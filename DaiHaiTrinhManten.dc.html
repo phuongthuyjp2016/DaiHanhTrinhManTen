@@ -639,7 +639,20 @@
 
       <div style="position:relative; z-index:4; display:flex; flex-direction:column; align-items:center; gap:12px;">
         <!-- Thủ Hộ chào đón -->
-        <div style="width:76px; height:76px;">{{ mascotTiny }}</div>
+        <div style="display:flex; align-items:flex-end; justify-content:center; gap:12px;">
+          <sc-if value="{{ hasMapShipArt }}" hint-placeholder-val="{{ false }}">
+            <div style="width:64px; height:64px;"><div style="{{ mapShipBgStyle }}"></div></div>
+          </sc-if>
+          <div style="width:64px; height:64px; position:relative;">
+            <sc-if value="{{ hasAvatarArt }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ avatarBgLarge }}"></div>
+            </sc-if>
+            <sc-if value="{{ noAvatarArt }}" hint-placeholder-val="{{ true }}">
+              {{ mascotProfile }}
+            </sc-if>
+            <div style="{{ flagDotStyle }}"></div>
+          </div>
+        </div>
         <div style="background:#fff; border-radius:14px; padding:8px 14px; color:#3a2a18; font-size:12.5px; font-weight:700; box-shadow:0 4px 0 rgba(0,0,0,.08); max-width:280px;">🦈 "Nhập mật mã Thủ Hộ trao sau buổi Host để nhận quà nhé!"</div>
 
         <div style="font-size:44px;">🔑</div>
