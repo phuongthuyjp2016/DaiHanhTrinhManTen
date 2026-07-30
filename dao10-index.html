@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đảo Đại Chiến — Chọn Thử Thách</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { min-height:100%; }
+  body {
+    font-family:'Be Vietnam Pro', sans-serif;
+    background: #0e5273;
+    background: linear-gradient(180deg, #0a3a54 0%, #0e5273 45%, #1f6f8c 100%);
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:24px 16px 40px;
+    color:#cdeef2;
+  }
+  .back {
+    align-self:flex-start;
+    color:#ffe9b0;
+    font-weight:700;
+    font-size:14px;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:18px;
+  }
+  .back:hover { text-decoration:underline; }
+  .wrap {
+    width:100%;
+    max-width:460px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:14px;
+    margin-top:6px;
+  }
+  .badge {
+    background:rgba(9,45,66,.55);
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:999px;
+    padding:6px 16px;
+    color:#ffe9b0;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+  }
+  h1 {
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    color:#fff;
+    font-size:clamp(24px,6vw,32px);
+  }
+  .skill {
+    color:#ffe9b0;
+    font-size:14px;
+    font-weight:700;
+  }
+  .story {
+    color:#cdeef2;
+    font-size:14px;
+    line-height:1.65;
+    max-width:420px;
+  }
+  .item-box {
+    background:rgba(9,45,66,.5);
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:12px;
+    padding:10px 16px;
+    color:#ffe9b0;
+    font-size:13px;
+    font-weight:700;
+  }
+  .tools {
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    margin-top:10px;
+  }
+  .tool-card {
+    display:flex;
+    align-items:center;
+    gap:14px;
+    text-decoration:none;
+    background:rgba(9,45,66,.55);
+    border:1.5px solid rgba(255,233,176,.35);
+    border-radius:16px;
+    padding:16px 18px;
+    text-align:left;
+    transition:transform .2s, border-color .2s, background .2s;
+  }
+  .tool-card:hover {
+    transform:translateY(-2px);
+    border-color:#ffe9b0;
+    background:rgba(9,45,66,.75);
+  }
+  .tool-icon {
+    flex:0 0 auto;
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:linear-gradient(180deg,#ffd25a,#f5a623);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    box-shadow:0 4px 0 #b9761a;
+  }
+  .tool-text { flex:1; }
+  .tool-title {
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    color:#fff;
+    font-size:16px;
+    margin-bottom:3px;
+  }
+  .tool-desc {
+    color:#a9cfdd;
+    font-size:12.5px;
+    line-height:1.5;
+  }
+  .tool-arrow {
+    flex:0 0 auto;
+    color:#ffe9b0;
+    font-size:20px;
+    font-weight:700;
+  }
+</style>
+</head>
+<body>
+
+  <a class="back" href="DaiHaiTrinhManten.dc.html">← Bản Đồ</a>
+
+  <div class="wrap">
+    <div class="badge">SỐ 10 · THỦ HỘ ĐẢO: CÁ MẬP CHỈ HUY</div>
+    <h1>Đảo Đại Chiến</h1>
+    <div class="skill">Thi Thử Toàn Phần</div>
+    <div class="story">Cá Mập Chỉ Huy tổ chức những trận thi thử hoàn chỉnh, mô phỏng đúng cấu trúc đề thi JLPT N1. Chọn một thử thách bên dưới để bắt đầu.</div>
+    <div class="item-box">🎁 Bảo Vật: Cúp Đại Chinh Phục</div>
+
+    <div class="tools">
+      <a class="tool-card" href="dao10-daichien-tuvung30.html">
+        <div class="tool-icon">📖</div>
+        <div class="tool-text">
+          <div class="tool-title">Từ Vựng 語彙 · Toàn 30 Vòng</div>
+          <div class="tool-desc">Luyện từ vựng N1 theo 30 vòng liên tiếp, bám sát cấu trúc đề thi thật.</div>
+        </div>
+        <div class="tool-arrow">›</div>
+      </a>
+
+      <a class="tool-card" href="dao10-daichien-dethi.html">
+        <div class="tool-icon">⚔</div>
+        <div class="tool-text">
+          <div class="tool-title">Đề Thi Tổng Hợp 2010–2025</div>
+          <div class="tool-desc">Thi thử toàn phần, tổng hợp đề thi JLPT N1 các năm từ 2010 đến 2025.</div>
+        </div>
+        <div class="tool-arrow">›</div>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

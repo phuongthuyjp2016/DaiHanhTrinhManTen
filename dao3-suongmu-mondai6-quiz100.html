@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Quiz N1 - 100 câu điền sao (Mondai 6)</title>
+<style>
+  :root{
+    --bg:#f7f5f0; --card:#ffffff; --ink:#2b2b2b; --muted:#7a7a7a;
+    --accent:#b5402c; --accent2:#2c6e58; --line:#e4ddd2; --wrong:#c0392b; --right:#1e7d4f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); padding:24px 16px 80px;
+  }
+  .wrap{max-width:720px; margin:0 auto;}
+  header{text-align:center; margin-bottom:20px;}
+  header h1{font-size:1.4rem; margin:0 0 4px;}
+  header p{color:var(--muted); margin:0; font-size:0.9rem;}
+
+  /* SET SELECTOR */
+  .set-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:20px;
+  }
+  @media(max-width:480px){.set-grid{grid-template-columns:repeat(2,1fr);}}
+  .set-btn{
+    background:var(--card); border:1.5px solid var(--line); border-radius:12px;
+    padding:14px 8px; text-align:center; cursor:pointer; font-family:inherit;
+    transition:.15s;
+  }
+  .set-btn:hover{border-color:var(--accent2); transform:translateY(-1px);}
+  .set-btn .set-num{display:block; font-weight:700; font-size:1.05rem; color:var(--accent);}
+  .set-btn .set-range{display:block; font-size:0.78rem; color:var(--muted); margin-top:2px;}
+  .back-link{
+    display:inline-block; margin-bottom:14px; color:var(--accent2); cursor:pointer;
+    font-size:0.9rem; text-decoration:underline;
+  }
+
+  .progress{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:10px 16px; margin-bottom:16px; font-size:0.85rem; color:var(--muted); flex-wrap:wrap; gap:6px;
+  }
+  .progress b{color:var(--ink);}
+  .progress .set-label{color:var(--accent); font-weight:700;}
+  .bar{height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:20px;}
+  .bar-fill{height:100%; background:var(--accent2); width:0%; transition:width .3s;}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:22px 20px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .qnum{
+    display:inline-block; background:var(--accent); color:#fff; font-weight:700;
+    border-radius:6px; padding:2px 10px; font-size:0.85rem; margin-bottom:10px;
+  }
+  .sentence{font-size:1.25rem; line-height:2.1; margin:10px 0 18px;}
+  .blank{
+    display:inline-block; min-width:64px; border-bottom:2px solid var(--muted);
+    text-align:center; margin:0 2px; color:var(--muted); font-size:0.95rem;
+  }
+  .blank.star{border-color:var(--accent); color:var(--accent); font-weight:700;}
+  .choices{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  @media(max-width:480px){.choices{grid-template-columns:1fr;}}
+  .choice-btn{
+    border:1.5px solid var(--line); background:#fdfcfa; border-radius:10px;
+    padding:12px 14px; font-size:1.05rem; cursor:pointer; text-align:left;
+    transition:.15s; font-family:inherit;
+  }
+  .choice-btn:hover{border-color:var(--accent2);}
+  .choice-btn.correct{background:#eaf6ee; border-color:var(--right); color:var(--right); font-weight:700;}
+  .choice-btn.wrong{background:#fbeceb; border-color:var(--wrong); color:var(--wrong); font-weight:700;}
+  .choice-btn:disabled{cursor:default;}
+  .explain{
+    margin-top:16px; border-radius:10px; background:#fbf8f1;
+    border:1px solid var(--line); font-size:0.92rem; line-height:1.7; display:none;
+    padding:16px;
+  }
+  .explain.show{display:block;}
+  .order-badge{
+    display:inline-block; background:var(--accent2); color:#fff; font-weight:700;
+    border-radius:8px; padding:5px 14px; font-size:0.95rem; margin-bottom:10px; margin-right:8px;
+  }
+  .grammar-badge{
+    display:block; background:#fff3e0; border:1.5px solid #d98c2b; color:#8a5a16; font-weight:700;
+    border-radius:8px; padding:8px 14px; font-size:0.93rem; margin-bottom:12px;
+  }
+  .grammar-badge span{font-weight:400; color:#6b4a14;}
+  .explain .full{font-size:1.08rem; margin-bottom:8px; color:var(--ink);}
+  .explain .vi{color:var(--accent2); margin-bottom:14px; font-style:italic;}
+  .explain hr{border:none; border-top:1px dashed var(--line); margin:12px 0;}
+  .step{margin-bottom:10px;}
+  .step b{color:var(--ink);}
+  .navrow{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;}
+  #topNavRow{
+    position:sticky; top:0; z-index:20; background:var(--bg);
+    padding:8px 0 4px; margin-top:0 !important;
+  }
+  .navbtn{
+    background:var(--accent2); color:#fff; border:none;
+    padding:10px 18px; border-radius:8px; font-size:0.95rem; cursor:pointer;
+  }
+  .navbtn.secondary{background:#fff; color:var(--accent2); border:1.5px solid var(--accent2);}
+  .navbtn:disabled{opacity:.4; cursor:not-allowed;}
+  .navbtn.hidden{display:none;}
+  .result{
+    text-align:center; padding:40px 20px; background:var(--card); border-radius:14px;
+    border:1px solid var(--line);
+  }
+  .result h2{margin-top:0;}
+  .restart{
+    background:var(--accent); color:#fff; border:none; padding:10px 22px;
+    border-radius:8px; font-size:1rem; cursor:pointer; margin-top:12px;
+  }
+  .remember-box{
+    background:#eef6f2; border:1px solid var(--accent2); border-radius:10px;
+    padding:12px 16px; margin-top:16px; font-size:0.88rem; color:var(--accent2);
+  }
+  footer{text-align:center; color:var(--muted); font-size:0.8rem; margin-top:30px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>JLPT N1 — Mondai 6 練習 (文の文法②)</h1>
+    <p>Bộ 100 câu điền sao — Đầy đủ 100/100 câu, chia 16 set x 20 câu</p>
+  </header>
+
+  <div id="setSelectArea"></div>
+  <div id="quizWrapArea" style="display:none;">
+    <span class="back-link" id="backToSets">← Quay về danh sách set</span>
+    <div class="progress">
+      <span class="set-label" id="setLabel">Set 1 (câu 1–20)</span>
+      <span>Câu <b id="curNum">1</b> / <span id="totalNum">20</span></span>
+      <span>Đúng: <b id="scoreNum">0</b></span>
+    </div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="navrow" id="topNavRow" style="margin-top:-4px; margin-bottom:14px;"></div>
+    <div id="quizArea"></div>
+    <div id="resultArea" style="display:none"></div>
+  </div>
+</div>
+<script>
+window.QUIZ_DATA = [
+{n:1, pre:"彼は", post:"人のお金まで盗む始末だ。", choices:["あげく","散々","ついには","借金をした"], order:[2,4,1,3], star:3,
+ full:"彼は散々借金をしたあげくついには人のお金まで盗む始末だ。", vi:"Anh ta cuối cùng đến mức ăn trộm cả tiền của người khác.",
+ orderDisp:"2-4-1-3",
+ grammar:"〜あげく (rốt cuộc, kết cục sau khi... — thường mang nghĩa xấu)",
+ steps:["Mảnh đầu câu (vị trí 1): 「散々」— khớp với phần câu 「...彼は」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ついには」— khớp với phần câu 「人のお金まで盗む始末」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「借金をした」 rồi 「あげく」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = あげく"]},
+{n:2, pre:"関東には三日間だけ", post:"を余儀なくされた。", choices:["予定だったが","台風の影響で","滞在する","日程の変更"], order:[3,1,2,4], star:3,
+ full:"関東には三日間だけ滞在する予定だったが台風の影響で日程の変更を余儀なくされた。", vi:"Dự định chỉ ở vùng Kanto 3 ngày, nhưng do ảnh hưởng của bão nên buộc phải thay đổi lịch trình.",
+ orderDisp:"3-1-2-4",
+ grammar:"〜を余儀なくされる (bị buộc phải...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「滞在する」— khớp với phần câu 「...東には三日間だけ」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「日程の変更」— khớp với phần câu 「を余儀なくされた。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「予定だったが」 rồi 「台風の影響で」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 台風の影響で"]},
+{n:3, pre:"言葉の通じない海外での一人暮らしが", post:"。", choices:["にかたくない","いかに","想像する","たいへんか"], order:[2,4,3,1], star:3,
+ full:"言葉の通じない海外での一人暮らしがいかにたいへんか想像するにかたくない。", vi:"Không khó để tưởng tượng việc sống một mình ở nước ngoài, nơi không thông ngôn ngữ, sẽ vất vả đến mức nào.",
+ orderDisp:"2-4-3-1",
+ grammar:"〜にかたくない (không khó để...) + いかに〜か (biết bao, đến mức nào)",
+ steps:["Mảnh đầu câu (vị trí 1): 「いかに」— khớp với phần câu 「...での一人暮らしが」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「にかたくない」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「たいへんか」 rồi 「想像する」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 想像する"]},
+{n:4, pre:"富と地位を", post:"許せない。", choices:["なんて","多くの人を","犠牲にする","得んがために"], order:[4,2,3,1], star:3,
+ full:"富と地位を得んがために多くの人を犠牲にするなんて許せない。", vi:"Việc hy sinh nhiều người để đạt được giàu sang và địa vị, thật không thể tha thứ.",
+ orderDisp:"4-2-3-1",
+ grammar:"〜んがために (để mà, nhằm mục đích — văn viết cổ)",
+ steps:["Mảnh đầu câu (vị trí 1): 「得んがために」— khớp với phần câu 「...富と地位を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「なんて」— khớp với phần câu 「許せない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「多くの人を」 rồi 「犠牲にする」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 犠牲にする"]},
+{n:5, pre:"バレンタインデーに彼に", post:"わけではない。", choices:["ある","特別な思いが","からといって","チョコレートをあげた"], order:[4,3,2,1], star:3,
+ full:"バレンタインデーに彼にチョコレートをあげたからといって特別な思いがあるわけではない。", vi:"Không phải vì có tình cảm đặc biệt mà tôi đã tặng socola cho anh ấy vào Valentine.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜からといって〜わけではない (không phải vì... mà...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「チョコレートをあげた」— khớp với phần câu 「...タインデーに彼に」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ある」— khớp với phần câu 「わけではない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「からといって」 rồi 「特別な思いが」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 特別な思いが"]},
+{n:6, pre:"アルバイト先の店長さん", post:"自分は何もしようとしない。", choices:["働かせる","ときたら","ばかりで","店員に"], order:[2,4,1,3], star:3,
+ full:"アルバイト先の店長さんときたら店員に働かせるばかりで自分は何もしようとしない。", vi:"Nói đến ông quản lý chỗ tôi làm thêm thì, chỉ toàn bắt nhân viên làm việc còn bản thân không chịu làm gì.",
+ orderDisp:"2-4-1-3",
+ grammar:"Nときたら (nói đến N thì — than phiền)",
+ steps:["Mảnh đầu câu (vị trí 1): 「ときたら」— khớp với phần câu 「...イト先の店長さん」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ばかりで」— khớp với phần câu 「自分は何もしようとし」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「店員に」 rồi 「働かせる」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 働かせる"]},
+{n:7, pre:"友人と6時に待ち合わせをしていたが、", post:"。", choices:["出かけられない","泣かれて","出かけようにも","子どもに"], order:[4,2,3,1], star:3,
+ full:"友人と6時に待ち合わせをしていたが、子どもに泣かれて出かけようにも出かけられない。", vi:"Tôi đã hẹn gặp bạn lúc 6 giờ, nhưng con tôi khóc nên dù muốn đi cũng không đi được.",
+ orderDisp:"4-2-3-1",
+ grammar:"Vようにも〜ない (dù muốn... cũng không thể...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「子どもに」— khớp với phần câu 「...せをしていたが、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「出かけられない」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「泣かれて」 rồi 「出かけようにも」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 出かけようにも"]},
+{n:8, pre:"観光事業に力を入れている町だ", post:"ほとんど観光客がいない。", choices:["休日にも","平日","というのに","はおろか"], order:[3,2,4,1], star:3,
+ full:"観光事業に力を入れている町だというのに平日はおろか休日にもほとんど観光客がいない。", vi:"Dù là thị trấn đang đầu tư mạnh vào du lịch, nhưng ngày thường thì khỏi nói, ngay cả ngày nghỉ cũng hầu như không có khách.",
+ orderDisp:"3-2-4-1",
+ grammar:"〜というのに (vậy mà, thế mà) + Nはおろか (N thì khỏi nói đến)",
+ steps:["Mảnh đầu câu (vị trí 1): 「というのに」— khớp với phần câu 「...を入れている町だ」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「休日にも」— khớp với phần câu 「ほとんど観光客がいな」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「平日」 rồi 「はおろか」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = はおろか"]},
+{n:9, pre:"夫は何の相談もなしに", post:"しまつだ。", choices:["最近では","仕事をやめ","生活費にまで","手をつける"], order:[2,1,3,4], star:3,
+ full:"夫は何の相談もなしに仕事をやめ最近では生活費にまで手をつけるしまつだ。", vi:"Chồng tôi tự ý nghỉ việc mà không bàn bạc gì, gần đây còn đến mức đụng cả vào tiền sinh hoạt.",
+ orderDisp:"2-1-3-4",
+ grammar:"〜しまつだ (rốt cuộc dẫn đến kết cục xấu là...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「仕事をやめ」— khớp với phần câu 「...何の相談もなしに」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「手をつける」— khớp với phần câu 「しまつだ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「最近では」 rồi 「生活費にまで」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 生活費にまで"]},
+{n:10, pre:"父は", post:"。", choices:["というもの","あまり外に","出なくなってしまった","退職してから"], order:[4,1,2,3], star:3,
+ full:"父は退職してからというものあまり外に出なくなってしまった。", vi:"Từ khi nghỉ hưu, bố tôi hầu như không còn ra ngoài nữa.",
+ orderDisp:"4-1-2-3",
+ grammar:"Nというもの (suốt khoảng thời gian từ... đến nay)",
+ steps:["Mảnh đầu câu (vị trí 1): 「退職してから」— khớp với phần câu 「...父は」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「出なくなってしまった」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「というもの」 rồi 「あまり外に」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = あまり外に"]},
+{n:11, pre:"締め切りを", post:"、間に合うとは思えない。", choices:["ところで","もらった","のばして","一週間"], order:[4,3,2,1], star:3,
+ full:"締め切りを一週間のばしてもらったところで、間に合うとは思えない。", vi:"Dù có được gia hạn thêm một tuần nữa, tôi cũng không nghĩ là sẽ kịp.",
+ orderDisp:"4-3-2-1",
+ grammar:"Vたところで (dù có... thì cũng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「一週間」— khớp với phần câu 「...締め切りを」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ところで」— khớp với phần câu 「、間に合うとは思えな」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「のばして」 rồi 「もらった」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = もらった"]},
+{n:12, pre:"救急車は", post:"ときに利用するものだ。", choices:["病気の","命","けがや","にかかわる"], order:[2,4,3,1], star:3,
+ full:"救急車は命にかかわるけがや病気のときに利用するものだ。", vi:"Xe cứu thương là thứ dùng khi bệnh tật hay vết thương liên quan đến tính mạng.",
+ orderDisp:"2-4-3-1",
+ grammar:"Nにかかわる (liên quan đến, ảnh hưởng đến N)",
+ steps:["Mảnh đầu câu (vị trí 1): 「命」— khớp với phần câu 「...救急車は」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「病気の」— khớp với phần câu 「ときに利用するものだ」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「にかかわる」 rồi 「けがや」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = けがや"]},
+{n:13, pre:"給料を", post:"生活は送りたい。", choices:["余裕のある生活","人並みの","とはいえないまでも","あげてもらって"], order:[4,1,3,2], star:3,
+ full:"給料をあげてもらって余裕のある生活とはいえないまでも人並みの生活は送りたい。", vi:"Dù không đến mức được tăng lương để có cuộc sống dư dả, tôi cũng muốn có cuộc sống bình thường như mọi người.",
+ orderDisp:"4-1-3-2",
+ grammar:"〜とはいえないまでも (dù không đến mức nói là... nhưng ít nhất)",
+ steps:["Mảnh đầu câu (vị trí 1): 「あげてもらって」— khớp với phần câu 「...給料を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「人並みの」— khớp với phần câu 「生活は送りたい。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「余裕のある生活」 rồi 「とはいえないまでも」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = とはいえないまでも"]},
+{n:14, pre:"一般的に自分と", post:"甘くなる嫌いがある。", choices:["対する","評価は","部下に","気が合う"], order:[4,3,1,2], star:3,
+ full:"一般的に自分と気が合う部下に対する評価は甘くなる嫌いがある。", vi:"Nói chung, đánh giá đối với cấp dưới hợp tính mình thường có khuynh hướng dễ dãi hơn.",
+ orderDisp:"4-3-1-2",
+ grammar:"〜きらいがある (có khuynh hướng không tốt là...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「気が合う」— khớp với phần câu 「...一般的に自分と」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「評価は」— khớp với phần câu 「甘くなる嫌いがある。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「部下に」 rồi 「対する」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 対する"]},
+{n:15, pre:"彼はずば抜けた語学力", post:"がすばらしい。", choices:["お客の応対に","もさることながら","ところ","気が利く"], order:[2,1,4,3], star:3,
+ full:"彼はずば抜けた語学力もさることながらお客の応対に気が利くところがすばらしい。", vi:"Anh ấy không chỉ có khả năng ngoại ngữ vượt trội, mà cách ứng xử khéo léo với khách hàng cũng rất tuyệt.",
+ orderDisp:"2-1-4-3",
+ grammar:"〜もさることながら (không chỉ... mà còn...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「もさることながら」— khớp với phần câu 「...ずば抜けた語学力」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ところ」— khớp với phần câu 「がすばらしい。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「お客の応対に」 rồi 「気が利く」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 気が利く"]},
+{n:16, pre:"大企業の", post:"も考えるべきだ。", choices:["貢献","社長","地域への","たるもの"], order:[2,4,3,1], star:3,
+ full:"大企業の社長たるもの地域への貢献も考えるべきだ。", vi:"Là giám đốc của một doanh nghiệp lớn, cũng nên nghĩ đến cả sự đóng góp cho địa phương.",
+ orderDisp:"2-4-3-1",
+ grammar:"Nたるもの (đã là người mang danh N thì phải...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「社長」— khớp với phần câu 「...大企業の」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「貢献」— khớp với phần câu 「も考えるべきだ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「たるもの」 rồi 「地域への」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 地域への"]},
+{n:17, pre:"今日はこの地域の", post:"賑わっている。", choices:["とあって","最大の祭り","観光客で","大勢の"], order:[2,1,4,3], star:3,
+ full:"今日はこの地域の最大の祭りとあって大勢の観光客で賑わっている。", vi:"Hôm nay vì là lễ hội lớn nhất của vùng này nên đông đảo du khách làm cho nơi đây nhộn nhịp.",
+ orderDisp:"2-1-4-3",
+ grammar:"〜とあって (vì là... nên — tình huống đặc biệt)",
+ steps:["Mảnh đầu câu (vị trí 1): 「最大の祭り」— khớp với phần câu 「...今日はこの地域の」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「観光客で」— khớp với phần câu 「賑わっている。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「とあって」 rồi 「大勢の」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 大勢の"]},
+{n:18, pre:"頼りにしていた先輩が", post:"。", choices:["心細い","つぎつぎと","やめてしまい","限りだ"], order:[2,3,1,4], star:3,
+ full:"頼りにしていた先輩がつぎつぎとやめてしまい心細い限りだ。", vi:"Các anh chị mà tôi từng tin tưởng lần lượt nghỉ việc, thật là cô đơn hết sức.",
+ orderDisp:"2-3-1-4",
+ grammar:"〜限りだ (cực kỳ, hết sức là...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「つぎつぎと」— khớp với phần câu 「...にしていた先輩が」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「限りだ」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「やめてしまい」 rồi 「心細い」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 心細い"]},
+{n:19, pre:"彼女に", post:"ことになる。", choices:["話に付き合わされる","会った","が最後","少なくとも30分は"], order:[2,3,4,1], star:3,
+ full:"彼女に会ったが最後少なくとも30分は話に付き合わされることになる。", vi:"Một khi đã gặp cô ấy là kiểu gì cũng bị lôi vào nghe chuyện ít nhất 30 phút.",
+ orderDisp:"2-3-4-1",
+ grammar:"〜が最後 (một khi đã... thì)",
+ steps:["Mảnh đầu câu (vị trí 1): 「会った」— khớp với phần câu 「...彼女に」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「話に付き合わされる」— khớp với phần câu 「ことになる。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「が最後」 rồi 「少なくとも30分は」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 少なくとも30分は"]},
+{n:20, pre:"明日はいよいよ大学受験、", post:"ことのみだ。", choices:["信じる","自分を","ただ","今できるのは"], order:[4,3,2,1], star:3,
+ full:"明日はいよいよ大学受験、今できるのはただ自分を信じることのみだ。", vi:"Ngày mai là kỳ thi đại học rồi, điều duy nhất tôi có thể làm bây giờ chỉ là tin vào bản thân mình.",
+ orderDisp:"4-3-2-1",
+ grammar:"ただ〜のみだ (chỉ còn... mà thôi)",
+ steps:["Mảnh đầu câu (vị trí 1): 「今できるのは」— khớp với phần câu 「...よいよ大学受験、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「信じる」— khớp với phần câu 「ことのみだ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ただ」 rồi 「自分を」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 自分を"]},
+{n:21, pre:"九州地方は", post:"をほっとさせた。", choices:["洪水が起こったが","大事には至らず","台風に襲われ","住民及び関係者"], order:[3,1,2,4], star:3,
+ full:"九州地方は台風に襲われ洪水が起こったが大事には至らず住民及び関係者をほっとさせた。", vi:"Vùng Kyushu bị bão tấn công gây ra lũ lụt, nhưng không đến mức nghiêm trọng, khiến người dân và các bên liên quan thở phào nhẹ nhõm.",
+ orderDisp:"3-1-2-4",
+ grammar:"〜には至らず (không đến mức...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「台風に襲われ」— khớp với phần câu 「...九州地方は」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「住民及び関係者」— khớp với phần câu 「をほっとさせた。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「洪水が起こったが」 rồi 「大事には至らず」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 大事には至らず"]},
+{n:22, pre:"多くの発展途上国が", post:"人口減少に危機感を募らせている。", choices:["先進国では","にひきかえ","頭を悩ましているの","人口増加に"], order:[4,3,2,1], star:3,
+ full:"多くの発展途上国が人口増加に頭を悩ましているのにひきかえ先進国では人口減少に危機感を募らせている。", vi:"Trái với việc nhiều nước đang phát triển đang đau đầu vì gia tăng dân số, các nước phát triển lại đang lo ngại về tình trạng giảm dân số.",
+ orderDisp:"4-3-2-1",
+ grammar:"Nにひきかえ (trái với, ngược lại với N)",
+ steps:["Mảnh đầu câu (vị trí 1): 「人口増加に」— khớp với phần câu 「...くの発展途上国が」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「先進国では」— khớp với phần câu 「人口減少に危機感を募」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「頭を悩ましているの」 rồi 「にひきかえ」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = にひきかえ"]},
+{n:23, pre:"江戸時代", post:"はかなり少ない。", choices:["着物を着て","ではあるまいし","生活する","日本人"], order:[2,1,3,4], star:3,
+ full:"江戸時代ではあるまいし着物を着て生活する日本人はかなり少ない。", vi:"Đâu phải thời Edo mà mặc kimono sống hàng ngày — số người Nhật làm vậy khá ít.",
+ orderDisp:"2-1-3-4",
+ grammar:"〜ではあるまいし (đâu phải là... mà)",
+ steps:["Mảnh đầu câu (vị trí 1): 「ではあるまいし」— khớp với phần câu 「...江戸時代」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「日本人」— khớp với phần câu 「はかなり少ない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「着物を着て」 rồi 「生活する」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 生活する"]},
+{n:24, pre:"欧米人の学習者は漢字を", post:"ようになるにはかなり時間がかかる。", choices:["覚えた","書ける","そばから","忘れる人が多く"], order:[1,3,4,2], star:3,
+ full:"欧米人の学習者は漢字を覚えたそばから忘れる人が多く書けるようになるにはかなり時間がかかる。", vi:"Người học phương Tây thường quên ngay chữ Kanji vừa học xong, nên để có thể viết được thành thạo thì mất khá nhiều thời gian.",
+ orderDisp:"1-3-4-2",
+ grammar:"Vたそばから (vừa mới... là đã lại...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「覚えた」— khớp với phần câu 「...の学習者は漢字を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「書ける」— khớp với phần câu 「ようになるにはかなり」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「そばから」 rồi 「忘れる人が多く」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 忘れる人が多く"]},
+{n:25, pre:"わたしは", post:"を惜しまない。", choices:["かなえん","日々の努力","がために","夢を"], order:[4,1,3,2], star:3,
+ full:"わたしは夢をかなえんがために日々の努力を惜しまない。", vi:"Để hiện thực hóa ước mơ, tôi không ngại bỏ ra nỗ lực hằng ngày.",
+ orderDisp:"4-1-3-2",
+ grammar:"〜んがために (để mà, nhằm mục đích) + 〜を惜しまない (không ngại bỏ ra...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「夢を」— khớp với phần câu 「...わたしは」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「日々の努力」— khớp với phần câu 「を惜しまない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「かなえん」 rồi 「がために」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = がために"]},
+{n:26, pre:"九月も半ばで、やっと", post:"。", choices:["涼しくなった","ぶり返した","また残暑が","と思いきや"], order:[1,4,3,2], star:3,
+ full:"九月も半ばで、やっと涼しくなったと思いきやまた残暑がぶり返した。", vi:"Đã giữa tháng 9, cứ nghĩ là cuối cùng đã mát hơn, thì cái nóng cuối hè lại quay trở lại.",
+ orderDisp:"1-4-3-2",
+ grammar:"〜と思いきや (cứ nghĩ là... nhưng hóa ra)",
+ steps:["Mảnh đầu câu (vị trí 1): 「涼しくなった」— khớp với phần câu 「...も半ばで、やっと」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ぶり返した」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「と思いきや」 rồi 「また残暑が」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = また残暑が"]},
+{n:27, pre:"どうしてもこの", post:"までのことだ。", choices:["のなら","やめる","仕事を","やりたくない"], order:[3,4,1,2], star:3,
+ full:"どうしてもこの仕事をやりたくないのならやめるまでのことだ。", vi:"Nếu nhất quyết không muốn làm công việc này, thì chỉ còn cách là bỏ việc mà thôi.",
+ orderDisp:"3-4-1-2",
+ grammar:"〜までのことだ (chỉ còn cách... mà thôi)",
+ steps:["Mảnh đầu câu (vị trí 1): 「仕事を」— khớp với phần câu 「...どうしてもこの」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「やめる」— khớp với phần câu 「までのことだ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「やりたくない」 rồi 「のなら」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = のなら"]},
+{n:28, pre:"1970年代後半", post:"いった。", choices:["消費社会へと","をさかいにして","突入して","日本は"], order:[2,4,1,3], star:3,
+ full:"1970年代後半をさかいにして日本は消費社会へと突入していった。", vi:"Lấy nửa cuối thập niên 1970 làm ranh giới, Nhật Bản đã bước vào xã hội tiêu dùng.",
+ orderDisp:"2-4-1-3",
+ grammar:"Nをさかいにして (lấy N làm ranh giới/điểm mốc)",
+ steps:["Mảnh đầu câu (vị trí 1): 「をさかいにして」— khớp với phần câu 「...1970年代後半」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「突入して」— khớp với phần câu 「いった。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「日本は」 rồi 「消費社会へと」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 消費社会へと"]},
+{n:29, pre:"納得できない仕事を", post:"構わないと思う。", choices:["くらいなら","失業しても","会社を辞めて","させられる"], order:[4,1,3,2], star:3,
+ full:"納得できない仕事をさせられるくらいなら会社を辞めて失業しても構わないと思う。", vi:"Nếu cứ phải bị bắt làm công việc mà mình không chấp nhận được, thì dù bỏ việc, thất nghiệp cũng không sao.",
+ orderDisp:"4-1-3-2",
+ grammar:"〜くらいなら (nếu phải... thì chẳng bằng...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「させられる」— khớp với phần câu 「...得できない仕事を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「失業しても」— khớp với phần câu 「構わないと思う。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「くらいなら」 rồi 「会社を辞めて」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 会社を辞めて"]},
+{n:30, pre:"面接のとき、", post:"困る。", choices:["ようでは","話もできない","緊張の","あまり"], order:[3,4,2,1], star:3,
+ full:"面接のとき、緊張のあまり話もできないようでは困る。", vi:"Lúc phỏng vấn mà cứ căng thẳng đến mức không nói được gì thì thật khó xử.",
+ orderDisp:"3-4-2-1",
+ grammar:"あまりの〜で (vì quá... đến nỗi) + 〜ようでは (nếu mà cứ như thế thì)",
+ steps:["Mảnh đầu câu (vị trí 1): 「緊張の」— khớp với phần câu 「...面接のとき、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ようでは」— khớp với phần câu 「困る。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「あまり」 rồi 「話もできない」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 話もできない"]},
+{n:31, pre:"相手は", post:"許してもらえないだろう。", choices:["ことなしに","賠償する","と言っているから","裁判に訴える"], order:[4,3,2,1], star:3,
+ full:"相手は裁判に訴えると言っているから賠償することなしに許してもらえないだろう。", vi:"Đối phương nói rằng sẽ kiện ra tòa nên nếu không đền bù thì chắc sẽ không được tha thứ.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜ことなしに (mà không...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「裁判に訴える」— khớp với phần câu 「...相手は」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ことなしに」— khớp với phần câu 「許してもらえないだろ」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「と言っているから」 rồi 「賠償する」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 賠償する"]},
+{n:32, pre:"久しぶりに", post:"を禁じえなかった。", choices:["感動的な","映画を見て","涙","場面に"], order:[2,1,4,3], star:3,
+ full:"久しぶりに映画を見て感動的な場面に涙を禁じえなかった。", vi:"Lâu rồi mới xem một bộ phim, đến cảnh xúc động tôi không thể ngăn được nước mắt.",
+ orderDisp:"2-1-4-3",
+ grammar:"〜を禁じえない (không thể ngăn/kìm được...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「映画を見て」— khớp với phần câu 「...久しぶりに」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「涙」— khớp với phần câu 「を禁じえなかった。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「感動的な」 rồi 「場面に」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 場面に"]},
+{n:33, pre:"入院した部長の", post:"行こう。", choices:["かたがた","報告しに","新しい企画を","お見舞い"], order:[4,1,3,2], star:3,
+ full:"入院した部長のお見舞いかたがた新しい企画を報告しに行こう。", vi:"Hãy đi thăm trưởng phòng đang nằm viện, nhân tiện báo cáo về dự án mới luôn.",
+ orderDisp:"4-1-3-2",
+ grammar:"〜かたがた (nhân tiện, kết hợp luôn việc...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「お見舞い」— khớp với phần câu 「...入院した部長の」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「報告しに」— khớp với phần câu 「行こう。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「かたがた」 rồi 「新しい企画を」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 新しい企画を"]},
+{n:34, pre:"コンピューター", post:"過言ではない。", choices:["成り立たない","なくしては","と言っても","現代社会が"], order:[2,4,1,3], star:3,
+ full:"コンピューターなくしては現代社会が成り立たないと言っても過言ではない。", vi:"Có thể nói không quá rằng xã hội hiện đại không thể tồn tại nếu không có máy tính.",
+ orderDisp:"2-4-1-3",
+ grammar:"Nなくしては〜ない (nếu không có N thì không thể...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「なくしては」— khớp với phần câu 「...コンピューター」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「と言っても」— khớp với phần câu 「過言ではない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「現代社会が」 rồi 「成り立たない」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 成り立たない"]},
+{n:35, pre:"環境汚染が", post:"すべての生物にとって重大な問題だ。", choices:["ひとり","日々深刻化しているのは","のみならず","人類"], order:[2,1,4,3], star:3,
+ full:"環境汚染が日々深刻化しているのはひとり人類のみならずすべての生物にとって重大な問題だ。", vi:"Ô nhiễm môi trường ngày càng nghiêm trọng không chỉ là vấn đề của riêng loài người, mà là vấn đề lớn đối với tất cả sinh vật.",
+ orderDisp:"2-1-4-3",
+ grammar:"ひとりNのみならず (không chỉ riêng N mà...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「日々深刻化しているのは」— khớp với phần câu 「...環境汚染が」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「のみならず」— khớp với phần câu 「すべての生物にとって」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ひとり」 rồi 「人類」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 人類"]},
+{n:36, pre:"スピーチは苦手だが、", post:"を得ない。", choices:["引き受けざる","とあれば","先生の頼み","お世話になった"], order:[4,3,2,1], star:3,
+ full:"スピーチは苦手だが、お世話になった先生の頼みとあれば引き受けざるを得ない。", vi:"Tôi không giỏi diễn thuyết, nhưng nếu là lời nhờ của thầy/cô đã từng giúp đỡ mình, thì buộc phải nhận lời.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜とあれば (nếu là... thì) + 〜ざるを得ない (buộc phải...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「お世話になった」— khớp với phần câu 「...ーチは苦手だが、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「引き受けざる」— khớp với phần câu 「を得ない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「先生の頼み」 rồi 「とあれば」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = とあれば"]},
+{n:37, pre:"息子は試験に向けて、", post:"が心配だ。", choices:["試験の結果","子どもの健康","にもまして","一生懸命頑張っているが"], order:[4,1,3,2], star:3,
+ full:"息子は試験に向けて、一生懸命頑張っているが試験の結果にもまして子どもの健康が心配だ。", vi:"Con trai tôi đang cố gắng hết mình cho kỳ thi, nhưng tôi lo cho sức khỏe của con hơn cả kết quả thi.",
+ orderDisp:"4-1-3-2",
+ grammar:"Nにもまして (hơn cả N)",
+ steps:["Mảnh đầu câu (vị trí 1): 「一生懸命頑張っているが」— khớp với phần câu 「...は試験に向けて、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「子どもの健康」— khớp với phần câu 「が心配だ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「試験の結果」 rồi 「にもまして」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = にもまして"]},
+{n:38, pre:"どの大学であれ、", post:"変わりがないでしょう。", choices:["学ぶ内容自体は","であれば","大して","同じ学科"], order:[4,2,1,3], star:3,
+ full:"どの大学であれ、同じ学科であれば学ぶ内容自体は大して変わりがないでしょう。", vi:"Bất kể trường đại học nào, nếu là cùng một khoa thì nội dung học cũng không khác nhau mấy.",
+ orderDisp:"4-2-1-3",
+ grammar:"Nであれ (dù là N nào) + 大して〜ない (không... mấy)",
+ steps:["Mảnh đầu câu (vị trí 1): 「同じ学科」— khớp với phần câu 「...どの大学であれ、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「大して」— khớp với phần câu 「変わりがないでしょう」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「であれば」 rồi 「学ぶ内容自体は」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 学ぶ内容自体は"]},
+{n:39, pre:"彼女はよく旅をするが、それは彼女が", post:"。", choices:["人との出会いを","から","にほかならない","大切にしている"], order:[1,4,2,3], star:3,
+ full:"彼女はよく旅をするが、それは彼女が人との出会いを大切にしているからにほかならない。", vi:"Cô ấy thường đi du lịch, đó chẳng phải vì lý do gì khác ngoài việc cô ấy quý trọng những cuộc gặp gỡ với con người.",
+ orderDisp:"1-4-2-3",
+ grammar:"〜にほかならない (không gì khác ngoài...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「人との出会いを」— khớp với phần câu 「...が、それは彼女が」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「にほかならない」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「大切にしている」 rồi 「から」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = から"]},
+{n:40, pre:"山田さんはいつも", post:"周りの人を困らせる。", choices:["言っては","めいた","なぞ","ことを"], order:[3,2,4,1], star:3,
+ full:"山田さんはいつもなぞめいたことを言っては周りの人を困らせる。", vi:"Anh Yamada lúc nào cũng nói những câu đố đố khiến người xung quanh khó xử.",
+ orderDisp:"3-2-4-1",
+ grammar:"Nめいた (có vẻ như, kiểu như N)",
+ steps:["Mảnh đầu câu (vị trí 1): 「なぞ」— khớp với phần câu 「...山田さんはいつも」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「言っては」— khớp với phần câu 「周りの人を困らせる。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「めいた」 rồi 「ことを」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = ことを"]},
+{n:41, pre:"田中さんは借金を", post:"倒れた。", choices:["昼となく夜となく","返すべく","過労で","働いていたため"], order:[2,1,4,3], star:3,
+ full:"田中さんは借金を返すべく昼となく夜となく働いていたため過労で倒れた。", vi:"Anh Tanaka để trả nợ đã làm việc không kể ngày đêm, nên đã ngã bệnh vì làm việc quá sức.",
+ orderDisp:"2-1-4-3",
+ grammar:"Nとなく Nとなく (không kể... hay...) + Vべく (để mà...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「返すべく」— khớp với phần câu 「...田中さんは借金を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「過労で」— khớp với phần câu 「倒れた。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「昼となく夜となく」 rồi 「働いていたため」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 働いていたため"]},
+{n:42, pre:"父が突然倒れて入院した。医者には", post:"と言われた。", choices:["回復することは","ことなしに","手術する","あり得ない"], order:[3,2,1,4], star:3,
+ full:"父が突然倒れて入院した。医者には手術することなしに回復することはあり得ないと言われた。", vi:"Bố tôi đột nhiên ngã bệnh phải nhập viện. Bác sĩ nói rằng nếu không phẫu thuật thì việc hồi phục là không thể.",
+ orderDisp:"3-2-1-4",
+ grammar:"〜ことなしに〜ない (nếu không... thì không thể...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「手術する」— khớp với phần câu 「...院した。医者には」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「あり得ない」— khớp với phần câu 「と言われた。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ことなしに」 rồi 「回復することは」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 回復することは"]},
+{n:43, pre:"みんなの気持ちは", post:"。", choices:["わけにはいかない","賛成する","やむを得ない事情で","わからないでもないが"], order:[4,3,2,1], star:3,
+ full:"みんなの気持ちはわからないでもないがやむを得ない事情で賛成するわけにはいかない。", vi:"Tôi không phải là không hiểu tâm trạng của mọi người, nhưng do tình huống bất khả kháng nên không thể đồng ý được.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜ないでもない (không phải là không...) + 〜わけにはいかない (không thể nào...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「わからないでもないが」— khớp với phần câu 「...みんなの気持ちは」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「わけにはいかない」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「やむを得ない事情で」 rồi 「賛成する」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 賛成する"]},
+{n:44, pre:"試合に勝ったから", post:"ものではなかった。", choices:["ものを","内容は決して","ほめられる","よさそうな"], order:[4,1,2,3], star:3,
+ full:"試合に勝ったからよさそうなものを内容は決してほめられるものではなかった。", vi:"Dù thắng trận nên có vẻ tốt, nhưng nội dung thì hoàn toàn không đáng được khen.",
+ orderDisp:"4-1-2-3",
+ grammar:"〜ものを (đáng lẽ... — tiếc nuối) + 決して〜ない (tuyệt đối không...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「よさそうな」— khớp với phần câu 「...試合に勝ったから」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ほめられる」— khớp với phần câu 「ものではなかった。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ものを」 rồi 「内容は決して」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 内容は決して"]},
+{n:45, pre:"新年を迎える", post:"実際に何もしていないうちに一年が過ぎていっちゃう。", choices:["充実した一年を","たびに","今年こそ","と思いながらも"], order:[2,3,1,4], star:3,
+ full:"新年を迎えるたびに今年こそ充実した一年をと思いながらも実際に何もしていないうちに一年が過ぎていっちゃう。", vi:"Mỗi lần đón năm mới, tôi đều nghĩ năm nay nhất định sẽ có một năm trọn vẹn, nhưng rồi chưa làm được gì thì một năm đã trôi qua.",
+ orderDisp:"2-3-1-4",
+ grammar:"〜たびに (mỗi lần...) + 〜と思いながらも (dù nghĩ là... nhưng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「たびに」— khớp với phần câu 「...新年を迎える」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「と思いながらも」— khớp với phần câu 「実際に何もしていない」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「今年こそ」 rồi 「充実した一年を」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 充実した一年を"]},
+{n:46, pre:"首都圏を", post:"。都市機能はマヒしてしまうだろう。", choices:["が最後","大地震が襲う","そうなった","恐れがあると言う"], order:[2,4,3,1], star:3,
+ full:"首都圏を大地震が襲う恐れがあると言うそうなったが最後。都市機能はマヒしてしまうだろう。", vi:"Nếu một trận động đất lớn tấn công vùng thủ đô, và nếu thực sự xảy ra như thế, thì chức năng đô thị sẽ bị tê liệt mất.",
+ orderDisp:"2-4-3-1",
+ grammar:"〜が最後 (một khi đã... thì)",
+ steps:["Mảnh đầu câu (vị trí 1): 「大地震が襲う」— khớp với phần câu 「...首都圏を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「が最後」— khớp với phần câu 「。都市機能はマヒして」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「恐れがあると言う」 rồi 「そうなった」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = そうなった"]},
+{n:47, pre:"わたしに", post:"手を打つべきだ。", choices:["上司なりなんなりに","しかるべき","いわせれば","相談して"], order:[3,1,4,2], star:3,
+ full:"わたしにいわせれば上司なりなんなりに相談してしかるべき手を打つべきだ。", vi:"Theo tôi thì nên tham khảo ý kiến cấp trên hay ai đó rồi đưa ra biện pháp thích đáng.",
+ orderDisp:"3-1-4-2",
+ grammar:"〜にいわせれば (theo... mà nói thì) + Vしかるべき (nên làm... thích đáng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「いわせれば」— khớp với phần câu 「...わたしに」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「しかるべき」— khớp với phần câu 「手を打つべきだ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「上司なりなんなりに」 rồi 「相談して」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 相談して"]},
+{n:48, pre:"大学を出た", post:"。いつまでも家でごろごろしているべきではない。", choices:["働こうともしない","子ども","と言うのに","ではあるまいし"], order:[2,4,1,3], star:3,
+ full:"大学を出た子どもではあるまいし働こうともしないと言うのに。いつまでも家でごろごろしているべきではない。", vi:"Đâu phải trẻ con mà không định đi làm, dù đã tốt nghiệp đại học — không nên cứ nằm dài ở nhà mãi như vậy.",
+ orderDisp:"2-4-1-3",
+ grammar:"〜ではあるまいし (đâu phải là... mà)",
+ steps:["Mảnh đầu câu (vị trí 1): 「子ども」— khớp với phần câu 「...大学を出た」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「と言うのに」— khớp với phần câu 「。いつまでも家でごろ」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ではあるまいし」 rồi 「働こうともしない」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 働こうともしない"]},
+{n:49, pre:"彼は留学して", post:"ようになった。", choices:["うって変わって","勉強に励む","それまでとは","からというもの"], order:[4,3,1,2], star:3,
+ full:"彼は留学してからというものそれまでとはうって変わって勉強に励むようになった。", vi:"Từ khi đi du học, anh ấy đã thay đổi hoàn toàn so với trước, trở nên chăm chỉ học hành.",
+ orderDisp:"4-3-1-2",
+ grammar:"〜からというもの (từ khi... trở đi) + 〜とは打って変わって (thay đổi hẳn so với...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「からというもの」— khớp với phần câu 「...彼は留学して」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「勉強に励む」— khớp với phần câu 「ようになった。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「それまでとは」 rồi 「うって変わって」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = うって変わって"]},
+{n:50, pre:"最近の子供は甘やかされている", post:"子供の意見を聞いてやることが大切だ。", choices:["厳しくしつければいい","厳しくしながらも","とよく言われるが","というものでもなく"], order:[3,1,4,2], star:3,
+ full:"最近の子供は甘やかされているとよく言われるが厳しくしつければいいというものでもなく厳しくしながらも子供の意見を聞いてやることが大切だ。", vi:"Người ta thường nói trẻ con ngày nay được nuông chiều, cứ nghiêm khắc là được, nhưng không hẳn là vậy, quan trọng là vừa nghiêm khắc vừa biết lắng nghe ý kiến của trẻ.",
+ orderDisp:"3-1-4-2",
+ grammar:"〜というものでもなく (không hẳn là... — phản biện nhẹ)",
+ steps:["Mảnh đầu câu (vị trí 1): 「とよく言われるが」— khớp với phần câu 「...甘やかされている」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「厳しくしながらも」— khớp với phần câu 「子供の意見を聞いてや」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「厳しくしつければいい」 rồi 「というものでもなく」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = というものでもなく"]},
+{n:51, pre:"姉は家事は何でも得意だが、", post:"だ。", choices:["並み","プロ","に至っては","料理"], order:[4,3,2,1], star:3,
+ full:"姉は家事は何でも得意だが、料理に至ってはプロ並みだ。", vi:"Chị tôi việc nhà gì cũng giỏi, nhưng riêng về nấu ăn thì đạt đến mức như chuyên gia.",
+ orderDisp:"4-3-2-1",
+ grammar:"Nに至っては (riêng về, nói đến... thì)",
+ steps:["Mảnh đầu câu (vị trí 1): 「料理」— khớp với phần câu 「...何でも得意だが、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「並み」— khớp với phần câu 「だ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「に至っては」 rồi 「プロ」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = プロ"]},
+{n:52, pre:"物質文明が高度に発達した現代社会", post:"。", choices:["われわれは","きらいがある","において","機械に頼りすぎる"], order:[3,1,4,2], star:3,
+ full:"物質文明が高度に発達した現代社会においてわれわれは機械に頼りすぎるきらいがある。", vi:"Trong xã hội hiện đại với văn minh vật chất phát triển cao, chúng ta có khuynh hướng quá phụ thuộc vào máy móc.",
+ orderDisp:"3-1-4-2",
+ grammar:"〜きらいがある (có khuynh hướng không tốt là...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「において」— khớp với phần câu 「...発達した現代社会」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「きらいがある」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「われわれは」 rồi 「機械に頼りすぎる」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 機械に頼りすぎる"]},
+{n:53, pre:"あの時、会社を", post:"言ったってどうにもならない。", choices:["といまさら","やめなければ","よかったのに","のように"], order:[2,3,1,4], star:3,
+ full:"あの時、会社をやめなければよかったのにといまさらのように言ったってどうにもならない。", vi:"Lúc đó, đáng lẽ nên bỏ việc thì tốt hơn, nhưng giờ nói lại cũng chẳng giải quyết được gì.",
+ orderDisp:"2-3-1-4",
+ grammar:"〜なければよかったのに (đáng lẽ nên... — tiếc nuối) + いまさら〜たって (giờ mới... thì cũng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「やめなければ」— khớp với phần câu 「...あの時、会社を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「のように」— khớp với phần câu 「言ったってどうにもな」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「よかったのに」 rồi 「といまさら」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = といまさら"]},
+{n:54, pre:"いくら", post:"それまでだ。", choices:["失敗すれば","本番で","重ねても","練習を"], order:[4,3,2,1], star:3,
+ full:"いくら練習を重ねても本番で失敗すればそれまでだ。", vi:"Dù có luyện tập bao nhiêu lần, nếu thất bại ngay lúc thi thật thì cũng coi như hết.",
+ orderDisp:"4-3-2-1",
+ grammar:"いくら〜ても (dù có... đến đâu cũng) + 〜ばそれまでだ (nếu... thì coi như chấm hết)",
+ steps:["Mảnh đầu câu (vị trí 1): 「練習を」— khớp với phần câu 「...いくら」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「失敗すれば」— khớp với phần câu 「それまでだ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「重ねても」 rồi 「本番で」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 本番で"]},
+{n:55, pre:"栄養、ほとんどの野菜は", post:"なかなか楽しめない。", choices:["栽培できないため","ならではの味が","生の野菜","農薬なしには"], order:[4,1,3,2], star:3,
+ full:"栄養、ほとんどの野菜は農薬なしには栽培できないため生の野菜ならではの味がなかなか楽しめない。", vi:"Vì hầu hết các loại rau hiện nay không thể trồng được mà không dùng thuốc trừ sâu, nên khó mà thưởng thức được vị đặc trưng của rau tươi tự nhiên.",
+ orderDisp:"4-1-3-2",
+ grammar:"Nなしには〜ない (nếu không có N thì không thể...) + Nならではの (chỉ riêng N mới có)",
+ steps:["Mảnh đầu câu (vị trí 1): 「農薬なしには」— khớp với phần câu 「...ほとんどの野菜は」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ならではの味が」— khớp với phần câu 「なかなか楽しめない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「栽培できないため」 rồi 「生の野菜」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 生の野菜"]},
+{n:56, pre:"その本が", post:"。", choices:["生命の起源","や否や","出版される","をめぐって"], order:[3,2,1,4], star:3,
+ full:"その本が出版されるや否や生命の起源をめぐって。", vi:"Ngay khi cuốn sách đó được xuất bản, đã trở thành đề tài tranh luận sôi nổi xung quanh nguồn gốc của sự sống.",
+ orderDisp:"3-2-1-4",
+ grammar:"〜や否や (ngay khi vừa... thì lập tức) + Nをめぐって (xung quanh, liên quan đến N)",
+ steps:["Mảnh đầu câu (vị trí 1): 「出版される」— khớp với phần câu 「...その本が」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「をめぐって」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「や否や」 rồi 「生命の起源」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 生命の起源"]},
+{n:57, pre:"彼は世間の批判に", post:"その生涯を終えた。", choices:["研究に終生を捧げ","さらされながらも","をもって","七十三歳"], order:[2,1,4,3], star:3,
+ full:"彼は世間の批判にさらされながらも研究に終生を捧げ七十三歳をもってその生涯を終えた。", vi:"Anh ấy dù bị xã hội phê phán, vẫn dành cả đời cho nghiên cứu, và kết thúc cuộc đời mình ở tuổi 73.",
+ orderDisp:"2-1-4-3",
+ grammar:"〜ながらも (dù... nhưng vẫn) + Nをもって (vào lúc/bằng N — trang trọng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「さらされながらも」— khớp với phần câu 「...彼は世間の批判に」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「をもって」— khớp với phần câu 「その生涯を終えた。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「研究に終生を捧げ」 rồi 「七十三歳」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 七十三歳"]},
+{n:58, pre:"タバコが体に", post:"。", choices:["やめられない","どうしても","百も承知しつつ","悪いことは"], order:[4,3,2,1], star:3,
+ full:"タバコが体に悪いことは百も承知しつつどうしてもやめられない。", vi:"Dù biết rất rõ rằng thuốc lá có hại cho sức khỏe, nhưng tôi vẫn không thể nào bỏ được.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜は百も承知しつつ (dù biết rất rõ... nhưng) + どうしても〜ない (dù thế nào cũng không...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「悪いことは」— khớp với phần câu 「...タバコが体に」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「やめられない」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「百も承知しつつ」 rồi 「どうしても」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = どうしても"]},
+{n:59, pre:"手術が成功した", post:"到底無理だろう。", choices:["歩けるようになる","ところで","のがやっとで","山登りなんて"], order:[2,1,3,4], star:3,
+ full:"手術が成功したところで歩けるようになるのがやっとで山登りなんて到底無理だろう。", vi:"Dù phẫu thuật thành công thì cũng chỉ mới đi lại được là cùng, leo núi thì chắc còn lâu mới làm được.",
+ orderDisp:"2-1-3-4",
+ grammar:"Vたところで (dù có... thì cũng) + Vのがやっとで (chỉ mới... là cùng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「ところで」— khớp với phần câu 「...手術が成功した」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「山登りなんて」— khớp với phần câu 「到底無理だろう。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「歩けるようになる」 rồi 「のがやっとで」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = のがやっとで"]},
+{n:60, pre:"高名の俳句の先生", post:"初心者の私にも十分わかるように易しく語ってくださった。", choices:["さぞ","と思いきや","難しい話をされるだろう","のことだから"], order:[4,1,3,2], star:3,
+ full:"高名の俳句の先生のことだからさぞ難しい話をされるだろうと思いきや初心者の私にも十分わかるように易しく語ってくださった。", vi:"Cứ nghĩ thầy giáo haiku nổi tiếng kia chắc sẽ nói chuyện khó hiểu lắm, nhưng thầy đã giảng giải dễ hiểu đến mức ngay cả người mới như tôi cũng hiểu được.",
+ orderDisp:"4-1-3-2",
+ grammar:"Nのことだから (vì là... nên chắc là) + 〜と思いきや (cứ nghĩ là... nhưng hóa ra)",
+ steps:["Mảnh đầu câu (vị trí 1): 「のことだから」— khớp với phần câu 「...高名の俳句の先生」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「と思いきや」— khớp với phần câu 「初心者の私にも十分わ」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「さぞ」 rồi 「難しい話をされるだろう」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 難しい話をされるだろう"]},
+{n:61, pre:"いくら", post:"とは、情けないやつだ。", choices:["聞くにたえない","スピーチをする","とはいえ","準備時間がなかった"], order:[4,3,1,2], star:3,
+ full:"いくら準備時間がなかったとはいえ聞くにたえないスピーチをするとは、情けないやつだ。", vi:"Dù nói là không có thời gian chuẩn bị, nhưng bài diễn thuyết tệ đến mức không thể nghe được, thật là một kẻ đáng thất vọng.",
+ orderDisp:"4-3-1-2",
+ grammar:"〜とはいえ (dù nói là... nhưng) + 〜にたえない (không thể chịu được, không đáng để...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「準備時間がなかった」— khớp với phần câu 「...いくら」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「スピーチをする」— khớp với phần câu 「とは、情けないやつだ」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「とはいえ」 rồi 「聞くにたえない」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 聞くにたえない"]},
+{n:62, pre:"日曜日にわざわざ", post:"に違いない。", choices:["からには","発生した","緊急事態が","呼び出す"], order:[4,1,3,2], star:3,
+ full:"日曜日にわざわざ呼び出すからには緊急事態が発生したに違いない。", vi:"Đã cố tình gọi tôi ra vào ngày chủ nhật, chắc chắn là có tình huống khẩn cấp xảy ra rồi.",
+ orderDisp:"4-1-3-2",
+ grammar:"〜からには (đã... thì) + 〜に違いない (chắc chắn là...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「呼び出す」— khớp với phần câu 「...日曜日にわざわざ」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「発生した」— khớp với phần câu 「に違いない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「からには」 rồi 「緊急事態が」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 緊急事態が"]},
+{n:63, pre:"将来のことで両親と対立すること", post:"思う。", choices:["突き進もうと","自分が","になるとしても","選んだ道を"], order:[3,2,4,1], star:3,
+ full:"将来のことで両親と対立することになるとしても自分が選んだ道を突き進もうと思う。", vi:"Dù việc này có thể dẫn đến xung đột với cha mẹ về tương lai, tôi vẫn nghĩ sẽ tiếp tục tiến lên trên con đường mình đã chọn.",
+ orderDisp:"3-2-4-1",
+ grammar:"〜になるとしても (dù có trở thành... thì cũng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「になるとしても」— khớp với phần câu 「...親と対立すること」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「突き進もうと」— khớp với phần câu 「思う。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「自分が」 rồi 「選んだ道を」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 選んだ道を"]},
+{n:64, pre:"山の中の生活", post:"。", choices:["不便じゃありません","電気もあれば","といっても","水道もあるんだから"], order:[3,2,4,1], star:3,
+ full:"山の中の生活といっても電気もあれば水道もあるんだから不便じゃありません。", vi:"Dù nói là sống trong núi, nhưng cũng không bất tiện đâu, vì có cả điện lẫn nước.",
+ orderDisp:"3-2-4-1",
+ grammar:"〜といっても (dù nói là... nhưng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「といっても」— khớp với phần câu 「...山の中の生活」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「不便じゃありません」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「電気もあれば」 rồi 「水道もあるんだから」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 水道もあるんだから"]},
+{n:65, pre:"たとえそれが事実だ", post:"にはあたらない。", choices:["彼の性格","から言えば","驚く","としても"], order:[4,1,2,3], star:3,
+ full:"たとえそれが事実だとしても彼の性格から言えば驚くにはあたらない。", vi:"Dù đó có là sự thật, thì xét theo tính cách của anh ấy, cũng không đến mức phải ngạc nhiên.",
+ orderDisp:"4-1-2-3",
+ grammar:"たとえ〜としても (dù có... thì cũng) + 〜にはあたらない (không đến mức phải...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「としても」— khớp với phần câu 「...とえそれが事実だ」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「驚く」— khớp với phần câu 「にはあたらない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「彼の性格」 rồi 「から言えば」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = から言えば"]},
+{n:66, pre:"長い時間をかけた", post:"。", choices:["よい作品が","とて","とは思わない","できる"], order:[2,1,4,3], star:3,
+ full:"長い時間をかけたとてよい作品ができるとは思わない。", vi:"Dù có dành nhiều thời gian, tôi cũng không nghĩ là sẽ tạo ra được tác phẩm tốt.",
+ orderDisp:"2-1-4-3",
+ grammar:"〜とて (dù có... thì cũng — văn viết, giống ても)",
+ steps:["Mảnh đầu câu (vị trí 1): 「とて」— khớp với phần câu 「...長い時間をかけた」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「とは思わない」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「よい作品が」 rồi 「できる」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = できる"]},
+{n:67, pre:"正しい知識の", post:"。", choices:["あり得ない","なくして","エイズ予防は","普及"], order:[4,2,3,1], star:3,
+ full:"正しい知識の普及なくしてエイズ予防はあり得ない。", vi:"Nếu không có sự phổ biến kiến thức đúng đắn, thì việc phòng chống AIDS là không thể.",
+ orderDisp:"4-2-3-1",
+ grammar:"〜なくして〜ない (nếu không có... thì không thể...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「普及」— khớp với phần câu 「...正しい知識の」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「あり得ない」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「なくして」 rồi 「エイズ予防は」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = エイズ予防は"]},
+{n:68, pre:"しっかりした計画を", post:"。", choices:["実行に移しても","でなければ","うまくいかない","立ててから"], order:[4,2,1,3], star:3,
+ full:"しっかりした計画を立ててからでなければ実行に移してもうまくいかない。", vi:"Nếu không lập kế hoạch chắc chắn trước, thì dù có đem ra thực hiện cũng không thành công.",
+ orderDisp:"4-2-1-3",
+ grammar:"〜てからでなければ (nếu không... trước thì) + 〜ても〜ない",
+ steps:["Mảnh đầu câu (vị trí 1): 「立ててから」— khớp với phần câu 「...っかりした計画を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「うまくいかない」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「でなければ」 rồi 「実行に移しても」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 実行に移しても"]},
+{n:69, pre:"あのホテルは", post:"。", choices:["一流だ","サービスにかけても","もさることながら","建物の豪華さ"], order:[4,3,2,1], star:3,
+ full:"あのホテルは建物の豪華さもさることながらサービスにかけても一流だ。", vi:"Khách sạn đó không chỉ có kiến trúc sang trọng, mà cả dịch vụ cũng đẳng cấp hàng đầu.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜もさることながら (không chỉ... mà còn...) + Nにかけても (về mặt... thì cũng...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「建物の豪華さ」— khớp với phần câu 「...あのホテルは」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「一流だ」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「もさることながら」 rồi 「サービスにかけても」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = サービスにかけても"]},
+{n:70, pre:"国境地域で起きた今度の事件は", post:"。", choices:["重大な外交問題となる","戦争勃発には","恐れがある","至らないまでも"], order:[2,4,1,3], star:3,
+ full:"国境地域で起きた今度の事件は戦争勃発には至らないまでも重大な外交問題となる恐れがある。", vi:"Vụ việc xảy ra ở vùng biên giới lần này, dù không đến mức gây ra chiến tranh, nhưng có khả năng trở thành vấn đề ngoại giao nghiêm trọng.",
+ orderDisp:"2-4-1-3",
+ grammar:"〜ないまでも (dù không đến mức... nhưng)",
+ steps:["Mảnh đầu câu (vị trí 1): 「戦争勃発には」— khớp với phần câu 「...きた今度の事件は」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「恐れがある」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「至らないまでも」 rồi 「重大な外交問題となる」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 重大な外交問題となる"]},
+{n:71, pre:"彼女のため", post:"。", choices:["でなくてなんだろう","とあれば","何でもする","これが愛"], order:[2,3,4,1], star:3,
+ full:"彼女のためとあれば何でもするこれが愛でなくてなんだろう。", vi:"Nếu là vì cô ấy thì làm gì cũng được — đây không phải là tình yêu thì là gì nữa?",
+ orderDisp:"2-3-4-1",
+ grammar:"〜とあれば (nếu là... thì) + 〜でなくてなんだろう (nếu không phải... thì là gì)",
+ steps:["Mảnh đầu câu (vị trí 1): 「とあれば」— khớp với phần câu 「...彼女のため」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「でなくてなんだろう」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「何でもする」 rồi 「これが愛」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = これが愛"]},
+{n:72, pre:"山田さん", post:"、あきれた。", choices:["とは","事実を知っていながら","隠し通した","ときたら"], order:[4,2,3,1], star:3,
+ full:"山田さんときたら事実を知っていながら隠し通したとは、あきれた。", vi:"Nói đến anh Yamada thì, dù biết sự thật mà vẫn giấu kín đến cùng, thật đáng kinh ngạc.",
+ orderDisp:"4-2-3-1",
+ grammar:"Nときたら (nói đến N thì) + 〜とは (mà lại... — ngạc nhiên)",
+ steps:["Mảnh đầu câu (vị trí 1): 「ときたら」— khớp với phần câu 「...山田さん」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「とは」— khớp với phần câu 「、あきれた。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「事実を知っていながら」 rồi 「隠し通した」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 隠し通した"]},
+{n:73, pre:"彼が協力してくれ", post:"のに。", choices:["こんなことに","さえ","すれば","ならずにすんだ"], order:[2,3,1,4], star:3,
+ full:"彼が協力してくれさえすればこんなことにならずにすんだのに。", vi:"Nếu anh ấy chỉ cần hợp tác giúp đỡ, thì đã không phải ra thành ra như thế này.",
+ orderDisp:"2-3-1-4",
+ grammar:"〜さえすれば (chỉ cần... thì) + 〜ずにすんだ (đã không phải...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「さえ」— khớp với phần câu 「...彼が協力してくれ」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ならずにすんだ」— khớp với phần câu 「のに。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「すれば」 rồi 「こんなことに」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = こんなことに"]},
+{n:74, pre:"「", post:"」。", choices:["わけではない","自信がある","ものの","と公言した"], order:[4,3,2,1], star:3,
+ full:"「と公言したものの自信があるわけではない」。", vi:"Tuy đã tuyên bố như vậy, nhưng không hẳn là có tự tin.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜ものの〜わけではない (dù... nhưng không có nghĩa là...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「と公言した」— khớp với phần câu 「...「」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「わけではない」— khớp với phần câu 「」。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ものの」 rồi 「自信がある」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 自信がある"]},
+{n:75, pre:"あのベテランの彼", post:"ことだろう。", choices:["新人の失敗は","ミスをするのだから","仕方がない","にして"], order:[4,2,1,3], star:3,
+ full:"あのベテランの彼にしてミスをするのだから新人の失敗は仕方がないことだろう。", vi:"Vì cả người kỳ cựu như anh ấy còn mắc lỗi, thì lỗi của người mới chắc cũng là điều không tránh được.",
+ orderDisp:"4-2-1-3",
+ grammar:"Nにして (ngay cả N mà cũng...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「にして」— khớp với phần câu 「...あのベテランの彼」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「仕方がない」— khớp với phần câu 「ことだろう。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ミスをするのだから」 rồi 「新人の失敗は」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 新人の失敗は"]},
+{n:76, pre:"激しい市場競争の中で勝ち残るには", post:"課題だと思います。", choices:["一層の品質の向上が","もさることながら","避けて通れない","コストの削減"], order:[4,2,1,3], star:3,
+ full:"激しい市場競争の中で勝ち残るにはコストの削減もさることながら一層の品質の向上が避けて通れない課題だと思います。", vi:"Để tồn tại trong cuộc cạnh tranh thị trường khốc liệt, tôi nghĩ không chỉ cắt giảm chi phí, mà việc nâng cao chất lượng hơn nữa là vấn đề không thể tránh khỏi.",
+ orderDisp:"4-2-1-3",
+ grammar:"〜もさることながら (không chỉ... mà còn...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「コストの削減」— khớp với phần câu 「...中で勝ち残るには」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「避けて通れない」— khớp với phần câu 「課題だと思います。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「もさることながら」 rồi 「一層の品質の向上が」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 一層の品質の向上が"]},
+{n:77, pre:"連絡もなしにお客様が", post:"できなかった。", choices:["急な","何の持て成しも","きたので","こととて"], order:[3,1,4,2], star:3,
+ full:"連絡もなしにお客様がきたので急なこととて何の持て成しもできなかった。", vi:"Vì khách đến mà không báo trước, do là chuyện bất ngờ nên không thể tiếp đón gì được.",
+ orderDisp:"3-1-4-2",
+ grammar:"〜こととて (vì là việc..., do là... — lý do, hơi cổ)",
+ steps:["Mảnh đầu câu (vị trí 1): 「きたので」— khớp với phần câu 「...もなしにお客様が」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「何の持て成しも」— khớp với phần câu 「できなかった。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「急な」 rồi 「こととて」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = こととて"]},
+{n:78, pre:"この派手なワンピースは衝動買いで", post:"一度も着たことがない。", choices:["きり","買ってはいる","試着した","ものの"], order:[2,4,3,1], star:3,
+ full:"この派手なワンピースは衝動買いで買ってはいるものの試着したきり一度も着たことがない。", vi:"Chiếc váy lòe loẹt này tôi đã mua bốc đồng, nhưng từ lúc thử nó đến giờ chưa mặc lần nào.",
+ orderDisp:"2-4-3-1",
+ grammar:"〜てはいるものの (dù có... nhưng) + Vきり〜ない (từ khi... chưa hề...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「買ってはいる」— khớp với phần câu 「...ースは衝動買いで」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「きり」— khớp với phần câu 「一度も着たことがない」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ものの」 rồi 「試着した」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 試着した"]},
+{n:79, pre:"飛んでくるボールを", post:"眼鏡が壊れてしまった。", choices:["顔面直撃で","やさきに","手を広げた","取ろうとして"], order:[4,3,2,1], star:3,
+ full:"飛んでくるボールを取ろうとして手を広げたやさきに顔面直撃で眼鏡が壊れてしまった。", vi:"Vừa mới dang tay để đón quả bóng đang bay tới, thì nó đập trúng mặt làm vỡ kính luôn.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜たやさきに (vừa mới... thì ngay lúc đó)",
+ steps:["Mảnh đầu câu (vị trí 1): 「取ろうとして」— khớp với phần câu 「...んでくるボールを」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「顔面直撃で」— khớp với phần câu 「眼鏡が壊れてしまった」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「手を広げた」 rồi 「やさきに」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = やさきに"]},
+{n:80, pre:"あの人の言いたいことは", post:"。", choices:["じまいだった","わからず","最後まで","何なのか"], order:[4,3,2,1], star:3,
+ full:"あの人の言いたいことは何なのか最後までわからずじまいだった。", vi:"Cuối cùng tôi vẫn không hiểu được điều người đó muốn nói là gì.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜ずじまいだった (rốt cuộc đã không... được)",
+ steps:["Mảnh đầu câu (vị trí 1): 「何なのか」— khớp với phần câu 「...の言いたいことは」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「じまいだった」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「最後まで」 rồi 「わからず」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = わからず"]},
+{n:81, pre:"留学生同士はお互いに", post:"生活している。", choices:["ながら","もちつ","助け合い","もたれつ"], order:[2,4,3,1], star:3,
+ full:"留学生同士はお互いにもちつもたれつ助け合いながら生活している。", vi:"Các du học sinh sống nương tựa giúp đỡ lẫn nhau.",
+ orderDisp:"2-4-3-1",
+ grammar:"持ちつ持たれつ (nương tựa qua lại, có qua có lại — thành ngữ)",
+ steps:["Mảnh đầu câu (vị trí 1): 「もちつ」— khớp với phần câu 「...生同士はお互いに」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ながら」— khớp với phần câu 「生活している。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「もたれつ」 rồi 「助け合い」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 助け合い"]},
+{n:82, pre:"大学生の娘は食べる", post:"もしない。", choices:["はおろか","後片付け","食事の支度","ばかりで"], order:[4,3,1,2], star:3,
+ full:"大学生の娘は食べるばかりで食事の支度はおろか後片付けもしない。", vi:"Con gái đang học đại học của tôi chỉ biết ăn, chứ chuẩn bị bữa ăn đã không nói, ngay cả dọn dẹp cũng không làm.",
+ orderDisp:"4-3-1-2",
+ grammar:"Nはおろか (N thì khỏi nói đến)",
+ steps:["Mảnh đầu câu (vị trí 1): 「ばかりで」— khớp với phần câu 「...学生の娘は食べる」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「後片付け」— khớp với phần câu 「もしない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「食事の支度」 rồi 「はおろか」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = はおろか"]},
+{n:83, pre:"ことここ", post:"だろう。", choices:["政府も","せざるを得ない","に至っては","真剣な対応を"], order:[3,1,4,2], star:3,
+ full:"ことここに至っては政府も真剣な対応をせざるを得ないだろう。", vi:"Đến tình huống này thì chính phủ cũng buộc phải có biện pháp đối ứng nghiêm túc.",
+ orderDisp:"3-1-4-2",
+ grammar:"ことここに至っては (đến mức/tình huống này thì) + 〜せざるを得ない (buộc phải...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「に至っては」— khớp với phần câu 「...ことここ」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「せざるを得ない」— khớp với phần câu 「だろう。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「政府も」 rồi 「真剣な対応を」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 真剣な対応を"]},
+{n:84, pre:"緊急時", post:"行動が必要だ。", choices:["冷静","迅速な","且つ","にあっては"], order:[4,1,3,2], star:3,
+ full:"緊急時にあっては冷静且つ迅速な行動が必要だ。", vi:"Trong tình huống khẩn cấp, cần có hành động vừa bình tĩnh vừa nhanh chóng.",
+ orderDisp:"4-1-3-2",
+ grammar:"Nにあっては (trong tình huống/bối cảnh N) + AかつB (vừa A vừa B)",
+ steps:["Mảnh đầu câu (vị trí 1): 「にあっては」— khớp với phần câu 「...緊急時」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「迅速な」— khớp với phần câu 「行動が必要だ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「冷静」 rồi 「且つ」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 且つ"]},
+{n:85, pre:"おもちゃをとられた子どもは、", post:"走ってきた。", choices:["顔で","泣き出さん","ばかりの","今にも"], order:[4,2,3,1], star:3,
+ full:"おもちゃをとられた子どもは、今にも泣き出さんばかりの顔で走ってきた。", vi:"Đứa trẻ bị giành mất đồ chơi chạy tới với vẻ mặt như muốn khóc ngay lập tức.",
+ orderDisp:"4-2-3-1",
+ grammar:"〜んばかりの (như muốn... đến mức)",
+ steps:["Mảnh đầu câu (vị trí 1): 「今にも」— khớp với phần câu 「...られた子どもは、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「顔で」— khớp với phần câu 「走ってきた。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「泣き出さん」 rồi 「ばかりの」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = ばかりの"]},
+{n:86, pre:"口先で", post:"のが大切だ。", choices:["なかなか","信用されないから","行動に移す","やると言っただけでは"], order:[4,1,2,3], star:3,
+ full:"口先でやると言っただけではなかなか信用されないから行動に移すのが大切だ。", vi:"Chỉ nói bằng miệng là sẽ làm thì khó được tin tưởng, nên quan trọng là phải hành động thực tế.",
+ orderDisp:"4-1-2-3",
+ grammar:"〜だけでは〜ない (chỉ... thì không...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「やると言っただけでは」— khớp với phần câu 「...口先で」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「行動に移す」— khớp với phần câu 「のが大切だ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「なかなか」 rồi 「信用されないから」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 信用されないから"]},
+{n:87, pre:"先月入った", post:"されたくない。", choices:["指図","ごときに","ばかりの","新入り"], order:[3,4,2,1], star:3,
+ full:"先月入ったばかりの新入りごときに指図されたくない。", vi:"Tôi không muốn bị một người mới vào công ty tháng trước chỉ đạo.",
+ orderDisp:"3-4-2-1",
+ grammar:"Nごとき(に) (kiểu/loại như N — khinh thường)",
+ steps:["Mảnh đầu câu (vị trí 1): 「ばかりの」— khớp với phần câu 「...先月入った」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「指図」— khớp với phần câu 「されたくない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「新入り」 rồi 「ごときに」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = ごときに"]},
+{n:88, pre:"ファン", post:"裏切ってはならない。", choices:["野球チーム","あっての","ファンの期待を","だから"], order:[2,1,4,3], star:3,
+ full:"ファンあっての野球チームだからファンの期待を裏切ってはならない。", vi:"Vì đội bóng chày tồn tại được là nhờ có fan hâm mộ, nên không được phụ lòng mong đợi của họ.",
+ orderDisp:"2-1-4-3",
+ grammar:"Nあっての N (nhờ có N mới có...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「あっての」— khớp với phần câu 「...ファン」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ファンの期待を」— khớp với phần câu 「裏切ってはならない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「野球チーム」 rồi 「だから」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = だから"]},
+{n:89, pre:"彼は学生の身", post:"を乗りまわしている。", choices:["500万円","高級車","でありながら","からする"], order:[3,1,4,2], star:3,
+ full:"彼は学生の身でありながら500万円からする高級車を乗りまわしている。", vi:"Anh ấy mặc dù chỉ là sinh viên, nhưng lại lái chiếc xe sang giá từ 5 triệu yên trở lên.",
+ orderDisp:"3-1-4-2",
+ grammar:"〜でありながら (dù là... nhưng) + 数字+からする (giá từ... trở lên)",
+ steps:["Mảnh đầu câu (vị trí 1): 「でありながら」— khớp với phần câu 「...彼は学生の身」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「高級車」— khớp với phần câu 「を乗りまわしている。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「500万円」 rồi 「からする」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = からする"]},
+{n:90, pre:"間違い電話をかけてきて", post:"極まりない。", choices:["切る","とは","非常識","謝りもせずに"], order:[4,1,2,3], star:3,
+ full:"間違い電話をかけてきて謝りもせずに切るとは非常識極まりない。", vi:"Gọi nhầm số mà không xin lỗi rồi cắt máy luôn, thật là vô cùng thiếu ý thức.",
+ orderDisp:"4-1-2-3",
+ grammar:"〜とは (mà lại... — phê phán) + 〜極まりない (cực kỳ, hết sức...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「謝りもせずに」— khớp với phần câu 「...電話をかけてきて」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「非常識」— khớp với phần câu 「極まりない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「切る」 rồi 「とは」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = とは"]},
+{n:91, pre:"行政の対応の遅れ", post:"を禁じえない。", choices:["怒り","によって","災害の被害者が増えた","ことに"], order:[2,3,4,1], star:3,
+ full:"行政の対応の遅れによって災害の被害者が増えたことに怒りを禁じえない。", vi:"Tôi không thể kìm được sự tức giận về việc số người chịu thiệt hại do thiên tai tăng lên vì sự chậm trễ trong ứng phó của chính quyền.",
+ orderDisp:"2-3-4-1",
+ grammar:"〜を禁じえない (không thể ngăn/kìm được...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「によって」— khớp với phần câu 「...行政の対応の遅れ」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「怒り」— khớp với phần câu 「を禁じえない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「災害の被害者が増えた」 rồi 「ことに」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = ことに"]},
+{n:92, pre:"国内の厳しい財政現状を", post:"だろう。", choices:["増税問題について","再議論せずには","すまない","考えれば"], order:[4,1,2,3], star:3,
+ full:"国内の厳しい財政現状を考えれば増税問題について再議論せずにはすまないだろう。", vi:"Nếu xem xét tình hình tài chính khó khăn trong nước, chắc chắn sẽ phải bàn lại về vấn đề tăng thuế.",
+ orderDisp:"4-1-2-3",
+ grammar:"〜ずにはすまない (không thể không..., nhất định phải...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「考えれば」— khớp với phần câu 「...厳しい財政現状を」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「すまない」— khớp với phần câu 「だろう。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「増税問題について」 rồi 「再議論せずには」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 再議論せずには"]},
+{n:93, pre:"互いに理屈ばかり", post:"再考してみようではないか。", choices:["机上の空論にすぎないんだから","に即して","述べていても","実情"], order:[3,1,4,2], star:3,
+ full:"互いに理屈ばかり述べていても机上の空論にすぎないんだから実情に即して再考してみようではないか。", vi:"Cứ mãi lý luận với nhau thì cũng chỉ là chuyện trên giấy, nên hãy thử suy nghĩ lại dựa theo tình hình thực tế.",
+ orderDisp:"3-1-4-2",
+ grammar:"Nに即して (dựa theo, tuân theo N)",
+ steps:["Mảnh đầu câu (vị trí 1): 「述べていても」— khớp với phần câu 「...互いに理屈ばかり」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「に即して」— khớp với phần câu 「再考してみようではな」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「机上の空論にすぎないんだから」 rồi 「実情」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 実情"]},
+{n:94, pre:"事件の現場に", post:"がない。", choices:["ことには","対処のしよう","何とも","行ってみない"], order:[4,1,3,2], star:3,
+ full:"事件の現場に行ってみないことには何とも対処のしようがない。", vi:"Nếu không đến hiện trường vụ việc thì không có cách nào để đối phó cả.",
+ orderDisp:"4-1-3-2",
+ grammar:"〜ないことには〜ない (nếu không... thì không thể...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「行ってみない」— khớp với phần câu 「...事件の現場に」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「対処のしよう」— khớp với phần câu 「がない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「ことには」 rồi 「何とも」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 何とも"]},
+{n:95, pre:"寒さが厳しくなると、", post:"。", choices:["遅れ","とかく","授業に","がちだ"], order:[2,3,1,4], star:3,
+ full:"寒さが厳しくなると、とかく授業に遅れがちだ。", vi:"Khi trời trở lạnh, thường dễ bị đi học muộn.",
+ orderDisp:"2-3-1-4",
+ grammar:"とかく〜がちだ (thường dễ có xu hướng...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「とかく」— khớp với phần câu 「...が厳しくなると、」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「がちだ」— khớp với phần câu 「。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「授業に」 rồi 「遅れ」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 遅れ"]},
+{n:96, pre:"遊んで暮らせるような", post:"日々の生活の営みが何より大事だ。", choices:["となると","一般の市民","いざしらず","大金持ちなら"], order:[4,3,2,1], star:3,
+ full:"遊んで暮らせるような大金持ちならいざしらず一般の市民となると日々の生活の営みが何より大事だ。", vi:"Nếu là người siêu giàu có thể sống chơi cả đời thì không nói, nhưng đối với người dân bình thường, việc duy trì sinh hoạt hằng ngày là quan trọng nhất.",
+ orderDisp:"4-3-2-1",
+ grammar:"〜ならいざしらず (nếu là... thì không nói, nhưng) + Nとなると (khi nói đến N thì)",
+ steps:["Mảnh đầu câu (vị trí 1): 「大金持ちなら」— khớp với phần câu 「...で暮らせるような」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「となると」— khớp với phần câu 「日々の生活の営みが何」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「いざしらず」 rồi 「一般の市民」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 一般の市民"]},
+{n:97, pre:"その話はあくまでも", post:"ことではない。", choices:["過ぎないから","冗談に","ほどの","気にする"], order:[2,1,4,3], star:3,
+ full:"その話はあくまでも冗談に過ぎないから気にするほどのことではない。", vi:"Câu chuyện đó chỉ là một câu nói đùa, không đáng để mà bận tâm.",
+ orderDisp:"2-1-4-3",
+ grammar:"〜に過ぎない (chỉ là...) + 〜ほどのことではない (không đến mức phải...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「冗談に」— khớp với phần câu 「...の話はあくまでも」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ほどの」— khớp với phần câu 「ことではない。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「過ぎないから」 rồi 「気にする」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 気にする"]},
+{n:98, pre:"彼", post:"と思う。", choices:["よもや","ことはない","企業秘密を外部に漏らす","に限って"], order:[4,1,3,2], star:3,
+ full:"彼に限ってよもや企業秘密を外部に漏らすことはないと思う。", vi:"Tôi nghĩ riêng anh ấy thì chắc không đời nào để lộ bí mật kinh doanh ra ngoài.",
+ orderDisp:"4-1-3-2",
+ grammar:"Nに限って (riêng N thì...) + よもや〜ことはない (chắc không đời nào...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「に限って」— khớp với phần câu 「...彼」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「ことはない」— khớp với phần câu 「と思う。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「よもや」 rồi 「企業秘密を外部に漏らす」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 企業秘密を外部に漏らす"]},
+{n:99, pre:"チームによって判定を変える", post:"ことだ。", choices:["審判に","中立であるべき","あるまじき","とは"], order:[4,2,1,3], star:3,
+ full:"チームによって判定を変えるとは中立であるべき審判にあるまじきことだ。", vi:"Việc thay đổi phán quyết theo từng đội, đó là điều không nên có đối với một trọng tài phải giữ trung lập.",
+ orderDisp:"4-2-1-3",
+ grammar:"〜とは (mà lại... — phê phán) + 〜にあるまじきこと (điều không nên có đối với...)",
+ steps:["Mảnh đầu câu (vị trí 1): 「とは」— khớp với phần câu 「...って判定を変える」ngay trước chỗ trống.","Mảnh cuối câu (vị trí 4): 「あるまじき」— khớp với phần câu 「ことだ。」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「中立であるべき」 rồi 「審判に」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = 審判に"]},
+{n:100, pre:"", post:"わけで気持ちを切り替えて頑張ろう。", choices:["なにも","後悔しても","始まらない","いまさら"], order:[4,2,1,3], star:3,
+ full:"いまさら後悔してもなにも始まらないわけで気持ちを切り替えて頑張ろう。", vi:"Giờ mới hối hận thì cũng chẳng ích gì, nên hãy thay đổi tâm thế và cố gắng lên.",
+ orderDisp:"4-2-1-3",
+ grammar:"いまさら〜ても (giờ mới... thì cũng) + 〜ても何も始まらない (dù có... cũng chẳng ích gì)",
+ steps:["Mảnh đầu câu (vị trí 1): 「いまさら」— đứng đầu câu.","Mảnh cuối câu (vị trí 4): 「始まらない」— khớp với phần câu 「わけで気持ちを切り替」ngay sau chỗ trống.","Hai mảnh giữa (vị trí 2-3): 「後悔しても」 rồi 「なにも」 — ghép theo cấu trúc ngữ pháp/ý nghĩa nối tiếp giữa 2 mảnh này.","Vị trí ★ (số 3): = なにも"]}
+];
+const TOTAL = window.QUIZ_DATA.length;
+const SET_SIZE = 20;
+const NUM_SETS = Math.ceil(TOTAL / SET_SIZE);
+
+let currentSet = 0; // 0-indexed
+let idxInSet = 0;
+let score = 0;
+let answered = false;
+let setData = [];
+
+function getSetData(setIndex){
+  const start = setIndex * SET_SIZE;
+  return window.QUIZ_DATA.slice(start, start + SET_SIZE);
+}
+
+const STORAGE_KEY = 'n1_mondai6_progress_100';
+
+function saveProgress(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({set:currentSet, idx:idxInSet, score:score}));
+  }catch(e){ /* ignore if storage unavailable */ }
+}
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+
+function clearProgress(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+}
+
+function renderSetSelector(){
+  let html = '';
+  const saved = loadProgress();
+  if(saved && saved.set>=0 && saved.set<NUM_SETS){
+    const sStart = saved.set*SET_SIZE+1;
+    const sQuestionNum = sStart + saved.idx;
+    html += `<div class="remember-box" style="background:#fdf1ea; border-color:var(--accent);">
+      📍 Lần trước bạn đang làm <b>Set ${saved.set+1}</b>, dừng ở <b>câu ${sQuestionNum}</b>.
+      <div style="margin-top:10px;">
+        <button class="navbtn" id="resumeBtn">Tiếp tục câu ${sQuestionNum} →</button>
+        <button class="navbtn secondary" id="clearProgressBtn" style="margin-left:8px;">Xóa tiến độ</button>
+      </div>
+    </div>`;
+  }
+  html += '<div class="set-grid">';
+  for(let s=0; s<NUM_SETS; s++){
+    const start = s*SET_SIZE+1;
+    const end = Math.min((s+1)*SET_SIZE, TOTAL);
+    const isSaved = saved && saved.set===s;
+    html += `<div class="set-btn" data-set="${s}" style="${isSaved?'border-color:var(--accent);':''}">
+      <span class="set-num">Set ${s+1}</span>
+      <span class="set-range">Câu ${start}–${end}</span>
+      ${isSaved?'<span style="display:block;font-size:0.72rem;color:var(--accent);margin-top:2px;">● đang dừng đây</span>':''}
+    </div>`;
+  }
+  html += '</div>';
+  html += `<div class="remember-box">💡 Tiến độ được <b>tự động lưu</b> trong trình duyệt này — lần sau mở lại file sẽ thấy nút "Tiếp tục" ở câu bạn vừa dừng.</div>`;
+  document.getElementById('setSelectArea').innerHTML = html;
+  document.querySelectorAll('.set-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> startSet(parseInt(btn.dataset.set), 0));
+  });
+  if(saved){
+    document.getElementById('resumeBtn').addEventListener('click', ()=> startSet(saved.set, saved.idx, saved.score||0));
+    document.getElementById('clearProgressBtn').addEventListener('click', ()=>{
+      clearProgress();
+      renderSetSelector();
+    });
+  }
+}
+
+function startSet(setIndex, resumeIdx, resumeScore){
+  currentSet = setIndex;
+  setData = getSetData(setIndex);
+  idxInSet = resumeIdx || 0;
+  score = resumeScore || 0;
+  document.getElementById('setSelectArea').style.display = 'none';
+  document.getElementById('quizWrapArea').style.display = 'block';
+  document.getElementById('resultArea').style.display = 'none';
+  document.getElementById('quizArea').style.display = 'block';
+  const start = currentSet*SET_SIZE+1;
+  const end = Math.min((currentSet+1)*SET_SIZE, TOTAL);
+  document.getElementById('setLabel').textContent = `Set ${currentSet+1} (câu ${start}–${end})`;
+  document.getElementById('totalNum').textContent = setData.length;
+  document.getElementById('scoreNum').textContent = score;
+  render();
+}
+
+function backToSets(){
+  document.getElementById('setSelectArea').style.display = 'block';
+  document.getElementById('quizWrapArea').style.display = 'none';
+  renderSetSelector();
+}
+
+function render(){
+  const q = setData[idxInSet];
+  answered = false;
+  saveProgress();
+  document.getElementById('curNum').textContent = idxInSet+1;
+  document.getElementById('barFill').style.width = (idxInSet/setData.length*100)+'%';
+
+  let blanksHtml = '';
+  for(let p=1;p<=4;p++){
+    blanksHtml += `<span class="blank ${p===q.star?'star':''}" id="slot${p}">${p===q.star?'★':'…'}</span>`;
+  }
+
+  const stepsHtml = q.steps.map((s,i)=>`<div class="step"><b>${i+1}.</b> ${s}</div>`).join('');
+  const isFirst = idxInSet===0;
+
+  document.getElementById('topNavRow').innerHTML = `
+    <button class="navbtn secondary" id="prevBtnTop" ${isFirst?'disabled':''}>← Câu trước</button>
+    <button class="navbtn hidden" id="nextBtnTop">Câu tiếp theo →</button>
+  `;
+
+  const html = `
+    <div class="card">
+      <span class="qnum">Câu ${q.n}</span>
+      <div class="sentence">${q.pre}${blanksHtml}${q.post}</div>
+      <div class="choices" id="choiceWrap">
+        ${q.choices.map((c,i)=>`<button class="choice-btn" data-i="${i+1}">${i+1}. ${c}</button>`).join('')}
+      </div>
+      <div class="explain" id="explainBox">
+        <div class="order-badge">Thứ tự đúng: ${q.orderDisp}</div>
+        <div class="grammar-badge">📌 Cấu trúc/cụm cố định: <span>${q.grammar}</span></div>
+        <div class="full">${q.full}</div>
+        <div class="vi">🇻🇳 ${q.vi}</div>
+        <hr>
+        ${stepsHtml}
+      </div>
+      <div class="navrow">
+        <button class="navbtn secondary" id="prevBtn" ${isFirst?'disabled':''}>← Câu trước</button>
+        <button class="navbtn hidden" id="nextBtn">Câu tiếp theo →</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('quizArea').innerHTML = html;
+
+  document.querySelectorAll('.choice-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>onAnswer(btn, q));
+  });
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  document.getElementById('nextBtnTop').addEventListener('click', next);
+  document.getElementById('prevBtnTop').addEventListener('click', prev);
+}
+
+function onAnswer(btn, q){
+  if(answered) return;
+  answered = true;
+  const picked = parseInt(btn.dataset.i);
+  const correctChoiceNum = q.order[q.star-1];
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    const i = parseInt(b.dataset.i);
+    if(i===correctChoiceNum) b.classList.add('correct');
+    else if(i===picked) b.classList.add('wrong');
+    b.disabled = true;
+  });
+  if(picked===correctChoiceNum) score++;
+  document.getElementById('scoreNum').textContent = score;
+  saveProgress();
+  document.getElementById('explainBox').classList.add('show');
+  document.getElementById('nextBtn').classList.remove('hidden');
+  document.getElementById('nextBtnTop').classList.remove('hidden');
+}
+
+function next(){
+  idxInSet++;
+  if(idxInSet>=setData.length){ showResult(); return; }
+  render();
+}
+
+function prev(){
+  if(idxInSet<=0) return;
+  idxInSet--;
+  score = Math.max(0, score); // score not recalculated when going back, just informational
+  render();
+  // re-show explanation immediately since this question was already answered before
+  const q = setData[idxInSet];
+  const correctChoiceNum = q.order[q.star-1];
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    const i = parseInt(b.dataset.i);
+    b.disabled = true;
+    if(i===correctChoiceNum) b.classList.add('correct');
+  });
+  document.getElementById('explainBox').classList.add('show');
+  document.getElementById('nextBtn').classList.remove('hidden');
+  document.getElementById('nextBtnTop').classList.remove('hidden');
+  answered = true;
+}
+
+function showResult(){
+  document.getElementById('barFill').style.width = '100%';
+  document.getElementById('quizArea').style.display='none';
+  document.getElementById('topNavRow').innerHTML = '';
+  clearProgress();
+  const pct = Math.round(score/setData.length*100);
+  document.getElementById('resultArea').style.display='block';
+  const start = currentSet*SET_SIZE+1;
+  const end = Math.min((currentSet+1)*SET_SIZE, TOTAL);
+  document.getElementById('resultArea').innerHTML = `
+    <div class="result">
+      <h2>🎉 Hoàn thành Set ${currentSet+1}!</h2>
+      <p style="font-size:1.4rem;">Điểm: <b>${score}</b> / ${setData.length} (${pct}%)</p>
+      <p style="color:var(--muted);">Bạn đã hoàn thành câu ${start}–${end}.</p>
+      <button class="restart" onclick="startSet(${currentSet})">Làm lại Set này</button>
+      <button class="restart" style="background:var(--accent2); margin-left:8px;" onclick="backToSets()">Chọn Set khác</button>
+    </div>
+  `;
+}
+
+document.getElementById('backToSets').addEventListener('click', backToSets);
+renderSetSelector();
+</script>
+<footer>JLPT N1 — Mondai 6 (文の文法②) · Bộ 100 câu — ĐẦY ĐỦ 100/100 câu · 5 set</footer>
+</body>
+</html>

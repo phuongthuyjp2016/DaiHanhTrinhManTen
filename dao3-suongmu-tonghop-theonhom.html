@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N1 文法 — Tổng hợp Ngữ pháp N1 (Cô Thảo)</title>
+<style>
+:root{
+  --paper:#f6f1e6;
+  --paper-2:#efe7d6;
+  --ink:#2b2620;
+  --ink-soft:#5c5346;
+  --indigo:#2c3e63;
+  --indigo-deep:#1c2942;
+  --vermillion:#c0503e;
+  --gold:#b8893f;
+  --line:#d9cfb8;
+  --card:#fffcf5;
+  --radius:10px;
+  --serif: "Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  --sans: "Zen Maru Gothic","Noto Sans JP","Hiragino Sans",sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.6;
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(184,137,63,0.06), transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(44,62,99,0.05), transparent 40%);
+}
+
+/* ---------- Header ---------- */
+header.hero{
+  padding:38px 20px 26px;
+  text-align:center;
+  border-bottom:3px double var(--indigo);
+  background:linear-gradient(180deg, var(--paper-2), var(--paper));
+  position:relative;
+}
+header.hero .stamp{
+  display:inline-block;
+  writing-mode:vertical-rl;
+  background:var(--vermillion);
+  color:#fff;
+  padding:10px 6px;
+  border-radius:4px;
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:2px;
+  margin-bottom:10px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.2);
+}
+header.hero h1{
+  font-family:var(--serif);
+  font-size:clamp(28px,5vw,44px);
+  margin:6px 0 4px;
+  color:var(--indigo-deep);
+  letter-spacing:1px;
+}
+header.hero p.sub{
+  margin:0;
+  color:var(--ink-soft);
+  font-size:15px;
+}
+header.hero p.credit{
+  margin-top:10px;
+  font-size:12.5px;
+  color:var(--gold);
+  font-weight:600;
+}
+
+/* ---------- Controls (sticky) ---------- */
+.controls{
+  position:sticky; top:0; z-index:50;
+  background:rgba(246,241,230,0.97);
+  backdrop-filter:blur(4px);
+  border-bottom:1px solid var(--line);
+  padding:10px 16px;
+  transition:transform .25s ease;
+  transform:translateY(0);
+}
+.controls.hide{
+  transform:translateY(-100%);
+}
+.controls-inner{max-width:980px;margin:0 auto;}
+.search-row{display:flex; gap:8px; align-items:center;}
+.search-row input[type=text]{
+  flex:1;
+  padding:11px 14px;
+  border-radius:999px;
+  border:1.5px solid var(--line);
+  background:var(--card);
+  font-size:15px;
+  font-family:var(--sans);
+  color:var(--ink);
+}
+.search-row input[type=text]:focus{outline:2px solid var(--indigo); outline-offset:1px;}
+.count-badge{
+  font-size:12.5px;
+  color:var(--ink-soft);
+  white-space:nowrap;
+}
+.pills{
+  display:flex; flex-wrap:nowrap; gap:6px;
+  margin-top:8px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  padding-bottom:4px;
+}
+.pill{
+  flex:0 0 auto;
+  white-space:nowrap;
+  border:1px solid var(--line);
+  background:var(--card);
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12.5px;
+  cursor:pointer;
+  color:var(--ink-soft);
+  transition:all .15s;
+  user-select:none;
+}
+.pill:hover{border-color:var(--indigo);}
+.pill.active{
+  background:var(--indigo);
+  color:#fff;
+  border-color:var(--indigo);
+}
+.toc-toggle{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--indigo);
+  cursor:pointer;
+  text-decoration:underline;
+  display:inline-block;
+}
+
+/* ---------- Layout ---------- */
+main{max-width:980px; margin:0 auto; padding:26px 16px 80px;}
+
+.group-section{
+  margin-bottom:38px;
+  scroll-margin-top:150px;
+}
+.group-head{
+  display:flex; align-items:baseline; gap:12px;
+  border-bottom:2px solid var(--gline,#333);
+  padding-bottom:8px;
+  margin-bottom:14px;
+}
+.group-head .gnum{
+  font-family:var(--serif);
+  font-size:26px;
+  font-weight:700;
+  color:var(--gline,#333);
+  min-width:32px;
+}
+.group-head h2{
+  font-family:var(--serif);
+  font-size:22px;
+  margin:0;
+  color:var(--ink);
+}
+.group-head .gdesc{
+  font-size:13px;
+  color:var(--ink-soft);
+  margin-left:auto;
+  font-style:italic;
+}
+.group-count{
+  font-size:12px;
+  color:#fff;
+  background:var(--gline,#333);
+  border-radius:999px;
+  padding:2px 9px;
+}
+
+.card-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--gline,#333);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.04);
+}
+.card .pattern{
+  font-family:var(--serif);
+  font-size:19px;
+  font-weight:700;
+  color:var(--indigo-deep);
+  margin:0 0 4px;
+}
+.card .meaning{
+  font-size:14.5px;
+  font-weight:600;
+  color:var(--ink);
+  margin:0 0 6px;
+}
+.card .nuance{
+  font-size:12.5px;
+  color:var(--gold);
+  background:rgba(184,137,63,0.1);
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:6px;
+  margin-bottom:8px;
+}
+.card .example{
+  background:var(--paper-2);
+  border-radius:8px;
+  padding:8px 12px;
+  font-size:13.5px;
+}
+.card .ex-jp{
+  font-family:var(--serif);
+  color:var(--ink);
+  margin:0 0 3px;
+}
+.card .ex-vn{
+  color:var(--ink-soft);
+  margin:0;
+}
+
+/* summary list */
+.summary-toggle{
+  margin-top:14px;
+  font-size:13px;
+  color:var(--indigo);
+  cursor:pointer;
+  text-decoration:underline;
+}
+.summary-list{
+  display:none;
+  margin-top:10px;
+  background:var(--paper-2);
+  border-radius:8px;
+  padding:10px 16px;
+  font-size:13px;
+  columns:2;
+  column-gap:24px;
+}
+.summary-list.show{display:block;}
+.summary-list div{break-inside:avoid; padding:2px 0;}
+.summary-list b{color:var(--indigo-deep);}
+
+/* compare box */
+.compare-box{
+  background:#fff8ea;
+  border:1px dashed var(--gold);
+  border-radius:10px;
+  padding:14px 16px;
+  margin:16px 0;
+  font-size:13.5px;
+}
+.compare-box h4{
+  margin:0 0 8px;
+  color:var(--vermillion);
+  font-size:14px;
+}
+.compare-box table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+.compare-box td, .compare-box th{
+  border:1px solid var(--line);
+  padding:6px 8px;
+  text-align:left;
+  vertical-align:top;
+}
+.compare-box th{background:var(--paper-2);}
+
+.empty-state{
+  text-align:center;
+  color:var(--ink-soft);
+  padding:60px 20px;
+  font-size:15px;
+}
+
+footer{
+  text-align:center;
+  padding:24px;
+  font-size:12px;
+  color:var(--ink-soft);
+  border-top:1px solid var(--line);
+}
+
+.back-top{
+  position:fixed; right:18px; bottom:18px;
+  background:var(--indigo);
+  color:#fff;
+  width:42px; height:42px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.25);
+  font-size:18px;
+  opacity:0.85;
+}
+mark{background:#ffe08a; color:inherit; border-radius:3px; padding:0 2px;}
+
+@media (min-width:640px){
+  .card-grid{grid-template-columns:1fr 1fr;}
+  .summary-list{columns:2;}
+}
+@media (min-width:900px){
+  .card-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="stamp">N1文法</span>
+  <h1>Tổng hợp Ngữ pháp N1</h1>
+  <p class="sub">266 mẫu ngữ pháp N1 · Nhóm theo ý nghĩa &amp; chức năng để dễ học thuộc, dễ phân biệt</p>
+  <p class="credit">Biên soạn lại từ tài liệu của Thảo Lê JP (Thaolejp.com)</p>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="search-row">
+      <input type="text" id="searchBox" placeholder="🔍 Tìm theo mẫu ngữ pháp hoặc nghĩa tiếng Việt... (VD: nhượng bộ, までもない, không cần)">
+      <span class="count-badge" id="countBadge">266 mẫu</span>
+    </div>
+    <div class="pills" id="pillBar"></div>
+  </div>
+</div>
+
+<main id="main">
+  <div id="content"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">Không tìm thấy mẫu ngữ pháp nào phù hợp 🍃</div>
+</main>
+
+<div class="back-top" id="backTop" title="Lên đầu trang">↑</div>
+
+<footer>Tài liệu ôn thi cá nhân — tổng hợp &amp; sắp xếp lại để tiện tra cứu, không thay thế giáo trình gốc.</footer>
+
+<script>
+const ITEMS = [{"id": 1, "pattern": "（よ）うが～（よ）うが／（よ）うと～（よ）うと", "group": "nhuongbo", "meaning": "Cho dù A hay cho dù B... thì vẫn...", "nuance": "Văn nói lẫn viết, nhấn mạnh ý chí không đổi", "ex_jp": "他の人に笑われようがバカにされようが、やりたいことをやるつもりです。", "ex_vn": "Cho dù bị người khác cười nhạo hay bị cho là ngu ngốc thì tôi vẫn sẽ làm điều mình muốn."}, {"id": 2, "pattern": "～（よ）うが／（よ）うと", "group": "nhuongbo", "meaning": "Cho dù A... đi nữa... thì vẫn...", "nuance": "Dùng 1 vế, ý chí/kết quả không đổi", "ex_jp": "この仕事は誰がやろうが、結果は同じだと思う。", "ex_vn": "Tôi nghĩ công việc này dù ai làm thì kết quả cũng giống nhau."}, {"id": 3, "pattern": "～であれ／であろうと", "group": "nhuongbo", "meaning": "Cho dù, dẫu cho... thì vế B cũng không thay đổi", "nuance": "Trang trọng, hay dùng với なんであれ, だれであれ", "ex_jp": "どんな悪人であろうと、心のどこかに良心は残っているはずだ。", "ex_vn": "Dù là người xấu xa thế nào thì trong tim vẫn còn lương tâm."}, {"id": 4, "pattern": "～であれ～であれ／～であろうと～であろうと／～だろうが～だろうが", "group": "nhuongbo", "meaning": "Cho dù A hay B thì kết quả cũng giống nhau", "nuance": "Liệt kê 2 vế tương phản", "ex_jp": "国会議員だろうが、公務員だろうが、税金は納めなければならない。", "ex_vn": "Dù là nghị sĩ hay công chức thì vẫn phải nộp thuế."}, {"id": 5, "pattern": "（よ）うが～まいが／（よ）うと～まいと", "group": "nhuongbo", "meaning": "Cho dù A hay không...", "nuance": "Vế đối lập có/không, kết quả như nhau", "ex_jp": "周囲の人が反対しようとしまいと、私の気持ちは変わらない。", "ex_vn": "Cho dù mọi người phản đối hay không thì tình cảm tôi vẫn không đổi."}, {"id": 6, "pattern": "～（よ）うとも／くとも", "group": "nhuongbo", "meaning": "Cho dù...", "nuance": "Văn viết/trang trọng", "ex_jp": "母はどんなに辛くとも、決してぐちを言わなかった。", "ex_vn": "Dù có khó khăn đến mấy mẹ tôi cũng không than vãn."}, {"id": 17, "pattern": "～ながらも", "group": "nhuongbo", "meaning": "Tuy, mặc dù... nhưng...", "nuance": "Trung tính, phổ biến cả nói lẫn viết", "ex_jp": "様々な苦難にあいながらも、あきらめないで最後までやり抜いた。", "ex_vn": "Tuy gặp nhiều khó khăn nhưng tôi không bỏ cuộc, làm đến cùng."}, {"id": 69, "pattern": "～にしては", "group": "nhuongbo", "meaning": "Mặc dù A nhưng B (A và B không tương xứng)", "nuance": "Có sắc thái ngạc nhiên/so sánh lệch chuẩn", "ex_jp": "この子は小学生にしてはずいぶんしっかりしている。", "ex_vn": "Đứa trẻ này dù là học sinh tiểu học nhưng rất chín chắn."}, {"id": 70, "pattern": "～にしろ／にせよ／にしても", "group": "nhuongbo", "meaning": "① Cho dù... ② Cho dù A hay B thì vẫn có điểm chung", "nuance": "Trang trọng, văn viết nhiều hơn ても", "ex_jp": "出席するにしろ欠席するにしろ、招待状の返事は早く出したほうがいい。", "ex_vn": "Dù tham dự hay không cũng nên trả lời thư mời sớm."}, {"id": 77, "pattern": "～といえども", "group": "nhuongbo", "meaning": "Cho dù là／dù nói là... nhưng (thực tế lại khác)", "nuance": "Rất trang trọng, văn viết/diễn văn", "ex_jp": "仕事がたまっていて、連休といえども毎日出社しなければならない。", "ex_vn": "Công việc tồn đọng nên dù là kỳ nghỉ vẫn phải đi làm hàng ngày."}, {"id": 93, "pattern": "～ものの", "group": "nhuongbo", "meaning": "Mặc dù...／ Tuy... nhưng...", "nuance": "Trung tính, thông dụng", "ex_jp": "新しいヒーターを買ったものの、暖冬で殆ど使っていない。", "ex_vn": "Tuy mua máy sưởi mới nhưng vì mùa đông ấm nên hầu như không dùng."}, {"id": 96, "pattern": "～とはいうものの", "group": "nhuongbo", "meaning": "Mặc dù nói là thế, nhưng... (thực tế không như lời nói)", "nuance": "Nhấn mạnh khoảng cách giữa lời nói và thực tế", "ex_jp": "18歳までは子供とは言うものの、最近は中学生でも大人びている。", "ex_vn": "Tuy nói dưới 18 là trẻ con nhưng học sinh cấp 2 giờ đã ra dáng người lớn."}, {"id": 211, "pattern": "～とて", "group": "nhuongbo", "meaning": "Dù là／ ngay cả N cũng không ngoại lệ...", "nuance": "Văn viết, hơi cổ", "ex_jp": "常に冷静な彼とてやはり人間だから、感情的になってしまうこともあるのだろう。", "ex_vn": "Dù anh ấy luôn điềm tĩnh nhưng cũng là con người nên vẫn có lúc kích động."}, {"id": 154, "pattern": "～てまで", "group": "nhuongbo", "meaning": "Đến mức... (làm việc vượt quá mức bình thường)", "nuance": "Thường mang sắc thái phê phán/tiếc nuối", "ex_jp": "趣味を持つのは良いことですが、家庭を犠牲にしてまでとなると、それはちょっと問題です。", "ex_vn": "Có sở thích là tốt, nhưng đến mức hi sinh gia đình thì hơi có vấn đề."}, {"id": 155, "pattern": "～までして", "group": "nhuongbo", "meaning": "Đến mức, tới mức (làm việc bất thường)", "nuance": "= てまで nhưng đứng sau danh từ/hành động", "ex_jp": "この絵は、昔父が借金までして手に入れたものです。", "ex_vn": "Bức tranh này ngày xưa bố tôi phải vay nợ mới có được."}, {"id": 188, "pattern": "～もさることながら", "group": "nhuongbo", "meaning": "Không chỉ... mà..., A là đương nhiên hơn thế nữa B (nhấn B hơn A)", "nuance": "Trang trọng", "ex_jp": "このパソコンは、価格や性能もさることながら、デザインが良いので人気がある。", "ex_vn": "Máy tính này không chỉ giá và tính năng tốt mà thiết kế cũng đẹp nên rất được ưa chuộng."}, {"id": 237, "pattern": "～かれ～かれ", "group": "nhuongbo", "meaning": "Dù... dù... (cặp tính từ trái nghĩa, dù ít dù nhiều thì vẫn)", "nuance": "Cố định: 多かれ少なかれ, よかれあしかれ", "ex_jp": "外国での生活は、多かれ少なかれ、カルチャーショックを感じるものだ。", "ex_vn": "Sống ở nước ngoài, dù ít hay nhiều bạn cũng sẽ sốc văn hóa."}, {"id": 240, "pattern": "～はおろか", "group": "nhuongbo", "meaning": "A là đương nhiên rồi, ngay cả B cũng... (nhấn mạnh phạm vi vượt xa dự đoán)", "nuance": "Vế B thường đi kèm さえ/まで/も", "ex_jp": "腰を痛めてしまい、歩くことはおろか立つことも難しい。", "ex_vn": "Tôi bị đau lưng, đi lại đã đành, đứng dậy cũng khó."}, {"id": 242, "pattern": "～にひきかえ／にひきかえて", "group": "nhuongbo", "meaning": "Trái ngược, ngược lại với...", "nuance": "Dùng để so sánh 2 đối tượng đối lập", "ex_jp": "弟が社交的なタイプなのにひきかえて、兄は人前に出るのを嫌うタイプだ。", "ex_vn": "Trái ngược với em trai hướng ngoại, anh trai lại ngại xuất hiện trước đám đông."}, {"id": 244, "pattern": "～まじき", "group": "nhuongbo", "meaning": "Không được phép, không chấp nhận được (với tư cách là...)", "nuance": "Rất trang trọng, đi với N＋として＋まじき", "ex_jp": "彼の言動は社会人としてあるまじきもので、とうてい許すことはできない。", "ex_vn": "Lời nói hành động của anh ta là điều không thể chấp nhận với tư cách người đi làm."}, {"id": 14, "pattern": "～とまではいかないが／とまではいかないとしても", "group": "nhuongbo", "meaning": "Dù không đến mức là... nhưng chí ít, tối thiểu là", "nuance": "Nhượng bộ nhẹ, thường đi với so sánh mức độ", "ex_jp": "毎日とまではいかないが、週に2、3回は掃除をしようと思う。", "ex_vn": "Dù không đến mức ngày nào cũng dọn nhưng ít nhất 1 tuần 2-3 lần."}, {"id": 15, "pattern": "～とまでは言わないが／～とまでは言わないとしても", "group": "nhuongbo", "meaning": "Dù không nói đến mức là...", "nuance": "Gần nghĩa mẫu 14 nhưng nhấn 'lời nói'", "ex_jp": "君自身の問題だから、「やめてしまえ」とまでは言わないが、いまいちど考え直してみたらどうだろうか。", "ex_vn": "Vì là vấn đề của em nên tôi không nói đến mức 'bỏ đi' nhưng nên suy nghĩ lại lần nữa."}, {"id": 153, "pattern": "～ではあるまいし／じゃあるまいし", "group": "nhuongbo", "meaning": "Đâu phải là, cũng không còn là... (phê phán)", "nuance": "Sắc thái chê trách, mỉa mai", "ex_jp": "子どもではあるまいし、もう少し冷静に話し合うべきだ。", "ex_vn": "Đâu phải trẻ con nữa, nên bình tĩnh trao đổi hơn một chút."}, {"id": 199, "pattern": "～ならいざしらず（知らず）", "group": "nhuongbo", "meaning": "A thì không biết/không nói làm gì, B mới là điều nhấn mạnh", "nuance": "So sánh 2 trường hợp, nhấn B khác hẳn A", "ex_jp": "小学生ならいざしらず、大学生がこんな簡単な計算ができないなんて信じられない。", "ex_vn": "Học sinh tiểu học thì không nói, nhưng sinh viên đại học mà tính đơn giản không được thì khó tin."}, {"id": 95, "pattern": "～ものなら", "group": "giadinh", "meaning": "① Nếu có thể... thì làm đi (thách thức) ② Nếu có thể thì rất muốn (nhưng không thể) ③ Nếu... thì dẫn tới hậu quả xấu", "nuance": "Đi với các dạng khả năng/ý chí", "ex_jp": "逃げられるものなら、逃げてみろ。必ずお前を探し出すから。", "ex_vn": "Nếu trốn được thì thử trốn đi, nhất định tao sẽ tìm ra mày."}, {"id": 52, "pattern": "～（か）と思いきや", "group": "giadinh", "meaning": "Cứ nghĩ là, cứ tưởng là... nhưng thực tế không phải vậy", "nuance": "Bất ngờ, đảo ngược kỳ vọng", "ex_jp": "新番組でこれまでにない役柄を演じる上田秋さん。役作りに悩んでいるのかと思いきやそうでもないという。", "ex_vn": "Cứ tưởng anh ấy trăn trở về vai diễn mới nhưng nghe nói không phải vậy."}, {"id": 225, "pattern": "～が最後／たら最後", "group": "giadinh", "meaning": "Một khi／nếu mà... thì sẽ dẫn đến kết quả xấu, không thể quay lại", "nuance": "Sắc thái tiêu cực mạnh", "ex_jp": "信用というものは、いったん失ったが最後、取り戻すのは難しい。", "ex_vn": "Lòng tin một khi mất đi rồi thì khó mà lấy lại được."}, {"id": 243, "pattern": "～ばそれまでだ・たらそれまでだ", "group": "giadinh", "meaning": "Nếu... là hết, coi như xong, cũng như không", "nuance": "Sắc thái buông xuôi, kết thúc", "ex_jp": "どんなに美しい花でも、散ってしまえばそれまでだ。", "ex_vn": "Hoa dù đẹp đến mấy, khi tàn là hết."}, {"id": 156, "pattern": "～でもしたら", "group": "giadinh", "meaning": "Nếu, nhỡ mà... thì... (giả định tình huống xấu)", "nuance": "Cảnh báo, lo lắng", "ex_jp": "おじいさんの古時計、触らないで。壊しでもしたら大変なことになるからね。", "ex_vn": "Đừng động vào đồng hồ cổ của ông, nhỡ làm hỏng thì to chuyện đấy."}, {"id": 29, "pattern": "～とする／～とするか", "group": "giadinh", "meaning": "Coi là／giả sử là／quyết định là／quy định là...", "nuance": "Trung tính, dùng cả giả định lẫn quy định", "ex_jp": "ここに時間を止められる機械があるとします。あなたならそれを使って何をしますか。", "ex_vn": "Giả sử có một cái máy dừng được thời gian. Nếu là bạn, bạn sẽ làm gì?"}, {"id": 30, "pattern": "～ものとする", "group": "giadinh", "meaning": "Xem như là／coi như là... (quy định)", "nuance": "Văn bản pháp lý, quy chế", "ex_jp": "この出版物にかかわる一切の権利は、ヒロシ社に帰属するものとする。", "ex_vn": "Toàn bộ quyền liên quan ấn phẩm này thuộc về công ty Hiroshi."}, {"id": 98, "pattern": "～ものとする", "group": "giadinh", "meaning": "Xem như là／Coi như là／Được xem là／Phải...", "nuance": "Giống mẫu 30, dùng lặp lại trong văn quy định", "ex_jp": "意見書を提出しない者は賛成しているものとする。", "ex_vn": "Người không nộp bản ý kiến sẽ được coi là đồng ý."}, {"id": 26, "pattern": "～にかかったら／にかかっては／にかかると", "group": "giadinh", "meaning": "Nếu N mà làm thì... / Đụng đến N thì khó ai sánh bằng", "nuance": "Sắc thái khen ngợi tài năng vượt trội", "ex_jp": "彼の毒舌にかかっては、誰も太刀打ちできない。", "ex_vn": "Nếu nói đến miệng lưỡi cay độc của anh ta thì không ai địch nổi."}, {"id": 25, "pattern": "～にかかっている", "group": "giadinh", "meaning": "Phụ thuộc vào, dựa vào...", "nuance": "Trung tính", "ex_jp": "今年卒業できるかどうかは、これからの頑張りにかかっている。", "ex_vn": "Năm nay có tốt nghiệp được hay không phụ thuộc vào sự cố gắng từ giờ."}, {"id": 27, "pattern": "～いかんで／いかんでは／いかんによっては／いかんにかかっている／いかんだ", "group": "giadinh", "meaning": "Phụ thuộc vào, tùy thuộc vào...", "nuance": "Trang trọng, văn viết/báo chí", "ex_jp": "出席状況・学業成績のいかんでは、奨学金の支給を停止することもある。", "ex_vn": "Tùy tình trạng điểm danh và thành tích học tập mà có thể dừng cấp học bổng."}, {"id": 28, "pattern": "～いかんにかかわらず／いかんによらず／いかんをとわず", "group": "giadinh", "meaning": "Cho dù, bất kể N là gì đi nữa thì đều không phụ thuộc...", "nuance": "Trang trọng, dùng nhiều trong thông báo", "ex_jp": "出席欠席のいかんによらず、同封した葉書にてお返事くださるようお願いいたします。", "ex_vn": "Dù tham dự hay không, xin phản hồi bằng bưu thiếp gửi kèm."}, {"id": 191, "pattern": "～ようによっては", "group": "giadinh", "meaning": "Tùy vào cách... (làm/nghĩ/nhìn)", "nuance": "Hay đi với 考えよう, やりよう", "ex_jp": "やりようによっては、その仕事はもっと簡単に済ませることができる。", "ex_vn": "Tùy cách làm, công việc đó có thể hoàn thành đơn giản hơn."}, {"id": 43, "pattern": "～とあっては", "group": "giadinh", "meaning": "Nếu (là)... thì...", "nuance": "B là điều tất yếu phải xảy ra", "ex_jp": "上司の指示とあっては、仕事の内容が気に入らなくてもやらなければならない。", "ex_vn": "Nếu là chỉ thị của cấp trên thì dù không thích cũng phải làm."}, {"id": 44, "pattern": "～とあれば", "group": "giadinh", "meaning": "Nếu (là)... thì...", "nuance": "Gần nghĩa とあっては", "ex_jp": "彼は、お金のためとあれば、どんな仕事でも引き受ける。", "ex_vn": "Nếu vì tiền thì việc gì anh ấy cũng nhận."}, {"id": 48, "pattern": "～なくして（は）", "group": "giadinh", "meaning": "Nếu không có... thì (khó thực hiện được B)", "nuance": "Văn viết, thường đi với danh từ trừu tượng", "ex_jp": "「努力なくして成功はない」という言葉は、祖父の口癖だ。", "ex_vn": "'Không nỗ lực thì không thành công' là câu ông tôi hay nói."}, {"id": 220, "pattern": "～なしに／なしには／なしでは", "group": "giadinh", "meaning": "B mà không A / Nếu không A thì không thể B", "nuance": "Trang trọng, gần なくして", "ex_jp": "教授の助言なしには、この研究の成功はなかった。", "ex_vn": "Nếu không có lời khuyên của giáo sư thì nghiên cứu này đã không thành công."}, {"id": 221, "pattern": "～ことなしに", "group": "giadinh", "meaning": "Nếu mà không, nếu không... (vế sau thường phủ định)", "nuance": "Trang trọng", "ex_jp": "人事部の許可を得ることなしに、勝手に休みを取ることはできない。", "ex_vn": "Không được phòng nhân sự cho phép thì không thể tự ý nghỉ."}, {"id": 64, "pattern": "～（よ）うにも～ない", "group": "giadinh", "meaning": "Dù có muốn cũng không thể... (không có cách nào thực hiện)", "nuance": "Nhấn mạnh sự bất lực", "ex_jp": "風邪で喉が痛くて、声を出そうにも出せない。", "ex_vn": "Đau họng do cảm nên dù muốn nói cũng không nói được."}, {"id": 114, "pattern": "いざ～となると／いざ～となれば／いざ～となったら", "group": "giadinh", "meaning": "Trong trường hợp／đến khi... thì..., đến lúc... thì...", "nuance": "Nhấn mạnh thời điểm cấp bách", "ex_jp": "いざとなったら110番に通報してください。", "ex_vn": "Trong trường hợp khẩn cấp thì gọi 110."}, {"id": 11, "pattern": "～ばこそ", "group": "nguyennhan", "meaning": "Chính vì... (nhấn mạnh lý do)", "nuance": "Nhấn rất mạnh, hay đi kèm こそ+の+こと", "ex_jp": "彼女の働きがあればこそ、計画が順調に進んでいるのだ。", "ex_vn": "Chính vì có sự đóng góp của cô ấy nên kế hoạch mới tiến triển thuận lợi."}, {"id": 74, "pattern": "～（が）ゆえ（に）／ゆえの（故）", "group": "nguyennhan", "meaning": "Vì... nên... (cách nói cứng)", "nuance": "Văn viết trang trọng", "ex_jp": "全国の名産品を電話一本で自宅まで届けてくれるサービスが、その手軽さゆえに人気を集めている。", "ex_vn": "Dịch vụ giao đặc sản toàn quốc tận nhà chỉ với một cuộc gọi đang được ưa chuộng vì sự tiện lợi đó."}, {"id": 90, "pattern": "～ものだから", "group": "nguyennhan", "meaning": "Vì, tại vì...", "nuance": "Văn nói, giải thích/biện minh", "ex_jp": "人身事故で電車が遅れたものですから、遅刻してしまいました。", "ex_vn": "Vì tàu bị trễ do tai nạn nên tôi đã đến muộn."}, {"id": 91, "pattern": "～もの／（な）んだもの", "group": "nguyennhan", "meaning": "① Bởi vì, vì... ② Văn nói thân mật (trẻ em, phụ nữ trẻ hay dùng)", "nuance": "Thân mật, hơi nũng nịu/biện minh", "ex_jp": "今日の授業行かなかったよ。あの先生の話、つまらないもの。", "ex_vn": "Hôm nay tớ không đi học đâu. Vì bài giảng của thầy đó chán lắm."}, {"id": 200, "pattern": "～にかこつけて", "group": "nguyennhan", "meaning": "Lấy cớ, lấy lý do... / Lợi dụng việc...", "nuance": "Sắc thái tiêu cực (viện cớ)", "ex_jp": "父の病気にかこつけて、会議への出席を断った。", "ex_vn": "Lấy cớ bố ốm để từ chối họp."}, {"id": 252, "pattern": "～ことだし", "group": "nguyennhan", "meaning": "Vì, bởi vì (có nhiều lý do nhưng trước hết là vì lý do này)", "nuance": "Thường đi kèm lời rủ rê ましょう", "ex_jp": "皆さんはもうお帰りになったことだし、そろそろ会場を片付けましょう。", "ex_vn": "Vì mọi người cũng đã về rồi nên chúng ta dọn hội trường thôi."}, {"id": 212, "pattern": "～こととて", "group": "nguyennhan", "meaning": "Vì... (dùng khi biện minh, xin lỗi, mong tha thứ)", "nuance": "Rất trang trọng, xin lỗi", "ex_jp": "連絡もなしにお客様がいらっしゃったが、急なこととて、何のおもてなしもできなかった。", "ex_vn": "Khách đến đột ngột không báo trước nên vì gấp quá mà không thể tiếp đón chu đáo."}, {"id": 45, "pattern": "～こともあって", "group": "nguyennhan", "meaning": "Cũng vì... (nêu 1 lý do trong số nhiều lý do)", "nuance": "Nhấn mạnh không phải lý do duy nhất", "ex_jp": "アルバイト先の仲間は、みんな年が近いこともあって同世代ならではの話でいつも盛り上がっています。", "ex_vn": "Đồng nghiệp làm thêm cũng vì gần tuổi nhau nên hay nói chuyện sôi nổi."}, {"id": 41, "pattern": "～とあって", "group": "nguyennhan", "meaning": "Vì, do là... nên B là điều đương nhiên", "nuance": "Nhấn mạnh nguyên nhân dẫn tới kết quả hiển nhiên", "ex_jp": "人気作家A氏の講演会が無料とあって、多くのファンが詰めかけた。", "ex_vn": "Vì buổi diễn thuyết của nhà văn nổi tiếng A miễn phí nên rất đông fan kéo đến."}, {"id": 134, "pattern": "～弾み", "group": "nguyennhan", "meaning": "Do A nên chẳng may B (B không chủ định, do phản xạ/quán tính)", "nuance": "Sự việc bất ngờ, ngoài ý muốn", "ex_jp": "転んだ弾みに、テーブルに頭をぶつけてしまった。", "ex_vn": "Do bị ngã nên (theo đà) đập đầu vào bàn."}, {"id": 147, "pattern": "～に負うところが多い／に負うところが大きい", "group": "nguyennhan", "meaning": "Phần lớn là nhờ...", "nuance": "Trang trọng, khen ngợi", "ex_jp": "この研究の成功はチームメンバーの協力に負うところが大きい。", "ex_vn": "Thành công của nghiên cứu này phần lớn nhờ sự hợp sức của các thành viên."}, {"id": 133, "pattern": "～によるところが大きい", "group": "nguyennhan", "meaning": "Phần lớn phụ thuộc vào...", "nuance": "Gần nghĩa mẫu 147", "ex_jp": "彼の成功は父親の助力によるところが大きい。", "ex_vn": "Thành công của anh ấy phần lớn nhờ sự giúp đỡ của bố."}, {"id": 7, "pattern": "～極まる／極まりない", "group": "nhanmanh", "meaning": "Vô cùng, cực kỳ", "nuance": "Văn viết, sắc thái phê phán/khen ngợi mạnh", "ex_jp": "自ら進んでプロジェクトを企画したのに、途中で辞めるなんて無責任極まりない。", "ex_vn": "Tự đề xuất kế hoạch mà bỏ dở giữa chừng thì thật vô trách nhiệm."}, {"id": 8, "pattern": "～の極み", "group": "nhanmanh", "meaning": "Hết sức, vô cùng", "nuance": "Trang trọng, đi với danh từ Hán Việt", "ex_jp": "世界的に有名な俳優と握手できたなんて、感激のきわみだ。", "ex_vn": "Được bắt tay diễn viên nổi tiếng thế giới, tôi vô cùng xúc động."}, {"id": 9, "pattern": "～限りだ", "group": "nhanmanh", "meaning": "Vô cùng (nhấn mạnh mức độ, cảm xúc)", "nuance": "Đi với tính từ chỉ cảm xúc chủ quan", "ex_jp": "自分の作品がこんなに大勢の人に評価されるとは、本当にうれしい限りだ。", "ex_vn": "Tác phẩm mình được nhiều người đánh giá cao như vậy, tôi thực sự vô cùng vui."}, {"id": 10, "pattern": "～の至り", "group": "nhanmanh", "meaning": "Vô cùng, rất...", "nuance": "Trang trọng, đi với 光栄・感激 v.v.", "ex_jp": "こんな立派な賞をいただいて、光栄の至りです。", "ex_vn": "Nhận được giải thưởng cao quý thế này tôi vô cùng vinh dự."}, {"id": 109, "pattern": "～ことこの上ない | この上ない | この上なく", "group": "nhanmanh", "meaning": "Vô cùng, cực kỳ..., không gì có thể hơn...", "nuance": "Nhấn mạnh mức tối đa", "ex_jp": "N1の文法は複雑なことこの上ない。", "ex_vn": "Ngữ pháp N1 phức tạp vô cùng."}, {"id": 164, "pattern": "～といったらない／ったらない／ったらありゃしない", "group": "nhanmanh", "meaning": "Vô cùng, cực kỳ... (không thể diễn tả bằng lời)", "nuance": "Văn nói, cảm xúc mạnh", "ex_jp": "夫の浮気現場を目撃した時の悔しさといったら、もう口では言い表せません。", "ex_vn": "Cảm giác cay đắng khi bắt gặp chồng ngoại tình thì không thể nói hết bằng lời."}, {"id": 195, "pattern": "～てはやりきれない", "group": "nhanmanh", "meaning": "Không thể chịu nổi (mức độ mạnh)", "nuance": "= てはかなわない", "ex_jp": "こう寒くてはやりきれない。", "ex_vn": "Lạnh thế này thì không chịu nổi."}, {"id": 255, "pattern": "～てはかなわない", "group": "nhanmanh", "meaning": "Không thể chịu nổi (nhấn mạnh mức độ vô cùng)", "nuance": "Văn nói, than phiền", "ex_jp": "おもしろいと言われたからといって、同じ冗談を何度も聞かされちゃかなわない。", "ex_vn": "Dù được khen thú vị nhưng bị nghe đi nghe lại một câu đùa thì không chịu nổi."}, {"id": 196, "pattern": "～ても～きれない", "group": "nhanmanh", "meaning": "Quá... nên không thể... (làm hết/nhớ hết/nói hết)", "nuance": "Đi với động từ khả năng lặp lại", "ex_jp": "N1の単語はあまりにも多いので、いくら覚えても覚えきれない。", "ex_vn": "Từ vựng N1 quá nhiều nên học mãi không nhớ hết."}, {"id": 231, "pattern": "～たりとも", "group": "nhanmanh", "meaning": "Dù chỉ (một..., số ít)... cũng không...", "nuance": "Rất trang trọng, phủ định tuyệt đối", "ex_jp": "医者は手術の間、一瞬たりとも気が抜けない。", "ex_vn": "Trong lúc phẫu thuật, bác sĩ không thể xao nhãng dù chỉ một khắc."}, {"id": 227, "pattern": "～だに", "group": "nhanmanh", "meaning": "Chỉ cần... là đã.../ Ngay cả tưởng tượng cũng không...", "nuance": "Trang trọng, đi với 想像する・考える", "ex_jp": "地震のことなど想像するだに恐ろしい。", "ex_vn": "Chỉ tưởng tượng đến động đất thôi cũng đã thấy sợ."}, {"id": 239, "pattern": "～に至るまで", "group": "nhanmanh", "meaning": "Thậm chí đến cả (nhấn mạnh phạm vi rộng)", "nuance": "Liệt kê để nhấn phạm vi tối đa", "ex_jp": "結婚をひかえ、家具はもちろん、皿やスプーンに至るまで新しいのを買いそろえた。", "ex_vn": "Sắp cưới nên không chỉ đồ đạc mà đến cả đĩa, thìa cũng mua mới hết."}, {"id": 241, "pattern": "～にも増して", "group": "nhanmanh", "meaning": "Hơn cả...", "nuance": "Cố định: 以前にもまして, いつにもまして", "ex_jp": "今回のイベントは、前回にもまして好評だった。", "ex_vn": "Sự kiện lần này được đánh giá cao hơn cả lần trước."}, {"id": 185, "pattern": "～でなくてなんだろう", "group": "nhanmanh", "meaning": "Không phải... thì là gì? (nhấn mạnh, chính là...)", "nuance": "Câu hỏi tu từ, văn viết", "ex_jp": "戦争で多くの人が殺されているなんて、これが悲劇でなくてなんだろう。", "ex_vn": "Chiến tranh giết hại nhiều người, đó không phải bi kịch thì là gì?"}, {"id": 186, "pattern": "～以外の何ものでもない", "group": "nhanmanh", "meaning": "Không phải là cái gì khác ngoài..., chính là... (nhấn mạnh)", "nuance": "Dạng nhấn mạnh hơn của は～です", "ex_jp": "彼女を悩ませているのは仕事のストレス以外の何ものでもない。", "ex_vn": "Điều khiến cô ấy trăn trở chính là áp lực công việc, không gì khác."}, {"id": 197, "pattern": "～こそすれ／こそあれ", "group": "nhanmanh", "meaning": "Khẳng định mạnh mẽ A là sự thật, tuyệt nhiên không phải B", "nuance": "Văn viết trang trọng", "ex_jp": "産業廃棄物処理に関しては今後とも、厳しくなりこそすれ、緩和されることはない。", "ex_vn": "Việc xử lý rác thải công nghiệp sẽ chỉ ngày càng khắt khe hơn chứ không hề nới lỏng."}, {"id": 246, "pattern": "～を禁じ得ない", "group": "nhanmanh", "meaning": "Không thể ngăn được, không thể kìm nén được (cảm xúc)", "nuance": "Văn viết trang trọng, đi với cảm xúc mạnh", "ex_jp": "この事件の犯人には、強い怒りを禁じ得ない。", "ex_vn": "Không thể kìm nén sự tức giận với hung thủ vụ án này."}, {"id": 71, "pattern": "ただ～のみだ", "group": "nhanmanh", "meaning": "Chỉ...", "nuance": "Trang trọng, quyết tâm", "ex_jp": "一歩も後退できない。ただ前進あるのみだ。", "ex_vn": "Không thể lùi một bước, chỉ có tiến lên phía trước."}, {"id": 224, "pattern": "～までだ／までのことだ", "group": "nhanmanh", "meaning": "Chỉ... (không hơn không kém) / Cùng lắm thì...", "nuance": "Trang trọng, dứt khoát", "ex_jp": "私は率直な感想を述べたまでです。特定の人を批判する意図はありません。", "ex_vn": "Tôi chỉ nói lên cảm nghĩ thật lòng thôi, không có ý phê phán ai cả."}, {"id": 12, "pattern": "～までもなく／までもない", "group": "khongcanthiet", "meaning": "Không cần phải, chưa tới mức phải...", "nuance": "Trung tính", "ex_jp": "そんな遠い店まで買いに行くまでもないよ。電話で注文すればすぐ届くんだから。", "ex_vn": "Không cần đi xa mua đâu, gọi điện đặt là được giao ngay."}, {"id": 13, "pattern": "～ないまでも", "group": "khongcanthiet", "meaning": "Dù không... nhưng.../ Dù chưa tới mức... nhưng cũng...", "nuance": "Nhượng bộ nhẹ, thừa nhận mức thấp hơn", "ex_jp": "きのうの演奏は、最高の出来とは言えないまでも、かなり良かったと思う。", "ex_vn": "Buổi biểu diễn hôm qua dù chưa thể nói là xuất sắc nhưng khá tốt."}, {"id": 16, "pattern": "～に（は）あたらない（当たらない）", "group": "khongcanthiet", "meaning": "① Không đáng, chẳng có gì phải... ② Không cần thiết phải... ③ Không tương đương với", "nuance": "Trang trọng", "ex_jp": "彼なりにできるだけの努力をしたのだから、いい結果を出せなかったとしても、非難するにはあたらない。", "ex_vn": "Vì anh ấy đã cố hết sức nên dù kết quả không tốt cũng chẳng đáng để trách."}, {"id": 205, "pattern": "～に（は）及ばない", "group": "khongcanthiet", "meaning": "Không đến mức phải, không cần thiết phải.../ Không đạt đến bằng N", "nuance": "Trang trọng", "ex_jp": "検査では何の異常も見つからなかったので、心配するには及ばない。", "ex_vn": "Kiểm tra không thấy gì bất thường nên không cần phải lo."}, {"id": 201, "pattern": "～に足りない／に足らない", "group": "khongcanthiet", "meaning": "Không đáng để... (lo sợ/tin tưởng)", "nuance": "Đi với 恐れる・信頼する", "ex_jp": "相手チームは実力が足りないので、恐れるに足らない。", "ex_vn": "Đội đối thủ thực lực chưa đủ nên không đáng lo sợ."}, {"id": 131, "pattern": "～には無理がある", "group": "khongcanthiet", "meaning": "Có điểm không hợp lý, không khả thi", "nuance": "Nhận xét khách quan", "ex_jp": "ただ3か月でこのプロジェクトを完成するには無理がある。", "ex_vn": "Chỉ 3 tháng thì không thể hoàn thành dự án này."}, {"id": 157, "pattern": "～ても始まらない", "group": "khongcanthiet", "meaning": "Dù có... thì cũng chẳng có ý nghĩa gì, chẳng thay đổi được gì", "nuance": "Khuyên nhủ dừng việc vô ích", "ex_jp": "いまさら担当者を責めても始まらない。", "ex_vn": "Giờ có trách người phụ trách thì cũng chẳng ích gì."}, {"id": 158, "pattern": "～てもどうにもならない／でもどうなるものでもない", "group": "khongcanthiet", "meaning": "Dù có... thì cũng chẳng giải quyết được gì", "nuance": "Gần nghĩa ても始まらない", "ex_jp": "人生には幸も不幸もない、ただ、考え方でどうにもなるのだ。", "ex_vn": "Đời không có may hay rủi, chỉ có cách nghĩ mới thay đổi được mọi thứ."}, {"id": 222, "pattern": "今ひとつ～ない", "group": "khongcanthiet", "meaning": "Thiếu một chút, chưa thực sự hài lòng, không... lắm", "nuance": "Đánh giá nhẹ nhàng, chưa tới mức tệ", "ex_jp": "昨日、話題のその映画を見たが、今ひとつ迫力が足りない気がした。", "ex_vn": "Hôm qua xem phim đang hot đó nhưng thấy vẫn thiếu chút kịch tính."}, {"id": 22, "pattern": "～ずにはすまない／ないではすまない", "group": "khongthe", "meaning": "Không A thì không xong, phải...", "nuance": "Nhấn mạnh nghĩa vụ/tất yếu", "ex_jp": "あの社員は客の金を使ったのだから処罰されずにはすまないだろう。", "ex_vn": "Nhân viên đó dùng tiền khách nên chắc chắn phải bị xử phạt."}, {"id": 23, "pattern": "～ずにはおかない／ないではおかない", "group": "khongthe", "meaning": "Nhất định, không thể không...", "nuance": "Nhấn mạnh tính tất yếu do bản chất sự việc", "ex_jp": "この絵は本当に素晴らしい。見る者を感動させずにはおかないだろう。", "ex_vn": "Bức tranh này thật tuyệt vời, chắc chắn sẽ khiến người xem cảm động."}, {"id": 247, "pattern": "～を余儀なくされる", "group": "khongthe", "meaning": "Bị buộc phải, đành phải...", "nuance": "Trang trọng, bị động, ngoài ý muốn", "ex_jp": "不正な取引が明らかになり、その取引に関わった会社役員は辞職を余儀なくされた。", "ex_vn": "Giao dịch bất chính bị phanh phui, lãnh đạo liên quan buộc phải từ chức."}, {"id": 248, "pattern": "～を余儀なくさせる", "group": "khongthe", "meaning": "Làm cho không còn cách nào khác, làm cho buộc phải...", "nuance": "Chủ động gây ra tình huống bắt buộc", "ex_jp": "両国関係の悪化が、プロジェクトの中止を余儀なくさせた。", "ex_vn": "Quan hệ hai nước xấu đi khiến dự án buộc phải dừng lại."}, {"id": 106, "pattern": "～羽目になる／羽目に陥る", "group": "khongthe", "meaning": "Phải, rơi vào cảnh phải... (tình huống xấu)", "nuance": "Kết quả ngoài ý muốn, hơi tiếc nuối", "ex_jp": "うっかりしてデータを消してしまったので、もう一度入力するはめになった。", "ex_vn": "Lỡ tay xóa mất dữ liệu nên phải nhập lại từ đầu."}, {"id": 144, "pattern": "～術がない", "group": "khongthe", "meaning": "Không thể, không có cách nào...", "nuance": "Bất lực hoàn toàn", "ex_jp": "前代未聞の金融危機で、失業者が続出し、政府も経済の悪化に成す術がない。", "ex_vn": "Khủng hoảng tài chính chưa từng có khiến thất nghiệp tăng, chính phủ cũng bó tay."}, {"id": 127, "pattern": "～に忍びない", "group": "khongthe", "meaning": "Không thể... (chịu đựng nổi)", "nuance": "Cảm xúc thương xót", "ex_jp": "事故の被害者たちの姿はあまりにも気の毒で見るにしのびない。", "ex_vn": "Cảnh nạn nhân vụ tai nạn đáng thương quá, không nỡ nhìn."}, {"id": 206, "pattern": "～べくもない", "group": "khongthe", "meaning": "Không thể, làm sao có thể (đương nhiên là không thể)", "nuance": "Văn viết trang trọng", "ex_jp": "主力が抜けているので、優勝は望むべくもない。", "ex_vn": "Không có thành viên chủ lực nên đừng mong vô địch."}, {"id": 117, "pattern": "～否めない", "group": "khongthe", "meaning": "Không thể phủ định là...", "nuance": "Trang trọng", "ex_jp": "その責任が君にあることは否めない。", "ex_vn": "Không thể phủ nhận trách nhiệm này thuộc về cậu."}, {"id": 122, "pattern": "～に値する／に値しない", "group": "khongthe", "meaning": "Xứng đáng／Không đáng", "nuance": "Đánh giá khách quan trang trọng", "ex_jp": "そんなことは彼にとっては一顧だに値しない。", "ex_vn": "Với anh ta, chuyện đó không đáng để liếc nhìn."}, {"id": 202, "pattern": "～に足りる／に足る", "group": "khongthe", "meaning": "Xứng đáng để...", "nuance": "Đi với 信頼・満足・推薦", "ex_jp": "合格と認められるに足る成績を示さなかった者には再試験を課す。", "ex_vn": "Người không có thành tích đủ để công nhận đỗ sẽ phải thi lại."}, {"id": 182, "pattern": "に足る ～に足らない・足りない", "group": "khongthe", "meaning": "Có đầy đủ giá trị, thỏa mãn hoặc xứng đáng với điều đó", "nuance": "Gần nghĩa mẫu 202", "ex_jp": "これはわざわざ議論するに足る問題なのだろうか。", "ex_vn": "Vấn đề này có đáng để mất công tranh luận không nhỉ?"}, {"id": 126, "pattern": "～に如くはない", "group": "khongthe", "meaning": "Không gì bằng... điều đó là tốt nhất", "nuance": "Văn viết cổ", "ex_jp": "このあたりは夜になると、物騒になるので、用心するにしくはない。", "ex_vn": "Khu này tối đến khá nguy hiểm nên không gì bằng cẩn thận đề phòng."}, {"id": 184, "pattern": "～にかたくない", "group": "khongthe", "meaning": "Không khó để... (tưởng tượng/cảm nhận/hiểu)", "nuance": "Đi với 想像する・察する・理解する", "ex_jp": "審査員が彼の作品を見て、そのすばらしさに驚いたことは、想像にかたくない。", "ex_vn": "Không khó để tưởng tượng giám khảo đã ngạc nhiên khi xem tác phẩm của anh ấy."}, {"id": 214, "pattern": "～ずじまいだ", "group": "khongthe", "meaning": "Bỏ lỡ, tuột mất cơ hội mà không thực hiện được, cuối cùng không...", "nuance": "Tiếc nuối vì lỡ dở", "ex_jp": "いなくなったペットを懸命に探したが、結局、その行方はわからずじまいだった。", "ex_vn": "Tìm hết sức thú cưng đi lạc nhưng cuối cùng vẫn không biết tung tích."}, {"id": 145, "pattern": "～ためしがない", "group": "khongthe", "meaning": "Chưa từng...", "nuance": "Nhấn mạnh không có tiền lệ", "ex_jp": "宝くじなんて、一度も当たったためしがない。", "ex_vn": "Xổ số thì tôi chưa từng trúng lần nào."}, {"id": 138, "pattern": "～そびれる", "group": "khongthe", "meaning": "Bỏ lỡ, chưa kịp làm...", "nuance": "Dở dang vì lý do khách quan", "ex_jp": "ぜひ見ようと思っていた映画だったのに、忙しくて行きそびれた。", "ex_vn": "Định xem bộ phim đó lắm mà bận quá nên lỡ mất."}, {"id": 51, "pattern": "～というところだ／といったところだ", "group": "suydoan", "meaning": "Tầm khoảng, cỡ... (áng chừng mức độ/số lượng)", "nuance": "Ước lượng khiêm tốn", "ex_jp": "自分で料理を作るといっても、せいぜいサラダとかゆで卵といったところだ。", "ex_vn": "Nói là tự nấu chứ cùng lắm cũng chỉ salad hay trứng luộc thôi."}, {"id": 56, "pattern": "～とも～ともつかない", "group": "suydoan", "meaning": "Không phân biệt (biết, rõ) được là ～ hay là ～", "nuance": "Trạng thái mập mờ", "ex_jp": "友達とも恋人ともつかない微妙な関係は、友達以上恋人未満と言う。", "ex_vn": "Mối quan hệ không rõ bạn hay người yêu gọi là 'trên tình bạn dưới tình yêu'."}, {"id": 57, "pattern": "～ようでいて", "group": "suydoan", "meaning": "Có vẻ như／dường như... nhưng thật ra không phải／không hẳn vậy", "nuance": "Đảo ngược kỳ vọng nhẹ", "ex_jp": "長く付き合っている相手のことはよく知っているようでいて、実は知らない一面もあったりする。", "ex_vn": "Tưởng hiểu rõ người yêu lâu năm nhưng thực ra vẫn có mặt chưa biết."}, {"id": 63, "pattern": "～なくはない／なくもない", "group": "suydoan", "meaning": "Không phải là không... (khẳng định nhẹ nhàng, dè dặt)", "nuance": "Nói giảm, tránh khẳng định tuyệt đối", "ex_jp": "彼の論文は、構成にはまだ少し問題がある気がしないでもないが、内容自体はだいぶよくなったと思う。", "ex_vn": "Bài luận vẫn còn chút vấn đề về cấu trúc, nhưng nội dung thì đã tốt hơn nhiều."}, {"id": 97, "pattern": "～ないものでもない", "group": "suydoan", "meaning": "Không hẳn là không...", "nuance": "Khẳng định nhẹ, có điều kiện", "ex_jp": "「私が悪かった」と素直に謝れば、許してやらないものでもない。", "ex_vn": "Nếu xin lỗi thành thật thì cũng không hẳn là không tha thứ."}, {"id": 173, "pattern": "～ないではない／ないでもない", "group": "suydoan", "meaning": "Không phải là không, không hẳn là không... (khẳng định nhẹ)", "nuance": "= mẫu 63, 97", "ex_jp": "時には、一人になりたいと思うことがないでもない。", "ex_vn": "Đôi khi cũng không phải là không muốn ở một mình."}, {"id": 174, "pattern": "～と言えなくもない", "group": "suydoan", "meaning": "Cũng không thể nói là không, cũng có thể nói là... (khẳng định nhẹ)", "nuance": "Nói giảm nói tránh", "ex_jp": "今の生活は充実にしていると言えなくもないが、何か物足りない感じがする。", "ex_vn": "Cuộc sống hiện tại cũng có thể nói là đầy đủ, nhưng vẫn thấy thiếu gì đó."}, {"id": 111, "pattern": "～こと請け合いだ", "group": "suydoan", "meaning": "Đảm bảo chắc chắn...", "nuance": "Tự tin khẳng định kết quả", "ex_jp": "この本を最後まで読めば、合格すること請け合いです。", "ex_vn": "Đọc hết cuốn sách này thì đảm bảo sẽ thi đỗ."}, {"id": 118, "pattern": "～思える／～思えない", "group": "suydoan", "meaning": "Cảm thấy／Cảm nhận... (phán đoán chủ quan)", "nuance": "Ý kiến cá nhân", "ex_jp": "80を過ぎた老人とは思えないほどの体力の持ち主だ。", "ex_vn": "Thể lực tốt đến mức không nghĩ là cụ già ngoài 80."}, {"id": 141, "pattern": "～とばかりに", "group": "suydoan", "meaning": "Cứ như thể là, như muốn nói rằng...", "nuance": "Miêu tả thái độ/hành động ngầm ý", "ex_jp": "天まで届けとばかりに、声をかぎりに歌った。", "ex_vn": "Hát to hết cỡ như thể muốn vang tới tận trời."}, {"id": 190, "pattern": "～ものと思われる", "group": "suydoan", "meaning": "Có lẽ... (suy đoán mang yếu tố khách quan)", "nuance": "Văn viết báo chí", "ex_jp": "今回の調査で事故の原因が明らかになるものと思われる。", "ex_vn": "Có lẽ nguyên nhân vụ tai nạn sẽ được làm rõ qua điều tra lần này."}, {"id": 250, "pattern": "～んばかりに／んばかりの／んばかりだ", "group": "suydoan", "meaning": "Tưởng chừng như, dường như sắp, cứ như thể là...", "nuance": "Miêu tả mức độ/trạng thái/biểu cảm", "ex_jp": "自分は関係ないといわんばかりの夫の言動に腹が立った。", "ex_vn": "Tôi tức giận vì lời nói hành động của chồng cứ như thể muốn nói không liên quan."}, {"id": 89, "pattern": "～というもの", "group": "thoidiem", "meaning": "Khoảng thời gian gần, có liên quan đến hiện tại", "nuance": "Nhấn mạnh khoảng thời gian kéo dài", "ex_jp": "ここ一週間というもの、忙しくて、ちゃんと食事をしていない。", "ex_vn": "Cả tuần nay bận đến mức chưa ăn uống đàng hoàng."}, {"id": 53, "pattern": "～かたがた", "group": "lietke", "meaning": "Trước là để A, sau là.../ Cũng là với mục đích", "nuance": "Trang trọng, mục đích kép", "ex_jp": "近くに用事があったものですから、先日のお礼かたがた伺いました。", "ex_vn": "Vì có việc gần đây nên tôi ghé qua vừa để cảm ơn hôm trước."}, {"id": 54, "pattern": "～だの～だの", "group": "lietke", "meaning": "Nào là... nào là...", "nuance": "Văn nói, liệt kê ví dụ tiêu biểu", "ex_jp": "あの人はネックレスだのイヤリングだの、アクセサリーをいっぱい身に付けていて、まるでバブル時代の女性みたい。", "ex_vn": "Người đó đeo đầy trang sức, nào vòng cổ nào bông tai, như phụ nữ thời bong bóng."}, {"id": 55, "pattern": "～わ～わ", "group": "lietke", "meaning": "① Nào là...nào là.../Vừa...vừa... ② Cứ...rất... (lặp từ nhấn mạnh)", "nuance": "Văn nói thân mật", "ex_jp": "昨日、会議で課長に叱られるわ、事はうまくいかないわで、さんざんな一日だった。", "ex_vn": "Hôm qua nào bị trưởng phòng mắng, nào việc không suôn sẻ, đúng là ngày tồi tệ."}, {"id": 72, "pattern": "ただ～のみならず／のみか", "group": "lietke", "meaning": "Không chỉ...", "nuance": "Trang trọng", "ex_jp": "チンパンジーは人間の模倣をするのみならず、互いに協力して共同作業をしているらしい。", "ex_vn": "Tinh tinh không chỉ bắt chước con người mà còn hợp tác làm việc cùng nhau."}, {"id": 73, "pattern": "（ひとり）～だけでなく／のみならず", "group": "lietke", "meaning": "Không chỉ một mình A mà B cũng...", "nuance": "Trang trọng", "ex_jp": "留学する以上は、勉強だけでなく、その国の文化を学んだり交流をしたりしたいと思う。", "ex_vn": "Đã đi du học thì không chỉ học mà còn muốn tìm hiểu văn hóa, giao lưu."}, {"id": 121, "pattern": "～と／に～を重ねて", "group": "lietke", "meaning": "N chồng chất N, lặp đi lặp lại nhiều lần", "nuance": "Nhấn mạnh sự lặp lại liên tục", "ex_jp": "修正に修正を重ねて、最終版の企画書を提出した。", "ex_vn": "Sửa đi sửa lại nhiều lần rồi mới nộp bản kế hoạch cuối."}, {"id": 150, "pattern": "～ては～ては", "group": "lietke", "meaning": "Cứ... rồi lại... (hành động lặp đi lặp lại xen kẽ)", "nuance": "Văn nói", "ex_jp": "休み中、食べては眠り、食べては眠りの連続で、すっかり太ってしまった。", "ex_vn": "Kỳ nghỉ cứ ăn rồi ngủ, ăn rồi ngủ nên béo hẳn lên."}, {"id": 159, "pattern": "～というか～というか", "group": "lietke", "meaning": "Có thể nói là A mà cũng có thể nói là B", "nuance": "Diễn tả cảm giác khó gọi tên chính xác", "ex_jp": "そのときの彼の表情は寂しいというか、情けないというか、はっきり言葉で説明できない。", "ex_vn": "Nét mặt anh ấy lúc đó buồn cũng đúng, thất vọng cũng đúng, khó diễn tả rõ."}, {"id": 160, "pattern": "～といい～といい", "group": "lietke", "meaning": "Cả A lẫn B đều...", "nuance": "Khen/chê toàn diện", "ex_jp": "この家は、広さといい、価格といい、新婚夫婦にぴったりだ。", "ex_vn": "Nhà này cả diện tích lẫn giá cả đều hợp với vợ chồng mới cưới."}, {"id": 161, "pattern": "～といわず～といわず", "group": "lietke", "meaning": "Bất kể là A hay B (không kể N1 hay N2, tất cả đều)", "nuance": "Nhấn mạnh phạm vi toàn bộ", "ex_jp": "部屋の中の物は、机といわず、いすといわず、めちゃくちゃに壊されていた。", "ex_vn": "Đồ trong phòng, bất kể bàn hay ghế, đều bị phá tan tành."}, {"id": 168, "pattern": "～や～", "group": "lietke", "meaning": "= か (đi sau từ chỉ số lượng, không đầy đủ, ước chừng)", "nuance": "Văn nói", "ex_jp": "完璧な人間なんて存在しない。誰でも1つや2つぐらい短所はある。", "ex_vn": "Không ai hoàn hảo cả, ai cũng có 1, 2 khuyết điểm."}, {"id": 169, "pattern": "AにB", "group": "lietke", "meaning": "Bổ sung thêm, ngoài A còn B", "nuance": "Đơn giản, thường trong văn nói", "ex_jp": "朝ご飯はいつもサラダにヨーグルトです。", "ex_vn": "Bữa sáng lúc nào cũng có salad kèm sữa chua."}, {"id": 170, "pattern": "～に～を重ねる", "group": "lietke", "meaning": "Liên tiếp, chồng chất, nối tiếp nhau", "nuance": "= mẫu 121", "ex_jp": "夫は嘘に嘘を重ねて浮気のことを隠そうとした。", "ex_vn": "Chồng nói dối chồng chất để giấu chuyện ngoại tình."}, {"id": 181, "pattern": "やれ～やれ～", "group": "lietke", "meaning": "Nào là... nào là... (liệt kê 2 ví dụ tiêu biểu, thường tiêu cực)", "nuance": "Văn nói, hơi than phiền", "ex_jp": "彼女は最近やれ剣道だ、やれ茶道だとお忙しそうだ。", "ex_vn": "Dạo này cô ấy có vẻ bận, nào kiếm đạo nào trà đạo."}, {"id": 204, "pattern": "～のなんの", "group": "lietke", "meaning": "Nào là... gì gì đấy... (khi liệt kê nhiều thứ)", "nuance": "Văn nói", "ex_jp": "彼は足が痛いのなんのと理由をつけては、サッカーの練習をさぼっている。", "ex_vn": "Anh ta lấy cớ đau chân nọ kia để trốn tập bóng đá."}, {"id": 216, "pattern": "～なり～なり", "group": "lietke", "meaning": "A hay B, A hoặc B (chọn 1 trong số ví dụ đưa ra)", "nuance": "Gợi ý lựa chọn", "ex_jp": "わからない単語があったら、辞書を引くなりだれかに聞くなりして調べておきなさい。", "ex_vn": "Nếu có từ không hiểu thì tra từ điển hay hỏi ai đó cũng được."}, {"id": 236, "pattern": "～つ～つ", "group": "lietke", "meaning": "A rồi lại B", "nuance": "Văn viết, mô tả hành động qua lại", "ex_jp": "事実を言おうか言うまいか、廊下を行きつ戻りつ考えた。", "ex_vn": "Tôi cứ đi đi lại lại ở hành lang suy nghĩ có nên nói sự thật hay không."}, {"id": 238, "pattern": "～も～も", "group": "lietke", "meaning": "Cả A hay B cũng đều...", "nuance": "Trung tính", "ex_jp": "就職するも進学するもあなた次第ですから、よく考えた上で結論を出してください。", "ex_vn": "Đi làm hay học tiếp đều tùy bạn, hãy suy nghĩ kỹ trước khi quyết định."}, {"id": 18, "pattern": "～ながらに／ながらの", "group": "thoidiem", "meaning": "Thể hiện một trạng thái kéo dài không thay đổi kể từ ban đầu", "nuance": "Cố định: 生まれながらに, 涙ながらに", "ex_jp": "彼は自らのつらい体験を涙ながらに語った。", "ex_vn": "Anh ấy kể về trải nghiệm đau khổ của mình trong nước mắt."}, {"id": 37, "pattern": "～越し（ごし）", "group": "thoidiem", "meaning": "Qua N (vật chắn giữa hai vật) / Suốt... qua (trạng thái kéo dài)", "nuance": "Không gian hoặc thời gian", "ex_jp": "この部屋からの眺めは最高だよ。こうして窓越しに海を見ると心が落ち着く。", "ex_vn": "Nhìn biển qua cửa sổ như thế này thấy tâm hồn dịu lại."}, {"id": 40, "pattern": "～に先駆けて", "group": "thoidiem", "meaning": "Tiên phong, đầu tiên, trước, trước khi", "nuance": "Trang trọng, thông báo sự kiện", "ex_jp": "新商品の発売に先駆け、わが社のホームページにてライブ配信を行います。", "ex_vn": "Trước khi ra mắt sản phẩm mới, công ty sẽ livestream trên trang web."}, {"id": 50, "pattern": "～に向け（て）", "group": "thoidiem", "meaning": "Hướng tới.../Chuẩn bị cho...", "nuance": "Trung tính", "ex_jp": "来月の演奏会に向けて、毎日バイオリンの練習を続けている。", "ex_vn": "Ngày nào cũng tập violin để chuẩn bị cho buổi biểu diễn tháng sau."}, {"id": 59, "pattern": "～を境に（して）", "group": "thoidiem", "meaning": "Kể từ... (đánh dấu mốc cho một sự thay đổi)", "nuance": "Mốc thời gian rõ ràng", "ex_jp": "親友に裏切られたあの日を境にして、私は人間不信に陥り、誰とも話さなくなった。", "ex_vn": "Từ ngày bị bạn thân phản bội, tôi rơi vào nghi ngờ con người, không nói chuyện với ai."}, {"id": 60, "pattern": "～もそこそこに", "group": "thoidiem", "meaning": "Làm vội／qua loa... rồi...", "nuance": "Nhấn mạnh sự vội vàng", "ex_jp": "寝坊したので朝ご飯もそこそこに、急いで駅に向かった。", "ex_vn": "Ngủ quên nên ăn sáng vội vàng rồi chạy vội ra ga."}, {"id": 62, "pattern": "～以前", "group": "thoidiem", "meaning": "Trước khi.../ Trước khi nói tới (vấn đề)...", "nuance": "Nhấn mạnh mức cơ bản, tiên quyết", "ex_jp": "脚本について語る以前に、この映画の主役にヒロシさんを起用するのはリスクが大きすぎない？", "ex_vn": "Trước khi bàn tới kịch bản, cho Hiroshi đóng vai chính liệu có rủi ro quá không?"}, {"id": 80, "pattern": "～がてら", "group": "thoidiem", "meaning": "Nhân tiện, sẵn tiện (trong khi làm A thì làm B luôn)", "nuance": "Cứng hơn ついでに một chút", "ex_jp": "週末にはドライブがてら、新しい博物館まで行ってみようと思う。", "ex_vn": "Cuối tuần nhân tiện lái xe đi chơi sẽ ghé bảo tàng mới."}, {"id": 104, "pattern": "～を限りに", "group": "thoidiem", "meaning": "Hết, kết thúc...", "nuance": "Trang trọng, thông báo kết thúc", "ex_jp": "鈴木アナウンサーはきょうのサッカーの試合の中継放送を限りに引退した。", "ex_vn": "Phát thanh viên Suzuki giải nghệ sau buổi tường thuật trận đấu hôm nay."}, {"id": 116, "pattern": "～や／や否や", "group": "thoidiem", "meaning": "Vừa mới... thì đã...", "nuance": "Nhấn mạnh tính tức thì", "ex_jp": "電車が駅に止まり、ドアが開くや否や彼は飛び出していった。", "ex_vn": "Tàu vừa dừng, cửa vừa mở, anh ta đã lao ra ngoài."}, {"id": 176, "pattern": "～を経て", "group": "thoidiem", "meaning": "Thông qua, đi qua, quá cảnh... (địa điểm/thời gian/phương pháp)", "nuance": "Trang trọng", "ex_jp": "新しい条約は、議会の承認を経て認められた。", "ex_vn": "Hiệp ước mới được công nhận qua sự phê duyệt của quốc hội."}, {"id": 180, "pattern": "～矢先に", "group": "thoidiem", "meaning": "Đúng lúc (chuẩn bị) A... thì B", "nuance": "Nhấn mạnh sự bất ngờ, đáng tiếc", "ex_jp": "高橋選手は400メートル走でゴールに着く矢先に転んでしまい、惜しくも金メダルを逃がした。", "ex_vn": "VĐV Takahashi đúng lúc sắp về đích 400m thì ngã, tiếc nuối để tuột HCV."}, {"id": 189, "pattern": "～を控え／を控えて／を控えた", "group": "thoidiem", "meaning": "Chẳng bao lâu nữa là tới,... đã tới gần (thời điểm, sự kiện)", "nuance": "Trang trọng", "ex_jp": "田中君は先週ずっと授業を休んでいて、試験を受けなかった。卒業を控えた身でありながら、海外へ遊びに行っていたらしい。", "ex_vn": "Tanaka nghỉ học cả tuần, không thi. Sắp tốt nghiệp mà nghe nói lại đi nước ngoài chơi."}, {"id": 192, "pattern": "～を皮切りに（して）", "group": "thoidiem", "meaning": "Bắt đầu với... (lấy N làm điểm xuất phát cho chuỗi hoạt động mở rộng)", "nuance": "Thông báo sự kiện, tin tức", "ex_jp": "その会社は、先週発表した新車を皮切りに、次々と新しい車を発表するそうだ。", "ex_vn": "Công ty đó bắt đầu từ chiếc xe mới công bố tuần trước sẽ tiếp tục ra mắt các dòng xe mới."}, {"id": 193, "pattern": "～を振り出しに", "group": "thoidiem", "meaning": "Bắt đầu...", "nuance": "Gần nghĩa mẫu 192", "ex_jp": "彼は小学校の教師を振り出しに社会に出た。", "ex_vn": "Anh ấy bước vào xã hội với công việc đầu tiên là giáo viên tiểu học."}, {"id": 215, "pattern": "～なり", "group": "thoidiem", "meaning": "Vừa mới... thì ngay lập tức...", "nuance": "Nhấn mạnh phản ứng tức thì", "ex_jp": "私の料理を一口食べるなり、父は変な顔をして席を立ってしまった。", "ex_vn": "Vừa ăn một miếng món tôi nấu, bố đã nhăn mặt đứng dậy."}, {"id": 226, "pattern": "～が早いか", "group": "thoidiem", "meaning": "Vừa mới A đã nhanh chóng, ngay lập tức B", "nuance": "Văn viết, nhấn mạnh tốc độ", "ex_jp": "授業終了のベルを聞くが早いか、生徒たちは教室を飛び出して行った。", "ex_vn": "Vừa nghe chuông hết giờ, học sinh đã lao ra khỏi lớp."}, {"id": 228, "pattern": "～かたわら", "group": "thoidiem", "meaning": "Vừa A vừa B, bên cạnh... còn... (cân bằng việc chính và phụ)", "nuance": "Trang trọng, khen ngợi đa năng", "ex_jp": "彼は歌手としての活動のかたわら、小説家としても活躍している。", "ex_vn": "Bên cạnh làm ca sĩ, anh ấy còn thành công với vai trò tiểu thuyết gia."}, {"id": 234, "pattern": "～てからというもの", "group": "thoidiem", "meaning": "Kể từ khi... thì có một sự thay đổi B", "nuance": "Nhấn mạnh sự thay đổi bền vững sau mốc", "ex_jp": "Eメールを使うようになってからというもの、ほとんど手紙を書かなくなった。", "ex_vn": "Từ khi dùng Email thì hầu như không viết thư tay nữa."}, {"id": 81, "pattern": "～ごとき／ごとく／ごとし", "group": "trangtrong", "meaning": "① Như thể là... (so sánh, giống よう) ② N＋ごとき: xem thường/khiêm nhường", "nuance": "Văn viết cổ điển", "ex_jp": "暑い日に草むしりをしていたら、汗が滝のごとく流れてきた。", "ex_vn": "Nhổ cỏ ngày nắng nóng nên mồ hôi tuôn như thác."}, {"id": 102, "pattern": "～をもって／をもちまして", "group": "trangtrong", "meaning": "① Hết, từ (thời điểm) ② Bằng... (cách thức) — cứng hơn で", "nuance": "Thông báo hành chính", "ex_jp": "誠に勝手ながら、当店は10月30日をもって開店いたしました。", "ex_vn": "Cửa hàng chúng tôi xin khai trương từ ngày 30/10."}, {"id": 103, "pattern": "～でもって", "group": "trangtrong", "meaning": "Bằng... (công cụ, cách thức) — cứng hơn で", "nuance": "Văn viết", "ex_jp": "言葉だけでは足りない。行動でもって証明してください。", "ex_vn": "Chỉ lời nói thôi chưa đủ, hãy chứng minh bằng hành động."}, {"id": 123, "pattern": "～におかれましては", "group": "trangtrong", "meaning": "Về phần, liên quan đến... (kính ngữ thư từ)", "nuance": "Rất trang trọng, thư từ", "ex_jp": "先生におかれましては、お変わりなくお過ごしのことと存じます。", "ex_vn": "Kính mong thầy vẫn luôn mạnh khỏe."}, {"id": 129, "pattern": "～に照らして", "group": "trangtrong", "meaning": "Chiếu theo... (quy định, pháp luật)", "nuance": "Đi với 憲法・法律・規則", "ex_jp": "法律に照らして処分する。", "ex_vn": "Xử phạt dựa theo pháp luật."}, {"id": 130, "pattern": "～に則って", "group": "trangtrong", "meaning": "Dựa trên, theo... (quy tắc, tập quán, truyền thống)", "nuance": "Đi với 規則・習慣・伝統", "ex_jp": "国際的に承認された原則に則って、契約を結びました。", "ex_vn": "Ký hợp đồng dựa trên nguyên tắc được quốc tế công nhận."}, {"id": 135, "pattern": "～ことと致す", "group": "trangtrong", "meaning": "Khiêm nhường ngữ cho hành động của phía mình (thông báo, quyết định)", "nuance": "Rất trang trọng", "ex_jp": "避難生活を余儀なくされている皆様の2017年度の会費はいただかないことと致します。", "ex_vn": "Chúng tôi sẽ không thu hội phí năm 2017 của các hội viên đang phải lánh nạn."}, {"id": 136, "pattern": "Các dạng phủ định cổ ぬ、ず、ざる", "group": "trangtrong", "meaning": "Không... (dạng phủ định văn cổ, biển báo, thành ngữ)", "nuance": "Văn viết cổ/biển báo", "ex_jp": "ここにゴミを捨てるべからず。", "ex_vn": "Không được đổ rác ở đây."}, {"id": 179, "pattern": "～べくして", "group": "trangtrong", "meaning": "Sớm muộn gì cũng, như một điều tất yếu", "nuance": "Động từ thường lặp lại 2 lần", "ex_jp": "この機械の危険性は以前から何度も指摘されていた。この事故は起こるべくして起こったといえる。", "ex_vn": "Có thể nói sự cố này xảy ra như một điều tất yếu."}, {"id": 187, "pattern": "～べく", "group": "trangtrong", "meaning": "Để... (chỉ mục đích, văn viết)", "nuance": "Trang trọng, báo cáo/tin tức", "ex_jp": "ウイルスの感染経路を明らかにすべく、調査が行われた。", "ex_vn": "Đã tiến hành điều tra để làm rõ đường lây nhiễm virus."}, {"id": 235, "pattern": "～たる／たるもの", "group": "trangtrong", "meaning": "Trên cương vị là, là... thì nên／không nên làm...", "nuance": "Rất trang trọng", "ex_jp": "国民の生活をより良いものにすること、それが政治家たる者の使命だと考えます。", "ex_vn": "Làm cho đời sống người dân tốt hơn là sứ mệnh của người trên cương vị chính trị gia."}, {"id": 245, "pattern": "～べからず／べからざる", "group": "trangtrong", "meaning": "Cấm, không được / Không thể, không được phép", "nuance": "Biển báo, văn viết cổ", "ex_jp": "危険！工事中につき、立ち入るべからず。", "ex_vn": "Nguy hiểm! Đang thi công, cấm vào!"}, {"id": 249, "pattern": "～んがため（に）／んがための", "group": "trangtrong", "meaning": "Để... (mục đích, văn viết cổ)", "nuance": "Cứng hơn ために", "ex_jp": "夢をかなえんがため、日々努力している。", "ex_vn": "Tôi nỗ lực mỗi ngày để đạt được ước mơ."}, {"id": 256, "pattern": "～て憚らない", "group": "trangtrong", "meaning": "Không ngại (làm/nói/khẳng định điều gì mà không e dè)", "nuance": "Văn viết, hơi phê phán", "ex_jp": "その新人候補は、今回の選挙に必ず当選してみせると断言してはばからない。", "ex_vn": "Ứng viên mới không ngần ngại khẳng định chắc chắn sẽ đắc cử."}, {"id": 31, "pattern": "～としたことが", "group": "camthan", "meaning": "(Thật không ngờ là) một người như ... lại...", "nuance": "Ngạc nhiên xen lẫn thất vọng", "ex_jp": "いつも慎重な彼としたことが、大事な資料をタクシーに忘れるとは。", "ex_vn": "Không ngờ một người luôn cẩn thận như anh ta lại để quên tài liệu quan trọng trên taxi."}, {"id": 42, "pattern": "～んじゃなかった", "group": "camthan", "meaning": "Lẽ ra không nên... (hối hận về việc đã xảy ra)", "nuance": "Văn nói, hối tiếc", "ex_jp": "このソファースペースとるし、デザインもいまいちなんだから、最初から買うんじゃなかった。", "ex_vn": "Cái sofa này choán diện tích lại thiết kế không ưng, lẽ ra đừng nên mua ngay từ đầu."}, {"id": 47, "pattern": "～とは", "group": "camthan", "meaning": "...là...／...thì (bất ngờ, thất vọng)", "nuance": "Cảm thán nhẹ", "ex_jp": "20歳にもなりながら、そんな簡単なこともできないとは、実に情けない。", "ex_vn": "Đã 20 tuổi mà việc đơn giản thế cũng không làm được, thật đáng thất vọng."}, {"id": 83, "pattern": "～ものだ", "group": "camthan", "meaning": "Đưa ra quy luật, chân lý, kiến thức chung, bản chất vốn có", "nuance": "Khẳng định mang tính phổ quát", "ex_jp": "外貨の相場は毎日変動するものだ。", "ex_vn": "Tỷ giá ngoại tệ biến động mỗi ngày (đó là lẽ thường)."}, {"id": 84, "pattern": "～たものだ", "group": "camthan", "meaning": "① Kể về kỷ niệm/thói quen quá khứ ② Ngạc nhiên, chỉ trích hoặc khen ngợi", "nuance": "Hoài niệm hoặc cảm thán", "ex_jp": "懐かしい喫茶店だ。ここでよく彼女と待ち合わせをしたものだ。", "ex_vn": "Quán cà phê đầy kỷ niệm, trước đây tôi hay hẹn cô ấy ở đây."}, {"id": 85, "pattern": "～形容詞ものだ", "group": "camthan", "meaning": "Thể hiện cảm thán, cảm nhận, cảm xúc của người nói", "nuance": "Đi sau tính từ", "ex_jp": "もう1年経ったのか。時間がたつのは早いものだ。", "ex_vn": "Một năm trôi qua rồi ư? Thời gian trôi nhanh thật."}, {"id": 87, "pattern": "～というものだ", "group": "camthan", "meaning": "Thật là.../Đúng là... (như thế mới gọi là)", "nuance": "Kết luận mang tính triết lý", "ex_jp": "せっせと計画を立てている時、別のことが起こる。それが人生というものだ。", "ex_vn": "Đang cần mẫn lập kế hoạch thì chuyện khác lại xảy ra. Đó mới là cuộc sống."}, {"id": 92, "pattern": "～ものか", "group": "camthan", "meaning": "Không đời nào／nhất định không／làm gì có chuyện...", "nuance": "Cảm thán phủ định mạnh, văn nói", "ex_jp": "お前みたいな最低なやつと誰が結婚するもんか。", "ex_vn": "Ai mà thèm lấy một gã tệ như mày cơ chứ."}, {"id": 94, "pattern": "～ものを", "group": "camthan", "meaning": "Giá mà／nếu mà... thì đã..., nhưng...", "nuance": "Tiếc nuối, trách móc nhẹ", "ex_jp": "インスタに上げなければ浮気のことを知られないで済むものを、どこへ行っても投稿するからこんな羽目になるんだ。", "ex_vn": "Giá mà đừng đăng Instagram thì đã không lộ chuyện ngoại tình."}, {"id": 151, "pattern": "～だろうに", "group": "camthan", "meaning": "Mặc dù chắc là... vậy mà... (nuối tiếc, bất mãn)", "nuance": "= のに nhưng nhấn mạnh hơn", "ex_jp": "もっと感じのいい女の子もたくさんいるだろうに。なぜ彼女じゃないだめなの？", "ex_vn": "Rõ ràng còn nhiều cô gái tốt hơn, sao cứ nhất định phải là cô ấy?"}, {"id": 152, "pattern": "なんて・なんと～だろう", "group": "camthan", "meaning": "Thật là... (câu cảm thán)", "nuance": "Văn nói, cảm thán trực tiếp", "ex_jp": "僕の顔がフライパンみたいだって？なんて失礼な人だろう。", "ex_vn": "Nói mặt tôi như cái chảo à? Thật là người mất lịch sự!"}, {"id": 162, "pattern": "～ときたら", "group": "camthan", "meaning": "N ấy hả (thể hiện sự chỉ trích, phê bình, tức giận)", "nuance": "Văn nói, phàn nàn", "ex_jp": "電車でお年寄りに席を譲ろうとしない高校生を見て、父は「近ごろの若者ときたら、困ったものだ。」と嘆いていた。", "ex_vn": "Thấy học sinh không nhường ghế cho người già, bố than 'giới trẻ bây giờ ấy mà'."}, {"id": 167, "pattern": "～ともあろうものが", "group": "camthan", "meaning": "Với cương vị là... nhưng, mà lại... (ngạc nhiên, thất vọng)", "nuance": "Trang trọng, chỉ trích", "ex_jp": "大学の学長ともあろうものが、賄賂を受け取るなんて、驚いた。", "ex_vn": "Bất ngờ vì một hiệu trưởng đại học mà lại nhận hối lộ."}, {"id": 194, "pattern": "～てやまない", "group": "camthan", "meaning": "Vẫn luôn, vẫn luôn hằng (cầu chúc, mong mỏi, kỳ vọng, yêu mến)", "nuance": "Trang trọng, tình cảm sâu sắc", "ex_jp": "多くの困難にも負けず、努力を続けている彼女はすばらしい。私は彼女の成功を願ってやまない。", "ex_vn": "Tôi vẫn luôn cầu mong cô ấy thành công."}, {"id": 198, "pattern": "～始末だ", "group": "camthan", "meaning": "Kết cục, rốt cuộc, cuối cùng (thường là kết quả xấu)", "nuance": "Than thở về kết quả tệ", "ex_jp": "体を鍛えようとジョギングを始めたが、走りすぎて膝を痛めてしまい、病院に通う始末だ。", "ex_vn": "Chạy bộ để rèn luyện mà chạy quá sức đau đầu gối, kết cục phải đi viện."}, {"id": 213, "pattern": "～とは／なんて", "group": "camthan", "meaning": "Không ngờ (ngạc nhiên, ngoài tưởng tượng)", "nuance": "Cảm thán mạnh", "ex_jp": "普段はおとなしい彼があんなに怒るとは、よほどひどいことを言われたのだろう。", "ex_vn": "Người hiền lành như anh ấy mà giận dữ vậy, chắc bị nói gì quá đáng lắm."}, {"id": 251, "pattern": "甲斐があって／甲斐がある／甲斐もなく／甲斐がない", "group": "camthan", "meaning": "Không uổng công, thật bõ công / (phủ định) Thật uổng công", "nuance": "Đánh giá kết quả so với công sức bỏ ra", "ex_jp": "応援のかいもなく、私のクラスのチームは一勝もできなかった。", "ex_vn": "Uổng công cổ vũ, đội lớp tôi không thắng trận nào."}, {"id": 253, "pattern": "～だけましだ", "group": "camthan", "meaning": "Kể cũng còn may, vẫn còn hơn, vẫn còn tốt chán", "nuance": "So sánh với tình huống tệ hơn để an ủi", "ex_jp": "石油の価格が上がったために、わが社の業績は下がった。しかし、損失が出ないだけまだましだ。", "ex_vn": "Giá dầu tăng nên doanh thu công ty giảm, nhưng không lỗ là còn may rồi."}, {"id": 75, "pattern": "～も顧みず／を顧みず", "group": "macke", "meaning": "Không quan tâm đến, không để ý đến, không màng đến...", "nuance": "Ca ngợi sự hy sinh/dũng cảm", "ex_jp": "カメラマンは自らの命もかえりみず戦場に向かった。", "ex_vn": "Nhiếp ảnh gia xông ra chiến trường không màng tính mạng."}, {"id": 76, "pattern": "～をものともせずに", "group": "macke", "meaning": "Mặc cho, bất chấp, không sợ／không bận tâm", "nuance": "Ca ngợi sự dũng cảm", "ex_jp": "彼はたび重なる困難をものともせず、前に進んでいった。", "ex_vn": "Mặc cho khó khăn chồng chất, anh ấy vẫn tiến về phía trước."}, {"id": 100, "pattern": "～をよそに", "group": "macke", "meaning": "Mặc kệ, bất chấp, không quan tâm đến... (thường tiêu cực)", "nuance": "Phê phán sự vô tâm", "ex_jp": "あの人は周りの心配をよそに、好き勝手に振舞っていた。", "ex_vn": "Người đó mặc kệ sự lo lắng của mọi người, cứ làm theo ý mình."}, {"id": 101, "pattern": "～ものともせず", "group": "macke", "meaning": "Mặc kệ, bất chấp (khó khăn, chê bai...) vẫn làm", "nuance": "= mẫu 76", "ex_jp": "彼女は周りの反対をものともせず、知り合って三日目の男と駆け落ちした。", "ex_vn": "Cô ấy bất chấp sự phản đối, bỏ trốn với người đàn ông mới quen 3 ngày."}, {"id": 105, "pattern": "～はそっちのけで／をそっちのけで", "group": "macke", "meaning": "Chẳng quan tâm tới, hoàn toàn lờ đi, mặc kệ (mải mê việc khác)", "nuance": "Văn nói, phê phán nhẹ", "ex_jp": "彼女は本業をそっちのけで、副業に精を出している。", "ex_vn": "Cô ấy bỏ bê công việc chính mà chuyên tâm vào việc phụ."}, {"id": 107, "pattern": "～を蔑ろにする", "group": "macke", "meaning": "Coi thường, lờ đi, xem nhẹ...", "nuance": "Sắc thái phê phán mạnh", "ex_jp": "人の意見をないがしろにする。", "ex_vn": "Coi thường ý kiến người khác."}, {"id": 108, "pattern": "～をなおざりにして", "group": "macke", "meaning": "Bỏ bê, không quan tâm...", "nuance": "Cảnh báo hậu quả", "ex_jp": "子どものしつけをなおざりにしていては、将来は大変なことになるよ。", "ex_vn": "Không quan tâm giáo dục con cái thì tương lai sẽ vất vả."}, {"id": 209, "pattern": "～を押して／を押し切って", "group": "macke", "meaning": "Mặc cho, bất chấp... (cố gắng vượt qua khó khăn)", "nuance": "Quyết tâm bất chấp trở ngại", "ex_jp": "私の妹は両親の反対を押して結婚した。", "ex_vn": "Em gái tôi kết hôn bất chấp sự phản đối của bố mẹ."}, {"id": 36, "pattern": "～きっての", "group": "sosanh", "meaning": "Nhất, nhất trong số...", "nuance": "Khen ngợi ở mức tối cao trong phạm vi", "ex_jp": "清水寺は京都きっての観光名所だ。", "ex_vn": "Chùa Kiyomizu là điểm du lịch nổi tiếng nhất Kyoto."}, {"id": 110, "pattern": "～とは比べ物にならない／～の比ではない", "group": "sosanh", "meaning": "Không thể so sánh với... (chênh lệch quá lớn)", "nuance": "Nhấn mạnh khoảng cách lớn", "ex_jp": "今の人工知能は10年前（のもの）とは比べ物にならないほど高度化している。", "ex_vn": "AI hiện nay phát triển đến mức không thể so với 10 năm trước."}, {"id": 148, "pattern": "～と（は）打って変わって", "group": "sosanh", "meaning": "Khác hẳn... (so với trước đó)", "nuance": "Nhấn mạnh sự thay đổi rõ rệt", "ex_jp": "その議員は当選後、選挙前とは打って変わって、優柔不断な発言を繰り返す。", "ex_vn": "Sau khi đắc cử, nghị sĩ đó nói năng thiếu quyết đoán, khác hẳn trước bầu cử."}, {"id": 183, "pattern": "～をおいて", "group": "sosanh", "meaning": "Ngoài N ra thì... (không có gì/ai khác)", "nuance": "Khẳng định tính duy nhất", "ex_jp": "新しく住宅開発を進めるなら、この地域をおいてほかにはない。", "ex_vn": "Nếu phát triển khu nhà ở mới thì ngoài khu này ra không còn nơi nào khác."}, {"id": 208, "pattern": "～も同然だ／も同然の", "group": "sosanh", "meaning": "Cũng giống như là, gần như là...", "nuance": "So sánh trạng thái gần đạt tới", "ex_jp": "あとは表紙をつけるだけだから、クラスの文集はもうできたのも同然だ。", "ex_vn": "Chỉ còn gắn bìa thôi nên coi như tập san lớp đã xong rồi."}, {"id": 223, "pattern": "～分／分だけ", "group": "sosanh", "meaning": "Bao nhiêu thì... bấy nhiêu (tỷ lệ thuận)", "nuance": "So sánh tương quan mức độ", "ex_jp": "1年間の休職の分だけ、仕事がたまっていた。", "ex_vn": "Nghỉ làm một năm thì bấy nhiêu công việc dồn lại."}, {"id": 19, "pattern": "～かといえば、かというと", "group": "khac", "meaning": "Nếu nói là... hay không／gì／như thế nào..., thì...", "nuance": "Dẫn dắt chủ đề để phủ định/giải thích", "ex_jp": "文章がうまければ誰でも作家になれるかというと、そんなことはない。", "ex_vn": "Nếu nói viết văn giỏi thì ai cũng thành nhà văn, thì không hẳn vậy."}, {"id": 20, "pattern": "～てすむ／...", "group": "khac", "meaning": "Chỉ cần... là xong", "nuance": "Giải pháp đơn giản, nhẹ nhàng hóa vấn đề", "ex_jp": "急に爆発したので、この携帯はもうダメかと思ってたけど、バッテリーの交換だけですむらしい。", "ex_vn": "Tưởng điện thoại hỏng hẳn nhưng nghe nói chỉ cần thay pin là xong."}, {"id": 21, "pattern": "～ないですむ／～なくてすむ／～ずにすむ", "group": "khongcanthiet", "meaning": "Không cần... cũng xong／cũng ok／cũng được", "nuance": "Nhẹ nhõm vì tránh được việc phải làm", "ex_jp": "中山駅？緑線で行けば、乗り換えしないですむよ。", "ex_vn": "Ga Nakayama à? Đi tuyến Midori thì không cần đổi tàu."}, {"id": 24, "pattern": "～つもりで／～つもりの", "group": "khac", "meaning": "Cứ nghĩ rằng／coi như rằng／đinh ninh là...", "nuance": "Có khoảng cách giữa suy nghĩ chủ quan và thực tế", "ex_jp": "私は彼女にいろいろ親切にしたつもりなんですが、感謝されるどころかうらまれました。", "ex_vn": "Tôi cứ nghĩ mình đã tử tế với cô ấy nhưng lại bị ghét thay vì được cảm ơn."}, {"id": 32, "pattern": "～ずと（も）", "group": "khongcanthiet", "meaning": "Không cần... cũng...", "nuance": "Văn viết", "ex_jp": "実力よりコネが重要なのは、言わずと知れたことだ。", "ex_vn": "Quan hệ quan trọng hơn thực lực là điều không cần nói cũng biết."}, {"id": 33, "pattern": "～びる", "group": "khac", "meaning": "Nhìn rất, trông rất...", "nuance": "Gắn sau danh từ chỉ tính chất", "ex_jp": "あの子はまだ12歳なのに慎重のせいか大人びて見えるね。", "ex_vn": "Đứa bé mới 12 tuổi mà trông ra dáng người lớn nhỉ."}, {"id": 34, "pattern": "～ぶり、～っぷり", "group": "khac", "meaning": "Dáng vẻ ～, điệu bộ ～, tình hình ～", "nuance": "Miêu tả cách thể hiện ra ngoài", "ex_jp": "エレナさんは高そうな鞄を持ったり、アクセサリーをつけたりして、お金持ちぶっています。", "ex_vn": "Erena xách túi đắt tiền, đeo trang sức, ra vẻ người giàu có."}, {"id": 35, "pattern": "～じみる", "group": "khac", "meaning": "Trông giống như／cảm giác như... thực sự", "nuance": "Thường mang nghĩa hơi tiêu cực", "ex_jp": "彼女は結婚してまだ一年も経ってないのに、急に所帯じみてきたね。", "ex_vn": "Cô ấy mới cưới chưa đầy năm mà đã ra dáng người phải lo toan gia đình rồi nhỉ."}, {"id": 38, "pattern": "～気取り", "group": "khac", "meaning": "Giả bộ, giả vờ, tỏ vẻ", "nuance": "Sắc thái châm biếm nhẹ", "ex_jp": "妹とその彼氏は、まだ結婚していないのに、すっかり夫婦きどりだ。", "ex_vn": "Em gái và bạn trai chưa cưới mà đã ra vẻ như vợ chồng thật."}, {"id": 39, "pattern": "～がましい", "group": "khac", "meaning": "Có vẻ, có nét, có hơi hướng", "nuance": "Thường mang nghĩa tiêu cực nhẹ", "ex_jp": "命の恩人とはいえ、恩着せがましい態度を取られ続けると、さすがに不快になる。", "ex_vn": "Dù là ân nhân nhưng cứ bị tỏ thái độ kể công thì cũng khó chịu."}, {"id": 46, "pattern": "～にあって（は）／にあっても", "group": "nhuongbo", "meaning": "(Dù) trong hoàn cảnh／tình huống đó", "nuance": "Trang trọng", "ex_jp": "どのような困難な状況にあっても、あきらめてはいけない。", "ex_vn": "Dù trong hoàn cảnh khó khăn thế nào cũng không được bỏ cuộc."}, {"id": 58, "pattern": "～を前提として、～を前提に（して）", "group": "khac", "meaning": "Với tiền đề là／với suy nghĩ／ý thức là...", "nuance": "Trung tính", "ex_jp": "結婚を前提に交際している彼女が、なんと男だった。", "ex_vn": "Cô gái tôi đang hẹn hò với ý định tiến tới hôn nhân hóa ra lại là đàn ông."}, {"id": 61, "pattern": "～ぐるみ", "group": "nhanmanh", "meaning": "Đi sau danh từ, diễn tả toàn bộ, tất cả, bao gồm cả danh từ đi trước", "nuance": "Nhấn mạnh sự đồng lòng toàn thể", "ex_jp": "学力低下やいじめ問題など、学校ぐるみで解決しなければならない課題は山ほどある。", "ex_vn": "Có rất nhiều vấn đề cả trường phải cùng giải quyết như suy giảm học lực, bắt nạt."}, {"id": 65, "pattern": "～ならでは／ならではの", "group": "nhanmanh", "meaning": "Chỉ N mới có thể, chỉ N mới có được (đặc trưng riêng của N)", "nuance": "Khen ngợi đặc trưng riêng biệt", "ex_jp": "100年の伝統を誇るこの旅館のサービスには、老舗旅館ならではの細やかな心遣いが感じられる。", "ex_vn": "Dịch vụ của nhà nghỉ 100 năm truyền thống này có sự chu đáo mà chỉ nơi lâu năm mới có."}, {"id": 66, "pattern": "～に至って／に至る／に至っては／に至っても", "group": "nhanmanh", "meaning": "① Đến khi... thì mới... ② Tới mức／đến mức ③ Mặc dù, thậm chí... nhưng", "nuance": "Trang trọng, nhấn mạnh mức độ tới hạn", "ex_jp": "証拠となる書類が発見されるに至って、彼はやっと自分の罪を認めた。", "ex_vn": "Đến khi tài liệu bằng chứng bị phát hiện, anh ta mới nhận tội."}, {"id": 67, "pattern": "～にして", "group": "khac", "meaning": "① Phải đến, mãi đến, dù chỉ mới ② Vừa là N vừa là... ③ Chỉ có N mới ④ Ngay cả N cũng (không)", "nuance": "Trang trọng, nhiều nghĩa theo ngữ cảnh", "ex_jp": "この試験は非常に難しく、私も4回目にしてようやく合格できた。", "ex_vn": "Kỳ thi này rất khó, tôi phải thi đến lần thứ 4 mới đỗ."}, {"id": 68, "pattern": "～にしたら／にすれば／にしても", "group": "khac", "meaning": "Đối với N／đứng trên lập trường...", "nuance": "Đặt mình vào vị trí người khác", "ex_jp": "突然父の病気を告げられて、彼女にしたらきっとショックだっただろう。", "ex_vn": "Đột nhiên nghe tin bố ốm, đứng ở vị trí cô ấy chắc hẳn là một cú sốc."}, {"id": 78, "pattern": "～という", "group": "nhanmanh", "meaning": "Tất cả... đều... (nhấn mạnh phạm vi toàn bộ)", "nuance": "Văn viết, lặp lại danh từ", "ex_jp": "学校が始まる日の朝、道路という道路は車であふれていた。", "ex_vn": "Sáng ngày khai giảng, đường nào cũng đầy xe."}, {"id": 79, "pattern": "～といって～ない／といった～ない", "group": "khac", "meaning": "Không có gì đặc biệt, quan trọng...", "nuance": "Phủ định nhẹ nhàng", "ex_jp": "今週の新聞にはこれといってたいしたニュースは載っていない。", "ex_vn": "Báo tuần này không có tin gì đặc biệt."}, {"id": 82, "pattern": "～やしない／はしない", "group": "khac", "meaning": "Không... (phủ định nhấn mạnh, văn nói)", "nuance": "Văn nói suồng sã, mạnh mẽ", "ex_jp": "どんなに苦しくても、自分が選んだ道だから後悔はしない。", "ex_vn": "Dù khó khăn thế nào tôi cũng không hối hận vì đó là con đường mình chọn."}, {"id": 86, "pattern": "～ものではない", "group": "khac", "meaning": "① Không nên... ② Không thể... (nhấn mạnh phủ định khả năng)", "nuance": "Khuyên răn hoặc phủ định mạnh", "ex_jp": "他人の悪口を言うものではない。", "ex_vn": "Không nên nói xấu người khác."}, {"id": 88, "pattern": "～というものではない", "group": "khac", "meaning": "Không hẳn là.../Không phải là.../Đâu phải là...", "nuance": "Phủ định một quan niệm phổ biến", "ex_jp": "お金さえあれば幸せになれるというものではない。", "ex_vn": "Đâu phải chỉ cần có tiền là sẽ hạnh phúc."}, {"id": 99, "pattern": "～からいいようなものの", "group": "giadinh", "meaning": "Mặc dù (lần này) may mắn／không sao, nhưng (nếu)... thì sẽ rất tồi tệ", "nuance": "Cảnh báo về may mắn nhất thời", "ex_jp": "今回は無事に助かったからいいようなものの、あれだけの悪天候だとまず救助は難しいでしょう。", "ex_vn": "Lần này may mà thoát nạn, chứ thời tiết xấu thế thì cứu hộ rất khó."}, {"id": 115, "pattern": "～か否か", "group": "khac", "meaning": "A hay không", "nuance": "Trang trọng, văn viết", "ex_jp": "その新たな雇用対策が有効であるか否か、結果が出るのはまだ先のことだ。", "ex_vn": "Đối sách tuyển dụng mới có hiệu quả hay không thì vẫn còn phải chờ."}, {"id": 119, "pattern": "～に欠かせない／が欠かせない", "group": "nhanmanh", "meaning": "Không thể thiếu", "nuance": "Nhấn mạnh tính thiết yếu", "ex_jp": "異文化間の交流には、相手を理解しようという姿勢が欠かせない。", "ex_vn": "Trong giao lưu văn hóa, thái độ muốn hiểu đối phương là không thể thiếu."}, {"id": 120, "pattern": "～ことのないよう", "group": "khac", "meaning": "Để không... (chỉ mục đích phủ định)", "nuance": "Trung tính", "ex_jp": "残り少ない留学生活を思い残すことのないよう、充実した日々を送りたい。", "ex_vn": "Muốn sống trọn vẹn từng ngày để không hối tiếc quãng thời gian du học ít ỏi còn lại."}, {"id": 124, "pattern": "～に限ったことではない", "group": "nhanmanh", "meaning": "Không phải chỉ giới hạn... mà còn...", "nuance": "Mở rộng phạm vi vấn đề", "ex_jp": "これはクラス全員の問題なので、何も彼女に限ったことではない。", "ex_vn": "Đây là vấn đề của cả lớp, không phải chỉ riêng cô ấy."}, {"id": 125, "pattern": "～にかまけて", "group": "khac", "meaning": "Bị cuốn vào, mải mê, chăm chú vào việc...", "nuance": "Sắc thái tiêu cực nhẹ (bỏ bê việc khác)", "ex_jp": "仕事にかまけて、子どもの面倒を見る時間もない。", "ex_vn": "Mải mê công việc, không có cả thời gian chăm con."}, {"id": 128, "pattern": "～に準じて／・に準じ／・に準じる", "group": "khac", "meaning": "Theo tiêu chuẩn／căn cứ theo.../ Tương đương, ngang bằng", "nuance": "Trang trọng, hành chính", "ex_jp": "うちの会社はアルバイトの人にも、正社員に準ずる待遇を与えている。", "ex_vn": "Công ty tôi cho nhân viên làm thêm đãi ngộ ngang với nhân viên chính thức."}, {"id": 132, "pattern": "～にもほどがある", "group": "nhanmanh", "meaning": "Quá, quá mức, cái gì cũng có giới hạn", "nuance": "Phê phán mạnh về sự thái quá", "ex_jp": "先輩に対して、あんな失礼なことを言うなんて、無神経にもほどがある。", "ex_vn": "Nói điều vô lễ như thế với senpai thì đúng là quá vô ý tứ."}, {"id": 137, "pattern": "～んだって／んですって", "group": "khac", "meaning": "Nghe nói...", "nuance": "Văn nói, truyền đạt thông tin gián tiếp", "ex_jp": "太田さんは来月から北海道に転勤するんだって。", "ex_vn": "Nghe nói anh Oda tháng sau chuyển công tác đến Hokkaido."}, {"id": 139, "pattern": "～たら／なら／ば、～で", "group": "khac", "meaning": "① Lặp 2 lần cùng từ: đến lúc/nếu... thì lại ② Nếu... thì cũng chẳng sao", "nuance": "Văn nói, thể hiện sự bất lực/chấp nhận", "ex_jp": "N1試験に落ちたら落ちたで、落ち込むことはない。半年後にまたチャレンジすればいいから。", "ex_vn": "Nếu trượt N1 thì cũng chẳng cần buồn, nửa năm sau thi lại là được."}, {"id": 140, "pattern": "～きり／きりだ", "group": "nhanmanh", "meaning": "① Chỉ... (số lượng ít) ② Lần cuối cùng... từ đó đến giờ không...", "nuance": "Nhấn mạnh giới hạn/gián đoạn", "ex_jp": "こんな難しい曲はひけませんよ。ギターは20年前に習ったきりですから。", "ex_vn": "Không chơi nổi bản khó thế đâu, vì học guitar từ 20 năm trước rồi không chơi lại."}, {"id": 142, "pattern": "～たところで", "group": "nhuongbo", "meaning": "Cho dù... thì cũng vô ích, lãng phí...", "nuance": "Bi quan về kết quả", "ex_jp": "社長一人が必死になったところで、この会社が大きく変わるとは思えない。", "ex_vn": "Dù một mình giám đốc có cố hết sức thì công ty cũng khó thay đổi lớn."}, {"id": 143, "pattern": "～としたって／としたところで／にしたところで／にしたって", "group": "nhuongbo", "meaning": "Ngay cả, thậm chí, dẫu cho...", "nuance": "Văn nói", "ex_jp": "いくら少人数としたって、パーティーをするにはこの部屋は狭すぎる。", "ex_vn": "Dù ít người thế nào thì phòng này vẫn quá nhỏ để tổ chức tiệc."}, {"id": 146, "pattern": "～ても知らない", "group": "khac", "meaning": "Lời cảnh báo: nếu cứ tiếp tục thế này sẽ có chuyện nghiêm trọng", "nuance": "Văn nói, cảnh báo", "ex_jp": "こうやって毎日休まずに働いては体を壊しても知らない。", "ex_vn": "Cứ làm việc không nghỉ thế này thì có ngày ảnh hưởng sức khỏe đấy!"}, {"id": 149, "pattern": "～ては", "group": "khac", "meaning": "① Nếu A... thì B (thường tiêu cực) ② Cứ mỗi khi A... thì lại B ③ Nhấn mạnh", "nuance": "Đa nghĩa theo ngữ cảnh", "ex_jp": "カップラーメンばかり食べていては、体を壊しますよ。", "ex_vn": "Cứ ăn mỳ gói mãi thì sẽ hại sức khỏe."}, {"id": 163, "pattern": "～めく", "group": "khac", "meaning": "Mang đầy, có cảm giác... (bản thân sự việc mang tính chất đó)", "nuance": "Văn viết, miêu tả", "ex_jp": "雪がとけて、野の花が咲き始め、日差しも春めいてきた。", "ex_vn": "Tuyết tan, hoa dại nở, nắng cũng có cảm giác của mùa xuân rồi."}, {"id": 165, "pattern": "～たらきりがない／ばきりがない", "group": "nhanmanh", "meaning": "Nếu... thì vô số, không giới hạn, không bao giờ hết", "nuance": "Nhấn mạnh phạm vi vô tận", "ex_jp": "この計画の問題点をあげればきりがないが、大事なのは解決策を考えることだ。", "ex_vn": "Nêu vấn đề của kế hoạch này thì không hết, nhưng quan trọng là tìm cách giải quyết."}, {"id": 166, "pattern": "～に（しよう）と思って", "group": "khac", "meaning": "Định...", "nuance": "Văn nói, giải thích ý định", "ex_jp": "ちょっと昼寝を（しよう）と思って。でも蚊が多くて。", "ex_vn": "Định ngủ trưa một chút nhưng muỗi nhiều quá."}, {"id": 171, "pattern": "をも、もが", "group": "nhanmanh", "meaning": "Mà còn...(nhấn mạnh sự vật, sự việc được nhắc đến)", "nuance": "Văn viết trang trọng", "ex_jp": "女装したヒロシは、男性のみならず女性をも魅了してしまう。", "ex_vn": "Hiroshi giả gái thu hút không chỉ nam giới mà cả nữ giới."}, {"id": 172, "pattern": "～に越したことはない", "group": "khac", "meaning": "Tốt hơn là nên..., thì vẫn hơn", "nuance": "Gợi ý nhẹ nhàng", "ex_jp": "申請書の提出締め切りは明日の午後4時だが、早めに出せればそれに越したことはない。", "ex_vn": "Hạn nộp đơn là 4h chiều mai, nhưng nộp sớm hơn thì vẫn tốt hơn."}, {"id": 175, "pattern": "～にたえる／にたえない", "group": "nhanmanh", "meaning": "① Có giá trị／Đáng... ② Không chịu nổi ③ Vô cùng... (cách nói cứng)", "nuance": "Đi với 見る・聞く・鑑賞する", "ex_jp": "最近のCDは品質がよく、厳しい音楽家の耳にも十分にたえるだろう。", "ex_vn": "CD gần đây chất lượng tốt, chắc đáp ứng được cả tai nghe khắt khe của nhạc sĩ."}, {"id": 177, "pattern": "～でも何でもない／くもなんともない", "group": "nhanmanh", "meaning": "Không phải là, hoàn toàn không... (nhấn mạnh phủ định)", "nuance": "Văn nói mạnh mẽ", "ex_jp": "私に言わせれば、あんな人は政治家でも何でもない。", "ex_vn": "Theo tôi thì người đó chẳng phải chính trị gia gì cả."}, {"id": 178, "pattern": "～として～ない", "group": "nhanmanh", "meaning": "Không một.../ Không... dù chỉ là một", "nuance": "Nhấn mạnh phủ định tuyệt đối", "ex_jp": "今回の期末試験では、一人として満点をとる生徒はいなかった。", "ex_vn": "Kỳ thi cuối kỳ này không một học sinh nào đạt điểm tuyệt đối."}, {"id": 203, "pattern": "～にとどまらず", "group": "nhanmanh", "meaning": "Không chỉ, không chỉ dừng lại ở... (mà còn hơn thế)", "nuance": "Nhấn mạnh phạm vi mở rộng", "ex_jp": "火山の噴火の影響は、ふもとにとどまらず、周辺地域全体に及んだ。", "ex_vn": "Ảnh hưởng của núi lửa phun trào không chỉ ở chân núi mà lan ra cả vùng xung quanh."}, {"id": 207, "pattern": "～言わずもがな", "group": "khac", "meaning": "① Không nên nói ② N＋は言わずもがな: không cần phải nói, đương nhiên", "nuance": "Văn viết/nói trang trọng", "ex_jp": "学生は言わずもがな、教師まで集まった。", "ex_vn": "Học sinh thì khỏi phải nói, đến cả giáo viên cũng tụ tập tới."}, {"id": 210, "pattern": "～を踏まえ／を踏まえて", "group": "khac", "meaning": "Dựa trên, trên cơ sở... (đi với 現状・実情・状況)", "nuance": "Trang trọng", "ex_jp": "現在の状況を踏まえて、今後の計画を考え直す必要がある。", "ex_vn": "Cần xem xét lại kế hoạch dựa trên tình hình hiện tại."}, {"id": 217, "pattern": "～なりとも", "group": "khac", "meaning": "Đưa ra 1 ví dụ tiêu biểu, điều kiện tối thiểu, một chút cũng được", "nuance": "Nhượng bộ về mức tối thiểu", "ex_jp": "時間があったら、電話なりとも、かけてくれればいい。", "ex_vn": "Nếu có thời gian thì gọi điện một chút cũng được."}, {"id": 218, "pattern": "～なりに／なりの", "group": "khac", "meaning": "Theo cách của..., hết sức (tương ứng, phù hợp với N)", "nuance": "Khiêm tốn, tôn trọng năng lực riêng", "ex_jp": "現行の制度における問題点を、私なりに整理してみました。", "ex_vn": "Tôi đã cố gắng hết sức chỉnh lý các vấn đề trong chế độ hiện hành theo cách của mình."}, {"id": 219, "pattern": "～と（が）相まって／も相まって", "group": "nguyennhan", "meaning": "A cùng với, kết hợp với B... (tạo ra hiệu quả/kết quả C)", "nuance": "Văn viết, phân tích nguyên nhân kép", "ex_jp": "この家具は複雑なデザインが華やかな色彩と相まって、素晴らしい製品となっている。", "ex_vn": "Thiết kế phức tạp cùng với màu sắc rực rỡ đã tạo nên sản phẩm tuyệt vời."}, {"id": 229, "pattern": "～からある／からする／からの", "group": "nhanmanh", "meaning": "Từ... trở lên, có hơn／có tới... (đi sau số lượng để nhấn mạnh)", "nuance": "Nhấn mạnh con số lớn", "ex_jp": "100キロからある荷物を3階まで運ぶには、足腰の強い人が3人は必要だ。", "ex_vn": "Cần 3 người khỏe mạnh để khuân đồ nặng hơn 100kg lên tầng 3."}, {"id": 230, "pattern": "～嫌いがある", "group": "khac", "meaning": "Có xu hướng, có chiều hướng, thường hay... (thường tiêu cực)", "nuance": "Nhận xét về tính cách/thói quen", "ex_jp": "彼はいつも物事を悲観的に考える嫌いがある。", "ex_vn": "Anh ấy thường có xu hướng suy nghĩ mọi việc theo chiều hướng bi quan."}, {"id": 232, "pattern": "～ともなく／ともなしに", "group": "khac", "meaning": "Làm gì đó một cách tự nhiên, vu vơ, không có ý thức, không mục đích", "nuance": "Miêu tả hành động vô thức", "ex_jp": "電車の窓から外を見るともなく見ていたら、高校時代の同級生の姿が目に入った。", "ex_vn": "Nhìn vu vơ ra ngoài cửa sổ tàu thì thấy bạn học cấp 3 cũ."}, {"id": 233, "pattern": "～はさておき／はさておいて", "group": "khac", "meaning": "Chưa bàn đến, khoan hãy nói đến... (gác sang một bên)", "nuance": "Chuyển hướng chủ đề", "ex_jp": "実現できるかどうかはさておき、まずは新商品のアイディアをみんなで出してみよう。", "ex_vn": "Chưa bàn có thực hiện được hay không, trước tiên hãy đưa ra ý tưởng sản phẩm mới."}, {"id": 254, "pattern": "～てしかるべきだ", "group": "khac", "meaning": "... là đương nhiên (= のが当然だ)", "nuance": "Khẳng định điều nên làm", "ex_jp": "所得が低い人には、税金の負担を軽くするなどの措置がとられてしかるべきだ。", "ex_vn": "Đương nhiên nên áp dụng biện pháp giảm thuế cho người thu nhập thấp."}, {"id": 257, "pattern": "～ても差し支えない", "group": "khac", "meaning": "Dù... cũng không sao, cũng không vấn đề gì", "nuance": "Cho phép nhẹ nhàng", "ex_jp": "手術後の経過が順調だったら、来週は散歩に出ても差し支えない。", "ex_vn": "Nếu hồi phục tốt sau phẫu thuật thì tuần sau đi dạo cũng không sao."}, {"id": 258, "pattern": "～てもともとだ", "group": "khac", "meaning": "Xác định ngay từ đầu... (dù thất bại cũng không sao vì đã lường trước)", "nuance": "Tâm lý chuẩn bị sẵn cho thất bại", "ex_jp": "採用の条件には合わないけど、だめでもともとだから、この会社に履歴書を出してみよう。", "ex_vn": "Không hợp điều kiện tuyển dụng nhưng cứ thử nộp hồ sơ, không được cũng không sao vì đã xác định trước."}, {"id": 259, "pattern": "～べし", "group": "trangtrong", "meaning": "Nên, cần phải làm (cách nói cổ, mệnh lệnh/khuyến cáo)", "nuance": "Rất cổ, hay gặp trong châm ngôn, biển báo, quy tắc", "ex_jp": "契約は細部まで確認するべし。", "ex_vn": "Nên xác nhận hợp đồng đến từng chi tiết nhỏ."}, {"id": 260, "pattern": "～じ", "group": "trangtrong", "meaning": "Để không... (= まいと, ないように, cách nói cổ)", "nuance": "V ない bỏ ない rồi thêm じ", "ex_jp": "小学生の娘に負けじと私も英語の勉強を始めました。", "ex_vn": "Tôi cũng bắt đầu học tiếng Anh để không thua con gái đang học tiểu học."}, {"id": 261, "pattern": "～も然り（しかり）／逆もまた然り", "group": "sosanh", "meaning": "...cũng tương tự, cũng như vậy / Ngược lại cũng vậy", "nuance": "Văn viết, so sánh 2 sự việc tương đồng", "ex_jp": "日本にとって高齢化は深刻な問題だ。我が国の場合も然りである。", "ex_vn": "Với Nhật, già hóa dân số là vấn đề nghiêm trọng. Nước ta cũng tương tự vậy."}, {"id": 262, "pattern": "かくなる上は／かく言う", "group": "khac", "meaning": "Một khi đã như thế này... (= こうなった以上は) / Nói như vậy (= このように言う)", "nuance": "Văn viết hơi cổ", "ex_jp": "かくなる上は、家族を連れて逃げるしかないよ。", "ex_vn": "Một khi đã đến nước này thì chỉ còn cách dẫn cả gia đình đi trốn."}, {"id": 263, "pattern": "～並み", "group": "sosanh", "meaning": "Ngang bằng, như...N", "nuance": "So sánh mức độ tương đương", "ex_jp": "彼女の通訳はプロ並みだよ。", "ex_vn": "Phiên dịch của cô ấy ngang tầm chuyên nghiệp đấy."}, {"id": 264, "pattern": "～うちに（は）入らない", "group": "khac", "meaning": "Chưa phải là... (chưa đạt tới ngưỡng để được coi là N)", "nuance": "Văn nói, phủ định mức độ nhẹ", "ex_jp": "カップラーメンに卵を入れただけじゃん。こんなの料理のうちに入らないよ。", "ex_vn": "Chỉ cho trứng vào mỳ gói thôi mà, thế thì chưa phải là nấu ăn đâu."}, {"id": 265, "pattern": "～手前", "group": "nguyennhan", "meaning": "Trước mặt, một khi đã... (phải giữ thể diện, không thể làm khác)", "nuance": "Nhấn mạnh áp lực giữ lời/giữ thể diện", "ex_jp": "任せてくださいと言ってしまった手前、今更プロジェクトから降りるわけにはいかない。", "ex_vn": "Một khi đã nói 'hãy giao cho tôi' thì giờ không thể rút khỏi dự án được."}, {"id": 266, "pattern": "～すべがない", "group": "khongthe", "meaning": "Không có cách thực hiện... (= 術がない)", "nuance": "Bất lực hoàn toàn", "ex_jp": "彼女はスマホもパソコンも持っていないので、連絡するすべがない。", "ex_vn": "Cô ấy chẳng có điện thoại lẫn máy tính nên không có cách nào liên lạc."}, {"id": 49, "pattern": "～ともなると／ともなれば", "group": "giadinh", "meaning": "Một khi, Nếu, Cứ hễ... (thay đổi trạng thái/chuyển sang trường hợp đó thì...)", "nuance": "Nhấn mạnh sự thay đổi quy mô", "ex_jp": "大寺院の本格的な修理ともなると、かかる経費も相当なものだろう。", "ex_vn": "Một ngôi đền lớn, một khi đã sửa chữa thực sự thì chi phí chắc cũng không nhỏ."}, {"id": 112, "pattern": "～あっての", "group": "nguyennhan", "meaning": "Có A thì mới có B, chính là nhờ có A", "nuance": "Nhấn mạnh vai trò quyết định của A", "ex_jp": "山田監督は私の恩人です。今の私があるのも監督あってのことです。", "ex_vn": "Đạo diễn Yamada là ân nhân của tôi. Có tôi hôm nay là nhờ có đạo diễn."}, {"id": 113, "pattern": "～てのことだ", "group": "nguyennhan", "meaning": "B là điều kiện cần thiết của A, hoặc B là lý do của A", "nuance": "Nhấn mạnh lý do nền tảng", "ex_jp": "私が仕事や趣味に専念できるのは、家族の協力があってのことだ。", "ex_vn": "Tôi có thể chuyên tâm công việc và sở thích là nhờ có sự hợp sức của gia đình."}];
+const GROUPS = {"nhuongbo": ["Nhượng bộ", "Dù… nhưng…", "#e07a5f"], "giadinh": ["Giả định – Điều kiện", "Nếu… thì…", "#3d5a80"], "nguyennhan": ["Nguyên nhân – Kết quả", "Vì… nên…", "#8a5a44"], "nhanmanh": ["Nhấn mạnh – Giới hạn", "Mức độ tuyệt đối", "#bc4749"], "suydoan": ["Suy đoán – Khả năng", "Phán đoán chủ quan", "#6a4c93"], "lietke": ["Liệt kê – Bổ sung", "Nào là… nào là…", "#457b9d"], "thoidiem": ["Thời điểm – Trình tự", "Chuỗi hành động", "#2a9d8f"], "trangtrong": ["Trang trọng – Văn viết", "Cổ ngữ, kính ngữ", "#5c4d7d"], "camthan": ["Cảm thán – Đánh giá chủ quan", "Ngạc nhiên, tiếc nuối", "#d68c45"], "khongcanthiet": ["Không cần thiết", "Chưa tới mức phải…", "#7a8b69"], "khongthe": ["Không thể – Buộc phải", "Bất khả kháng", "#9c3848"], "macke": ["Mặc kệ – Bất chấp", "Phớt lờ, không quan tâm", "#4a5859"], "sosanh": ["So sánh – Trái ngược", "Hơn kém, đối lập", "#8d6a9f"], "khac": ["Nhóm khác", "Cấu trúc bổ trợ, cách nói đặc thù", "#6b705c"]};
+const ORDER = ["nhuongbo", "giadinh", "nguyennhan", "nhanmanh", "suydoan", "lietke", "thoidiem", "trangtrong", "camthan", "khongcanthiet", "khongthe", "macke", "sosanh", "khac"];
+
+// compare boxes: inserted at end of specific groups
+const COMPARE = {
+  nhuongbo: `<div class="compare-box">
+    <h4>⚖️ So sánh nhanh — Bộ ba nhượng bộ hay nhầm</h4>
+    <table>
+      <tr><th>Mẫu</th><th>Sắc thái riêng</th><th>Văn phong</th></tr>
+      <tr><td><b>にしろ／にせよ／にしても</b></td><td>Cho dù A hay B thì vẫn có điểm chung ở kết luận</td><td>Trang trọng, hay dùng khi liệt kê 2 lựa chọn</td></tr>
+      <tr><td><b>であれ～であれ</b></td><td>Nhấn "bất kể là gì trong 2 cái", tính khách quan cao hơn</td><td>Văn viết trang trọng</td></tr>
+      <tr><td><b>といえども</b></td><td>Nhấn khoảng cách giữa "danh nghĩa" và "thực tế"</td><td>Rất trang trọng, diễn văn/văn viết</td></tr>
+    </table>
+  </div>`,
+  giadinh: `<div class="compare-box">
+    <h4>⚖️ So sánh nhanh — Giả định dẫn tới kết quả xấu</h4>
+    <table>
+      <tr><th>Mẫu</th><th>Điểm khác biệt</th></tr>
+      <tr><td><b>～が最後／たら最後</b></td><td>Một khi xảy ra A thì B (hậu quả xấu) là điều <i>không thể tránh khỏi</i>, không thể quay đầu</td></tr>
+      <tr><td><b>～ものなら</b> (nghĩa③)</td><td>Nhấn mạnh <i>rủi ro giả định</i> nếu lỡ làm A — thường là lời cảnh báo</td></tr>
+      <tr><td><b>～ばそれまでだ</b></td><td>Nhấn "coi như xong, hết chuyện", mang sắc thái buông xuôi hơn là cảnh báo</td></tr>
+    </table>
+  </div>`,
+  suydoan: `<div class="compare-box">
+    <h4>⚖️ So sánh nhanh — Khẳng định nhẹ "không hẳn là không..."</h4>
+    <table>
+      <tr><th>Mẫu</th><th>Ghi chú</th></tr>
+      <tr><td><b>～なくはない／なくもない</b></td><td>Phổ biến nhất, trung tính</td></tr>
+      <tr><td><b>～ないではない／ないでもない</b></td><td>Nghĩa giống hệt, chỉ khác cách chia phủ định (ない thay vì なく)</td></tr>
+      <tr><td><b>～と言えなくもない</b></td><td>Gắn liền với hành động "nói" — dùng khi đưa ra nhận định dè dặt</td></tr>
+    </table>
+  </div>`,
+};
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function highlight(text, q){
+  if(!q) return escapeHtml(text);
+  const esc = escapeHtml(text);
+  try{
+    const re = new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig');
+    return esc.replace(re, '<mark>$1</mark>');
+  }catch(e){ return esc; }
+}
+
+let activeGroup = 'all';
+let query = '';
+
+function render(){
+  const content = document.getElementById('content');
+  const empty = document.getElementById('emptyState');
+  content.innerHTML = '';
+  let totalShown = 0;
+  const q = query.trim().toLowerCase();
+
+  ORDER.forEach(gid=>{
+    if(activeGroup !== 'all' && activeGroup !== gid) return;
+    const meta = GROUPS[gid];
+    let items = ITEMS.filter(it=>it.group===gid);
+    if(q){
+      items = items.filter(it =>
+        it.pattern.toLowerCase().includes(q) ||
+        it.meaning.toLowerCase().includes(q) ||
+        (it.nuance||'').toLowerCase().includes(q) ||
+        it.ex_vn.toLowerCase().includes(q) ||
+        it.ex_jp.toLowerCase().includes(q)
+      );
+    }
+    if(items.length===0) return;
+    totalShown += items.length;
+
+    const section = document.createElement('section');
+    section.className='group-section';
+    section.id = 'grp-'+gid;
+    section.style.setProperty('--gline', meta[2]);
+
+    const idx = ORDER.indexOf(gid)+1;
+    let html = `<div class="group-head">
+      <span class="gnum">${String(idx).padStart(2,'0')}</span>
+      <h2>${meta[0]}</h2>
+      <span class="group-count">${items.length} mẫu</span>
+      <span class="gdesc">${meta[1]}</span>
+    </div>`;
+
+    html += `<div class="card-grid">`;
+    items.forEach(it=>{
+      html += `<div class="card">
+        <p class="pattern">${highlight(it.pattern,q)}</p>
+        <p class="meaning">${highlight(it.meaning,q)}</p>
+        ${it.nuance? `<span class="nuance">💡 ${highlight(it.nuance,q)}</span>`:''}
+        <div class="example">
+          <p class="ex-jp">・${highlight(it.ex_jp,q)}</p>
+          <p class="ex-vn">${highlight(it.ex_vn,q)}</p>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    if(!q && COMPARE[gid]){
+      html += COMPARE[gid];
+    }
+
+    if(!q){
+      html += `<div class="summary-toggle" data-target="sum-${gid}">📋 Xem tóm tắt nhanh (ôn lướt) ▾</div>
+      <div class="summary-list" id="sum-${gid}">`;
+      items.forEach(it=>{
+        html += `<div><b>${escapeHtml(it.pattern)}</b> — ${escapeHtml(it.meaning)}</div>`;
+      });
+      html += `</div>`;
+    }
+
+    section.innerHTML = html;
+    content.appendChild(section);
+  });
+
+  document.getElementById('countBadge').textContent = totalShown + ' mẫu';
+  empty.style.display = totalShown===0 ? 'block' : 'none';
+
+  document.querySelectorAll('.summary-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const t = document.getElementById(btn.dataset.target);
+      t.classList.toggle('show');
+      btn.textContent = t.classList.contains('show') ? btn.textContent.replace('▾','▴') : btn.textContent.replace('▴','▾');
+    });
+  });
+}
+
+function buildPills(){
+  const bar = document.getElementById('pillBar');
+  let html = `<span class="pill active" data-g="all">Tất cả (266)</span>`;
+  ORDER.forEach(gid=>{
+    const meta = GROUPS[gid];
+    const n = ITEMS.filter(it=>it.group===gid).length;
+    html += `<span class="pill" data-g="${gid}">${meta[0]} (${n})</span>`;
+  });
+  bar.innerHTML = html;
+  bar.querySelectorAll('.pill').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      bar.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      activeGroup = p.dataset.g;
+      render();
+      if(activeGroup!=='all'){
+        document.getElementById('grp-'+activeGroup)?.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    });
+  });
+}
+
+document.getElementById('searchBox').addEventListener('input', (e)=>{
+  query = e.target.value;
+  render();
+});
+
+const controlsBar = document.querySelector('.controls');
+let lastScrollY = window.scrollY;
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  if(y > lastScrollY && y > 120){
+    controlsBar.classList.add('hide'); // scrolling down -> hide bar, more room to read
+  } else {
+    controlsBar.classList.remove('hide'); // scrolling up -> show bar again
+  }
+  lastScrollY = y;
+}, {passive:true});
+
+const backTop = document.getElementById('backTop');
+backTop.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+window.addEventListener('scroll', ()=>{
+  backTop.style.display = window.scrollY > 400 ? 'flex' : 'none';
+});
+backTop.style.display='none';
+
+buildPills();
+render();
+</script>
+</body>
+</html>
