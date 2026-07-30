@@ -633,7 +633,14 @@
       <div style="position:absolute; right:14%; top:20%; width:26px; height:18px; animation:fly 9s ease-in-out infinite reverse;">{{ birdSvg }}</div>
       <!-- dolphin & sailing ship -->
       <div style="position:absolute; left:6%; bottom:16%; width:70px; height:44px; animation:swim 6s ease-in-out infinite;">{{ dolphinSvg }}</div>
-      <div style="position:absolute; right:8%; bottom:20%; width:52px; height:42px; animation:bob 4s ease-in-out infinite;">{{ shipSvg }}</div>
+      <div style="position:absolute; right:6%; bottom:18%; width:88px; height:71px; animation:bob 4s ease-in-out infinite;">
+        <sc-if value="{{ hasMapShipArt }}" hint-placeholder-val="{{ false }}">
+          <div style="width:100%; height:100%;"><div style="{{ mapShipBgStyle }}"></div></div>
+        </sc-if>
+        <sc-if value="{{ noMapShipArt }}" hint-placeholder-val="{{ true }}">
+          {{ shipSvg }}
+        </sc-if>
+      </div>
 
       <div onClick="{{ backToMap }}" style="position:absolute; top:18px; left:16px; cursor:pointer; color:#0e5273; font-weight:700; font-size:14px; z-index:5;">← Bản Đồ</div>
 
@@ -1138,7 +1145,8 @@ const EVENT_CODES = {
   'MANTEN-KHUNGVANG': { type:'avatarFrame', name:'Khung Vàng Cổ Đại', emoji:'🖼️' },
   'MANTEN-SKINSANHO': { type:'shipSkin', name:'Tàu San Hô Rực Rỡ', emoji:'⛵' },
   'MANTEN-DANHHIEU01': { type:'title', name:'Nhà Thám Hiểm Buổi Đầu', emoji:'🏵️' },
-  'MANTEN-DONGHANH01': { type:'companionBadge', name:'Bạn Đồng Hành Buổi Host #1', emoji:'🤝' }
+  'MANTEN-DONGHANH01': { type:'companionBadge', name:'Bạn Đồng Hành Buổi Host #1', emoji:'🤝' },
+  'SAME3007': { type:'companionBadge', name:'Bạn Đồng Hành Buổi Host #1', emoji:'🤝' }
 };
 const REWARD_LIST_KEY = { mapFragment:'mapFragments', journalEntry:'journalEntries', sticker:'stickers', avatarFrame:'avatarFrames', shipSkin:'shipSkins', title:'titles', companionBadge:'companionBadges' };
 const COLLECTIBLE_META = [
@@ -1914,6 +1922,7 @@ class Component extends DCLogic {
       islandMenuPanelStyle: { position:'absolute', left:0, top:'calc(100% + 8px)', zIndex:20, width:'min(360px, calc(100vw - 32px))', maxHeight:'56vh', overflowY:'auto', overflowX:'hidden', display:'flex', flexDirection:'column', gap:'3px', padding:'8px', background:'rgba(9,45,66,.96)', border:'1.5px solid rgba(255,233,176,.4)', borderRadius:'14px', boxShadow:'0 16px 34px rgba(3,40,70,.5)', animation:'popIn .18s ease-out' },
       mapShipArt: ((profile && SHIP_TYPES.find(sh => sh.id === profile.shipType)) || SHIP_TYPES[0]).art,
       hasMapShipArt: !!((profile && SHIP_TYPES.find(sh => sh.id === profile.shipType)) || SHIP_TYPES[0]).art,
+      noMapShipArt: !((profile && SHIP_TYPES.find(sh => sh.id === profile.shipType)) || SHIP_TYPES[0]).art,
       mapShipBgStyle: bgOf(((profile && SHIP_TYPES.find(sh => sh.id === profile.shipType)) || SHIP_TYPES[0]).art, { width:'100%', height:'100%', transform:'scaleX(-1)', filter:'drop-shadow(0 8px 10px rgba(3,40,70,.42))' }),
       shipStyle: { position:'absolute', left:0, top:0, width:'104px', height:'112px', offsetPath: `path('${buildRoutePath(s.mobile)}')`, offsetRotate:'0deg', animation: `shipSail ${s.mobile ? 30 : 24}s ease-in-out infinite alternate` },
       mapOuterStyle: { position:'relative', width:'100%', height: ((s.mobile ? MOBILE_H : CANVAS_H) * scale) + 'px', maxHeight: s.mobile ? '78dvh' : 'none', marginTop:'6px', borderRadius:'16px', overflowX:'hidden', overflowY: (s.mobile && !s.zooming) ? 'auto' : 'hidden', border:'2px solid rgba(255,255,255,.15)' },
