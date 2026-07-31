@@ -563,7 +563,21 @@
           <div style="color:#ffe9b0; font-size:12px; font-weight:700;">{{ currentIsland.setStatusLabel }}</div>
           <button onClick="{{ goToIslandSets }}" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:16px; padding:14px 32px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:16px; color:#5a3b22; cursor:pointer; box-shadow:0 6px 0 #b9761a;">📋 Chọn Bộ Đề</button>
         </sc-if>
-        <sc-if value="{{ currentIsland.external }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ currentIsland.hasMenuTools }}" hint-placeholder-val="{{ false }}">
+          <div style="width:100%; display:flex; flex-direction:column; gap:14px; margin-top:10px; text-align:left;">
+            <sc-for list="{{ currentIsland.menuTools }}" as="tool" hint-placeholder-count="2">
+              <a href="{{ tool.url }}" style="display:flex; align-items:center; gap:14px; text-decoration:none; background:rgba(9,45,66,.55); border:1.5px solid rgba(255,233,176,.35); border-radius:16px; padding:16px 18px;">
+                <div style="flex:0 0 auto; width:48px; height:48px; border-radius:50%; background:linear-gradient(180deg,#ffd25a,#f5a623); display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 0 #b9761a;">{{ tool.icon }}</div>
+                <div style="flex:1;">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:700; color:#fff; font-size:16px; margin-bottom:3px;">{{ tool.title }}</div>
+                  <div style="color:#a9cfdd; font-size:12.5px; line-height:1.5;">{{ tool.desc }}</div>
+                </div>
+                <div style="flex:0 0 auto; color:#ffe9b0; font-size:20px; font-weight:700;">›</div>
+              </a>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ currentIsland.externalNoTools }}" hint-placeholder-val="{{ false }}">
           <a href="{{ currentIsland.menuUrl }}" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:16px; padding:14px 32px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:16px; color:#5a3b22; cursor:pointer; box-shadow:0 6px 0 #b9761a; text-decoration:none; display:inline-block;">⚔ Vào Đảo</a>
         </sc-if>
       </div>
@@ -933,6 +947,10 @@ const ISLANDS = [
   { name:'Đảo Tân Binh', skill:'Hán Tự Nhập Môn', boss:'Cá Mập Học Giả', item:'Thư Tịch Kanji Cổ', arc:'khoidong', color:'#3f8f6e', dark:'#2c6b50', x:230, y:300, accessory:'glasses',
     story:'Trên hòn đảo phủ đầy rừng tre cổ, Cá Mập Học Giả canh giữ những con chữ Hán nhập môn đầu tiên trên hải trình JLPT N1.',
     playable:false, comingSoon:false, external:true, menuUrl:'dao1-index.html',
+    menuTools:[
+      { icon:'📘', title:'Mondai 1 · Đọc Kanji', desc:'Luyện đọc âm Hán tự (漢字読み) theo đúng dạng câu hỏi Mondai 1 trong đề thi.', url:'dao1-hantu-doc-kanji.html' },
+      { icon:'🈶', title:'Âm Hán Việt · 498 Từ', desc:'Tra cứu và ôn luyện 498 từ Kanji kèm âm Hán Việt, collocation, cụm cố định.', url:'dao1-hantu-am-hanviet.html' }
+    ],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[
         { prompt:'Chọn cách đọc đúng của từ được gạch dưới:\n「交通渋滞のため、会議に遅刻した。」\n渋滞', options:[
@@ -2042,6 +2060,8 @@ class Component extends DCLogic {
         bossArtWrap: { width: s.currentIslandId === 11 ? '300px' : ([3,4,9,10].includes(s.currentIslandId) ? '250px' : '188px'), height: s.currentIslandId === 11 ? '220px' : ([3,4,9,10].includes(s.currentIslandId) ? '226px' : '170px'), margin:'0 auto', animation:'bob 4.2s ease-in-out infinite' },
         story: currentIslandData.story, playable: currentIslandData.playable, comingSoon: currentIslandData.comingSoon, item: currentIslandData.item,
         external: currentIslandData.external, menuUrl: currentIslandData.menuUrl,
+        menuTools: currentIslandData.menuTools || [], hasMenuTools: !!(currentIslandData.menuTools && currentIslandData.menuTools.length),
+        externalNoTools: !!currentIslandData.external && !(currentIslandData.menuTools && currentIslandData.menuTools.length),
         setStatusLabel: `📋 ${islandEntry.done.length}/${(currentIslandData.sets || []).length} bộ đề · cần ≥2 để đánh bại Thủ Hộ`,
         guardianBadge: { width:'108px', height:'108px', borderRadius:'50%', background:'rgba(255,255,255,.12)', border:'3px solid #ffe9b0', display:'flex', alignItems:'center', justifyContent:'center', padding:'10px' }
       },
