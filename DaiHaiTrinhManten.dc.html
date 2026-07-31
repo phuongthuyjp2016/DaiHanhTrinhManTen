@@ -87,7 +87,7 @@
 
 <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0e5273"/><circle cx="50" cy="50" r="26" fill="none" stroke="#ffe9b0" stroke-width="3"/><path d="M50 30 L56 50 L50 70 L44 50 Z" fill="#ffe9b0"/><circle cx="50" cy="50" r="4" fill="#0e5273"/></svg></template>
 
-<div style="position:relative; width:100%; min-height:100dvh; background:linear-gradient(180deg, rgba(8,44,70,.35) 0%, rgba(14,82,115,.22) 30%, rgba(28,154,149,.18) 100%); font-family:'Be Vietnam Pro',sans-serif; overflow:hidden;" data-app="dhtm">
+<div style="position:relative; width:100%; min-height:100dvh; font-family:'Be Vietnam Pro',sans-serif; overflow:hidden;" data-app="dhtm">
 
   <!-- ===================== AUTH (Google Sign-In) ===================== -->
   <sc-if value="{{ isAuth }}" hint-placeholder-val="{{ false }}">
@@ -360,13 +360,15 @@
       <div style="{{ subMapOuterStyle }}">
         <div style="{{ subMapCanvasStyle }}">
           <div style="position:absolute; inset:0; background:radial-gradient(ellipse at 50% 10%, rgba(255,255,255,.55), rgba(255,255,255,0) 60%); pointer-events:none;"></div>
-          <svg viewBox="0 0 1200 760" style="position:absolute; inset:0; width:1200px; height:760px; pointer-events:none;">
-            <path d="M235,440 Q400,300 600,200 Q810,270 960,460" fill="none" stroke="#e8f7ff" stroke-width="18" opacity="0.45" style="filter:blur(1px);"></path>
-            <path d="M235,440 Q400,300 600,200 Q810,270 960,460" fill="none" stroke="#ffffff" stroke-width="5" stroke-dasharray="4,14" opacity="0.85" style="animation:dashMove 2.5s linear infinite;"></path>
+          <svg viewBox="{{ subMapViewBox }}" style="{{ subMapSvgStyle }}">
+            <path d="{{ hailuuRoutePath }}" fill="none" stroke="#e8f7ff" stroke-width="18" opacity="0.45" style="filter:blur(1px);"></path>
+            <path d="{{ hailuuRoutePath }}" fill="none" stroke="#ffffff" stroke-width="5" stroke-dasharray="4,14" opacity="0.85" style="animation:dashMove 2.5s linear infinite;"></path>
           </svg>
+          <sc-if value="{{ isDesktopSubMap }}" hint-placeholder-val="{{ true }}">
           <div style="position:absolute; left:120px; top:345px; width:240px; height:230px; background:radial-gradient(circle, rgba(47,143,209,.35), transparent 70%); border-radius:50%; pointer-events:none;"></div>
           <div style="position:absolute; left:480px; top:100px; width:250px; height:220px; background:radial-gradient(ellipse, rgba(79,191,168,.3), transparent 70%); border-radius:50%; pointer-events:none;"></div>
           <div style="position:absolute; left:845px; top:360px; width:250px; height:230px; background:radial-gradient(circle, rgba(95,127,191,.3), transparent 70%); border-radius:50%; pointer-events:none;"></div>
+          </sc-if>
 
           <sc-for list="{{ hailuuIslets }}" as="il" hint-placeholder-count="3">
             <div style="{{ il.wrapStyle }}" onClick="{{ il.onClick }}" onMouseEnter="{{ il.onEnter }}" onMouseLeave="{{ il.onLeave }}">
@@ -409,7 +411,7 @@
         <sc-if value="{{ currentIslet.hasTools }}" hint-placeholder-val="{{ false }}">
           <div style="width:100%; display:flex; flex-direction:column; gap:10px; margin-top:4px;">
             <sc-for list="{{ currentIslet.tools }}" as="t" hint-placeholder-count="2">
-              <a href="{{ t.url }}" target="_blank" rel="noopener" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:14px; padding:13px 20px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; color:#5a3b22; cursor:pointer; box-shadow:0 5px 0 #b9761a; text-decoration:none; display:block;">⚔ {{ t.label }}</a>
+              <a href="{{ t.url }}" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:14px; padding:13px 20px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; color:#5a3b22; cursor:pointer; box-shadow:0 5px 0 #b9761a; text-decoration:none; display:block;">⚔ {{ t.label }}</a>
             </sc-for>
           </div>
         </sc-if>
@@ -430,15 +432,17 @@
       <div style="{{ subMapOuterStyle }}">
         <div style="{{ subMapCanvasStyle }}">
           <div style="position:absolute; inset:0; background:radial-gradient(ellipse at 60% 8%, rgba(255,255,255,.7), rgba(255,255,255,0) 55%); pointer-events:none;"></div>
-          <svg viewBox="0 0 1200 760" style="position:absolute; inset:0; width:1200px; height:760px; pointer-events:none;">
+          <svg viewBox="{{ subMapViewBox }}" style="{{ subMapSvgStyle }}">
             <path d="{{ zoneRoutePath }}" fill="none" stroke="#fff2c4" stroke-width="20" opacity="0.5" style="filter:blur(1px);"></path>
             <path d="{{ zoneRoutePath }}" fill="none" stroke="#ffe27a" stroke-width="6" stroke-dasharray="4,14" opacity="0.9" style="animation:dashMove 2.5s linear infinite;"></path>
           </svg>
+          <sc-if value="{{ isDesktopSubMap }}" hint-placeholder-val="{{ true }}">
           <div style="position:absolute; left:70px; top:480px; width:220px; height:220px; background:radial-gradient(circle, rgba(63,143,110,.35), transparent 70%); border-radius:50%; pointer-events:none;"></div>
           <div style="position:absolute; left:550px; top:55px; width:280px; height:220px; background:radial-gradient(ellipse, rgba(122,122,143,.3), transparent 70%); border-radius:50%; pointer-events:none;"></div>
           <div style="position:absolute; left:530px; top:530px; width:300px; height:190px; background:radial-gradient(ellipse, rgba(79,157,191,.25), transparent 70%); border-radius:50%; pointer-events:none;"></div>
           <div style="position:absolute; left:295px; top:245px; width:240px; height:220px; background:radial-gradient(circle, rgba(191,143,79,.28), transparent 70%); border-radius:50%; pointer-events:none;"></div>
           <div style="position:absolute; left:835px; top:310px; width:240px; height:220px; background:radial-gradient(circle, rgba(143,95,191,.26), transparent 70%); border-radius:50%; pointer-events:none;"></div>
+          </sc-if>
 
           <sc-for list="{{ anhSangZones }}" as="z" hint-placeholder-count="5">
             <div style="{{ z.wrapStyle }}" onClick="{{ z.onClick }}" onMouseEnter="{{ z.onEnter }}" onMouseLeave="{{ z.onLeave }}">
@@ -919,6 +923,24 @@ function islandPos(i, mobile) {
   return { x: ISLANDS[i].x, y: ISLANDS[i].y };
 }
 
+// Sub-map mobile layouts (Vùng Biển Hải Lưu / Đảo Ánh Sáng): the desktop
+// canvas is just uniformly scaled down (min 0.32x) on phones, which makes
+// labels unreadably small. These give phones their own taller, narrower
+// canvas with a vertical zig-zag arrangement instead.
+const SUBMAP_MOBILE_W = 480;
+const HAILUU_MOBILE_H = 1060;
+const HAILUU_MOBILE_POS = { 'song-ngam': [150,210], 'gio': [330,540], 'xoay-nuoc': [150,870] };
+const ANHSANG_MOBILE_H = 1790;
+const ANHSANG_MOBILE_POS = {
+  'rung-tia-chop': [150,210], 'cau-tri-thuc': [330,500], 'nui-dai-van': [150,800],
+  'thung-lung-song-anh': [330,1100], 'thanh-pho-la-ban': [150,1400]
+};
+const ANHSANG_BOSS_MOBILE = { x: 330, y: 1680 };
+function subPos(id, mobilePosMap, x, y, mobile) {
+  if (mobile && mobilePosMap[id]) return { x: mobilePosMap[id][0], y: mobilePosMap[id][1] };
+  return { x, y };
+}
+
 const ARC = {
   khoidong: '#3fae6e',
   chinhphuc: '#2f8fd1',
@@ -1139,8 +1161,19 @@ const ANHSANG_ZONES = [
       ], explain:'4kgは「5kgまで」の1,200円に該当し、離島加算300円を足すと1,500円。' } ] }
     ] }
 ];
-function buildZoneRoutePath() {
-  const pts = ANHSANG_ZONES.map(z => [z.x, z.y]);
+function buildZoneRoutePath(mobile) {
+  const pts = ANHSANG_ZONES.map(z => { const p = subPos(z.id, ANHSANG_MOBILE_POS, z.x, z.y, mobile); return [p.x, p.y]; });
+  const n = pts.length;
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = pts[i === 0 ? 0 : i - 1], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2 < n ? i + 2 : n - 1];
+    const t = 0.2;
+    d += ` C${(p1[0]+(p2[0]-p0[0])*t).toFixed(1)},${(p1[1]+(p2[1]-p0[1])*t).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])*t).toFixed(1)},${(p2[1]-(p3[1]-p1[1])*t).toFixed(1)} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+function buildHailuuRoutePath(mobile) {
+  const pts = HAILUU_ISLETS.map(z => { const p = subPos(z.id, HAILUU_MOBILE_POS, z.x, z.y, mobile); return [p.x, p.y]; });
   const n = pts.length;
   let d = `M${pts[0][0]},${pts[0][1]}`;
   for (let i = 0; i < n - 1; i++) {
@@ -1414,16 +1447,23 @@ class Component extends DCLogic {
     if (user && profile) screen = 'map';
     else if (user && !profile) screen = 'onboarding';
     let requestedIslandId = 0;
+    let requestedIsletId = null;
     try {
-      const islandParam = new URLSearchParams(window.location.search).get('island');
+      const qs = new URLSearchParams(window.location.search);
+      const islandParam = qs.get('island');
+      const isletParam = qs.get('islet');
       if (islandParam !== null && !isNaN(parseInt(islandParam, 10))) {
         requestedIslandId = parseInt(islandParam, 10);
         if (screen === 'map') screen = 'island';
       }
+      if (isletParam) {
+        requestedIsletId = isletParam;
+        if (screen === 'map' || screen === 'island') screen = 'hailuu-islet';
+      }
     } catch (e) {}
     return {
       screen, user, profile,
-      currentIslandId: requestedIslandId, cardIslandId: null,
+      currentIslandId: requestedIslandId, currentIsletId: requestedIsletId, cardIslandId: null,
       quizIndex: 0,
       selected: null,
       answered: false,
@@ -1482,7 +1522,7 @@ class Component extends DCLogic {
     const containerW = el ? el.clientWidth : (typeof window !== 'undefined' ? window.innerWidth - 24 : CANVAS_W);
     const mobile = containerW < 620;
   const scale = Math.max(0.2, Math.min(1, (containerW - 4) / (mobile ? MOBILE_W : CANVAS_W)));
-    const subScale = Math.max(0.32, Math.min(1, (containerW - 4) / SUBMAP_W));
+    const subScale = Math.max(0.32, Math.min(1, (containerW - 4) / (mobile ? SUBMAP_MOBILE_W : SUBMAP_W)));
     this.setState({ scale, subScale, mobile });
   };
   setMapOuterRef = (el) => { this._mapOuterRef = el; if (el) this.updateScale(); };
@@ -1915,7 +1955,7 @@ class Component extends DCLogic {
         artBgStyle: bgOf(ZONE_ART[z.id], { position:'relative', zIndex:1, width:'100%', aspectRatio:'1.3', animation: `bob ${(4.2 + ANHSANG_ZONES.indexOf(z) * 0.6).toFixed(1)}s ease-in-out infinite`, animationDelay: `-${(ANHSANG_ZONES.indexOf(z) * 1.3).toFixed(1)}s`, transition:'filter .3s', filter: s.hoverIslet === z.id ? `drop-shadow(0 0 16px ${z.color}) drop-shadow(0 12px 12px rgba(3,40,70,.38)) saturate(1.12) brightness(1.05)` : (completed ? 'drop-shadow(0 0 12px rgba(255,226,120,.85)) drop-shadow(0 9px 11px rgba(3,40,70,.3))' : 'drop-shadow(0 9px 11px rgba(3,40,70,.3))') }),
         onEnter: this.hoverIslet(z.id), onLeave: this.leaveIslet,
         mondaiText: z.mondai + ' – ' + z.type,
-        wrapStyle: { position:'absolute', left: z.x + 'px', top: z.y + 'px', transform: s.hoverIslet === z.id ? 'translate(-50%,-50%) translateY(-11px) scale(1.07)' : 'translate(-50%,-50%)', transition:'transform .32s cubic-bezier(.34,1.56,.64,1)', width:'216px', cursor:'pointer', textAlign:'center', zIndex: s.hoverIslet === z.id ? 8 : 2 },
+        wrapStyle: (p => ({ position:'absolute', left: p.x + 'px', top: p.y + 'px', transform: s.hoverIslet === z.id ? 'translate(-50%,-50%) translateY(-11px) scale(1.07)' : 'translate(-50%,-50%)', transition:'transform .32s cubic-bezier(.34,1.56,.64,1)', width:'216px', cursor:'pointer', textAlign:'center', zIndex: s.hoverIslet === z.id ? 8 : 2 }))(subPos(z.id, ANHSANG_MOBILE_POS, z.x, z.y, s.mobile)),
         haloStyle: { position:'absolute', left:'50%', bottom:'40px', width:'160px', height:'46px', transform:'translateX(-50%) scale(' + (s.hoverIslet === z.id ? 1 : .6) + ')', borderRadius:'50%', background:`radial-gradient(ellipse, ${z.color}cc, transparent 70%)`, opacity: s.hoverIslet === z.id ? .85 : 0, transition:'opacity .3s, transform .4s cubic-bezier(.34,1.56,.64,1)', pointerEvents:'none' },
         artStyle: { position:'relative', zIndex:1, width:'100%', display:'block', animation: `bob ${(4.2 + ANHSANG_ZONES.indexOf(z) * 0.6).toFixed(1)}s ease-in-out infinite`, animationDelay: `-${(ANHSANG_ZONES.indexOf(z) * 1.3).toFixed(1)}s`, transition:'filter .3s', filter: s.hoverIslet === z.id ? `drop-shadow(0 0 16px ${z.color}) drop-shadow(0 12px 12px rgba(3,40,70,.38)) saturate(1.12) brightness(1.05)` : (completed ? 'drop-shadow(0 0 12px rgba(255,226,120,.85)) drop-shadow(0 9px 11px rgba(3,40,70,.3))' : 'drop-shadow(0 9px 11px rgba(3,40,70,.3))') },
         blobStyle: { position:'relative', width:'78px', height:'78px', margin:'0 auto', borderRadius:'50%', background:`linear-gradient(180deg,${z.color},rgba(0,0,0,.15))`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow: completed ? '0 0 18px rgba(255,226,120,.85), 0 8px 14px rgba(0,0,0,.25)' : '0 8px 14px rgba(0,0,0,.25)', border: completed ? '3px solid #ffe9b0' : '3px solid rgba(255,255,255,.6)' },
@@ -1925,7 +1965,11 @@ class Component extends DCLogic {
     });
     const anhSangZoneCount = anhSangDone.length;
     const anhSangBossUnlockedBool = anhSangZoneCount >= 5;
-    const bossWrapStyle = { position:'absolute', left: ANHSANG_BOSS.x + 'px', top: ANHSANG_BOSS.y + 'px', transform:'translate(-50%,-50%)', width:'150px', cursor:'pointer', textAlign:'center', zIndex:3 };
+    const bossPos = subPos('boss', { boss: [ANHSANG_BOSS_MOBILE.x, ANHSANG_BOSS_MOBILE.y] }, ANHSANG_BOSS.x, ANHSANG_BOSS.y, s.mobile);
+    const bossWrapStyle = { position:'absolute', left: bossPos.x + 'px', top: bossPos.y + 'px', transform:'translate(-50%,-50%)', width:'150px', cursor:'pointer', textAlign:'center', zIndex:3 };
+    const isDesktopSubMap = !s.mobile;
+    const subCanvasW = s.mobile ? SUBMAP_MOBILE_W : SUBMAP_W;
+    const subCanvasH = s.mobile ? (s.screen === 'submap-anhsang' ? ANHSANG_MOBILE_H : HAILUU_MOBILE_H) : SUBMAP_H;
     const bossBlobStyle = { position:'relative', width:'112px', height:'112px', margin:'0 auto', borderRadius:'50%', fontSize:'42px', display:'flex', alignItems:'center', justifyContent:'center', background: anhSangBossUnlockedBool ? 'linear-gradient(180deg,#ffe27a,#d4af37)' : 'linear-gradient(180deg,#cfc3a3,#a99a77)', border: anhSangBossUnlockedBool ? '4px solid #fff2c4' : '4px solid rgba(255,255,255,.5)', boxShadow: anhSangBossUnlockedBool ? '0 0 26px rgba(255,226,120,.9), 0 8px 14px rgba(0,0,0,.3)' : '0 8px 14px rgba(0,0,0,.25)', animation: anhSangBossUnlockedBool ? 'glowPulse 2s ease-in-out infinite' : 'none' };
     const bossLabelStyle = { marginTop:'6px', fontFamily:"'Baloo 2',sans-serif", fontWeight:800, color:'#5a3b22', fontSize:'12px', background:'rgba(255,250,240,.92)', borderRadius:'8px', padding:'4px 8px' };
 
@@ -1934,7 +1978,7 @@ class Component extends DCLogic {
       artBgStyle: bgOf(z.art, { position:'relative', zIndex:1, width:'100%', aspectRatio:'1.35', animation: `bob ${4.4 + HAILUU_ISLETS.indexOf(z) * 0.7}s ease-in-out infinite`, animationDelay: `-${HAILUU_ISLETS.indexOf(z) * 1.5}s`, transition:'filter .3s', filter: s.hoverIslet === z.id ? `drop-shadow(0 0 18px ${z.color}) drop-shadow(0 14px 14px rgba(3,40,70,.4)) saturate(1.12) brightness(1.05)` : 'drop-shadow(0 10px 12px rgba(3,40,70,.32))' }),
       onClick: this.goToHaiLuuIslet(z.id),
       onEnter: this.hoverIslet(z.id), onLeave: this.leaveIslet,
-      wrapStyle: { position:'absolute', left: z.x + 'px', top: z.y + 'px', transform: s.hoverIslet === z.id ? 'translate(-50%,-50%) translateY(-12px) scale(1.07)' : 'translate(-50%,-50%)', transition:'transform .32s cubic-bezier(.34,1.56,.64,1)', width:'270px', cursor:'pointer', textAlign:'center', zIndex: s.hoverIslet === z.id ? 8 : 2 },
+      wrapStyle: (p => ({ position:'absolute', left: p.x + 'px', top: p.y + 'px', transform: s.hoverIslet === z.id ? 'translate(-50%,-50%) translateY(-12px) scale(1.07)' : 'translate(-50%,-50%)', transition:'transform .32s cubic-bezier(.34,1.56,.64,1)', width:'270px', cursor:'pointer', textAlign:'center', zIndex: s.hoverIslet === z.id ? 8 : 2 }))(subPos(z.id, HAILUU_MOBILE_POS, z.x, z.y, s.mobile)),
       haloStyle: { position:'absolute', left:'50%', bottom:'48px', width:'200px', height:'56px', transform:'translateX(-50%) scale(' + (s.hoverIslet === z.id ? 1 : .6) + ')', borderRadius:'50%', background:`radial-gradient(ellipse, ${z.color}cc, transparent 70%)`, opacity: s.hoverIslet === z.id ? .85 : 0, transition:'opacity .3s, transform .4s cubic-bezier(.34,1.56,.64,1)', pointerEvents:'none' },
       artStyle: { position:'relative', zIndex:1, width:'100%', display:'block', animation: `bob ${4.4 + HAILUU_ISLETS.indexOf(z) * 0.7}s ease-in-out infinite`, animationDelay: `-${HAILUU_ISLETS.indexOf(z) * 1.5}s`, transition:'filter .3s', filter: s.hoverIslet === z.id ? `drop-shadow(0 0 18px ${z.color}) drop-shadow(0 14px 14px rgba(3,40,70,.4)) saturate(1.12) brightness(1.05)` : 'drop-shadow(0 10px 12px rgba(3,40,70,.32))' },
       labelStyle: { position:'relative', zIndex:2, marginTop:'-4px', fontFamily:"'Baloo 2',sans-serif", fontWeight:800, color:'#5a3a18', fontSize:'14px', lineHeight:1.25, background:'linear-gradient(180deg,#f6e6c3,#e5cfa2)', border:'1.5px solid #b99a63', borderRadius:'6px', padding:'5px 10px', display:'inline-block', boxShadow:'0 4px 10px rgba(3,40,70,.28)' },
@@ -2021,13 +2065,17 @@ class Component extends DCLogic {
           descStyle: { color:'#5a3b22', fontSize:'13.5px', lineHeight:1.65, textAlign:'center', textWrap:'pretty' }
         };
       })(),
-      zoneRoutePath: buildZoneRoutePath(),
+      zoneRoutePath: buildZoneRoutePath(s.mobile),
+      hailuuRoutePath: buildHailuuRoutePath(s.mobile),
       anhSangZones, anhSangProgressLabel: `${anhSangZoneCount}/5 khu vực · Thư viện: ${p.anhSang.bossDone ? 'Đã mở' : (anhSangBossUnlockedBool ? 'Sẵn sàng' : 'Khóa')}`,
       goToAnhSangBoss: this.goToAnhSangBoss, backToSubMap: this.backToSubMap, bossWrapStyle, bossBlobStyle, bossLabelStyle,
       anhSangLibNodeStyle: bgOf(ANHSANG_LIB_ART, { width:'130px', height:'132px', margin:'0 auto', backgroundPosition:'center bottom', filter:'drop-shadow(0 8px 12px rgba(3,40,70,.4))', animation:'bob 6s ease-in-out infinite' }),
       anhSangBossArtStyle: bgOf(ANHSANG_BOSS_ART, { width:'220px', height:'210px', backgroundPosition:'center bottom', filter:'drop-shadow(0 10px 16px rgba(3,40,70,.5))', animation:'bob 4.4s ease-in-out infinite' }),
-      subMapOuterStyle: { position:'relative', width:'100%', height: (SUBMAP_H * s.subScale) + 'px', marginTop:'10px', borderRadius:'16px', overflowX:'hidden', overflowY:'hidden', border:'2px solid rgba(139,94,52,.3)' },
-      subMapCanvasStyle: { position:'relative', width: SUBMAP_W + 'px', height: SUBMAP_H + 'px', transform: `scale(${s.subScale})`, transformOrigin:'top left', marginRight: -(SUBMAP_W * (1 - s.subScale)) + 'px', marginBottom: -(SUBMAP_H * (1 - s.subScale)) + 'px' },
+      subMapOuterStyle: { position:'relative', width:'100%', height: (subCanvasH * s.subScale) + 'px', marginTop:'10px', borderRadius:'16px', overflowX:'hidden', overflowY:'hidden', border:'2px solid rgba(139,94,52,.3)' },
+      subMapCanvasStyle: { position:'relative', width: subCanvasW + 'px', height: subCanvasH + 'px', transform: `scale(${s.subScale})`, transformOrigin:'top left', marginRight: -(subCanvasW * (1 - s.subScale)) + 'px', marginBottom: -(subCanvasH * (1 - s.subScale)) + 'px' },
+      isDesktopSubMap,
+      subMapViewBox: `0 0 ${subCanvasW} ${subCanvasH}`,
+      subMapSvgStyle: { position:'absolute', inset:0, width: subCanvasW + 'px', height: subCanvasH + 'px', pointerEvents:'none' },
       currentZone,
       anhSangBossLocked: !anhSangBossUnlockedBool, anhSangBossUnlocked: anhSangBossUnlockedBool,
       anhSangBossDone: p.anhSang.bossDone, anhSangBossNotDone: !p.anhSang.bossDone, anhSangBossName: ANHSANG_BOSS.boss, completeAnhSangBoss: this.completeAnhSangBoss,
