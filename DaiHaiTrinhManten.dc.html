@@ -399,6 +399,10 @@
         <div style="color:#ffe9b0; font-size:13px; font-weight:700;">{{ currentIslet.skill }}</div>
         <div style="color:#cdeef2; font-size:14px; line-height:1.6;">{{ currentIslet.story }}</div>
         <div style="background:rgba(9,45,66,.5); border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:10px 16px; color:#ffe9b0; font-size:13px; font-weight:700;">🎁 Bảo Vật: {{ currentIslet.treasure }}</div>
+        <div style="background:rgba(255,233,176,.08); border:1px dashed rgba(255,233,176,.4); border-radius:14px; padding:14px 16px; color:#eaf6fb; font-size:12.5px; line-height:1.7; text-align:left;">
+          <div>🗺️ Chinh phục <b style="color:#ffe9b0;">50%</b> thử thách của đảo nhỏ để tìm thấy <b style="color:#ffe9b0;">Bảo Vật</b> giấu trong hải trình.</div>
+          <div>⚔️ Chinh phục <b style="color:#ffe9b0;">80%</b> để hạ gục <b style="color:#ffe9b0;">Thủ Hộ</b> và nhận <b style="color:#ffe9b0;">Chìa Khóa</b> mở Kho Báu Manten!</div>
+        </div>
         <sc-if value="{{ currentIslet.noTools }}" hint-placeholder-val="{{ true }}">
           <div style="background:rgba(9,45,66,.5); border:1px dashed rgba(255,255,255,.4); border-radius:14px; padding:16px; color:#cdeef2; font-size:13px;">Thử thách của đảo nhỏ này đang được Thủ Hộ chuẩn bị — bộ đề sẽ sớm ra mắt. Hẹn nhà thám hiểm quay lại sau!</div>
         </sc-if>
@@ -485,6 +489,11 @@
 
         <div style="background:rgba(9,45,66,.5); border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:10px 16px; color:#ffe9b0; font-size:13px; font-weight:700;">{{ currentZone.treasureEmoji }} Bảo Vật: {{ currentZone.treasure }}</div>
 
+        <div style="background:rgba(255,233,176,.08); border:1px dashed rgba(255,233,176,.4); border-radius:14px; padding:14px 16px; color:#eaf6fb; font-size:12.5px; line-height:1.7; text-align:left;">
+          <div>🗺️ Chinh phục <b style="color:#ffe9b0;">50%</b> thử thách của đảo nhỏ để tìm thấy <b style="color:#ffe9b0;">Bảo Vật</b> giấu trong hải trình.</div>
+          <div>⚔️ Chinh phục <b style="color:#ffe9b0;">80%</b> để hạ gục <b style="color:#ffe9b0;">Thủ Hộ</b> và nhận <b style="color:#ffe9b0;">Chìa Khóa</b> mở Kho Báu Manten!</div>
+        </div>
+
         <sc-if value="{{ currentZone.hasTools }}" hint-placeholder-val="{{ false }}">
           <div style="width:100%; display:flex; flex-direction:column; gap:10px; margin-top:4px;">
             <sc-for list="{{ currentZone.tools }}" as="t" hint-placeholder-count="1">
@@ -555,6 +564,13 @@
         <div style="color:#ffe9b0; font-size:13px; font-weight:700;">{{ currentIsland.skill }}</div>
         <div style="color:#cdeef2; font-size:14px; line-height:1.6;">{{ currentIsland.story }}</div>
         <div style="background:rgba(9,45,66,.5); border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:10px 16px; color:#ffe9b0; font-size:13px; font-weight:700;">🎁 Bảo Vật: {{ currentIsland.item }}</div>
+
+        <sc-if value="{{ currentIsland.showRewardNote }}" hint-placeholder-val="{{ true }}">
+          <div style="background:rgba(255,233,176,.08); border:1px dashed rgba(255,233,176,.4); border-radius:14px; padding:14px 16px; color:#eaf6fb; font-size:12.5px; line-height:1.7; text-align:left;">
+            <div>🗺️ Chinh phục <b style="color:#ffe9b0;">50%</b> thử thách của đảo để tìm thấy <b style="color:#ffe9b0;">Bảo Vật</b> giấu trong hải trình.</div>
+            <div>⚔️ Chinh phục <b style="color:#ffe9b0;">80%</b> để hạ gục <b style="color:#ffe9b0;">Thủ Hộ Đảo</b> và nhận <b style="color:#ffe9b0;">Chìa Khóa</b> mở Kho Báu Manten!</div>
+          </div>
+        </sc-if>
 
         <sc-if value="{{ currentIsland.comingSoon }}" hint-placeholder-val="{{ false }}">
           <div style="background:rgba(9,45,66,.5); border:1px dashed rgba(255,255,255,.4); border-radius:14px; padding:16px; color:#cdeef2; font-size:13px;">Thử thách của đảo này đang được Thủ Hộ Đảo chuẩn bị — nhiều bộ đề và bài học sẽ sớm ra mắt. Hẹn nhà thám hiểm quay lại sau!</div>
@@ -1397,9 +1413,17 @@ class Component extends DCLogic {
     let screen = 'auth';
     if (user && profile) screen = 'map';
     else if (user && !profile) screen = 'onboarding';
+    let requestedIslandId = 0;
+    try {
+      const islandParam = new URLSearchParams(window.location.search).get('island');
+      if (islandParam !== null && !isNaN(parseInt(islandParam, 10))) {
+        requestedIslandId = parseInt(islandParam, 10);
+        if (screen === 'map') screen = 'island';
+      }
+    } catch (e) {}
     return {
       screen, user, profile,
-      currentIslandId: 0, cardIslandId: null,
+      currentIslandId: requestedIslandId, cardIslandId: null,
       quizIndex: 0,
       selected: null,
       answered: false,
@@ -2062,6 +2086,7 @@ class Component extends DCLogic {
         external: currentIslandData.external, menuUrl: currentIslandData.menuUrl,
         menuTools: currentIslandData.menuTools || [], hasMenuTools: !!(currentIslandData.menuTools && currentIslandData.menuTools.length),
         externalNoTools: !!currentIslandData.external && !(currentIslandData.menuTools && currentIslandData.menuTools.length),
+        showRewardNote: !currentIslandData.isTreasure,
         setStatusLabel: `📋 ${islandEntry.done.length}/${(currentIslandData.sets || []).length} bộ đề · cần ≥2 để đánh bại Thủ Hộ`,
         guardianBadge: { width:'108px', height:'108px', borderRadius:'50%', background:'rgba(255,255,255,.12)', border:'3px solid #ffe9b0', display:'flex', alignItems:'center', justifyContent:'center', padding:'10px' }
       },
