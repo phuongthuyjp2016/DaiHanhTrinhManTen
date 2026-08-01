@@ -501,7 +501,7 @@
         <sc-if value="{{ currentZone.hasTools }}" hint-placeholder-val="{{ false }}">
           <div style="width:100%; display:flex; flex-direction:column; gap:10px; margin-top:4px;">
             <sc-for list="{{ currentZone.tools }}" as="t" hint-placeholder-count="1">
-              <a href="{{ t.url }}" target="_blank" rel="noopener" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:14px; padding:13px 20px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; color:#5a3b22; cursor:pointer; box-shadow:0 5px 0 #b9761a; text-decoration:none; display:block;">⚔ {{ t.label }}</a>
+              <a href="{{ t.url }}" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:14px; padding:13px 20px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; color:#5a3b22; cursor:pointer; box-shadow:0 5px 0 #b9761a; text-decoration:none; display:block;">⚔ {{ t.label }}</a>
             </sc-for>
           </div>
         </sc-if>
@@ -1455,10 +1455,12 @@ class Component extends DCLogic {
     else if (user && !profile) screen = 'onboarding';
     let requestedIslandId = 0;
     let requestedIsletId = null;
+    let requestedZoneId = null;
     try {
       const qs = new URLSearchParams(window.location.search);
       const islandParam = qs.get('island');
       const isletParam = qs.get('islet');
+      const zoneParam = qs.get('zone');
       if (islandParam !== null && !isNaN(parseInt(islandParam, 10))) {
         requestedIslandId = parseInt(islandParam, 10);
         if (screen === 'map') screen = 'island';
@@ -1467,17 +1469,21 @@ class Component extends DCLogic {
         requestedIsletId = isletParam;
         if (screen === 'map' || screen === 'island') screen = 'hailuu-islet';
       }
+      if (zoneParam) {
+        requestedZoneId = zoneParam;
+        if (screen === 'map' || screen === 'island') screen = 'anhsang-zone';
+      }
     } catch (e) {}
     return {
       screen, user, profile,
-      currentIslandId: requestedIslandId, currentIsletId: requestedIsletId, cardIslandId: null,
+      currentIslandId: requestedIslandId, currentIsletId: requestedIsletId, currentZoneId: requestedZoneId || 'rung-tia-chop', cardIslandId: null,
       quizIndex: 0,
       selected: null,
       answered: false,
       correctCount: 0,
       progress: loadProgress(),
       scale: 1, subScale: 1,
-      zooming: false, zoomOrigin: null, currentZoneId: 'rung-tia-chop',
+      zooming: false, zoomOrigin: null,
       quizKind: 'island', quizNodeId: 0, quizSetIndex: 0, resultKind: 'set',
       obName: '', obAvatarIdx: 0, obFlagIdx: 0, obHouseIdx: 0, obShipIdx: 0,
       redeemInput: '', redeemError: '', redeemSuccess: null, showUnlockAnim: false,
