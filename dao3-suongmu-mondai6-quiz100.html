@@ -120,6 +120,27 @@
     padding:12px 16px; margin-top:16px; font-size:0.88rem; color:var(--accent2);
   }
   footer{text-align:center; color:var(--muted); font-size:0.8rem; margin-top:30px;}
+  .exp-toast{position:fixed;top:18%;left:50%;transform:translate(-50%,-10px);background:linear-gradient(180deg,#ffd25a,#f5a623);color:#5a3b22;font-weight:800;padding:10px 22px;border-radius:20px;box-shadow:0 6px 18px rgba(0,0,0,.28);z-index:9999;text-align:center;pointer-events:none;animation:expPop .35s ease-out;}
+  .exp-toast-main{font-size:20px;line-height:1.2;}
+  .exp-toast-sub{font-size:12px;font-weight:700;margin-top:2px;opacity:.85;}
+  .exp-toast-big{background:linear-gradient(180deg,#ff9a56,#ff5b3a);color:#fff;box-shadow:0 8px 22px rgba(255,90,40,.5);}
+  .exp-toast-big .exp-toast-main{font-size:24px;}
+  .exp-toast-out{animation:expFade .5s ease-in forwards;}
+  .combo-toast{position:fixed;top:76px;right:20px;background:#fef3c7;color:#d97706;border:1px solid #fcd34d;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:500;z-index:9998;opacity:0;transform:translateY(-8px);transition:all .3s;pointer-events:none;}
+  .combo-toast.show{opacity:1;transform:translateY(0);}
+  .coin-burst-overlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+  .coin-burst-card{position:relative;background:linear-gradient(180deg,#fff6d9,#ffe9b0);border:3px solid #f5a623;border-radius:24px;padding:26px 40px;box-shadow:0 20px 60px rgba(0,0,0,.45), 0 0 40px rgba(255,210,90,.6);text-align:center;animation:coinPop .5s cubic-bezier(.34,1.56,.64,1);}
+  .coin-burst-icon{font-size:56px;animation:coinSpin .6s ease-out;}
+  .coin-burst-text{font-weight:800;font-size:28px;color:#8b5e34;margin-top:6px;text-shadow:0 2px 0 #fff8e6;}
+  .coin-burst-sub{font-size:13px;font-weight:700;color:#a3792a;margin-top:2px;}
+  .coin-burst-out{animation:coinFadeOut .4s ease-in forwards;}
+  .coin-particle{position:absolute;font-size:20px;left:50%;top:50%;animation:coinFly 900ms ease-out forwards;pointer-events:none;}
+  @keyframes expPop{0%{transform:translate(-50%,10px) scale(.7);opacity:0;}60%{transform:translate(-50%,-14px) scale(1.08);opacity:1;}100%{transform:translate(-50%,-10px) scale(1);opacity:1;}}
+  @keyframes expFade{0%{opacity:1;transform:translate(-50%,-10px) scale(1);}100%{opacity:0;transform:translate(-50%,-30px) scale(.9);}}
+  @keyframes coinPop{0%{transform:scale(.3);opacity:0;}60%{transform:scale(1.15);opacity:1;}100%{transform:scale(1);opacity:1;}}
+  @keyframes coinSpin{0%{transform:rotateY(0deg) scale(.5);}100%{transform:rotateY(360deg) scale(1);}}
+  @keyframes coinFadeOut{0%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(.85);}}
+  @keyframes coinFly{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(.4);opacity:0;}}
 </style>
 </head>
 <body>
@@ -682,6 +703,131 @@ function clearProgress(){
   try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
 }
 
+const EVER_CORRECT_KEY = 'mondai6_100_ever_correct';
+let everCorrect = new Set(JSON.parse(localStorage.getItem(EVER_CORRECT_KEY) || '[]'));
+function reportToolProgress(correct, total) {
+  try {
+    const key = 'dc_tool_progress';
+    const all = JSON.parse(localStorage.getItem(key) || '{}');
+    all['dao3-suongmu-mondai6-quiz100.html'] = { correct, total };
+    localStorage.setItem(key, JSON.stringify(all));
+  } catch (e) {}
+}
+reportToolProgress(everCorrect.size, TOTAL);
+
+const EXP_PER_CORRECT = 5;
+const COMBO_TARGET = 10;
+const COMBO_BONUS = 50;
+let comboCount = 0;
+const HYPE_MESSAGES = ['Xuất sắc!', 'Đỉnh của chóp!', 'Cứ thế phát huy nhé!', 'Quá đỉnh!', 'N1 đang trong tầm tay!', 'Không gì cản được bạn!', 'Chuẩn không cần chỉnh!', 'Học vậy mới máu!'];
+
+function loadLocalProfile() {
+  try { const r = localStorage.getItem('dhtm_profile_v1'); return r ? JSON.parse(r) : null; } catch (e) { return null; }
+}
+function saveLocalProfile(p) {
+  try { localStorage.setItem('dhtm_profile_v1', JSON.stringify(p)); } catch (e) {}
+}
+function awardExp(amount) {
+  const profile = loadLocalProfile();
+  if (!profile) return false;
+  let exp = (profile.exp || 0) + amount, level = profile.level || 1, expToNext = profile.expToNext || 100;
+  let leveledUp = false;
+  while (exp >= expToNext) { exp -= expToNext; level += 1; expToNext = Math.round(expToNext * 1.25); leveledUp = true; }
+  profile.exp = exp; profile.level = level; profile.expToNext = expToNext;
+  saveLocalProfile(profile);
+  return leveledUp;
+}
+function pickHype() { return HYPE_MESSAGES[Math.floor(Math.random() * HYPE_MESSAGES.length)]; }
+function showExpToast(mainText, subText, big) {
+  document.querySelectorAll('.exp-toast').forEach(t => t.remove());
+  const wrap = document.createElement('div');
+  wrap.className = 'exp-toast' + (big ? ' exp-toast-big' : '');
+  const line1 = document.createElement('div');
+  line1.className = 'exp-toast-main';
+  line1.textContent = mainText;
+  const line2 = document.createElement('div');
+  line2.className = 'exp-toast-sub';
+  line2.textContent = subText;
+  wrap.appendChild(line1);
+  wrap.appendChild(line2);
+  document.body.appendChild(wrap);
+  setTimeout(() => { wrap.classList.add('exp-toast-out'); }, 900);
+  setTimeout(() => { wrap.remove(); }, 1400);
+}
+function showComboToast(n) {
+  let el = document.getElementById('combo-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'combo-toast';
+    el.className = 'combo-toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = '🔥 Chuỗi ' + n + ' câu đúng';
+  el.classList.add('show');
+  clearTimeout(window._comboToastTimer);
+  window._comboToastTimer = setTimeout(() => { el.classList.remove('show'); }, 1500);
+}
+function showCoinBurst(amount) {
+  const overlay = document.createElement('div');
+  overlay.className = 'coin-burst-overlay';
+  const card = document.createElement('div');
+  card.className = 'coin-burst-card';
+  const icon = document.createElement('div');
+  icon.className = 'coin-burst-icon';
+  icon.textContent = '🪙';
+  const text = document.createElement('div');
+  text.className = 'coin-burst-text';
+  text.textContent = '+' + amount + ' Xu!';
+  const sub = document.createElement('div');
+  sub.className = 'coin-burst-sub';
+  sub.textContent = 'Nhặt được xu may mắn!';
+  card.appendChild(icon);
+  card.appendChild(text);
+  card.appendChild(sub);
+  overlay.appendChild(card);
+  for (let i = 0; i < 14; i++) {
+    const pt = document.createElement('div');
+    pt.className = 'coin-particle';
+    pt.textContent = '🪙';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 140;
+    pt.style.setProperty('--dx', (Math.cos(angle) * dist) + 'px');
+    pt.style.setProperty('--dy', (Math.sin(angle) * dist) + 'px');
+    overlay.appendChild(pt);
+  }
+  document.body.appendChild(overlay);
+  setTimeout(() => { card.classList.add('coin-burst-out'); }, 1200);
+  setTimeout(() => { overlay.remove(); }, 1700);
+}
+function maybeDropCoins() {
+  if (Math.random() >= 0.35) return;
+  const amount = 5 + Math.floor(Math.random() * 21);
+  const profile = loadLocalProfile();
+  if (profile) {
+    profile.coins = (profile.coins || 0) + amount;
+    saveLocalProfile(profile);
+  }
+  showCoinBurst(amount);
+}
+function onCorrectAnswer() {
+  comboCount++;
+  let gained = EXP_PER_CORRECT;
+  let big = false;
+  let sub = pickHype();
+  if (comboCount >= 2) showComboToast(comboCount);
+  if (comboCount > 0 && comboCount % COMBO_TARGET === 0) {
+    gained += COMBO_BONUS;
+    big = true;
+    sub = 'Chuỗi ' + comboCount + ' câu đúng — Bùng nổ!';
+  }
+  const leveledUp = awardExp(gained);
+  showExpToast('+' + gained + ' EXP', leveledUp ? 'LÊN CẤP! 🎉' : sub, big || leveledUp);
+  maybeDropCoins();
+}
+function onWrongAnswer() {
+  comboCount = 0;
+}
+
 function renderSetSelector(){
   let html = '';
   const saved = loadProgress();
@@ -808,7 +954,18 @@ function onAnswer(btn, q){
     else if(i===picked) b.classList.add('wrong');
     b.disabled = true;
   });
-  if(picked===correctChoiceNum) score++;
+  if(picked===correctChoiceNum) {
+    score++;
+    const globalIdx = currentSet*SET_SIZE+idxInSet;
+    if(!everCorrect.has(globalIdx)){
+      everCorrect.add(globalIdx);
+      try{ localStorage.setItem(EVER_CORRECT_KEY, JSON.stringify([...everCorrect])); }catch(e){}
+      reportToolProgress(everCorrect.size, TOTAL);
+    }
+    onCorrectAnswer();
+  } else {
+    onWrongAnswer();
+  }
   document.getElementById('scoreNum').textContent = score;
   saveProgress();
   document.getElementById('explainBox').classList.add('show');

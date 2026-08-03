@@ -1068,7 +1068,8 @@ const ISLANDS = [
       { icon:'🗂️', title:'Flashcard Ngữ Pháp N1', desc:'Lật thẻ ôn nhanh các mẫu ngữ pháp N1 quan trọng.', url:'dao3-suongmu-flashcard.html' },
       { icon:'⭐', title:'Mondai 6 · Điền Sao (100 câu)', desc:'Luyện dạng bài sắp xếp câu ★ với 100 câu hỏi chọn lọc.', url:'dao3-suongmu-mondai6-quiz100.html' },
       { icon:'🌟', title:'Mondai 6 · Điền Sao (320 câu)', desc:'Bộ đề đầy đủ 320 câu dạng sắp xếp câu ★ cho Mondai 6.', url:'dao3-suongmu-mondai6-quiz320.html' }
-    ] },
+    ],
+    progressTools:['dao3-suongmu-powerdrill-full30.html','dao3-suongmu-mondai6-quiz100.html','dao3-suongmu-mondai6-quiz320.html'] },
   { name:'Đảo Kiếm Sĩ', skill:'Nghe Hiểu · Loại Đáp Án Sai (MD4)', boss:'Cá Mập Kiếm Sĩ', item:'Kiếm Phá Bẫy', arc:'chinhphuc', color:'#bf6f4f', dark:'#8c4f36', x:1130, y:250, accessory:'bandana',
     story:'Cá Mập Kiếm Sĩ rèn luyện khả năng chém phăng những đáp án gây nhiễu trong bài nghe.',
     playable:false, comingSoon:true, quiz:[] },
@@ -1595,12 +1596,12 @@ class Component extends DCLogic {
       if (!isl.progressTools || !isl.progressTools.length) return;
       const tp = computeToolProgress(isl.progressTools);
       if (!tp.has) return;
-      if (tp.pct >= 50 && !treasures.includes(i)) {
+      if (tp.pct >= 2 && !treasures.includes(i)) {
         treasures = [...treasures, i]; changed = true;
         if (newlyFoundIdx === null) newlyFoundIdx = i;
         if (profile) { badges = [...badges, isl.item]; log = [...log, { date: todayStr(), text: `Tìm thấy ${isl.item} tại ${isl.name}!` }]; }
       }
-      if (tp.pct >= 80 && !completed.includes(i)) {
+      if (tp.pct >= 2 && !completed.includes(i)) {
         completed = [...completed, i]; changed = true;
         if (newlyGuardianIdx === null) { newlyGuardianIdx = i; newlyGuardianPct = tp.pct; }
         if (profile) { badges = [...badges, `Chìa Khóa Manten: ${isl.name}`]; log = [...log, { date: todayStr(), text: `Đánh bại ${isl.boss} tại ${isl.name}, nhận Chìa Khóa Manten!` }]; keysGained += 1; }
