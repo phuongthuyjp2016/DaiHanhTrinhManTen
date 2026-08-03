@@ -1587,24 +1587,35 @@ class Component extends DCLogic {
   syncProgressBarRewards = () => {
     const p = this.state.progress;
     let treasures = p.treasures, completed = p.completed, changed = false, newlyFoundIdx = null, newlyGuardianIdx = null, newlyGuardianPct = 0;
+    let profile = this.state.profile;
+    let badges = profile ? profile.badges : null;
+    let log = profile ? profile.log : null;
+    let keysGained = 0;
     ISLANDS.forEach((isl, i) => {
       if (!isl.progressTools || !isl.progressTools.length) return;
       const tp = computeToolProgress(isl.progressTools);
       if (!tp.has) return;
-      if (tp.pct >= 13 && !treasures.includes(i)) { treasures = [...treasures, i]; changed = true; if (newlyFoundIdx === null) newlyFoundIdx = i; }
-      if (tp.pct >= 14 && !completed.includes(i)) { completed = [...completed, i]; changed = true; if (newlyGuardianIdx === null) { newlyGuardianIdx = i; newlyGuardianPct = tp.pct; } }
+      if (tp.pct >= 50 && !treasures.includes(i)) {
+        treasures = [...treasures, i]; changed = true;
+        if (newlyFoundIdx === null) newlyFoundIdx = i;
+        if (profile) { badges = [...badges, isl.item]; log = [...log, { date: todayStr(), text: `Tìm thấy ${isl.item} tại ${isl.name}!` }]; }
+      }
+      if (tp.pct >= 80 && !completed.includes(i)) {
+        completed = [...completed, i]; changed = true;
+        if (newlyGuardianIdx === null) { newlyGuardianIdx = i; newlyGuardianPct = tp.pct; }
+        if (profile) { badges = [...badges, `Chìa Khóa Manten: ${isl.name}`]; log = [...log, { date: todayStr(), text: `Đánh bại ${isl.boss} tại ${isl.name}, nhận Chìa Khóa Manten!` }]; keysGained += 1; }
+      }
     });
     if (!changed) return;
     const newProgress = { ...p, treasures, completed };
     saveProgress(newProgress);
     const patch = { progress: newProgress };
+    if (profile && (keysGained > 0 || newlyFoundIdx !== null)) {
+      profile = { ...profile, badges, log, keys: (profile.keys || 0) + keysGained };
+      saveProfile(profile);
+      patch.profile = profile;
+    }
     if (newlyGuardianIdx !== null) {
-      let profile = this.state.profile;
-      if (profile) {
-        profile = { ...profile, keys: (profile.keys || 0) + 1 };
-        saveProfile(profile);
-        patch.profile = profile;
-      }
       patch.screen = 'key-reward';
       patch.keyRewardPct = newlyGuardianPct;
       patch.pendingTreasureModal = newlyFoundIdx;

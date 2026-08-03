@@ -159,6 +159,17 @@
   .exp-toast-out{animation:expFade .5s ease-in forwards;}
   @keyframes expPop{0%{transform:translate(-50%,10px) scale(.7);opacity:0;}60%{transform:translate(-50%,-14px) scale(1.08);opacity:1;}100%{transform:translate(-50%,-10px) scale(1);opacity:1;}}
   @keyframes expFade{0%{opacity:1;transform:translate(-50%,-10px) scale(1);}100%{opacity:0;transform:translate(-50%,-30px) scale(.9);}}
+  .coin-burst-overlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+  .coin-burst-card{position:relative;background:linear-gradient(180deg,#fff6d9,#ffe9b0);border:3px solid #f5a623;border-radius:24px;padding:26px 40px;box-shadow:0 20px 60px rgba(0,0,0,.45), 0 0 40px rgba(255,210,90,.6);text-align:center;animation:coinPop .5s cubic-bezier(.34,1.56,.64,1);}
+  .coin-burst-icon{font-size:56px;animation:coinSpin .6s ease-out;}
+  .coin-burst-text{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:28px;color:#8b5e34;margin-top:6px;text-shadow:0 2px 0 #fff8e6;}
+  .coin-burst-sub{font-size:13px;font-weight:700;color:#a3792a;margin-top:2px;}
+  .coin-burst-out{animation:coinFadeOut .4s ease-in forwards;}
+  .coin-particle{position:absolute;font-size:20px;left:50%;top:50%;animation:coinFly 900ms ease-out forwards;pointer-events:none;}
+  @keyframes coinPop{0%{transform:scale(.3);opacity:0;}60%{transform:scale(1.15);opacity:1;}100%{transform:scale(1);opacity:1;}}
+  @keyframes coinSpin{0%{transform:rotateY(0deg) scale(.5);}100%{transform:rotateY(360deg) scale(1);}}
+  @keyframes coinFadeOut{0%{opacity:1;transform:scale(1);}100%{opacity:0;transform:scale(.85);}}
+  @keyframes coinFly{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(.4);opacity:0;}}
 </style>
 </head>
 <body>
@@ -498,6 +509,48 @@ function showExpToast(mainText, subText, big) {
   setTimeout(() => { wrap.classList.add('exp-toast-out'); }, 900);
   setTimeout(() => { wrap.remove(); }, 1400);
 }
+function showCoinBurst(amount) {
+  const overlay = document.createElement('div');
+  overlay.className = 'coin-burst-overlay';
+  const card = document.createElement('div');
+  card.className = 'coin-burst-card';
+  const icon = document.createElement('div');
+  icon.className = 'coin-burst-icon';
+  icon.textContent = '🪙';
+  const text = document.createElement('div');
+  text.className = 'coin-burst-text';
+  text.textContent = '+' + amount + ' Xu!';
+  const sub = document.createElement('div');
+  sub.className = 'coin-burst-sub';
+  sub.textContent = 'Nhặt được xu may mắn!';
+  card.appendChild(icon);
+  card.appendChild(text);
+  card.appendChild(sub);
+  overlay.appendChild(card);
+  for (let i = 0; i < 14; i++) {
+    const pt = document.createElement('div');
+    pt.className = 'coin-particle';
+    pt.textContent = '🪙';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 140;
+    pt.style.setProperty('--dx', (Math.cos(angle) * dist) + 'px');
+    pt.style.setProperty('--dy', (Math.sin(angle) * dist) + 'px');
+    overlay.appendChild(pt);
+  }
+  document.body.appendChild(overlay);
+  setTimeout(() => { card.classList.add('coin-burst-out'); }, 1200);
+  setTimeout(() => { overlay.remove(); }, 1700);
+}
+function maybeDropCoins() {
+  if (Math.random() >= 0.35) return;
+  const amount = 5 + Math.floor(Math.random() * 21);
+  const profile = loadLocalProfile();
+  if (profile) {
+    profile.coins = (profile.coins || 0) + amount;
+    saveLocalProfile(profile);
+  }
+  showCoinBurst(amount);
+}
 function onCorrectAnswer(comboCount) {
   let gained = EXP_PER_CORRECT;
   let big = false;
@@ -509,6 +562,7 @@ function onCorrectAnswer(comboCount) {
   }
   const leveledUp = awardExp(gained);
   showExpToast('+' + gained + ' EXP', leveledUp ? 'LÊN CẤP! 🎉' : sub, big || leveledUp);
+  maybeDropCoins();
 }
 
 function markEverCorrect(vocabKey) {
@@ -885,7 +939,7 @@ function pick(i) {
     wrongBefore: wrongList.map(w=>w[0])
   });
 
-  if (isOk) { okCount++; streak++; if(streak>=3) showStreak(); markEverCorrect(card[0]); onCorrectAnswer(streak); }
+  if (isOk) { okCount++; streak++; if(streak>=2) showStreak(); markEverCorrect(card[0]); onCorrectAnswer(streak); }
   else { ngCount++; streak=0; if(!wrongList.find(w=>w[0]===card[0])) wrongList.push(card); }
 
   opts.forEach((o,j) => {
@@ -957,7 +1011,7 @@ function goBack() {
 
 function showStreak() {
   const t = document.getElementById('streak-toast');
-  t.textContent = '🔥 Chuỗi '+streak+' câu đúng!';
+  t.textContent = '🔥 Chuỗi '+streak+' câu đúng';
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
