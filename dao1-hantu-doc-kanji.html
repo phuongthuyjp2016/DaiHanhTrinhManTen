@@ -428,6 +428,16 @@ header span{font-size:.8rem;color:#b0a898;}
 .btn-menu-back{background:transparent;border:2px solid var(--ink);color:var(--ink);}
 .btn-wrong-only{background:var(--ink);color:white;border:none;}
 @media(max-width:480px){.choices{grid-template-columns:1fr;}.round-grid{grid-template-columns:repeat(4,1fr);}}
+.exp-toast{position:fixed;top:18%;left:50%;transform:translate(-50%,-10px);background:linear-gradient(180deg,#ffd25a,#f5a623);color:#5a3b22;font-family:'Baloo 2',sans-serif;font-weight:800;padding:10px 22px;border-radius:20px;box-shadow:0 6px 18px rgba(0,0,0,.28);z-index:9999;text-align:center;pointer-events:none;animation:expPop .35s ease-out;}
+.exp-toast-main{font-size:20px;line-height:1.2;}
+.exp-toast-sub{font-size:12px;font-weight:700;margin-top:2px;opacity:.85;}
+.exp-toast-big{background:linear-gradient(180deg,#ff9a56,#ff5b3a);color:#fff;box-shadow:0 8px 22px rgba(255,90,40,.5);}
+.exp-toast-big .exp-toast-main{font-size:24px;}
+.exp-toast-out{animation:expFade .5s ease-in forwards;}
+@keyframes expPop{0%{transform:translate(-50%,10px) scale(.7);opacity:0;}60%{transform:translate(-50%,-14px) scale(1.08);opacity:1;}100%{transform:translate(-50%,-10px) scale(1);opacity:1;}}
+@keyframes expFade{0%{opacity:1;transform:translate(-50%,-10px) scale(1);}100%{opacity:0;transform:translate(-50%,-30px) scale(.9);}}
+.combo-toast{position:fixed;top:76px;right:20px;background:#fef3c7;color:#d97706;border:1px solid #fcd34d;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:500;z-index:9998;opacity:0;transform:translateY(-8px);transition:all .3s;pointer-events:none;}
+.combo-toast.show{opacity:1;transform:translateY(0);}
 </style>
 </head>
 <body>
@@ -916,6 +926,86 @@ let allWrong=JSON.parse(localStorage.getItem('jlpt_wrong')||'[]');
 let allCorrect=JSON.parse(localStorage.getItem('jlpt_correct')||'[]');
 let savedSession=JSON.parse(localStorage.getItem('jlpt_session')||'null');
 
+function reportToolProgress(correct,total){
+  try{
+    const key='dc_tool_progress';
+    const all=JSON.parse(localStorage.getItem(key)||'{}');
+    all['dao1-hantu-doc-kanji.html']={correct,total};
+    localStorage.setItem(key,JSON.stringify(all));
+  }catch(e){}
+}
+
+const EXP_PER_CORRECT=5;
+const COMBO_TARGET=10;
+const COMBO_BONUS=50;
+let comboCount=0;
+const HYPE_MESSAGES=['Xuất sắc!','Đỉnh của chóp!','Cứ thế phát huy nhé!','Quá đỉnh!','N1 đang trong tầm tay!','Không gì cản được bạn!','Chuẩn không cần chỉnh!','Học vậy mới máu!'];
+
+function loadLocalProfile(){
+  try{const r=localStorage.getItem('dhtm_profile_v1');return r?JSON.parse(r):null;}catch(e){return null;}
+}
+function saveLocalProfile(p){
+  try{localStorage.setItem('dhtm_profile_v1',JSON.stringify(p));}catch(e){}
+}
+function awardExp(amount){
+  const profile=loadLocalProfile();
+  if(!profile)return false;
+  let exp=(profile.exp||0)+amount, level=profile.level||1, expToNext=profile.expToNext||100;
+  let leveledUp=false;
+  while(exp>=expToNext){exp-=expToNext;level+=1;expToNext=Math.round(expToNext*1.25);leveledUp=true;}
+  profile.exp=exp;profile.level=level;profile.expToNext=expToNext;
+  saveLocalProfile(profile);
+  return leveledUp;
+}
+function pickHype(){return HYPE_MESSAGES[Math.floor(Math.random()*HYPE_MESSAGES.length)];}
+function showExpToast(mainText,subText,big){
+  document.querySelectorAll('.exp-toast').forEach(t=>t.remove());
+  const wrap=document.createElement('div');
+  wrap.className='exp-toast'+(big?' exp-toast-big':'');
+  const line1=document.createElement('div');
+  line1.className='exp-toast-main';
+  line1.textContent=mainText;
+  const line2=document.createElement('div');
+  line2.className='exp-toast-sub';
+  line2.textContent=subText;
+  wrap.appendChild(line1);
+  wrap.appendChild(line2);
+  document.body.appendChild(wrap);
+  setTimeout(()=>{wrap.classList.add('exp-toast-out');},900);
+  setTimeout(()=>{wrap.remove();},1400);
+}
+function showComboToast(n){
+  let el=document.getElementById('combo-toast');
+  if(!el){
+    el=document.createElement('div');
+    el.id='combo-toast';
+    el.className='combo-toast';
+    document.body.appendChild(el);
+  }
+  el.textContent='🔥 Chuỗi '+n+' câu đúng';
+  el.classList.add('show');
+  clearTimeout(window._comboToastTimer);
+  window._comboToastTimer=setTimeout(()=>{el.classList.remove('show');},1500);
+}
+function onCorrectAnswer(){
+  comboCount++;
+  let gained=EXP_PER_CORRECT;
+  let big=false;
+  let sub=pickHype();
+  if(comboCount>=2)showComboToast(comboCount);
+  if(comboCount>0 && comboCount%COMBO_TARGET===0){
+    gained+=COMBO_BONUS;
+    big=true;
+    sub='Chuỗi '+comboCount+' câu đúng — Bùng nổ!';
+  }
+  const leveledUp=awardExp(gained);
+  showExpToast('+'+gained+' EXP', leveledUp?'LÊN CẤP! 🎉':sub, big||leveledUp);
+}
+function onWrongAnswer(){
+  comboCount=0;
+}
+reportToolProgress(allCorrect.length,VOCAB.length);
+
 // ── Build menu ──
 function buildMenu(){
   const g=document.getElementById('round-grid');
@@ -1123,6 +1213,7 @@ function selectChoice(el,opt,q){
     allWrong=allWrong.filter(w=>w!==q.k);
     if(!allCorrect.includes(q.k))allCorrect.push(q.k);
     session.answers.push({q,userAns:opt.text,isCorrect:true});
+    onCorrectAnswer();
   } else {
     el.classList.add('wrong-pick');
     session.wrong++;
@@ -1134,10 +1225,12 @@ function selectChoice(el,opt,q){
     showInfoPanel(q.k);
     if(!allWrong.includes(q.k))allWrong.push(q.k);
     session.answers.push({q,userAns:opt.text,isCorrect:false});
+    onWrongAnswer();
   }
   localStorage.setItem('jlpt_wrong',JSON.stringify(allWrong));
   localStorage.setItem('jlpt_correct',JSON.stringify(allCorrect));
   localStorage.setItem('jlpt_session',JSON.stringify(session));
+  reportToolProgress(allCorrect.length,VOCAB.length);
   document.getElementById('q-score').textContent=`✓ ${session.correct}　✗ ${session.wrong}`;
   document.getElementById('btn-next').style.display='block';
   document.getElementById('btn-next-top').style.display='flex';

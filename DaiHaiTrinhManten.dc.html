@@ -570,6 +570,15 @@
         <div style="color:#cdeef2; font-size:14px; line-height:1.6;">{{ currentIsland.story }}</div>
         <div style="background:rgba(9,45,66,.5); border:1px solid rgba(255,255,255,.2); border-radius:12px; padding:10px 16px; color:#ffe9b0; font-size:13px; font-weight:700;">🎁 Bảo Vật: {{ currentIsland.item }}</div>
 
+        <sc-if value="{{ currentIsland.hasToolProgress }}" hint-placeholder-val="{{ false }}">
+          <div style="width:100%; background:rgba(9,45,66,.5); border:1px solid rgba(255,233,176,.35); border-radius:12px; padding:10px 14px;">
+            <div style="color:#ffe9b0; font-size:12px; font-weight:700; margin-bottom:6px;">📊 {{ currentIsland.toolProgressLabel }}</div>
+            <div style="width:100%; height:10px; background:rgba(3,26,45,.55); border-radius:8px; overflow:hidden;">
+              <div style="{{ currentIsland.toolProgressBarStyle }}"></div>
+            </div>
+          </div>
+        </sc-if>
+
         <sc-if value="{{ currentIsland.showRewardNote }}" hint-placeholder-val="{{ true }}">
           <div style="background:rgba(255,233,176,.08); border:1px dashed rgba(255,233,176,.4); border-radius:14px; padding:14px 16px; color:#eaf6fb; font-size:12.5px; line-height:1.7; text-align:left;">
             <div>🗺️ Chinh phục <b style="color:#ffe9b0;">50%</b> thử thách của đảo để tìm thấy <b style="color:#ffe9b0;">Bảo Vật</b> giấu trong hải trình.</div>
@@ -704,6 +713,19 @@
     </div>
   </sc-if>
 
+  <!-- ===================== KEY REWARD (đánh bại Thủ Hộ qua thanh tiến trình) ===================== -->
+  <sc-if value="{{ isKeyReward }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative; min-height:100dvh; padding:24px 16px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px;">
+      <div style="font-size:64px; animation:popIn .4s ease, glowPulse 2s ease-in-out infinite;">🔑</div>
+      <div style="font-family:'Baloo 2',sans-serif; color:#ffe9b0; font-weight:800; font-size:clamp(20px,5.5vw,28px);">⚔ ĐÃ ĐÁNH BẠI THỦ HỘ!</div>
+      <div style="color:#fff; font-weight:700; font-size:16px;">🔑 Nhận được: 1 Chìa Khóa Manten</div>
+      <div style="color:#cdeef2; font-size:14px;">Bạn đã chinh phục {{ keyRewardPct }}% đảo</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px;">
+        <button onClick="{{ backToMapFromKeyReward }}" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:16px; padding:12px 24px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; color:#5a3b22; cursor:pointer; box-shadow:0 6px 0 #b9761a;">Trở Về</button>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ===================== MẬT MÃ HẢI TRÌNH (Event Code Redeem) ===================== -->
   <sc-if value="{{ isRedeem }}" hint-placeholder-val="{{ false }}">
     <div style="position:relative; min-height:100dvh; padding:18px 16px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:14px; overflow:hidden; background:linear-gradient(180deg,#aee9ff 0%,#8fdcef 35%,#4fc3d9 70%,#1c9a95 100%);">
@@ -818,7 +840,7 @@
           <button onClick="{{ handleSignOut }}" style="flex-shrink:0; background:#f4e8d0; border:2px solid #c9a769; border-radius:12px; padding:8px 12px; font-size:11px; font-weight:700; color:#8b5e34; cursor:pointer;">Đăng xuất</button>
         </div>
 
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px;">
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:14px;">
           <div style="background:#fffaf0; border:1px solid #e2d3ae; border-radius:10px; padding:8px; text-align:center;">
             <div style="color:#8b5e34; font-size:10px; font-weight:700;">CẤP ĐỘ</div>
             <div style="color:#3a2a18; font-size:16px; font-weight:800; font-family:'Baloo 2',sans-serif;">{{ profileLevel }}</div>
@@ -830,6 +852,10 @@
           <div style="background:#fffaf0; border:1px solid #e2d3ae; border-radius:10px; padding:8px; text-align:center;">
             <div style="color:#8b5e34; font-size:10px; font-weight:700;">STREAK</div>
             <div style="color:#3a2a18; font-size:16px; font-weight:800; font-family:'Baloo 2',sans-serif;">🔥 {{ profileStreak }}</div>
+          </div>
+          <div style="background:#fffaf0; border:1px solid #e2d3ae; border-radius:10px; padding:8px; text-align:center;">
+            <div style="color:#8b5e34; font-size:10px; font-weight:700;">CHÌA KHÓA</div>
+            <div style="color:#3a2a18; font-size:16px; font-weight:800; font-family:'Baloo 2',sans-serif;">🔑 {{ profileKeys }}</div>
           </div>
         </div>
 
@@ -942,6 +968,19 @@ function subPos(id, mobilePosMap, x, y, mobile) {
   return { x, y };
 }
 
+function computeToolProgress(toolUrls) {
+  if (!toolUrls || !toolUrls.length) return { has: false, pct: 0, correct: 0, total: 0 };
+  let stored = {};
+  try { stored = JSON.parse(localStorage.getItem('dc_tool_progress') || '{}'); } catch (e) {}
+  let correct = 0, total = 0;
+  toolUrls.forEach(url => {
+    const st = stored[url];
+    if (st && typeof st.total === 'number') { correct += st.correct || 0; total += st.total; }
+  });
+  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  return { has: true, pct, correct, total };
+}
+
 const ARC = {
   khoidong: '#3fae6e',
   chinhphuc: '#2f8fd1',
@@ -990,6 +1029,7 @@ const ISLANDS = [
       { icon:'📘', title:'Mondai 1 · Đọc Kanji', desc:'Luyện đọc âm Hán tự (漢字読み) theo đúng dạng câu hỏi Mondai 1 trong đề thi.', url:'dao1-hantu-doc-kanji.html' },
       { icon:'🈶', title:'Âm Hán Việt · 498 Từ', desc:'Tra cứu và ôn luyện 498 từ Kanji kèm âm Hán Việt, collocation, cụm cố định.', url:'dao1-hantu-am-hanviet.html' }
     ],
+    progressTools:['dao1-hantu-doc-kanji.html','dao1-hantu-am-hanviet.html'],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[
         { prompt:'Chọn cách đọc đúng của từ được gạch dưới:\n「交通渋滞のため、会議に遅刻した。」\n渋滞', options:[
@@ -1298,9 +1338,11 @@ function ensureProfileShape(profile) {
   if (!profile.collectibles || typeof profile.collectibles !== 'object') profile.collectibles = {};
   COLLECTIBLE_META.forEach(m => { if (!Array.isArray(profile.collectibles[m.key])) profile.collectibles[m.key] = []; });
   if (!Array.isArray(profile.redeemedCodes)) profile.redeemedCodes = [];
+  if (typeof profile.keys !== 'number') profile.keys = 0;
   return profile;
 }
 function loadProfile() { try { const r = localStorage.getItem(PROFILE_KEY); if (r) return ensureProfileShape(JSON.parse(r)); } catch (e) {} return null; }
+function profilePower(p) { if (!p) return -1; return (p.level || 1) * 1000000 + (p.exp || 0); }
 function saveProfile(p) {
   try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e) {}
   if (window.dcSync && window.dcSync.currentUid()) window.dcSync.pushProfile(window.dcSync.currentUid(), p);
@@ -1503,6 +1545,7 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
+    this.syncProgressBarRewards();
     this.updateScale();
     this._onResize = () => this.updateScale();
     window.addEventListener('resize', this._onResize);
@@ -1515,22 +1558,61 @@ class Component extends DCLogic {
         const remoteProgress = await window.dcSync.fetchMapProgress(fbUser.uid);
         const patch = { user: fbUser };
         if (remoteProfile) {
-          const shaped = ensureProfileShape(remoteProfile);
-          try { localStorage.setItem(PROFILE_KEY, JSON.stringify(shaped)); } catch (e) {}
-          patch.profile = shaped;
+          const shapedRemote = ensureProfileShape(remoteProfile);
+          const localProfile = loadProfile();
+          const isLocalAhead = localProfile && profilePower(localProfile) > profilePower(shapedRemote);
+          const winner = isLocalAhead ? localProfile : shapedRemote;
+          try { localStorage.setItem(PROFILE_KEY, JSON.stringify(winner)); } catch (e) {}
+          if (isLocalAhead) window.dcSync.pushProfile(fbUser.uid, winner);
+          patch.profile = winner;
           if (this.state.screen === 'auth') patch.screen = 'map';
         } else if (this.state.screen === 'auth') {
           patch.screen = 'onboarding';
         }
         if (remoteProgress) {
-          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteProgress)); } catch (e) {}
-          patch.progress = remoteProgress;
+          const localProgress = this.state.progress;
+          const mergedCompleted = Array.from(new Set([...(localProgress.completed || []), ...(remoteProgress.completed || [])]));
+          const mergedTreasures = Array.from(new Set([...(localProgress.treasures || []), ...(remoteProgress.treasures || [])]));
+          const hasNewLocal = mergedCompleted.length > (remoteProgress.completed || []).length || mergedTreasures.length > (remoteProgress.treasures || []).length;
+          const mergedProgress = { ...remoteProgress, completed: mergedCompleted, treasures: mergedTreasures };
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedProgress)); } catch (e) {}
+          if (hasNewLocal) window.dcSync.pushMapProgress(fbUser.uid, mergedProgress);
+          patch.progress = mergedProgress;
         }
         this.setState(patch);
       });
     };
     trySubscribe();
   }
+  syncProgressBarRewards = () => {
+    const p = this.state.progress;
+    let treasures = p.treasures, completed = p.completed, changed = false, newlyFoundIdx = null, newlyGuardianIdx = null, newlyGuardianPct = 0;
+    ISLANDS.forEach((isl, i) => {
+      if (!isl.progressTools || !isl.progressTools.length) return;
+      const tp = computeToolProgress(isl.progressTools);
+      if (!tp.has) return;
+      if (tp.pct >= 13 && !treasures.includes(i)) { treasures = [...treasures, i]; changed = true; if (newlyFoundIdx === null) newlyFoundIdx = i; }
+      if (tp.pct >= 14 && !completed.includes(i)) { completed = [...completed, i]; changed = true; if (newlyGuardianIdx === null) { newlyGuardianIdx = i; newlyGuardianPct = tp.pct; } }
+    });
+    if (!changed) return;
+    const newProgress = { ...p, treasures, completed };
+    saveProgress(newProgress);
+    const patch = { progress: newProgress };
+    if (newlyGuardianIdx !== null) {
+      let profile = this.state.profile;
+      if (profile) {
+        profile = { ...profile, keys: (profile.keys || 0) + 1 };
+        saveProfile(profile);
+        patch.profile = profile;
+      }
+      patch.screen = 'key-reward';
+      patch.keyRewardPct = newlyGuardianPct;
+      patch.pendingTreasureModal = newlyFoundIdx;
+    } else if (newlyFoundIdx !== null) {
+      patch.treasureModal = newlyFoundIdx;
+    }
+    this.setState(patch);
+  };
   componentWillUnmount() {
     window.removeEventListener('resize', this._onResize);
     if (this._unsubAuth) this._unsubAuth();
@@ -1653,8 +1735,12 @@ class Component extends DCLogic {
       let profile = await window.dcSync.fetchProfile(fbUser.uid);
       let progress = await window.dcSync.fetchMapProgress(fbUser.uid);
       if (profile) {
-        profile = ensureProfileShape(profile);
+        const shapedRemote = ensureProfileShape(profile);
+        const localProfile = loadProfile();
+        const isLocalAhead = localProfile && profilePower(localProfile) > profilePower(shapedRemote);
+        profile = isLocalAhead ? localProfile : shapedRemote;
         try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch (e) {}
+        if (isLocalAhead) window.dcSync.pushProfile(fbUser.uid, profile);
       } else {
         profile = loadProfile();
         if (profile) window.dcSync.pushProfile(fbUser.uid, profile);
@@ -1701,7 +1787,7 @@ class Component extends DCLogic {
       flagColor: flag,
       house: house.id,
       shipType: ship.id,
-      score: 0, level: 1, exp: 0, expToNext: 100, coins: 0,
+      score: 0, level: 1, exp: 0, expToNext: 100, coins: 0, keys: 0,
       items: [], badges: [],
       collectibles: { mapFragments: [], journalEntries: [], stickers: [], avatarFrames: [], shipSkins: [], titles: [], companionBadges: [] },
       redeemedCodes: [],
@@ -1735,8 +1821,11 @@ class Component extends DCLogic {
     const alreadyDone = prevEntry.done.includes(set.id);
     const done = alreadyDone ? prevEntry.done : [...prevEntry.done, set.id];
     const totalSets = node.sets.length;
-    const guardianJustDefeated = !prevEntry.guardianDefeated && done.length >= 2;
+    const treasureThreshold = Math.max(1, Math.ceil(totalSets * 0.5));
+    const guardianThreshold = Math.max(1, Math.ceil(totalSets * 0.8));
+    const guardianJustDefeated = !prevEntry.guardianDefeated && done.length >= guardianThreshold;
     const perfectJustAchieved = !prevEntry.perfect && done.length === totalSets;
+    const treasureJustFound = this.state.quizKind === 'island' && !p.treasures.includes(this.state.quizNodeId) && done.length >= treasureThreshold;
     const entry = { done, guardianDefeated: prevEntry.guardianDefeated || guardianJustDefeated, perfect: prevEntry.perfect || perfectJustAchieved };
     let newProgress = { ...p, setClears: { ...setClears, [node.key]: entry } };
 
@@ -1744,11 +1833,13 @@ class Component extends DCLogic {
       if (this.state.quizKind === 'island') {
         const idx = this.state.quizNodeId;
         newProgress.completed = newProgress.completed.includes(idx) ? newProgress.completed : [...newProgress.completed, idx];
-        newProgress.treasures = newProgress.treasures.includes(idx) ? newProgress.treasures : [...newProgress.treasures, idx];
       } else {
         const zoneId = this.state.quizNodeId;
         newProgress.anhSang = { zones: newProgress.anhSang.zones.includes(zoneId) ? newProgress.anhSang.zones : [...newProgress.anhSang.zones, zoneId], bossDone: newProgress.anhSang.bossDone };
       }
+    }
+    if (treasureJustFound) {
+      newProgress.treasures = [...newProgress.treasures, this.state.quizNodeId];
     }
     saveProgress(newProgress);
 
@@ -1774,6 +1865,10 @@ class Component extends DCLogic {
     this.setState({ screen: 'result', progress: newProgress, profile, resultKind });
   };
   backToMapFromResult = () => this.setState({ screen: this.state.quizKind === 'zone' ? 'submap-anhsang' : 'map' });
+  backToMapFromKeyReward = () => {
+    const pending = this.state.pendingTreasureModal;
+    this.setState({ screen: 'map', keyRewardPct: 0, pendingTreasureModal: null, treasureModal: (pending === null || pending === undefined) ? null : pending });
+  };
   editProfile = () => {
     const p = this.state.profile;
     const avIdx = p ? Math.max(0, AVATAR_PALETTE.findIndex(a => a.art === (p.avatar && p.avatar.art))) : 0;
@@ -1932,6 +2027,7 @@ class Component extends DCLogic {
     const profileName = profile ? profile.displayName : '';
     const profileLevel = profile ? profile.level : 1;
     const profileCoins = profile ? profile.coins : 0;
+    const profileKeys = profile ? (profile.keys || 0) : 0;
     const profileStreak = profile ? profile.streak.count : 0;
     const profileHouse = (profile && HOUSES.find(h => h.id === profile.house)) || HOUSES[0];
     const profileShipLabel = profile ? (SHIP_TYPES.find(sh => sh.id === profile.shipType) || SHIP_TYPES[0]).label : '';
@@ -2021,7 +2117,7 @@ class Component extends DCLogic {
       bossBgStyle: bgOf(ZONE_BOSS_ART[currentZoneData.id] || '', { width:'100%', height:'100%', filter:'drop-shadow(0 10px 14px rgba(3,40,70,.45))' }),
       treasure: currentZoneData.treasureEmoji + ' ' + currentZoneData.treasure, treasureEmoji: currentZoneData.treasureEmoji, completed: currentZoneCompleted,
       missionList: currentZoneData.missions.map(m => ({ text: m })),
-      setStatusLabel: `📋 ${zoneEntry.done.length}/${currentZoneData.sets.length} bộ đề · cần ≥2 để đánh bại Thủ Hộ`,
+      setStatusLabel: `📋 ${zoneEntry.done.length}/${currentZoneData.sets.length} bộ đề · cần ≥${Math.max(1, Math.ceil(currentZoneData.sets.length * 0.8))} để đánh bại Thủ Hộ`,
       hasTools: !!(currentZoneData.tools && currentZoneData.tools.length), noTools: !(currentZoneData.tools && currentZoneData.tools.length),
       tools: (currentZoneData.tools || []).map(t => ({ label: t.label, url: t.url }))
     };
@@ -2029,6 +2125,7 @@ class Component extends DCLogic {
 
     const islandEntry = (p.setClears && p.setClears['island-' + s.currentIslandId]) || { done: [] };
     const goToIslandSets = this.goToSetSelect('island', s.currentIslandId);
+    const toolProgress = computeToolProgress(currentIslandData.progressTools || []);
 
     // ----- SET-SELECT SCREEN -----
     const setSelectNodeData = this.getNode(s.quizKind, s.quizNodeId);
@@ -2098,7 +2195,8 @@ class Component extends DCLogic {
       anhSangBossLocked: !anhSangBossUnlockedBool, anhSangBossUnlocked: anhSangBossUnlockedBool,
       anhSangBossDone: p.anhSang.bossDone, anhSangBossNotDone: !p.anhSang.bossDone, anhSangBossName: ANHSANG_BOSS.boss, completeAnhSangBoss: this.completeAnhSangBoss,
       isMap: s.screen === 'map', isIsland: s.screen === 'island', isQuiz: s.screen === 'quiz', isResult: s.screen === 'result', isProfile: s.screen === 'profile',
-      isSetSelect: s.screen === 'set-select', isRedeem: s.screen === 'redeem',
+      isSetSelect: s.screen === 'set-select', isRedeem: s.screen === 'redeem', isKeyReward: s.screen === 'key-reward',
+      keyRewardPct: s.keyRewardPct || 0, backToMapFromKeyReward: this.backToMapFromKeyReward,
       goToRedeem: this.goToRedeem, redeemInput: s.redeemInput, onRedeemInputChange: this.onRedeemInputChange, redeemCode: this.redeemCode,
       redeemError: s.redeemError, redeemSuccess: s.redeemSuccess, showUnlockAnim: s.showUnlockAnim, fireworkParticles, collectibleSummary,
       handleGoogleSignIn: this.handleGoogleSignIn, handleSignOut: this.handleSignOut, onNameChange: this.onNameChange, confirmProfile: this.confirmProfile,
@@ -2109,7 +2207,7 @@ class Component extends DCLogic {
       setSelectNode: { name: setSelectNodeData.name, boss: setSelectNodeData.boss, item: setSelectNodeData.item },
       resultTreasureArt: TREASURE_ART[typeof s.quizNodeId === 'number' ? s.quizNodeId : 0],
       resultTreasureBgStyle: bgOf(TREASURE_ART[typeof s.quizNodeId === 'number' ? s.quizNodeId : 0], { width:'112px', height:'112px', margin:'2px auto', filter:'drop-shadow(0 0 16px rgba(255,226,120,.75))' }),
-      setSelectSets, setSelectStatusLabel: `${setSelectEntry.done.length}/${setSelectNodeData.sets.length} bộ đề · cần ≥2 để đánh bại Thủ Hộ`,
+      setSelectSets, setSelectStatusLabel: `${setSelectEntry.done.length}/${setSelectNodeData.sets.length} bộ đề · cần ≥${Math.max(1, Math.ceil(setSelectNodeData.sets.length * 0.8))} để đánh bại Thủ Hộ`,
       setSelectGuardianDefeated: setSelectEntry.guardianDefeated, setSelectPerfect: setSelectEntry.perfect,
       quizNodeSkill: quizNode.skill,
       isResultGuardianOrPerfect, isResultPerfect, isResultGuardianOnly, isResultSetOnly,
@@ -2153,8 +2251,12 @@ class Component extends DCLogic {
         menuTools: currentIslandData.menuTools || [], hasMenuTools: !!(currentIslandData.menuTools && currentIslandData.menuTools.length),
         externalNoTools: !!currentIslandData.external && !(currentIslandData.menuTools && currentIslandData.menuTools.length),
         showRewardNote: !currentIslandData.isTreasure,
-        setStatusLabel: `📋 ${islandEntry.done.length}/${(currentIslandData.sets || []).length} bộ đề · cần ≥2 để đánh bại Thủ Hộ`,
-        guardianBadge: { width:'108px', height:'108px', borderRadius:'50%', background:'rgba(255,255,255,.12)', border:'3px solid #ffe9b0', display:'flex', alignItems:'center', justifyContent:'center', padding:'10px' }
+        setStatusLabel: `📋 ${islandEntry.done.length}/${(currentIslandData.sets || []).length} bộ đề · cần ≥${Math.max(1, Math.ceil((currentIslandData.sets || []).length * 0.8))} để đánh bại Thủ Hộ`,
+        guardianBadge: { width:'108px', height:'108px', borderRadius:'50%', background:'rgba(255,255,255,.12)', border:'3px solid #ffe9b0', display:'flex', alignItems:'center', justifyContent:'center', padding:'10px' },
+        hasToolProgress: toolProgress.has,
+        toolProgressPct: toolProgress.pct,
+        toolProgressLabel: `${toolProgress.pct}% hoàn thành · ${toolProgress.correct}/${toolProgress.total} câu đúng`,
+        toolProgressBarStyle: { height:'100%', width: toolProgress.pct + '%', background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
       },
       currentQuestion, quizProgressLabel, quizBarStyle, answered: s.answered, feedbackTitle, explainBoxStyle, nextLabel, scoreLabel,
       avatarArt: (profile && profile.avatar && profile.avatar.art) || '',
@@ -2174,7 +2276,7 @@ class Component extends DCLogic {
       profileHouseLabel: profileHouse.label,
       profileHouseTitle: 'Nhóm Nhà ' + profileHouse.label + ' — ' + profileHouse.desc,
       profileHouseTagStyle: { color: profileHouse.color, fontSize:'12px', fontWeight:800, letterSpacing:'.4px' },
-      profileHouseBgStyle: bgOf(profileHouse.art, { width:'62px', height:'62px', flex:'0 0 62px', filter: `drop-shadow(0 3px 7px ${profileHouse.color}88)` }), profileLevel, profileCoins, profileStreak, profileShipLabel, profileExpLabel, profileExpBarStyle, flagDotStyle,
+      profileHouseBgStyle: bgOf(profileHouse.art, { width:'62px', height:'62px', flex:'0 0 62px', filter: `drop-shadow(0 3px 7px ${profileHouse.color}88)` }), profileLevel, profileCoins, profileKeys, profileStreak, profileShipLabel, profileExpLabel, profileExpBarStyle, flagDotStyle,
       badgeList, hasNoBadges: badgeList.length === 0, logList, hasNoLog: logList.length === 0
     };
   }
