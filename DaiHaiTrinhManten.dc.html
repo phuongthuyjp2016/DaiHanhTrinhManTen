@@ -7,7 +7,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC84j3PM2_PInZbUm3IBCfQSessFndkSJ8",
@@ -73,6 +73,58 @@
           };
         }) };
       } catch (e) { console.error('[dcSync] fetchLeaderboard failed', e); return { ok: false, entries: [] }; }
+    },
+    sendFriendRequest: async (fromUid, fromProfile, toUid) => {
+      const reqId = fromUid + '_' + toUid;
+      await setDoc(doc(db, 'friend_requests', reqId), {
+        from: fromUid,
+        fromName: fromProfile.displayName || 'Nhà Thám Hiểm',
+        fromAvatarColor: (fromProfile.avatar && fromProfile.avatar.color) || '#7fb3d5',
+        fromAvatarDark: (fromProfile.avatar && fromProfile.avatar.dark) || '#4d7fa3',
+        fromAvatarAccessory: (fromProfile.avatar && fromProfile.avatar.accessory) || 'none',
+        fromAvatarArt: (fromProfile.avatar && fromProfile.avatar.art) || '',
+        to: toUid,
+        status: 'pending',
+        createdAt: Date.now()
+      }, { merge: true });
+    },
+    fetchIncomingRequests: async (myUid) => {
+      try {
+        const q = query(collection(db, 'friend_requests'), where('to', '==', myUid), where('status', '==', 'pending'));
+        const snap = await getDocs(q);
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (e) { console.error('[dcSync] fetchIncomingRequests failed', e); return []; }
+    },
+    respondToRequest: async (requestId, accept) => {
+      try { await setDoc(doc(db, 'friend_requests', requestId), { status: accept ? 'accepted' : 'declined', respondedAt: Date.now() }, { merge: true }); } catch (e) { console.error('[dcSync] respondToRequest failed', e); }
+    },
+    fetchSentAcceptedRequests: async (myUid) => {
+      try {
+        const q = query(collection(db, 'friend_requests'), where('from', '==', myUid), where('status', '==', 'accepted'));
+        const snap = await getDocs(q);
+        return snap.docs.map(d => d.data().to);
+      } catch (e) { console.error('[dcSync] fetchSentAcceptedRequests failed', e); return []; }
+    },
+    fetchPendingSentRequests: async (myUid) => {
+      try {
+        const q = query(collection(db, 'friend_requests'), where('from', '==', myUid), where('status', '==', 'pending'));
+        const snap = await getDocs(q);
+        return snap.docs.map(d => d.data().to);
+      } catch (e) { console.error('[dcSync] fetchPendingSentRequests failed', e); return []; }
+    },
+    fetchPlayerProfiles: async (uids) => {
+      const results = await Promise.all(uids.map(async uid => {
+        try {
+          const snap = await getDoc(doc(db, 'players', uid));
+          if (!snap.exists()) return null;
+          const data = snap.data();
+          return { ...(data.profile || {}), uid, lastOnline: data.lastOnline || null };
+        } catch (e) { return null; }
+      }));
+      return results.filter(Boolean);
+    },
+    touchOnline: async (uid) => {
+      try { await setDoc(doc(db, 'players', uid), { lastOnline: Date.now() }, { merge: true }); } catch (e) {}
     },
     onAuthChanged: (cb) => onAuthStateChanged(auth, (user) => {
       currentUid = user ? user.uid : null;
@@ -960,6 +1012,60 @@
     </div>
   </sc-if>
 
+  <!-- ===================== BẠN BÈ ===================== -->
+  <sc-if value="{{ isFriendsScreen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
+      <div onClick="{{ backFromFriends }}" style="cursor:pointer; color:#ffe9b0; font-weight:700; font-size:14px; width:fit-content;">← Hồ Sơ</div>
+
+      <div style="text-align:center; margin-top:10px; margin-bottom:16px;">
+        <div style="font-size:36px;">👥</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#ffe9b0; font-size:22px;">BẠN BÈ</div>
+      </div>
+
+      <sc-if value="{{ friendsLoading }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center; color:#cdeef2; font-size:14px; padding:30px 0;">⏳ Đang tải...</div>
+      </sc-if>
+
+      <sc-if value="{{ friendsEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center; color:#5a3b22; font-size:13.5px; font-weight:600; padding:24px 20px; background:#fdf6e8; border:2px solid #c9a769; border-radius:16px; max-width:480px; margin:0 auto;">Chưa có lời mời hay bạn bè nào — vào Bảng Xếp Hạng để kết bạn nhé!</div>
+      </sc-if>
+
+      <sc-if value="{{ hasIncomingSection }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:480px; margin:0 auto 16px;">
+          <div style="color:#ffe9b0; font-weight:800; font-family:'Baloo 2',sans-serif; font-size:14px; margin-bottom:8px;">✉️ Lời mời kết bạn</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <sc-for list="{{ incomingRequestRows }}" as="req" hint-placeholder-count="3">
+              <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:14px; background:#fdf6e8; border:1.5px solid #c9a769;">
+                <div style="{{ req.avatarWrapStyle }}">{{ req.avatarSvg }}</div>
+                <div style="flex:1; min-width:0; color:#5a3b22; font-weight:800; font-family:'Baloo 2',sans-serif; font-size:14px;">{{ req.name }}</div>
+                <div onClick="{{ req.onAccept }}" style="cursor:pointer; flex-shrink:0; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:12px; padding:7px 12px; border-radius:12px; background:linear-gradient(180deg,#7fe0a8,#3fae6e); color:#fff; box-shadow:0 3px 0 #2c8752;">✓ Chấp nhận</div>
+                <div onClick="{{ req.onDecline }}" style="cursor:pointer; flex-shrink:0; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:12px; padding:7px 12px; border-radius:12px; background:#f4e8d0; color:#8b5e34; border:1.5px solid #c9a769;">✕</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="max-width:480px; margin:0 auto;">
+        <div style="color:#ffe9b0; font-weight:800; font-family:'Baloo 2',sans-serif; font-size:14px; margin-bottom:8px;">🤝 Danh sách bạn bè</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <sc-for list="{{ friendRows }}" as="fr" hint-placeholder-count="6">
+            <div style="display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:14px; background:#fdf6e8; border:1.5px solid #c9a769;">
+              <div style="{{ fr.avatarWrapStyle }}">{{ fr.avatarSvg }}</div>
+              <sc-if value="{{ fr.hasHouse }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ fr.houseBadgeStyle }}" title="{{ fr.houseTitle }}"></div>
+              </sc-if>
+              <div style="flex:1; min-width:0;">
+                <div style="color:#5a3b22; font-weight:800; font-family:'Baloo 2',sans-serif; font-size:14px;">{{ fr.name }}</div>
+                <div style="color:#8b5e34; font-size:11px; font-weight:700; margin-top:2px;">Cấp {{ fr.level }} · {{ fr.lastOnlineLabel }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ===================== PROFILE ===================== -->
   <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
     <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
@@ -985,7 +1091,15 @@
           <button onClick="{{ goToRedeem }}" style="flex-shrink:0; background:#fff2d1; border:2px solid #e6c877; border-radius:12px; padding:8px 12px; font-size:11px; font-weight:700; color:#a3792a; cursor:pointer;">🔑 Mật Mã</button>
         </div>
 
-        <div style="display:flex; gap:8px; margin-top:12px;">
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button onClick="{{ goToFriends }}" style="flex:1; background:#fff2d1; border:2px solid #e6c877; border-radius:12px; padding:8px 12px; font-size:11px; font-weight:700; color:#a3792a; cursor:pointer; position:relative;">👥 Bạn Bè
+            <sc-if value="{{ hasIncomingRequests }}" hint-placeholder-val="{{ false }}">
+              <span style="position:absolute; top:-6px; right:-6px; background:#e05c5c; color:#fff; border-radius:50%; width:18px; height:18px; font-size:10.5px; display:flex; align-items:center; justify-content:center; font-weight:800;">{{ incomingRequestCount }}</span>
+            </sc-if>
+          </button>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-top:8px;">
           <button onClick="{{ handleGoogleSignIn }}" style="flex:1; background:#fff; border:2px solid #8b5e34; border-radius:12px; padding:8px 10px; font-size:11px; font-weight:700; color:#3a2a18; cursor:pointer;">🔗 Đồng bộ Google</button>
           <button onClick="{{ handleSignOut }}" style="flex-shrink:0; background:#f4e8d0; border:2px solid #c9a769; border-radius:12px; padding:8px 12px; font-size:11px; font-weight:700; color:#8b5e34; cursor:pointer;">Đăng xuất</button>
         </div>
@@ -1445,6 +1559,14 @@ function saveProgress(p) {
  */
 const USER_KEY = 'dhtm_user_v1';
 const PROFILE_KEY = 'dhtm_profile_v1';
+const OWNER_KEY = 'dhtm_owner_uid_v1';
+function loadOwnerUid() { try { return localStorage.getItem(OWNER_KEY); } catch (e) { return null; } }
+function saveOwnerUid(uid) { try { localStorage.setItem(OWNER_KEY, uid); } catch (e) {} }
+function clearLocalAccountData() {
+  try { localStorage.removeItem(PROFILE_KEY); } catch (e) {}
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  try { localStorage.removeItem(OWNER_KEY); } catch (e) {}
+}
 
 const AVATAR_PALETTE = [
   { color:'#7fb3d5', dark:'#4d7fa3', accessory:'none', label:'Cá Mập Thuyền Trưởng', art:'data:image/png;base64,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' },
@@ -1527,6 +1649,19 @@ function ensureProfileShape(profile) {
 }
 function loadProfile() { try { const r = localStorage.getItem(PROFILE_KEY); if (r) return ensureProfileShape(JSON.parse(r)); } catch (e) {} return null; }
 function profilePower(p) { if (!p) return -1; return (p.level || 1) * 1000000 + (p.exp || 0); }
+function formatLastOnline(ts) {
+  if (!ts) return 'Chưa rõ';
+  const diffMs = Date.now() - ts;
+  const min = Math.floor(diffMs / 60000);
+  if (min < 2) return 'Đang online';
+  if (min < 60) return min + ' phút trước';
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return hr + ' giờ trước';
+  const day = Math.floor(hr / 24);
+  if (day < 30) return day + ' ngày trước';
+  const d = new Date(ts);
+  return d.toLocaleDateString('vi-VN');
+}
 function saveProfile(p) {
   try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e) {}
   if (window.dcSync && window.dcSync.currentUid()) {
@@ -1723,6 +1858,7 @@ class Component extends DCLogic {
       redeemInput: '', redeemError: '', redeemSuccess: null, showUnlockAnim: false, redeemChecking: false,
       showAdminPanel: false, adminCodeInput: '', adminNameInput: '', adminEmojiInput: '', adminTypeInput: 'companionBadge', adminCreateError: '', adminCreateSuccess: '', adminCreating: false,
       leaderboardEntries: [], leaderboardLoading: false, leaderboardFailed: false,
+      pendingSentUids: [], incomingRequests: [], friendProfiles: [], friendsLoading: false,
       compassMsg: '', compassSpin: false
     };
   })();
@@ -1743,12 +1879,15 @@ class Component extends DCLogic {
       this._unsubAuth = window.dcSync.onAuthChanged(async (fbUser) => {
         if (!fbUser) return;
         saveUser(fbUser);
+        const ownerUid = loadOwnerUid();
+        const localIsUsable = !ownerUid || ownerUid === fbUser.uid;
+        if (!localIsUsable) clearLocalAccountData();
         const remoteProfile = await window.dcSync.fetchProfile(fbUser.uid);
         const remoteProgress = await window.dcSync.fetchMapProgress(fbUser.uid);
         const patch = { user: fbUser };
         if (remoteProfile) {
           const shapedRemote = ensureProfileShape(remoteProfile);
-          const localProfile = loadProfile();
+          const localProfile = localIsUsable ? loadProfile() : null;
           const isLocalAhead = localProfile && profilePower(localProfile) > profilePower(shapedRemote);
           const winner = isLocalAhead ? localProfile : shapedRemote;
           try { localStorage.setItem(PROFILE_KEY, JSON.stringify(winner)); } catch (e) {}
@@ -1759,17 +1898,21 @@ class Component extends DCLogic {
           patch.screen = 'onboarding';
         }
         if (remoteProgress) {
-          const localProgress = this.state.progress;
-          const mergedCompleted = Array.from(new Set([...(localProgress.completed || []), ...(remoteProgress.completed || [])]));
-          const mergedHailuuCompleted = Array.from(new Set([...(localProgress.hailuuCompleted || []), ...(remoteProgress.hailuuCompleted || [])]));
+          const localProgress = localIsUsable ? this.state.progress : null;
+          const mergedCompleted = Array.from(new Set([...((localProgress && localProgress.completed) || []), ...(remoteProgress.completed || [])]));
+          const mergedHailuuCompleted = Array.from(new Set([...((localProgress && localProgress.hailuuCompleted) || []), ...(remoteProgress.hailuuCompleted || [])]));
           const normalizeTreasures = arr => (arr || []).map(t => typeof t === 'number' ? 'island-' + t : t);
-          const mergedTreasures = Array.from(new Set([...normalizeTreasures(localProgress.treasures), ...normalizeTreasures(remoteProgress.treasures)]));
+          const mergedTreasures = Array.from(new Set([...normalizeTreasures(localProgress && localProgress.treasures), ...normalizeTreasures(remoteProgress.treasures)]));
           const hasNewLocal = mergedCompleted.length > (remoteProgress.completed || []).length || mergedTreasures.length > (remoteProgress.treasures || []).length;
           const mergedProgress = { ...remoteProgress, completed: mergedCompleted, hailuuCompleted: mergedHailuuCompleted, treasures: mergedTreasures };
           try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedProgress)); } catch (e) {}
           if (hasNewLocal) window.dcSync.pushMapProgress(fbUser.uid, mergedProgress);
           patch.progress = mergedProgress;
+        } else if (!localIsUsable) {
+          patch.progress = loadProgress();
         }
+        saveOwnerUid(fbUser.uid);
+        window.dcSync.touchOnline(fbUser.uid);
         this.setState(patch);
       });
     };
@@ -1894,7 +2037,16 @@ class Component extends DCLogic {
       this.goToIsland(pick)();
     }, 1400);
   };
-  openProfile = () => this.setState({ screen: 'profile' });
+  openProfile = () => {
+    this.setState({ screen: 'profile' });
+    this.syncFriendRequests();
+    const myUid = window.dcSync && window.dcSync.currentUid();
+    if (myUid && window.dcSync) {
+      window.dcSync.fetchIncomingRequests(myUid).then(reqs => {
+        this.setState({ incomingRequests: reqs || [] });
+      });
+    }
+  };
   backToMap = () => {
     this.setState({ screen: 'map', zooming: false, zoomOrigin: null, hoverIsland: null, cardIslandId: null }, () => {
       const el = this._mapOuterRef;
@@ -1920,6 +2072,7 @@ class Component extends DCLogic {
   goToLeaderboard = () => {
     this.setState({ screen: 'leaderboard', leaderboardLoading: true, leaderboardFailed: false });
     if (!window.dcSync) { this.setState({ leaderboardLoading: false, leaderboardFailed: true }); return; }
+    this.syncFriendRequests();
     const uid = window.dcSync.currentUid();
     const p = this.state.profile;
     const selfPush = (uid && p) ? window.dcSync.pushProfile(uid, { ...p, power: profilePower(p) }) : Promise.resolve();
@@ -1952,15 +2105,68 @@ class Component extends DCLogic {
     this._unlockTimer = setTimeout(() => this.setState({ showUnlockAnim: false }), 2200);
   };
   toggleAdminPanel = () => this.setState(s => ({ showAdminPanel: !s.showAdminPanel, adminCreateError: '', adminCreateSuccess: '' }));
-  addFriend(uid, name) {
+  sendFriendRequest(uid) {
     return () => {
       const profile = this.state.profile;
-      if (!profile || (profile.friends || []).includes(uid)) return;
-      const friends = [...(profile.friends || []), uid];
-      const log = [...profile.log, { date: todayStr(), text: `Kết bạn với ${name}!` }];
-      const newProfile = { ...profile, friends, log };
+      const myUid = window.dcSync && window.dcSync.currentUid();
+      if (!profile || !myUid || !window.dcSync) return;
+      if ((profile.friends || []).includes(uid)) return;
+      if ((this.state.pendingSentUids || []).includes(uid)) return;
+      window.dcSync.sendFriendRequest(myUid, profile, uid);
+      this.setState(s => ({ pendingSentUids: [...(s.pendingSentUids || []), uid] }));
+    };
+  }
+  syncFriendRequests = () => {
+    const myUid = window.dcSync && window.dcSync.currentUid();
+    const profile = this.state.profile;
+    if (!myUid || !profile || !window.dcSync) return;
+    window.dcSync.fetchPendingSentRequests(myUid).then(uids => {
+      this.setState({ pendingSentUids: uids || [] });
+    });
+    window.dcSync.fetchSentAcceptedRequests(myUid).then(uids => {
+      const newFriends = (uids || []).filter(uid => !(profile.friends || []).includes(uid));
+      if (!newFriends.length) return;
+      const latestProfile = this.state.profile;
+      const friends = [...(latestProfile.friends || []), ...newFriends];
+      const newProfile = { ...latestProfile, friends };
       saveProfile(newProfile);
       this.setState({ profile: newProfile });
+    });
+  };
+  goToFriends = () => {
+    this.setState({ screen: 'friends', friendsLoading: true });
+    const myUid = window.dcSync && window.dcSync.currentUid();
+    if (!myUid || !window.dcSync) { this.setState({ friendsLoading: false }); return; }
+    window.dcSync.fetchIncomingRequests(myUid).then(reqs => {
+      this.setState({ incomingRequests: reqs || [] });
+    });
+    const profile = this.state.profile;
+    const friendUids = (profile && profile.friends) || [];
+    if (!friendUids.length) { this.setState({ friendsLoading: false, friendProfiles: [] }); return; }
+    window.dcSync.fetchPlayerProfiles(friendUids).then(profiles => {
+      this.setState({ friendProfiles: profiles || [], friendsLoading: false });
+    });
+  };
+  backFromFriends = () => this.setState({ screen: 'profile' });
+  respondToRequest(reqId, fromUid, accept) {
+    return () => {
+      if (!window.dcSync) return;
+      window.dcSync.respondToRequest(reqId, accept).then(() => {
+        this.setState(s => ({ incomingRequests: (s.incomingRequests || []).filter(r => r.id !== reqId) }));
+        if (accept) {
+          const profile = this.state.profile;
+          if (profile && !(profile.friends || []).includes(fromUid)) {
+            const newProfile = { ...profile, friends: [...(profile.friends || []), fromUid] };
+            saveProfile(newProfile);
+            this.setState({ profile: newProfile });
+            if (window.dcSync) {
+              window.dcSync.fetchPlayerProfiles(newProfile.friends).then(profiles => {
+                this.setState({ friendProfiles: profiles || [] });
+              });
+            }
+          }
+        }
+      });
     };
   }
   onAdminCodeChange = (e) => this.setState({ adminCodeInput: e.target.value });
@@ -2020,32 +2226,38 @@ class Component extends DCLogic {
     if (!window.dcSync) { console.error('Firebase chưa sẵn sàng, thử lại sau giây lát.'); return; }
     window.dcSync.signIn().then(async (fbUser) => {
       saveUser(fbUser);
+      const ownerUid = loadOwnerUid();
+      const localIsUsable = !ownerUid || ownerUid === fbUser.uid;
+      if (!localIsUsable) clearLocalAccountData();
       let profile = await window.dcSync.fetchProfile(fbUser.uid);
       let progress = await window.dcSync.fetchMapProgress(fbUser.uid);
       if (profile) {
         const shapedRemote = ensureProfileShape(profile);
-        const localProfile = loadProfile();
+        const localProfile = localIsUsable ? loadProfile() : null;
         const isLocalAhead = localProfile && profilePower(localProfile) > profilePower(shapedRemote);
         profile = isLocalAhead ? localProfile : shapedRemote;
         try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch (e) {}
         if (isLocalAhead) window.dcSync.pushProfile(fbUser.uid, profile);
       } else {
-        profile = loadProfile();
+        profile = localIsUsable ? loadProfile() : null;
         if (profile) window.dcSync.pushProfile(fbUser.uid, profile);
       }
       if (progress) {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); } catch (e) {}
       } else {
-        progress = loadProgress();
+        progress = localIsUsable ? loadProgress() : null;
         if (progress) window.dcSync.pushMapProgress(fbUser.uid, progress);
       }
+      saveOwnerUid(fbUser.uid);
+      window.dcSync.touchOnline(fbUser.uid);
       this.setState({ user: fbUser, profile, progress, screen: profile ? 'map' : 'onboarding' });
     }).catch((e) => console.error('Đăng nhập Google thất bại', e));
   };
   handleSignOut = () => {
     if (window.dcSync) window.dcSync.signOutUser();
     try { localStorage.removeItem(USER_KEY); } catch (e) {}
-    this.setState({ user: null, screen: 'auth' });
+    clearLocalAccountData();
+    this.setState({ user: null, profile: null, progress: loadProgress(), screen: 'auth' });
   };
   onNameChange = (e) => this.setState({ obName: e.target.value });
   selectAvatar(i) { return () => this.setState({ obAvatarIdx: i }); }
@@ -2511,6 +2723,38 @@ class Component extends DCLogic {
       goToRedeem: this.goToRedeem, redeemInput: s.redeemInput, onRedeemInputChange: this.onRedeemInputChange, redeemCode: this.redeemCode,
       redeemError: s.redeemError, redeemSuccess: s.redeemSuccess, showUnlockAnim: s.showUnlockAnim, fireworkParticles, collectibleSummary,
       isLeaderboard: s.screen === 'leaderboard', goToLeaderboard: this.goToLeaderboard, backFromLeaderboard: this.backFromLeaderboard,
+      isFriendsScreen: s.screen === 'friends', goToFriends: this.goToFriends, backFromFriends: this.backFromFriends,
+      hasIncomingRequests: !!(s.incomingRequests && s.incomingRequests.length),
+      incomingRequestCount: (s.incomingRequests || []).length,
+      friendsLoading: s.friendsLoading,
+      hasIncomingSection: !!(s.incomingRequests && s.incomingRequests.length),
+      incomingRequestRows: (s.incomingRequests || []).map(r => ({
+        id: r.id,
+        name: r.fromName || 'Nhà Thám Hiểm',
+        avatarSvg: r.fromAvatarArt ? '' : mascotSvg(44, r.fromAvatarColor || '#7fb3d5', r.fromAvatarDark || '#4d7fa3', r.fromAvatarAccessory || 'none'),
+        avatarWrapStyle: r.fromAvatarArt
+          ? bgOf(r.fromAvatarArt, { width:'44px', height:'44px', flexShrink:0, borderRadius:'50%', border: `2.5px solid ${r.fromAvatarColor || '#7fb3d5'}`, backgroundColor:'#fffaf0' })
+          : { width:'44px', height:'44px', flexShrink:0, borderRadius:'50%', overflow:'hidden', background:'#fffaf0', border: `2.5px solid ${r.fromAvatarColor || '#7fb3d5'}`, display:'flex', alignItems:'center', justifyContent:'center' },
+        onAccept: this.respondToRequest(r.id, r.from, true),
+        onDecline: this.respondToRequest(r.id, r.from, false)
+      })),
+      friendsEmpty: !s.friendsLoading && !(s.friendProfiles && s.friendProfiles.length) && !(s.incomingRequests && s.incomingRequests.length),
+      friendRows: (s.friendProfiles || []).map(fp => {
+        const hasArt = !!(fp.avatar && fp.avatar.art);
+        const houseData = HOUSES.find(h => h.id === fp.house);
+        return {
+          name: fp.displayName || 'Nhà Thám Hiểm',
+          level: fp.level || 1,
+          lastOnlineLabel: formatLastOnline(fp.lastOnline),
+          avatarSvg: hasArt ? '' : mascotSvg(44, (fp.avatar && fp.avatar.color) || '#7fb3d5', (fp.avatar && fp.avatar.dark) || '#4d7fa3', (fp.avatar && fp.avatar.accessory) || 'none'),
+          avatarWrapStyle: hasArt
+            ? bgOf(fp.avatar.art, { width:'44px', height:'44px', flexShrink:0, borderRadius:'50%', border: `2.5px solid ${fp.avatar.color || '#7fb3d5'}`, backgroundColor:'#fffaf0' })
+            : { width:'44px', height:'44px', flexShrink:0, borderRadius:'50%', overflow:'hidden', background:'#fffaf0', border: `2.5px solid ${(fp.avatar && fp.avatar.color) || '#7fb3d5'}`, display:'flex', alignItems:'center', justifyContent:'center' },
+          hasHouse: !!houseData,
+          houseTitle: houseData ? ('Nhóm Nhà ' + houseData.label) : '',
+          houseBadgeStyle: houseData ? bgOf(houseData.art, { width:'26px', height:'26px', flexShrink:0, borderRadius:'50%', backgroundColor:'#fffaf0', border:`2px solid ${houseData.color}`, boxShadow: `0 2px 4px ${houseData.color}88` }) : {}
+        };
+      }),
       leaderboardLoading: s.leaderboardLoading,
       leaderboardNotSignedIn: !s.leaderboardLoading && !s.user,
       leaderboardFailed: !s.leaderboardLoading && !!s.user && !!s.leaderboardFailed,
@@ -2522,6 +2766,7 @@ class Component extends DCLogic {
         const avSize = 56;
         const hasArt = !!e.avatarArt;
         const isFriend = !!(profile && profile.friends || []).includes(e.uid);
+        const isPendingSent = !isFriend && (s.pendingSentUids || []).includes(e.uid);
         const houseData = HOUSES.find(h => h.id === e.house);
         return {
           hasHouse: !!houseData,
@@ -2542,10 +2787,10 @@ class Component extends DCLogic {
           coinBadgeStyle: { flexShrink:0, minWidth:'64px', boxSizing:'border-box', display:'flex', alignItems:'center', justifyContent:'center', gap:'4px', background:'linear-gradient(180deg,#fff6d9,#ffe9b0)', border:'1.5px solid #e6c877', borderRadius:'14px', padding:'5px 10px', fontFamily:"'Baloo 2',sans-serif", fontWeight:800, fontSize:'12.5px', color:'#8b5e34' },
           rowStyle: { display:'flex', alignItems:'center', gap:'10px', padding:'10px 14px', borderRadius:'14px', background: isMe ? 'linear-gradient(90deg,#fff2d1,#ffe9b0)' : (i === 0 ? 'linear-gradient(90deg,#fdf6e8,#f6e6c3)' : '#fdf6e8'), border: isMe ? '2px solid #f5a623' : '1.5px solid #c9a769', boxShadow: isTop3 ? '0 3px 0 rgba(139,94,52,.18)' : 'none' },
           textColStyle: { display:'flex', flexDirection:'column', flex:'1', minWidth:0 },
-          showFriendBtn: !isMe, isFriend,
-          friendBtnLabel: isFriend ? '✓ Bạn bè' : '🤝 Kết Bạn',
-          friendBtnStyle: { flexShrink:0, minWidth:'92px', boxSizing:'border-box', textAlign:'center', marginLeft:'auto', cursor: isFriend ? 'default' : 'pointer', fontFamily:"'Baloo 2',sans-serif", fontWeight:700, fontSize:'11.5px', padding:'6px 10px', borderRadius:'12px', background: isFriend ? 'rgba(127,224,168,.28)' : 'linear-gradient(180deg,#ffd25a,#f5a623)', color: isFriend ? '#1d6b45' : '#5a3b22', border: isFriend ? '1.5px solid #7fe0a8' : 'none', boxShadow: isFriend ? 'none' : '0 3px 0 #b9761a' },
-          onAddFriend: this.addFriend(e.uid, e.name)
+          showFriendBtn: !isMe, isFriend, isPendingSent,
+          friendBtnLabel: isFriend ? '✓ Bạn bè' : (isPendingSent ? '⏳ Đã gửi' : '🤝 Kết Bạn'),
+          friendBtnStyle: { flexShrink:0, minWidth:'92px', boxSizing:'border-box', textAlign:'center', marginLeft:'auto', cursor: (isFriend || isPendingSent) ? 'default' : 'pointer', fontFamily:"'Baloo 2',sans-serif", fontWeight:700, fontSize:'11.5px', padding:'6px 10px', borderRadius:'12px', background: isFriend ? 'rgba(127,224,168,.28)' : (isPendingSent ? 'rgba(139,94,52,.12)' : 'linear-gradient(180deg,#ffd25a,#f5a623)'), color: isFriend ? '#1d6b45' : (isPendingSent ? '#8b5e34' : '#5a3b22'), border: isFriend ? '1.5px solid #7fe0a8' : (isPendingSent ? '1.5px solid #c9a769' : 'none'), boxShadow: (isFriend || isPendingSent) ? 'none' : '0 3px 0 #b9761a' },
+          onAddFriend: this.sendFriendRequest(e.uid)
         };
       }),
       isAdmin: !!(s.user && ADMIN_EMAILS.includes(s.user.email)),
