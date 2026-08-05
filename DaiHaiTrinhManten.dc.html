@@ -279,6 +279,9 @@
             <sc-if value="{{ showLevelStar }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute; top:-4px; right:-4px; font-size:12px; animation:sparkle 1.8s ease-in-out infinite;">⭐</div>
             </sc-if>
+            <sc-if value="{{ hasIncomingRequests }}" hint-placeholder-val="{{ false }}">
+              <span style="position:absolute; top:-6px; left:-6px; background:#e05c5c; color:#fff; border-radius:50%; width:18px; height:18px; font-size:10.5px; display:flex; align-items:center; justify-content:center; font-weight:800; border:1.5px solid #fdf6e8;">{{ incomingRequestCount }}</span>
+            </sc-if>
           </div>
         </div>
       </div>
@@ -1913,7 +1916,7 @@ class Component extends DCLogic {
         }
         saveOwnerUid(fbUser.uid);
         window.dcSync.touchOnline(fbUser.uid);
-        this.setState(patch);
+        this.setState(patch, () => this.syncIncomingRequests());
       });
     };
     trySubscribe();
@@ -2040,12 +2043,7 @@ class Component extends DCLogic {
   openProfile = () => {
     this.setState({ screen: 'profile' });
     this.syncFriendRequests();
-    const myUid = window.dcSync && window.dcSync.currentUid();
-    if (myUid && window.dcSync) {
-      window.dcSync.fetchIncomingRequests(myUid).then(reqs => {
-        this.setState({ incomingRequests: reqs || [] });
-      });
-    }
+    this.syncIncomingRequests();
   };
   backToMap = () => {
     this.setState({ screen: 'map', zooming: false, zoomOrigin: null, hoverIsland: null, cardIslandId: null }, () => {
@@ -2116,6 +2114,13 @@ class Component extends DCLogic {
       this.setState(s => ({ pendingSentUids: [...(s.pendingSentUids || []), uid] }));
     };
   }
+  syncIncomingRequests = () => {
+    const myUid = window.dcSync && window.dcSync.currentUid();
+    if (!myUid || !window.dcSync) return;
+    window.dcSync.fetchIncomingRequests(myUid).then(reqs => {
+      this.setState({ incomingRequests: reqs || [] });
+    });
+  };
   syncFriendRequests = () => {
     const myUid = window.dcSync && window.dcSync.currentUid();
     const profile = this.state.profile;
@@ -2137,9 +2142,7 @@ class Component extends DCLogic {
     this.setState({ screen: 'friends', friendsLoading: true });
     const myUid = window.dcSync && window.dcSync.currentUid();
     if (!myUid || !window.dcSync) { this.setState({ friendsLoading: false }); return; }
-    window.dcSync.fetchIncomingRequests(myUid).then(reqs => {
-      this.setState({ incomingRequests: reqs || [] });
-    });
+    this.syncIncomingRequests();
     const profile = this.state.profile;
     const friendUids = (profile && profile.friends) || [];
     if (!friendUids.length) { this.setState({ friendsLoading: false, friendProfiles: [] }); return; }
@@ -2250,7 +2253,7 @@ class Component extends DCLogic {
       }
       saveOwnerUid(fbUser.uid);
       window.dcSync.touchOnline(fbUser.uid);
-      this.setState({ user: fbUser, profile, progress, screen: profile ? 'map' : 'onboarding' });
+      this.setState({ user: fbUser, profile, progress, screen: profile ? 'map' : 'onboarding' }, () => this.syncIncomingRequests());
     }).catch((e) => console.error('Đăng nhập Google thất bại', e));
   };
   handleSignOut = () => {
