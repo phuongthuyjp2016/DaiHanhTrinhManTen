@@ -7,7 +7,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC84j3PM2_PInZbUm3IBCfQSessFndkSJ8",
@@ -52,6 +52,27 @@
     },
     createEventCode: async (code, reward) => {
       await setDoc(doc(db, 'event_codes', code), { ...reward, createdAt: Date.now() });
+    },
+    fetchLeaderboard: async (topN) => {
+      try {
+        const q = query(collection(db, 'players'), orderBy('profile.level', 'desc'), orderBy('profile.exp', 'desc'), limit(topN || 50));
+        const snap = await getDocs(q);
+        return { ok: true, entries: snap.docs.map(d => {
+          const pr = d.data().profile || {};
+          return {
+            uid: d.id,
+            name: pr.displayName || 'Nhà Thám Hiểm',
+            avatarColor: (pr.avatar && pr.avatar.color) || '#7fb3d5',
+            avatarDark: (pr.avatar && pr.avatar.dark) || '#4d7fa3',
+            avatarAccessory: (pr.avatar && pr.avatar.accessory) || 'none',
+            avatarArt: (pr.avatar && pr.avatar.art) || '',
+            house: pr.house || '',
+            level: pr.level || 1,
+            exp: pr.exp || 0,
+            coins: pr.coins || 0
+          };
+        }) };
+      } catch (e) { console.error('[dcSync] fetchLeaderboard failed', e); return { ok: false, entries: [] }; }
     },
     onAuthChanged: (cb) => onAuthStateChanged(auth, (user) => {
       currentUid = user ? user.uid : null;
@@ -194,6 +215,7 @@
             <span style="font-size:16px;">{{ weatherIcon }}</span>
             <span>{{ weatherPhase }}</span>
           </div>
+          <div onClick="{{ goToLeaderboard }}" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; flex-shrink:0; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:14px; padding:6px 10px; box-shadow:0 3px 0 #9a5f14;"><span style="font-size:28px; line-height:1;">🏆</span><span style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:9.5px; color:#5a3b22; letter-spacing:.3px;">BXH</span></div>
           <div onClick="{{ openProfile }}" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; background:rgba(9,45,66,.55); border:2px solid #ffe9b0; border-radius:16px; padding:8px 12px; position:relative;">
             <sc-if value="{{ hasAvatarArt }}" hint-placeholder-val="{{ false }}">
               <div style="{{ avatarBgSmall }}"></div>
@@ -868,6 +890,76 @@
     </div>
   </sc-if>
 
+  <!-- ===================== LEADERBOARD ===================== -->
+  <sc-if value="{{ isLeaderboard }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative; min-height:100dvh; padding:18px 16px 40px; overflow:hidden; background:linear-gradient(180deg,#aee9ff 0%,#8fdcef 35%,#4fc3d9 70%,#1c9a95 100%);">
+
+      <!-- ambient clouds -->
+      <div style="position:absolute; top:4%; left:2%; width:36%; height:48px; background:radial-gradient(ellipse at center, rgba(255,255,255,.9), rgba(255,255,255,0) 70%); filter:blur(1px); animation:drift 20s ease-in-out infinite; pointer-events:none;"></div>
+      <div style="position:absolute; top:9%; left:56%; width:30%; height:40px; background:radial-gradient(ellipse at center, rgba(255,255,255,.8), rgba(255,255,255,0) 70%); filter:blur(1px); animation:drift 26s ease-in-out infinite reverse; pointer-events:none;"></div>
+      <!-- sea birds -->
+      <div style="position:absolute; left:12%; top:14%; width:30px; height:20px; animation:fly 7s ease-in-out infinite;">{{ birdSvg }}</div>
+      <div style="position:absolute; right:14%; top:20%; width:26px; height:18px; animation:fly 9s ease-in-out infinite reverse;">{{ birdSvg }}</div>
+      <!-- dolphin & sailing ship -->
+      <div style="position:absolute; left:6%; bottom:5%; width:70px; height:44px; animation:swim 6s ease-in-out infinite;">{{ dolphinSvg }}</div>
+      <div style="position:absolute; right:6%; bottom:7%; width:88px; height:71px; animation:bob 4s ease-in-out infinite;">
+        <sc-if value="{{ hasMapShipArt }}" hint-placeholder-val="{{ false }}">
+          <div style="width:100%; height:100%;"><div style="{{ mapShipBgStyle }}"></div></div>
+        </sc-if>
+        <sc-if value="{{ noMapShipArt }}" hint-placeholder-val="{{ true }}">
+          {{ shipSvg }}
+        </sc-if>
+      </div>
+
+      <div onClick="{{ backFromLeaderboard }}" style="position:relative; z-index:5; cursor:pointer; color:#0e5273; font-weight:700; font-size:14px; width:fit-content;">← Bản Đồ</div>
+
+      <div style="position:relative; z-index:4; max-width:560px; margin:14px auto 16px; background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #b9761a; border-radius:22px; padding:20px 18px 16px; text-align:center; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
+        <div style="width:64px; height:64px; margin:0 auto 6px; border-radius:50%; background:linear-gradient(180deg,#ffe27a,#f5a623); border:3px solid #b9761a; display:flex; align-items:center; justify-content:center; font-size:34px; box-shadow:0 4px 0 #9a5f14;">🏆</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:24px; text-shadow:0 2px 0 #fff8e6;">BẢNG XẾP HẠNG</div>
+        <div style="color:#8b5e34; font-size:12.5px; font-weight:600; margin-top:2px;">Top nhà thám hiểm theo cấp độ &amp; kinh nghiệm</div>
+      </div>
+
+      <sc-if value="{{ leaderboardLoading }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative; z-index:4; text-align:center; color:#0e5273; font-weight:700; font-size:14px; padding:30px 0;">⏳ Đang tải bảng xếp hạng...</div>
+      </sc-if>
+
+      <sc-if value="{{ leaderboardNotSignedIn }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative; z-index:4; text-align:center; color:#5a3b22; font-size:13.5px; font-weight:600; padding:24px 20px; background:#fdf6e8; border:2px solid #c9a769; border-radius:16px; max-width:420px; margin:0 auto;">Đăng nhập Google để tham gia bảng xếp hạng nhé!</div>
+      </sc-if>
+
+      <sc-if value="{{ leaderboardFailed }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative; z-index:4; text-align:center; color:#5a3b22; font-size:13.5px; font-weight:600; padding:24px 20px; background:#fdf6e8; border:2px solid #c9a769; border-radius:16px; max-width:420px; margin:0 auto;">⚠️ Chưa tải được bảng xếp hạng — có thể do lỗi kết nối, thử lại sau nhé!</div>
+      </sc-if>
+
+      <sc-if value="{{ leaderboardEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative; z-index:4; text-align:center; color:#5a3b22; font-size:13.5px; font-weight:600; padding:24px 20px; background:#fdf6e8; border:2px solid #c9a769; border-radius:16px; max-width:420px; margin:0 auto;">Chưa có ai trên bảng xếp hạng — hãy là người đầu tiên!</div>
+      </sc-if>
+
+      <div style="position:relative; z-index:4; max-width:560px; margin:0 auto; background:rgba(9,45,66,.35); border:1.5px solid rgba(255,233,176,.3); border-radius:20px; padding:10px; display:flex; flex-direction:column; gap:8px;">
+        <sc-for list="{{ leaderboardRows }}" as="lb" hint-placeholder-count="10">
+          <div style="{{ lb.rowStyle }}">
+            <div style="{{ lb.rankBadgeStyle }}">{{ lb.rankLabel }}</div>
+            <div style="{{ lb.avatarWrapStyle }}">{{ lb.avatarSvg }}</div>
+            <sc-if value="{{ lb.hasHouse }}" hint-placeholder-val="{{ false }}">
+              <div style="{{ lb.houseBadgeStyle }}" title="{{ lb.houseTitle }}"></div>
+            </sc-if>
+            <div style="{{ lb.textColStyle }}">
+              <div style="{{ lb.nameStyle }}">{{ lb.name }}</div>
+              <div style="{{ lb.statsLineStyle }}">
+                <div style="{{ lb.levelPillStyle }}">Cấp {{ lb.level }}</div>
+                <div style="{{ lb.expBadgeStyle }}">⭐ {{ lb.exp }}</div>
+                <div style="{{ lb.coinBadgeStyle }}">🪙 {{ lb.coins }}</div>
+                <sc-if value="{{ lb.showFriendBtn }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ lb.onAddFriend }}" style="{{ lb.friendBtnStyle }}">{{ lb.friendBtnLabel }}</div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ===================== PROFILE ===================== -->
   <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
     <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
@@ -1430,13 +1522,17 @@ function ensureProfileShape(profile) {
   COLLECTIBLE_META.forEach(m => { if (!Array.isArray(profile.collectibles[m.key])) profile.collectibles[m.key] = []; });
   if (!Array.isArray(profile.redeemedCodes)) profile.redeemedCodes = [];
   if (typeof profile.keys !== 'number') profile.keys = 0;
+  if (!Array.isArray(profile.friends)) profile.friends = [];
   return profile;
 }
 function loadProfile() { try { const r = localStorage.getItem(PROFILE_KEY); if (r) return ensureProfileShape(JSON.parse(r)); } catch (e) {} return null; }
 function profilePower(p) { if (!p) return -1; return (p.level || 1) * 1000000 + (p.exp || 0); }
 function saveProfile(p) {
   try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch (e) {}
-  if (window.dcSync && window.dcSync.currentUid()) window.dcSync.pushProfile(window.dcSync.currentUid(), p);
+  if (window.dcSync && window.dcSync.currentUid()) {
+    const uid = window.dcSync.currentUid();
+    window.dcSync.pushProfile(uid, { ...p, power: profilePower(p) });
+  }
 }
 function todayStr() { return new Date().toISOString().slice(0, 10); }
 function updateStreak(profile) {
@@ -1626,6 +1722,7 @@ class Component extends DCLogic {
       obName: '', obAvatarIdx: 0, obFlagIdx: 0, obHouseIdx: 0, obShipIdx: 0,
       redeemInput: '', redeemError: '', redeemSuccess: null, showUnlockAnim: false, redeemChecking: false,
       showAdminPanel: false, adminCodeInput: '', adminNameInput: '', adminEmojiInput: '', adminTypeInput: 'companionBadge', adminCreateError: '', adminCreateSuccess: '', adminCreating: false,
+      leaderboardEntries: [], leaderboardLoading: false, leaderboardFailed: false,
       compassMsg: '', compassSpin: false
     };
   })();
@@ -1820,6 +1917,17 @@ class Component extends DCLogic {
   goToHaiLuuIslet(id) { return () => this.setState({ screen: 'hailuu-islet', currentIsletId: id }); }
 
   goToRedeem = () => this.setState({ screen: 'redeem', redeemError: '', redeemInput: '', showAdminPanel: false, adminCreateError: '', adminCreateSuccess: '' });
+  goToLeaderboard = () => {
+    this.setState({ screen: 'leaderboard', leaderboardLoading: true, leaderboardFailed: false });
+    if (!window.dcSync) { this.setState({ leaderboardLoading: false, leaderboardFailed: true }); return; }
+    const uid = window.dcSync.currentUid();
+    const p = this.state.profile;
+    const selfPush = (uid && p) ? window.dcSync.pushProfile(uid, { ...p, power: profilePower(p) }) : Promise.resolve();
+    selfPush.then(() => window.dcSync.fetchLeaderboard(50)).then(result => {
+      this.setState({ leaderboardEntries: (result && result.entries) || [], leaderboardLoading: false, leaderboardFailed: !(result && result.ok) });
+    }).catch(() => { this.setState({ leaderboardLoading: false, leaderboardFailed: true }); });
+  };
+  backFromLeaderboard = () => this.setState({ screen: 'map' });
   onRedeemInputChange = (e) => this.setState({ redeemInput: e.target.value, redeemError: '' });
   redeemCode = async () => {
     const raw = this.state.redeemInput.trim().toUpperCase();
@@ -1844,6 +1952,17 @@ class Component extends DCLogic {
     this._unlockTimer = setTimeout(() => this.setState({ showUnlockAnim: false }), 2200);
   };
   toggleAdminPanel = () => this.setState(s => ({ showAdminPanel: !s.showAdminPanel, adminCreateError: '', adminCreateSuccess: '' }));
+  addFriend(uid, name) {
+    return () => {
+      const profile = this.state.profile;
+      if (!profile || (profile.friends || []).includes(uid)) return;
+      const friends = [...(profile.friends || []), uid];
+      const log = [...profile.log, { date: todayStr(), text: `Kết bạn với ${name}!` }];
+      const newProfile = { ...profile, friends, log };
+      saveProfile(newProfile);
+      this.setState({ profile: newProfile });
+    };
+  }
   onAdminCodeChange = (e) => this.setState({ adminCodeInput: e.target.value });
   onAdminNameChange = (e) => this.setState({ adminNameInput: e.target.value });
   onAdminEmojiChange = (e) => this.setState({ adminEmojiInput: e.target.value });
@@ -2391,6 +2510,44 @@ class Component extends DCLogic {
       keyRewardPct: s.keyRewardPct || 0, backToMapFromKeyReward: this.backToMapFromKeyReward,
       goToRedeem: this.goToRedeem, redeemInput: s.redeemInput, onRedeemInputChange: this.onRedeemInputChange, redeemCode: this.redeemCode,
       redeemError: s.redeemError, redeemSuccess: s.redeemSuccess, showUnlockAnim: s.showUnlockAnim, fireworkParticles, collectibleSummary,
+      isLeaderboard: s.screen === 'leaderboard', goToLeaderboard: this.goToLeaderboard, backFromLeaderboard: this.backFromLeaderboard,
+      leaderboardLoading: s.leaderboardLoading,
+      leaderboardNotSignedIn: !s.leaderboardLoading && !s.user,
+      leaderboardFailed: !s.leaderboardLoading && !!s.user && !!s.leaderboardFailed,
+      leaderboardEmpty: !s.leaderboardLoading && !!s.user && !s.leaderboardFailed && (!s.leaderboardEntries || !s.leaderboardEntries.length),
+      leaderboardRows: (s.leaderboardEntries || []).map((e, i) => {
+        const isMe = !!(window.dcSync && window.dcSync.currentUid() && e.uid === window.dcSync.currentUid());
+        const isTop3 = i < 3;
+        const medalBg = ['linear-gradient(180deg,#ffe27a,#f5a623)','linear-gradient(180deg,#e8e8e8,#b8bec5)','linear-gradient(180deg,#e0ab7a,#b9761a)'][i];
+        const avSize = 56;
+        const hasArt = !!e.avatarArt;
+        const isFriend = !!(profile && profile.friends || []).includes(e.uid);
+        const houseData = HOUSES.find(h => h.id === e.house);
+        return {
+          hasHouse: !!houseData,
+          houseTitle: houseData ? ('Nhóm Nhà ' + houseData.label) : '',
+          houseBadgeStyle: houseData ? bgOf(houseData.art, { width:'40px', height:'40px', flexShrink:0, borderRadius:'50%', backgroundColor:'#fffaf0', border:`2px solid ${houseData.color}`, boxShadow: `0 2px 4px ${houseData.color}88` }) : {},
+          rankLabel: isTop3 ? ['🥇','🥈','🥉'][i] : String(i + 1),
+          name: e.name || 'Nhà Thám Hiểm', level: e.level || 1, exp: e.exp || 0, coins: e.coins || 0,
+          avatarSvg: hasArt ? '' : mascotSvg(avSize, e.avatarColor || '#7fb3d5', e.avatarDark || '#4d7fa3', e.avatarAccessory || 'none'),
+          rankBadgeStyle: { width: isTop3 ? '34px' : '28px', height: isTop3 ? '34px' : '28px', flexShrink:0, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Baloo 2',sans-serif", fontWeight:800, fontSize: isTop3 ? '17px' : '13px', color: isTop3 ? '#5a3b22' : '#8b5e34', background: isTop3 ? medalBg : '#e9dcbc', border: isTop3 ? '1.5px solid #b9761a' : '1.5px solid #c9a769', boxShadow: isTop3 ? '0 2px 0 rgba(90,59,34,.35)' : 'none' },
+          avatarWrapStyle: hasArt
+            ? bgOf(e.avatarArt, { width: avSize + 'px', height: avSize + 'px', flexShrink:0, borderRadius:'50%', border: `2.5px solid ${e.avatarColor || '#7fb3d5'}`, backgroundColor:'#fffaf0' })
+            : { width: avSize + 'px', height: avSize + 'px', flexShrink:0, borderRadius:'50%', overflow:'hidden', background:'#fffaf0', border: `2.5px solid ${e.avatarColor || '#7fb3d5'}`, display:'flex', alignItems:'center', justifyContent:'center' },
+          nameStyle: { color:'#5a3b22', fontWeight:800, fontSize:'14.5px', fontFamily:"'Baloo 2',sans-serif", lineHeight:1.25, wordBreak:'break-word' },
+          topLineStyle: { display:'flex', alignItems:'center', gap:'10px' },
+          statsLineStyle: { display:'flex', alignItems:'center', gap:'8px', marginTop:'6px', flexWrap:'wrap' },
+          levelPillStyle: { flexShrink:0, minWidth:'46px', textAlign:'center', boxSizing:'border-box', fontSize:'10.5px', fontWeight:700, color:'#8b5e34', background:'rgba(139,94,52,.12)', borderRadius:'8px', padding:'3px 8px' },
+          expBadgeStyle: { flexShrink:0, minWidth:'64px', boxSizing:'border-box', display:'flex', alignItems:'center', justifyContent:'center', gap:'4px', background:'linear-gradient(180deg,#fff6d9,#ffe9b0)', border:'1.5px solid #e6c877', borderRadius:'14px', padding:'5px 10px', fontFamily:"'Baloo 2',sans-serif", fontWeight:800, fontSize:'12.5px', color:'#8b5e34' },
+          coinBadgeStyle: { flexShrink:0, minWidth:'64px', boxSizing:'border-box', display:'flex', alignItems:'center', justifyContent:'center', gap:'4px', background:'linear-gradient(180deg,#fff6d9,#ffe9b0)', border:'1.5px solid #e6c877', borderRadius:'14px', padding:'5px 10px', fontFamily:"'Baloo 2',sans-serif", fontWeight:800, fontSize:'12.5px', color:'#8b5e34' },
+          rowStyle: { display:'flex', alignItems:'center', gap:'10px', padding:'10px 14px', borderRadius:'14px', background: isMe ? 'linear-gradient(90deg,#fff2d1,#ffe9b0)' : (i === 0 ? 'linear-gradient(90deg,#fdf6e8,#f6e6c3)' : '#fdf6e8'), border: isMe ? '2px solid #f5a623' : '1.5px solid #c9a769', boxShadow: isTop3 ? '0 3px 0 rgba(139,94,52,.18)' : 'none' },
+          textColStyle: { display:'flex', flexDirection:'column', flex:'1', minWidth:0 },
+          showFriendBtn: !isMe, isFriend,
+          friendBtnLabel: isFriend ? '✓ Bạn bè' : '🤝 Kết Bạn',
+          friendBtnStyle: { flexShrink:0, minWidth:'92px', boxSizing:'border-box', textAlign:'center', marginLeft:'auto', cursor: isFriend ? 'default' : 'pointer', fontFamily:"'Baloo 2',sans-serif", fontWeight:700, fontSize:'11.5px', padding:'6px 10px', borderRadius:'12px', background: isFriend ? 'rgba(127,224,168,.28)' : 'linear-gradient(180deg,#ffd25a,#f5a623)', color: isFriend ? '#1d6b45' : '#5a3b22', border: isFriend ? '1.5px solid #7fe0a8' : 'none', boxShadow: isFriend ? 'none' : '0 3px 0 #b9761a' },
+          onAddFriend: this.addFriend(e.uid, e.name)
+        };
+      }),
       isAdmin: !!(s.user && ADMIN_EMAILS.includes(s.user.email)),
       showAdminPanel: s.showAdminPanel, toggleAdminPanel: this.toggleAdminPanel,
       adminPanelLabel: s.showAdminPanel ? '▲ Đóng bảng Admin' : '🛠 Tạo Mật Mã Mới (Admin)',
