@@ -2129,13 +2129,16 @@ class Component extends DCLogic {
       this.setState({ pendingSentUids: uids || [] });
     });
     window.dcSync.fetchSentAcceptedRequests(myUid).then(uids => {
-      const newFriends = (uids || []).filter(uid => !(profile.friends || []).includes(uid));
-      if (!newFriends.length) return;
-      const latestProfile = this.state.profile;
-      const friends = [...(latestProfile.friends || []), ...newFriends];
-      const newProfile = { ...latestProfile, friends };
-      saveProfile(newProfile);
-      this.setState({ profile: newProfile });
+      if (!uids || !uids.length) return;
+      this.setState(s => {
+        if (!s.profile) return null;
+        const existing = new Set(s.profile.friends || []);
+        const newFriends = uids.filter(uid => !existing.has(uid));
+        if (!newFriends.length) return null;
+        const newProfile = { ...s.profile, friends: [...(s.profile.friends || []), ...newFriends] };
+        saveProfile(newProfile);
+        return { profile: newProfile };
+      });
     });
   };
   goToFriends = () => {
@@ -2144,7 +2147,15 @@ class Component extends DCLogic {
     if (!myUid || !window.dcSync) { this.setState({ friendsLoading: false }); return; }
     this.syncIncomingRequests();
     const profile = this.state.profile;
-    const friendUids = (profile && profile.friends) || [];
+    let friendUids = (profile && profile.friends) || [];
+    const dedupedUids = Array.from(new Set(friendUids));
+    if (dedupedUids.length !== friendUids.length) {
+      const newProfile = { ...profile, friends: dedupedUids };
+      saveProfile(newProfile);
+      window.dcSync.pushProfile(myUid, newProfile);
+      this.setState({ profile: newProfile });
+      friendUids = dedupedUids;
+    }
     if (!friendUids.length) { this.setState({ friendsLoading: false, friendProfiles: [] }); return; }
     window.dcSync.fetchPlayerProfiles(friendUids).then(profiles => {
       this.setState({ friendProfiles: profiles || [], friendsLoading: false });
@@ -2157,17 +2168,17 @@ class Component extends DCLogic {
       window.dcSync.respondToRequest(reqId, accept).then(() => {
         this.setState(s => ({ incomingRequests: (s.incomingRequests || []).filter(r => r.id !== reqId) }));
         if (accept) {
-          const profile = this.state.profile;
-          if (profile && !(profile.friends || []).includes(fromUid)) {
-            const newProfile = { ...profile, friends: [...(profile.friends || []), fromUid] };
+          this.setState(s => {
+            if (!s.profile || (s.profile.friends || []).includes(fromUid)) return null;
+            const newProfile = { ...s.profile, friends: [...(s.profile.friends || []), fromUid] };
             saveProfile(newProfile);
-            this.setState({ profile: newProfile });
             if (window.dcSync) {
               window.dcSync.fetchPlayerProfiles(newProfile.friends).then(profiles => {
                 this.setState({ friendProfiles: profiles || [] });
               });
             }
-          }
+            return { profile: newProfile };
+          });
         }
       });
     };
