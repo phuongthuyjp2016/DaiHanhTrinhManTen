@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<script src="./dc-card-template-engine.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
@@ -126,6 +127,13 @@
     touchOnline: async (uid) => {
       try { await setDoc(doc(db, 'players', uid), { lastOnline: Date.now() }, { merge: true }); } catch (e) {}
     },
+    fetchNotebook: async (uid) => {
+      const snap = await getDoc(doc(db, 'players', uid));
+      return snap.exists() ? (snap.data().notebook || []) : [];
+    },
+    pushNotebook: async (uid, notebook) => {
+      try { await setDoc(doc(db, 'players', uid), { notebook }, { merge: true }); } catch (e) { console.error('[dcSync] pushNotebook failed', e); }
+    },
     onAuthChanged: (cb) => onAuthStateChanged(auth, (user) => {
       currentUid = user ? user.uid : null;
       cb(user ? toPlainUser(user) : null);
@@ -158,6 +166,9 @@
     @keyframes twinkle { 0%,100%{ opacity:.2 } 50%{ opacity:.9 } }
     .treasure-grid { grid-template-columns: repeat(10,1fr); grid-auto-rows: 52px; }
     @media (max-width: 643px) { .treasure-grid { grid-template-columns: repeat(6,1fr); grid-auto-rows: 46px; } }
+    .notebook-grid { grid-template-columns: 1fr; }
+    @media (min-width: 820px) { .notebook-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (min-width: 1220px) { .notebook-grid { grid-template-columns: repeat(3,1fr); } }
     html { background: url('assets/art-001.webp') center top / cover no-repeat fixed, #0e5273; }
     body { margin:0; -webkit-font-smoothing:antialiased; background:transparent; }
     @media (max-width: 643px) { html { background: url('assets/art-002.webp') center top / cover no-repeat fixed, #0e5273; } }
@@ -1069,6 +1080,77 @@
     </div>
   </sc-if>
 
+  <!-- ===================== SỔ TAY ===================== -->
+  <sc-if value="{{ isNotebookScreen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
+      <div onClick="{{ backFromNotebook }}" style="cursor:pointer; color:#ffe9b0; font-weight:700; font-size:14px; width:fit-content;">← Hồ Sơ</div>
+
+      <div style="text-align:center; margin-top:10px; margin-bottom:16px;">
+        <div style="font-size:36px;">📓</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#ffe9b0; font-size:22px;">SỔ TAY</div>
+      </div>
+
+      <sc-if value="{{ notebookEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center; color:#5a3b22; font-size:13.5px; font-weight:600; padding:24px 20px; background:#fdf6e8; border:2px solid #c9a769; border-radius:16px; max-width:480px; margin:0 auto;">Chưa có từ nào được lưu — vào các bài học, bấm nút 📓 trên mỗi từ để lưu vào đây nhé!</div>
+      </sc-if>
+
+      <div style="max-width:1280px; margin:0 auto;">
+        <div class="notebook-grid" style="display:grid; gap:10px; align-items:start;">
+          <sc-for list="{{ notebookRows }}" as="nb" hint-placeholder-count="6">
+            <div style="padding:12px 14px; border-radius:14px; background:#fdf6e8; border:1.5px solid #c9a769;">
+              <div onClick="{{ nb.onToggle }}" style="cursor:pointer; display:flex; align-items:flex-start; gap:10px;">
+                <div style="flex:1; min-width:0;">
+                  <div style="color:#5a3b22; font-weight:800; font-family:'Baloo 2',sans-serif; font-size:16px;">{{ nb.title }}</div>
+                  <div style="color:#2f6fb0; font-weight:700; font-size:12.5px; margin-top:2px;">【{{ nb.reading }}】</div>
+                  <div style="color:#7a5a3a; font-size:12px; margin-top:2px;">{{ nb.meaning }}</div>
+                </div>
+                <div onClick="{{ nb.onRemove }}" style="cursor:pointer; flex-shrink:0; font-size:16px; color:#b06a4a; padding:4px;">🗑</div>
+              </div>
+              <sc-if value="{{ nb.expanded }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px; padding-top:10px; border-top:1.5px dashed #c9a769;">
+                  <sc-if value="{{ nb.templateReady }}" hint-placeholder-val="{{ false }}">
+                    <div>{{ nb.templateNode }}</div>
+                    <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:6px;">
+                      <a href="{{ nb.sourceLink }}" target="_blank" style="flex-shrink:0; text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:10.5px; color:#5a3b22; background:#fff2d1; padding:5px 10px; border-radius:10px; border:1.5px solid #e6c877;">↗ Mở đầy đủ (tab mới)</a>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ nb.templateLoading }}" hint-placeholder-val="{{ false }}">
+                    <div style="text-align:center; color:#8b5e34; font-size:12.5px; padding:20px 0;">⏳ Đang tải...</div>
+                  </sc-if>
+                  <sc-if value="{{ nb.useIframe }}" hint-placeholder-val="{{ false }}">
+                    <iframe src="{{ nb.embedSrc }}" loading="lazy" style="width:100%; height:420px; border:1.5px solid #c9a769; border-radius:10px; background:#fff;"></iframe>
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px;">
+                      <div style="font-size:10.5px; color:#a3792a;">{{ nb.sourceLabel }}</div>
+                      <a href="{{ nb.sourceLink }}" target="_blank" style="flex-shrink:0; text-decoration:none; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:10.5px; color:#5a3b22; background:#fff2d1; padding:5px 10px; border-radius:10px; border:1.5px solid #e6c877;">↗ Mở đầy đủ (tab mới)</a>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ nb.noSourceLink }}" hint-placeholder-val="{{ false }}">
+                    <sc-if value="{{ nb.example }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:12.5px; color:#444; background:#f8f8fc; border-left:3px solid #2f6fb0; border-radius:0 8px 8px 0; padding:7px 12px; margin-bottom:8px;">{{ nb.example }}</div>
+                    </sc-if>
+                    <sc-if value="{{ nb.hasParts }}" hint-placeholder-val="{{ false }}">
+                      <div>
+                        <sc-for list="{{ nb.partsRows }}" as="pt" hint-placeholder-count="2">
+                          <div style="display:flex; align-items:center; gap:8px; font-size:11.5px; color:#5a3b22; padding:3px 0;">
+                            <span style="font-weight:800; font-size:14px; flex-shrink:0;">{{ pt.kanji }}</span>
+                            <span style="color:#8b5e34; flex-shrink:0;">{{ pt.hanviet }}</span>
+                            <span style="color:#8b5e34; flex-shrink:0;">{{ pt.on }}・{{ pt.kun }}</span>
+                            <span style="flex:1; min-width:0;">{{ pt.meaning }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <div style="font-size:10.5px; color:#a3792a; margin-top:6px;">{{ nb.sourceLabel }}</div>
+                  </sc-if>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ===================== PROFILE ===================== -->
   <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
     <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
@@ -1100,6 +1182,7 @@
               <span style="position:absolute; top:-6px; right:-6px; background:#e05c5c; color:#fff; border-radius:50%; width:18px; height:18px; font-size:10.5px; display:flex; align-items:center; justify-content:center; font-weight:800;">{{ incomingRequestCount }}</span>
             </sc-if>
           </button>
+          <button onClick="{{ goToNotebook }}" style="flex:1; background:#fff2d1; border:2px solid #e6c877; border-radius:12px; padding:8px 12px; font-size:11px; font-weight:700; color:#a3792a; cursor:pointer;">📓 Sổ Tay ({{ notebookCount }})</button>
         </div>
 
         <div style="display:flex; gap:8px; margin-top:8px;">
@@ -1563,12 +1646,26 @@ function saveProgress(p) {
 const USER_KEY = 'dhtm_user_v1';
 const PROFILE_KEY = 'dhtm_profile_v1';
 const OWNER_KEY = 'dhtm_owner_uid_v1';
+const NOTEBOOK_KEY = 'dhtm_notebook_v1';
+const ISLAND_CARD_TEMPLATES = {
+  'dao1-hantu-doc-kanji.html': { template: 'dao1-hantu-doc-kanji-card-template.html', buildData: (raw, opts) => dcBuildDao1KanjiCardData(raw, opts) },
+  'dao2-hailuu-mondai3-dongnghia.html': { template: 'dao2-hailuu-mondai3-dongnghia-card-template.html', buildData: (raw, opts) => dcBuildDao2Mondai3CardData(raw, opts) }
+};
 function loadOwnerUid() { try { return localStorage.getItem(OWNER_KEY); } catch (e) { return null; } }
 function saveOwnerUid(uid) { try { localStorage.setItem(OWNER_KEY, uid); } catch (e) {} }
+function loadNotebook() { try { const r = localStorage.getItem(NOTEBOOK_KEY); return r ? JSON.parse(r) : []; } catch (e) { return []; } }
+function saveNotebook(list) { try { localStorage.setItem(NOTEBOOK_KEY, JSON.stringify(list)); } catch (e) {} }
+function mergeNotebooks(remote, local) {
+  const byId = new Map();
+  (remote || []).forEach(e => e && e.id && byId.set(e.id, e));
+  (local || []).forEach(e => e && e.id && !byId.has(e.id) && byId.set(e.id, e));
+  return Array.from(byId.values()).sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+}
 function clearLocalAccountData() {
   try { localStorage.removeItem(PROFILE_KEY); } catch (e) {}
   try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
   try { localStorage.removeItem(OWNER_KEY); } catch (e) {}
+  try { localStorage.removeItem(NOTEBOOK_KEY); } catch (e) {}
 }
 
 const AVATAR_PALETTE = [
@@ -1862,6 +1959,7 @@ class Component extends DCLogic {
       showAdminPanel: false, adminCodeInput: '', adminNameInput: '', adminEmojiInput: '', adminTypeInput: 'companionBadge', adminCreateError: '', adminCreateSuccess: '', adminCreating: false,
       leaderboardEntries: [], leaderboardLoading: false, leaderboardFailed: false,
       pendingSentUids: [], incomingRequests: [], friendProfiles: [], friendsLoading: false,
+      notebook: loadNotebook(), notebookExpandedId: null,
       compassMsg: '', compassSpin: false
     };
   })();
@@ -1914,6 +2012,12 @@ class Component extends DCLogic {
         } else if (!localIsUsable) {
           patch.progress = loadProgress();
         }
+        const remoteNotebook = await window.dcSync.fetchNotebook(fbUser.uid);
+        const localNotebook = localIsUsable ? loadNotebook() : [];
+        const mergedNotebook = mergeNotebooks(remoteNotebook, localNotebook);
+        saveNotebook(mergedNotebook);
+        if (mergedNotebook.length > (remoteNotebook || []).length) window.dcSync.pushNotebook(fbUser.uid, mergedNotebook);
+        patch.notebook = mergedNotebook;
         saveOwnerUid(fbUser.uid);
         window.dcSync.touchOnline(fbUser.uid);
         this.setState(patch, () => this.syncIncomingRequests());
@@ -2162,6 +2266,44 @@ class Component extends DCLogic {
     });
   };
   backFromFriends = () => this.setState({ screen: 'profile' });
+  goToNotebook = () => {
+    this.setState({ screen: 'notebook', notebook: loadNotebook(), notebookExpandedId: null });
+  };
+  backFromNotebook = () => this.setState({ screen: 'profile' });
+  loadCardTemplate(source) {
+    const reg = ISLAND_CARD_TEMPLATES[source];
+    if (!reg) return;
+    if (!this._cardTemplateCache) this._cardTemplateCache = {};
+    if (this._cardTemplateCache[source]) return;
+    this._cardTemplateCache[source] = { loading: true, html: null };
+    fetch(reg.template).then(r => r.text()).then(text => {
+      const parsed = dcParseCardTemplate(text);
+      dcInjectCardStyle(source, parsed.css);
+      this._cardTemplateCache[source] = { loading: false, html: parsed.html };
+      this.setState({});
+    }).catch(e => {
+      console.error('[notebook] failed to load card template for', source, e);
+      this._cardTemplateCache[source] = { loading: false, html: null };
+      this.setState({});
+    });
+  }
+  toggleNotebookExpand(id) {
+    return () => {
+      this.setState(s => ({ notebookExpandedId: s.notebookExpandedId === id ? null : id }));
+      const entry = (this.state.notebook || []).find(n => n.id === id);
+      if (entry && entry.source) this.loadCardTemplate(entry.source);
+    };
+  }
+  removeFromNotebook(id) {
+    return (e) => {
+      if (e && e.stopPropagation) e.stopPropagation();
+      const notebook = (this.state.notebook || []).filter(n => n.id !== id);
+      saveNotebook(notebook);
+      const uid = window.dcSync && window.dcSync.currentUid();
+      if (uid && window.dcSync) window.dcSync.pushNotebook(uid, notebook);
+      this.setState({ notebook, notebookExpandedId: this.state.notebookExpandedId === id ? null : this.state.notebookExpandedId });
+    };
+  }
   respondToRequest(reqId, fromUid, accept) {
     return () => {
       if (!window.dcSync) return;
@@ -2262,16 +2404,21 @@ class Component extends DCLogic {
         progress = localIsUsable ? loadProgress() : null;
         if (progress) window.dcSync.pushMapProgress(fbUser.uid, progress);
       }
+      const remoteNotebook = await window.dcSync.fetchNotebook(fbUser.uid);
+      const localNotebook = localIsUsable ? loadNotebook() : [];
+      const notebook = mergeNotebooks(remoteNotebook, localNotebook);
+      saveNotebook(notebook);
+      if (notebook.length > (remoteNotebook || []).length) window.dcSync.pushNotebook(fbUser.uid, notebook);
       saveOwnerUid(fbUser.uid);
       window.dcSync.touchOnline(fbUser.uid);
-      this.setState({ user: fbUser, profile, progress, screen: profile ? 'map' : 'onboarding' }, () => this.syncIncomingRequests());
+      this.setState({ user: fbUser, profile, progress, notebook, screen: profile ? 'map' : 'onboarding' }, () => this.syncIncomingRequests());
     }).catch((e) => console.error('Đăng nhập Google thất bại', e));
   };
   handleSignOut = () => {
     if (window.dcSync) window.dcSync.signOutUser();
     try { localStorage.removeItem(USER_KEY); } catch (e) {}
     clearLocalAccountData();
-    this.setState({ user: null, profile: null, progress: loadProgress(), screen: 'auth' });
+    this.setState({ user: null, profile: null, progress: loadProgress(), notebook: [], screen: 'auth' });
   };
   onNameChange = (e) => this.setState({ obName: e.target.value });
   selectAvatar(i) { return () => this.setState({ obAvatarIdx: i }); }
@@ -2767,6 +2914,45 @@ class Component extends DCLogic {
           hasHouse: !!houseData,
           houseTitle: houseData ? ('Nhóm Nhà ' + houseData.label) : '',
           houseBadgeStyle: houseData ? bgOf(houseData.art, { width:'26px', height:'26px', flexShrink:0, borderRadius:'50%', backgroundColor:'#fffaf0', border:`2px solid ${houseData.color}`, boxShadow: `0 2px 4px ${houseData.color}88` }) : {}
+        };
+      }),
+      isNotebookScreen: s.screen === 'notebook', goToNotebook: this.goToNotebook, backFromNotebook: this.backFromNotebook,
+      notebookCount: (s.notebook || []).length,
+      notebookEmpty: !(s.notebook && s.notebook.length),
+      notebookRows: (s.notebook || []).map(n => {
+        const reg = n.source ? ISLAND_CARD_TEMPLATES[n.source] : null;
+        const hasTemplate = !!(reg && n.raw);
+        const cache = hasTemplate && this._cardTemplateCache ? this._cardTemplateCache[n.source] : null;
+        const templateReady = hasTemplate && cache && !cache.loading && cache.html;
+        let templateNode = null;
+        if (templateReady) {
+          const data = reg.buildData(n.raw, { interactive: false, pinned: true });
+          const html = dcRenderCardTemplate(cache.html, data);
+          templateNode = React.createElement('div', { dangerouslySetInnerHTML: { __html: html } });
+        }
+        return {
+          id: n.id,
+          title: n.title || '',
+          reading: n.reading || '',
+          meaning: n.meaning || '',
+          example: n.example || '',
+          sourceLabel: n.sourceLabel || '',
+          hasSourceLink: !!n.source,
+          noSourceLink: !n.source,
+          sourceLink: n.source ? (n.source + '?nb=' + encodeURIComponent(n.id)) : '',
+          embedSrc: n.source ? (n.source + '?nb=' + encodeURIComponent(n.id) + '&embed=1') : '',
+          expanded: s.notebookExpandedId === n.id,
+          hasParts: !!(n.parts && n.parts.length),
+          partsRows: (n.parts || []).map(p => ({
+            kanji: p.kanji || '', hanviet: p.hanviet || '', on: p.on || '', kun: p.kun || '', meaning: p.meaning || ''
+          })),
+          hasTemplate,
+          templateLoading: hasTemplate && !templateReady,
+          templateReady: !!templateReady,
+          templateNode,
+          useIframe: !!n.source && !hasTemplate,
+          onToggle: this.toggleNotebookExpand(n.id),
+          onRemove: this.removeFromNotebook(n.id)
         };
       }),
       leaderboardLoading: s.leaderboardLoading,

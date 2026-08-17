@@ -42,168 +42,22 @@ header h1{font-family:'Baloo 2','Noto Serif JP',serif;font-weight:800;color:#ffe
 
 /* GRID */
 .container{max-width:1100px;margin:0 auto;padding:6px 16px 60px;}
+body.nb-embed header,body.nb-embed .filter-bar{display:none;}
+body.nb-embed .container{padding-top:10px;}
 .vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;}
+@media(max-width:600px){.vocab-grid{grid-template-columns:1fr;}}
+/* Each card's own look lives in dao1-hantu-doc-kanji-card-template.html,
+   fetched once and injected below — not duplicated here. */
 
-/* CARD */
-.card{
-  background:var(--card);border-radius:16px;
-  border:2px solid var(--border);
-  box-shadow:0 3px 14px rgba(0,0,0,.07);
-  overflow:hidden;transition:all .2s;cursor:pointer;
+.nb-toast{
+  position:fixed;transform:translate(-50%,-6px);
+  background:linear-gradient(180deg,#3a3226,#241f18);color:#ffe9b0;
+  font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;
+  padding:6px 12px;border-radius:9px;box-shadow:0 4px 14px rgba(0,0,0,.3);
+  z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;
+  white-space:nowrap;
 }
-.card:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.12);}
-.card.expanded{border-color:#7986cb;}
-.card:nth-child(6n+1){border-top:4px solid #e53935;}
-.card:nth-child(6n+2){border-top:4px solid #1565c0;}
-.card:nth-child(6n+3){border-top:4px solid #2e7d32;}
-.card:nth-child(6n+4){border-top:4px solid #6a1b9a;}
-.card:nth-child(6n+5){border-top:4px solid #e65100;}
-.card:nth-child(6n+6){border-top:4px solid #00695c;}
-
-/* CARD HEADER */
-.card-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px 12px;padding:14px 14px 10px;}
-.k-big{
-  font-family:'Noto Serif JP',serif;font-size:2.4rem;font-weight:700;
-  color:var(--red);line-height:1.15;text-shadow:0 1px 4px rgba(229,57,53,.18);
-  min-width:54px;max-width:100%;word-break:break-word;flex:0 1 auto;
-}
-.k-meta{flex:1 1 100%;min-width:0;order:3;margin-top:4px;}
-.k-reading{
-  font-family:'Noto Sans JP',sans-serif;font-size:.95rem;
-  font-weight:700;color:var(--blue);margin-bottom:2px;
-  overflow-wrap:break-word;
-}
-.k-meaning{font-size:.8rem;color:var(--muted);overflow-wrap:break-word;}
-.k-badge{
-  font-size:.65rem;background:#e8eaf6;color:var(--indigo);
-  padding:2px 8px;border-radius:10px;display:inline-block;
-  margin-top:3px;font-weight:700;
-}
-.card-head-right{display:flex;align-items:center;gap:6px;flex-shrink:0;order:2;margin-left:auto;}
-.expand-btn{
-  background:none;border:none;font-size:.82rem;color:var(--muted);
-  cursor:pointer;padding:4px;transition:transform .2s;
-}
-.card.expanded .expand-btn{transform:rotate(180deg);}
-
-/* SPEAK */
-.speak-btn{
-  background:none;border:1.5px solid var(--border);border-radius:8px;
-  padding:5px 7px;cursor:pointer;color:var(--muted);line-height:0;
-  transition:all .18s;
-}
-.speak-btn:hover{border-color:var(--blue);color:var(--blue);background:#e3f2fd;}
-.speak-btn.speaking{border-color:var(--red);color:var(--red);animation:pulse .8s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-
-/* EXAMPLE */
-.card-ex{
-  font-family:'Noto Sans JP',sans-serif;font-size:.84rem;color:#444;
-  background:#f8f8fc;border-left:3px solid var(--blue);
-  border-radius:0 8px 8px 0;padding:7px 12px;
-  margin:0 14px 10px;line-height:1.8;
-}
-.card-ex b{color:var(--red);font-size:.95rem;}
-
-/* DETAIL */
-.card-detail{display:none;padding:0 14px 14px;}
-.card.expanded .card-detail{display:block;}
-
-/* ── SECTION LABELS ── */
-.sec{margin-bottom:12px;}
-.sec-label{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.08em;margin-bottom:7px;
-  display:flex;align-items:center;gap:5px;
-}
-
-/* ── PARTS TABLE (ảnh: màu cột riêng) ── */
-.parts-table{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;margin-bottom:0;}
-.parts-table th{
-  font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;
-  padding:6px 9px;text-align:left;font-weight:700;
-}
-.th-kanji{background:#f3e5f5;color:#6a1b9a;}
-.th-hv   {background:#e8eaf6;color:#283593;}
-.th-on   {background:#ffebee;color:#c62828;}
-.th-kun  {background:#e3f2fd;color:#1565c0;}
-.th-meaning{background:#e8f5e9;color:#2e7d32;}
-.parts-table td{padding:9px 9px;border-bottom:1px solid #f0f0f8;vertical-align:middle;}
-.parts-table tr:last-child td{border-bottom:none;}
-.parts-table tr:hover td{background:#fafafe;}
-.td-k{font-family:'Noto Serif JP',serif;font-size:1.7rem;font-weight:700;color:var(--ink);}
-.td-hv{font-weight:800;color:#6a1b9a;font-size:.8rem;letter-spacing:.05em;}
-.td-on{color:#c62828;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.82rem;}
-.td-kun{color:#1565c0;font-family:'Noto Sans JP',sans-serif;font-size:.8rem;}
-.td-m{color:#444;font-size:.78rem;}
-
-/* ── CONFUSE BOX (vàng như ảnh) ── */
-.confuse-box{
-  background:#fffde7;border:1.5px solid #f9a825;border-radius:10px;
-  padding:10px 13px;margin-bottom:12px;
-}
-.confuse-title{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:#f57f17;margin-bottom:5px;
-  display:flex;align-items:center;gap:4px;
-}
-.confuse-text{font-size:.82rem;color:#5d4037;line-height:1.65;font-family:'Noto Sans JP',sans-serif;}
-
-/* ── WRONG READINGS (hồng đỏ nhạt như ảnh) ── */
-.wrong-sec{margin-bottom:12px;}
-.wrong-label{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:var(--red);margin-bottom:6px;
-  display:flex;align-items:center;gap:4px;
-}
-.wrong-list{display:flex;flex-direction:column;gap:5px;}
-.wrong-item{
-  display:flex;align-items:flex-start;gap:10px;
-  background:#fce4ec;border-radius:9px;padding:7px 11px;
-  border-left:3px solid #e57373;
-}
-.wrong-r{
-  font-family:'Noto Sans JP',sans-serif;font-size:.88rem;
-  font-weight:700;color:var(--red);min-width:72px;flex-shrink:0;
-}
-.wrong-m{font-size:.78rem;color:#555;line-height:1.55;white-space:pre-line;}
-
-/* ── COLLOCATIONS (xanh dương nhạt như ảnh) ── */
-.col-sec{margin-bottom:12px;}
-.col-label{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:var(--teal);margin-bottom:6px;
-  display:flex;align-items:center;gap:4px;
-}
-.col-list{display:flex;flex-direction:column;gap:4px;}
-.col-item{
-  font-family:'Noto Sans JP',sans-serif;font-size:.81rem;
-  background:#e3f2fd;border-radius:8px;padding:6px 11px;
-  color:#0d47a1;line-height:1.6;
-  border-left:3px solid #90caf9;
-}
-
-/* ── SYNONYMS (xanh lá) ── */
-.syn-sec{}
-.syn-label{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:var(--green);margin-bottom:6px;
-  display:flex;align-items:center;gap:4px;
-}
-.syn-chips{display:flex;flex-wrap:wrap;gap:5px;}
-.syn-chip{
-  background:#e8f5e9;color:#1b5e20;
-  border:1px solid #a5d6a7;border-radius:20px;
-  padding:3px 11px;font-family:'Noto Sans JP',sans-serif;
-  font-size:.79rem;font-weight:600;
-}
-.syn-chip.main{
-  background:#c8e6c9;border-color:#66bb6a;
-  font-weight:800;font-size:.83rem;
-}
-
-mark{background:#fff59d;border-radius:3px;padding:0 2px;}
-@media(max-width:600px){.vocab-grid{grid-template-columns:1fr;}.k-big{font-size:2rem;}}
+.nb-toast.show{opacity:1;transform:translate(-50%,-14px);}
 
 .tab-switch{display:flex;gap:6px;}
 .tab-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);border-radius:20px;padding:7px 16px;color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Be Vietnam Pro',sans-serif;transition:all .15s;white-space:nowrap;}
@@ -969,148 +823,65 @@ function switchTab(tab){
 <script>
 </script>
 <script src="dao1-hantu-doc-kanji-data.js"></script>
+<script src="dc-card-template-engine.js"></script>
 <script>
 let currentRound='all', currentSearch='';
+let CARD_TEMPLATE=null;
+
+const NOTEBOOK_KEY='dhtm_notebook_v1';
+function loadNotebookIds(){
+  try{ return new Set(JSON.parse(localStorage.getItem(NOTEBOOK_KEY)||'[]').map(x=>x.id)); }catch(e){ return new Set(); }
+}
+let _nbToastTimer=null;
+function showNotebookToast(msg,anchorEl){
+  let el=document.getElementById('nb-toast');
+  if(!el){
+    el=document.createElement('div');
+    el.id='nb-toast';
+    el.className='nb-toast';
+    document.body.appendChild(el);
+  }
+  el.innerHTML='📓 '+esc(msg);
+  if(anchorEl){
+    const r=anchorEl.getBoundingClientRect();
+    el.style.left=(r.left+r.width/2)+'px';
+    el.style.top=Math.max(30,r.top)+'px';
+  }
+  clearTimeout(_nbToastTimer);
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  _nbToastTimer=setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+function toggleNotebook(id,btnEl){
+  let list=[];
+  try{ list=JSON.parse(localStorage.getItem(NOTEBOOK_KEY)||'[]'); }catch(e){}
+  const idx=list.findIndex(x=>x.id===id);
+  if(idx>=0){
+    list.splice(idx,1);
+    btnEl.classList.remove('active');
+  }else{
+    let data={};
+    try{ data=JSON.parse(btnEl.dataset.nb); }catch(e){}
+    list.push({ id, addedAt:Date.now(), ...data });
+    btnEl.classList.add('active');
+    showNotebookToast('Đã lưu vào sổ tay!',btnEl);
+  }
+  try{ localStorage.setItem(NOTEBOOK_KEY,JSON.stringify(list)); }catch(e){}
+}
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function hl(t,q){
-  if(!q)return esc(t);
-  const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
-  return esc(t).replace(re,m=>`<mark>${m}</mark>`);
-}
 
-// Speech
-function speak(text,btn){
-  if(!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
-  document.querySelectorAll('.speak-btn').forEach(b=>b.classList.remove('speaking'));
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang='ja-JP';u.rate=.9;
-  const v=window.speechSynthesis.getVoices();
-  const jv=v.find(x=>x.lang==='ja-JP'||x.lang.startsWith('ja'));
-  if(jv)u.voice=jv;
-  if(btn)btn.classList.add('speaking');
-  u.onend=()=>{if(btn)btn.classList.remove('speaking');};
-  u.onerror=()=>{if(btn)btn.classList.remove('speaking');};
-  window.speechSynthesis.speak(u);
-}
 if(window.speechSynthesis){
   window.speechSynthesis.getVoices();
   window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 }
 
-function buildCard(item, q){
-  const rLabel = item.round===25?`復習問題`:`第${item.round}回`;
-  const speakTxt = `${item.k}。${item.r}`;
-
-  // Example sentence
-  let exHtml = esc(item.ex||'');
-  const kEsc = esc(item.k);
-  exHtml = exHtml.replace(new RegExp(kEsc.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g'),`<b>${kEsc}</b>`);
-
-  // PARTS TABLE
-  let partsHtml = '';
-  if(item.parts&&item.parts.length){
-    const rows = item.parts.map(p=>`<tr>
-      <td class="td-k">${esc(p.kanji)}</td>
-      <td class="td-hv">${esc(p.hanviet||'—')}</td>
-      <td class="td-on">${esc(p.on||'—')}</td>
-      <td class="td-kun">${esc(p.kun||'—')}</td>
-      <td class="td-m">${esc(p.meaning||'')}</td>
-    </tr>`).join('');
-    partsHtml=`<div class="sec">
-      <div class="sec-label" style="color:#283593;">📊 Phân tích chữ Hán</div>
-      <table class="parts-table">
-        <thead><tr>
-          <th class="th-kanji">漢字</th>
-          <th class="th-hv">Hán Việt</th>
-          <th class="th-on">音読み</th>
-          <th class="th-kun">訓読み</th>
-          <th class="th-meaning">Nghĩa</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
-  }
-
-  // CONFUSE (vàng)
-  const confuseHtml = item.confuse?`<div class="confuse-box">
-    <div class="confuse-title">⚠ Điểm dễ nhầm</div>
-    <div class="confuse-text">${esc(item.confuse)}</div>
-  </div>`:'';
-
-  // WRONG (hồng đỏ)
-  let wrongHtml='';
-  const we = item.wrong_explained||[];
-  if(we.length && !we[0].meaning?.startsWith('→ cần')){
-    wrongHtml=`<div class="wrong-sec">
-      <div class="wrong-label">❌ Bẫy đáp án</div>
-      <div class="wrong-list">
-        ${we.map(w=>`<div class="wrong-item">
-          <span class="wrong-r">${esc(w.r||'')}</span>
-          <span class="wrong-m">${esc(w.meaning||'')}</span>
-        </div>`).join('')}
-      </div>
-    </div>`;
-  }
-
-  // COLLOCATIONS (xanh dương nhạt)
-  let colHtml='';
-  if(item.collocations&&item.collocations.length){
-    colHtml=`<div class="col-sec">
-      <div class="col-label">🔗 Cụm hay dùng</div>
-      <div class="col-list">
-        ${item.collocations.map(c=>`<div class="col-item">${esc(c)}</div>`).join('')}
-      </div>
-    </div>`;
-  }
-
-  // SYNONYMS (xanh lá)
-  let synHtml='';
-  if(item.synonyms&&item.synonyms.length){
-    synHtml=`<div class="syn-sec">
-      <div class="syn-label">≈ Đồng nghĩa</div>
-      <div class="syn-chips">
-        ${item.synonyms.map((s,i)=>`<span class="syn-chip${i===0?' main':''}">${esc(s)}</span>`).join('')}
-      </div>
-    </div>`;
-  }
-
-  const kHl = q?hl(item.k,q):esc(item.k);
-  const rHl = q?hl(item.r,q):esc(item.r);
-  const mHl = q?hl(item.m,q):esc(item.m);
-
-  return `<div class="card" onclick="toggle(this)">
-    <div class="card-head">
-      <div class="k-big">${kHl}</div>
-      <div class="k-meta">
-        <div class="k-reading">【${rHl}】</div>
-        <div class="k-meaning">${mHl}</div>
-        <div class="k-badge">${esc(rLabel)} [${item.order}]</div>
-      </div>
-      <div class="card-head-right">
-        <button class="speak-btn" onclick="event.stopPropagation();speak('${esc(speakTxt).replace(/'/g,"\\'")}',this)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-          </svg>
-        </button>
-        <button class="expand-btn" onclick="event.stopPropagation();toggle(this.closest('.card'))">▼</button>
-      </div>
-    </div>
-    <div class="card-ex">${exHtml}</div>
-    <div class="card-detail">
-      ${partsHtml}
-      ${confuseHtml}
-      ${wrongHtml}
-      ${colHtml}
-      ${synHtml}
-    </div>
-  </div>`;
+function buildCard(item, q, notebookIds){
+  const data = dcBuildDao1KanjiCardData(item, { q, notebookIds, interactive:true, pinned:false });
+  return dcRenderCardTemplate(CARD_TEMPLATE, data);
 }
-
-function toggle(el){el.classList.toggle('expanded');}
 
 function getFiltered(){
   let items=DATA;
@@ -1127,9 +898,11 @@ function getFiltered(){
 }
 
 function render(){
+  if(!CARD_TEMPLATE) return;
   currentSearch=document.getElementById('search-input').value;
   const items=getFiltered();
-  document.getElementById('grid').innerHTML=items.map(v=>buildCard(v,currentSearch)).join('');
+  const notebookIds=loadNotebookIds();
+  document.getElementById('grid').innerHTML=items.map(v=>buildCard(v,currentSearch,notebookIds)).join('');
   document.getElementById('result-count').textContent=`${items.length} từ`;
 }
 
@@ -1139,7 +912,25 @@ function setRound(r,btn){
   btn.classList.add('active');render();
 }
 
-render();
+function openFromNotebookParam(){
+  const params=new URLSearchParams(location.search);
+  if(params.get('embed')==='1') document.body.classList.add('nb-embed');
+  const target=params.get('nb');
+  if(!target) return;
+  const card=document.querySelector('.dc-kanji-card[data-nb-id="'+CSS.escape(target)+'"]');
+  if(!card) return;
+  card.classList.add('expanded','nb-highlight');
+  card.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>card.classList.remove('nb-highlight'),2200);
+}
+
+fetch('dao1-hantu-doc-kanji-card-template.html').then(r=>r.text()).then(text=>{
+  const parsed=dcParseCardTemplate(text);
+  CARD_TEMPLATE=parsed.html;
+  dcInjectCardStyle('dao1-hantu-doc-kanji.html',parsed.css);
+  render();
+  openFromNotebookParam();
+}).catch(e=>console.error('Không tải được template thẻ từ vựng',e));
 </script>
 </body>
 </html>

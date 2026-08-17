@@ -1,0 +1,47 @@
+<!--STYLE-->
+.dc-mondai3-card{background:#fdf6e8;border-radius:12px;border:1px solid #c9a769;padding:14px}
+.dc-mondai3-card.nb-highlight{animation:dcMondai3Glow 1.1s ease-in-out 2}
+@keyframes dcMondai3Glow{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px rgba(245,166,35,.55)}}
+.dc-mondai3-card .nb-btn{background:none;border:1.5px solid #ded6c2;border-radius:7px;cursor:pointer;font-size:15px;padding:1px 5px;color:#8a8276;line-height:1;transition:all .18s}
+.dc-mondai3-card .nb-btn:hover{border-color:#f5a623;color:#f5a623;background:#fff8e6}
+.dc-mondai3-card .nb-btn.active{border-color:#e08d0a;background:linear-gradient(180deg,#ffe27a,#f5a623);box-shadow:0 2px 5px rgba(224,141,10,.45),inset 0 1px 0 rgba(255,255,255,.5)}
+.dc-mondai3-card .speak-btn-inline{background:none;border:none;cursor:pointer;font-size:15px;padding:1px 4px;color:#7F77DD}
+.dc-mondai3-card .wrow{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.dc-mondai3-card .wk{font-size:20px;font-weight:600;color:#534AB7}
+.dc-mondai3-card .wh{font-size:13px;color:#7F77DD;background:#EEEDFE;padding:1px 7px;border-radius:6px}
+.dc-mondai3-card .rtag{font-size:11px;background:#F1EFE8;color:#5F5E5A;border-radius:6px;padding:2px 7px;margin-left:auto}
+.dc-mondai3-card .ptag{font-size:11px;background:#E1F5EE;color:#0F6E56;border-radius:6px;padding:2px 7px}
+.dc-mondai3-card .qbadge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#534AB7;color:#fff;border-radius:50%;font-size:12px;font-weight:600;flex-shrink:0}
+.dc-mondai3-card .mng{font-size:13px;color:#333;margin-bottom:6px}
+.dc-mondai3-card .vi{font-size:12px;color:#b45309;background:#FFFBEB;border-radius:6px;padding:3px 8px;margin-bottom:6px;display:inline-block}
+.dc-mondai3-card .synb{background:#F8F7FF;border-radius:8px;padding:8px;margin-bottom:6px}
+.dc-mondai3-card .synl{font-size:11px;color:#7F77DD;font-weight:500;margin-bottom:4px}
+.dc-mondai3-card .syi{display:inline-block;font-size:12px;color:#3C3489;background:#EEEDFE;border-radius:6px;padding:2px 8px;margin:2px 2px 2px 0}
+.dc-mondai3-card .syi.pri{background:#534AB7;color:#fff}
+.dc-mondai3-card .clls{font-size:11px;color:#888;border-top:1px solid #eee;padding-top:6px}
+.dc-mondai3-card .ct{display:inline-block;background:#F1EFE8;color:#5F5E5A;border-radius:5px;padding:1px 6px;margin:2px 2px 2px 0;font-size:11px}
+<!--/STYLE-->
+<!--CARD-->
+<div class="dc-mondai3-card" data-nb-id="{{nbId}}">
+  <div class="wrow">
+    <span class="qbadge">{{n}}</span>
+    <span class="wk">{{k}}</span>
+    <span class="wh">{{h}}</span>
+    {{#if interactive}}
+    <button class="nb-btn{{{nbActiveClass}}}" data-nb="{{{nbData}}}" title="Thêm vào Sổ Tay" onclick="dcKanjiCardToggleNotebook(this)">📓</button>
+    {{/if}}
+    <button class="speak-btn-inline" data-speak="{{speakTxt}}" onclick="dcKanjiCardSpeak(this)">🔊</button>
+    <span class="ptag">{{p}}</span>
+    <span class="rtag">{{rLabel}}</span>
+  </div>
+  <div class="mng">{{m}}</div>
+  {{#if hasVi}}
+  <div class="vi">🇻🇳 {{vi}}</div>
+  {{/if}}
+  <div class="synb">
+    <div class="synl">≒ 類義語</div>
+    {{#each synonyms}}<span class="syi{{this.mainClass}}">{{this.text}}</span>{{/each}}
+  </div>
+  <div class="clls">📌 {{#each collocations}}<span class="ct">{{this.text}}</span>{{/each}}</div>
+</div>
+<!--/CARD-->
