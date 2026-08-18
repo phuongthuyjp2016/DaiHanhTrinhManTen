@@ -1,0 +1,74 @@
+<!--STYLE-->
+.dc-tonghop-card{
+  background:#fffcf5;
+  border:1px solid #d9cfb8;
+  border-left:4px solid #333;
+  border-radius:10px;
+  padding:14px 16px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.04);
+}
+.dc-tonghop-card.nb-highlight{animation:dcTonghopGlow 1.1s ease-in-out 2}
+@keyframes dcTonghopGlow{0%,100%{box-shadow:0 1px 2px rgba(0,0,0,0.04)}50%{box-shadow:0 0 0 4px rgba(245,166,35,.55)}}
+.dc-tonghop-card .card-top-row{display:flex;align-items:flex-start;gap:8px;margin:0 0 4px;}
+.dc-tonghop-card .pattern{
+  font-family:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  font-size:19px;
+  font-weight:700;
+  color:#1c2942;
+  margin:0;
+  flex:1;
+  min-width:0;
+}
+.dc-tonghop-card .nb-btn{background:none;border:1.5px solid #d9cfb8;border-radius:7px;cursor:pointer;font-size:15px;padding:1px 5px;color:#5c5346;line-height:1;flex-shrink:0;transition:all .18s}
+.dc-tonghop-card .nb-btn:hover{border-color:#f5a623;color:#f5a623;background:#fff8e6}
+.dc-tonghop-card .nb-btn.active{border-color:#e08d0a;background:linear-gradient(180deg,#ffe27a,#f5a623);box-shadow:0 2px 5px rgba(224,141,10,.45),inset 0 1px 0 rgba(255,255,255,.5)}
+.dc-tonghop-card .meaning{
+  font-size:14.5px;
+  font-weight:600;
+  color:#2b2620;
+  margin:0 0 6px;
+}
+.dc-tonghop-card .nuance{
+  font-size:12.5px;
+  color:#b8893f;
+  background:rgba(184,137,63,0.1);
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:6px;
+  margin-bottom:8px;
+}
+.dc-tonghop-card .example{
+  background:#efe7d6;
+  border-radius:8px;
+  padding:8px 12px;
+  font-size:13.5px;
+}
+.dc-tonghop-card .ex-jp{
+  font-family:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",serif;
+  color:#2b2620;
+  margin:0 0 3px;
+}
+.dc-tonghop-card .ex-vn{
+  color:#5c5346;
+  margin:0;
+}
+.dc-tonghop-card mark{background:#fff59d;border-radius:3px;padding:0 2px;}
+<!--/STYLE-->
+<!--CARD-->
+<div class="dc-tonghop-card" data-nb-id="{{nbId}}" style="border-left-color:{{groupColor}}">
+  <div class="card-top-row">
+    <p class="pattern">{{{patternHl}}}</p>
+    {{#if interactive}}
+    <button class="nb-btn{{{nbActiveClass}}}" data-nb="{{{nbData}}}" title="Thêm vào Sổ Tay" onclick="dcKanjiCardToggleNotebook(this)">📓</button>
+    {{/if}}
+  </div>
+  <p class="meaning">{{{meaningHl}}}</p>
+  {{#if hasNuance}}
+  <span class="nuance">💡 {{{nuanceHl}}}</span>
+  {{/if}}
+  <div class="example">
+    <p class="ex-jp">・{{{exJpHl}}}</p>
+    <p class="ex-vn">{{{exVnHl}}}</p>
+  </div>
+</div>
+<!--/CARD-->

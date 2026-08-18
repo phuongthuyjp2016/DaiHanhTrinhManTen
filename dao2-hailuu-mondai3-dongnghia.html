@@ -25,9 +25,8 @@ body.nb-embed .container{padding-top:10px}
 .cnt{font-size:13px;color:#888}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
 /* Each card's own look lives in dao2-hailuu-mondai3-dongnghia-card-template.html,
-   fetched once and injected below — not duplicated here. */
-.nb-toast{position:fixed;transform:translate(-50%,-6px);background:linear-gradient(180deg,#3a3226,#241f18);color:#ffe9b0;font-weight:700;font-size:12px;padding:6px 12px;border-radius:9px;box-shadow:0 4px 14px rgba(0,0,0,.3);z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
-.nb-toast.show{opacity:1;transform:translate(-50%,-14px)}
+   fetched once and injected below — not duplicated here. The notebook-save
+   toast's style/behavior is shared too, injected by dc-card-template-engine.js. */
 .qsetup{background:#fdf6e8;border-radius:12px;border:1px solid #c9a769;padding:20px;margin-bottom:16px}
 .qsetup h2{font-size:16px;font-weight:500;margin-bottom:14px}
 .srow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
@@ -288,22 +287,6 @@ function switchTab(t){ct=t;document.querySelectorAll('.tab').forEach(function(e,
 function fv(){var s=document.getElementById('si').value.toLowerCase();var r=document.getElementById('fr').value;var p=document.getElementById('fp').value;rv(V.filter(function(v){return(!r||v.r===r)&&(!p||v.p===p)&&(!s||v.k.indexOf(s)>=0||v.h.indexOf(s)>=0||v.m.indexOf(s)>=0||v.sy.join('').indexOf(s)>=0);}));}
 var NOTEBOOK_KEY='dhtm_notebook_v1';
 function loadNotebookIds(){try{return new Set(JSON.parse(localStorage.getItem(NOTEBOOK_KEY)||'[]').map(function(x){return x.id;}));}catch(e){return new Set();}}
-var _nbToastTimer=null;
-function showNotebookToast(msg,anchorEl){
-  var el=document.getElementById('nb-toast');
-  if(!el){el=document.createElement('div');el.id='nb-toast';el.className='nb-toast';document.body.appendChild(el);}
-  el.textContent='📓 '+msg;
-  if(anchorEl){
-    var r=anchorEl.getBoundingClientRect();
-    el.style.left=(r.left+r.width/2)+'px';
-    el.style.top=Math.max(30,r.top)+'px';
-  }
-  clearTimeout(_nbToastTimer);
-  el.classList.remove('show');
-  void el.offsetWidth;
-  el.classList.add('show');
-  _nbToastTimer=setTimeout(function(){el.classList.remove('show');},1800);
-}
 function toggleNotebook(id,btnEl){
   var list=[];
   try{list=JSON.parse(localStorage.getItem(NOTEBOOK_KEY)||'[]');}catch(e){}
@@ -318,7 +301,7 @@ function toggleNotebook(id,btnEl){
     data.id=id;data.addedAt=Date.now();
     list.push(data);
     btnEl.classList.add('active');
-    showNotebookToast('Đã lưu vào sổ tay!',btnEl);
+    dcShowNotebookToast('Đã lưu vào sổ tay!',btnEl);
   }
   try{localStorage.setItem(NOTEBOOK_KEY,JSON.stringify(list));}catch(e){}
 }

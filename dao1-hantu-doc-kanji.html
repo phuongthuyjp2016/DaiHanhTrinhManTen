@@ -49,16 +49,6 @@ body.nb-embed .container{padding-top:10px;}
 /* Each card's own look lives in dao1-hantu-doc-kanji-card-template.html,
    fetched once and injected below — not duplicated here. */
 
-.nb-toast{
-  position:fixed;transform:translate(-50%,-6px);
-  background:linear-gradient(180deg,#3a3226,#241f18);color:#ffe9b0;
-  font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;
-  padding:6px 12px;border-radius:9px;box-shadow:0 4px 14px rgba(0,0,0,.3);
-  z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;
-  white-space:nowrap;
-}
-.nb-toast.show{opacity:1;transform:translate(-50%,-14px);}
-
 .tab-switch{display:flex;gap:6px;}
 .tab-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);border-radius:20px;padding:7px 16px;color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Be Vietnam Pro',sans-serif;transition:all .15s;white-space:nowrap;}
 .tab-btn:hover{background:rgba(255,255,255,.25);}
@@ -832,28 +822,6 @@ const NOTEBOOK_KEY='dhtm_notebook_v1';
 function loadNotebookIds(){
   try{ return new Set(JSON.parse(localStorage.getItem(NOTEBOOK_KEY)||'[]').map(x=>x.id)); }catch(e){ return new Set(); }
 }
-let _nbToastTimer=null;
-function showNotebookToast(msg,anchorEl){
-  let el=document.getElementById('nb-toast');
-  if(!el){
-    el=document.createElement('div');
-    el.id='nb-toast';
-    el.className='nb-toast';
-    document.body.appendChild(el);
-  }
-  el.innerHTML='📓 '+esc(msg);
-  if(anchorEl){
-    const r=anchorEl.getBoundingClientRect();
-    el.style.left=(r.left+r.width/2)+'px';
-    el.style.top=Math.max(30,r.top)+'px';
-  }
-  clearTimeout(_nbToastTimer);
-  el.classList.remove('show');
-  void el.offsetWidth;
-  el.classList.add('show');
-  _nbToastTimer=setTimeout(()=>el.classList.remove('show'),1800);
-}
-
 function toggleNotebook(id,btnEl){
   let list=[];
   try{ list=JSON.parse(localStorage.getItem(NOTEBOOK_KEY)||'[]'); }catch(e){}
@@ -866,7 +834,7 @@ function toggleNotebook(id,btnEl){
     try{ data=JSON.parse(btnEl.dataset.nb); }catch(e){}
     list.push({ id, addedAt:Date.now(), ...data });
     btnEl.classList.add('active');
-    showNotebookToast('Đã lưu vào sổ tay!',btnEl);
+    dcShowNotebookToast('Đã lưu vào sổ tay!',btnEl);
   }
   try{ localStorage.setItem(NOTEBOOK_KEY,JSON.stringify(list)); }catch(e){}
 }

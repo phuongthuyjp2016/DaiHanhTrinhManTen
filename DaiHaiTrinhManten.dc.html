@@ -1101,7 +1101,9 @@
               <div onClick="{{ nb.onToggle }}" style="cursor:pointer; display:flex; align-items:flex-start; gap:10px;">
                 <div style="flex:1; min-width:0;">
                   <div style="color:#5a3b22; font-weight:800; font-family:'Baloo 2',sans-serif; font-size:16px;">{{ nb.title }}</div>
-                  <div style="color:#2f6fb0; font-weight:700; font-size:12.5px; margin-top:2px;">【{{ nb.reading }}】</div>
+                  <sc-if value="{{ nb.hasReading }}" hint-placeholder-val="{{ false }}">
+                    <div style="color:#2f6fb0; font-weight:700; font-size:12.5px; margin-top:2px;">【{{ nb.reading }}】</div>
+                  </sc-if>
                   <div style="color:#7a5a3a; font-size:12px; margin-top:2px;">{{ nb.meaning }}</div>
                 </div>
                 <div onClick="{{ nb.onRemove }}" style="cursor:pointer; flex-shrink:0; font-size:16px; color:#b06a4a; padding:4px;">🗑</div>
@@ -1649,7 +1651,8 @@ const OWNER_KEY = 'dhtm_owner_uid_v1';
 const NOTEBOOK_KEY = 'dhtm_notebook_v1';
 const ISLAND_CARD_TEMPLATES = {
   'dao1-hantu-doc-kanji.html': { template: 'dao1-hantu-doc-kanji-card-template.html', buildData: (raw, opts) => dcBuildDao1KanjiCardData(raw, opts) },
-  'dao2-hailuu-mondai3-dongnghia.html': { template: 'dao2-hailuu-mondai3-dongnghia-card-template.html', buildData: (raw, opts) => dcBuildDao2Mondai3CardData(raw, opts) }
+  'dao2-hailuu-mondai3-dongnghia.html': { template: 'dao2-hailuu-mondai3-dongnghia-card-template.html', buildData: (raw, opts) => dcBuildDao2Mondai3CardData(raw, opts) },
+  'dao3-suongmu-tonghop-theonhom.html': { template: 'dao3-suongmu-tonghop-theonhom-card-template.html', buildData: (raw, opts) => dcBuildDao3TonghopCardData(raw, opts) }
 };
 function loadOwnerUid() { try { return localStorage.getItem(OWNER_KEY); } catch (e) { return null; } }
 function saveOwnerUid(uid) { try { localStorage.setItem(OWNER_KEY, uid); } catch (e) {} }
@@ -2934,6 +2937,7 @@ class Component extends DCLogic {
           id: n.id,
           title: n.title || '',
           reading: n.reading || '',
+          hasReading: !!n.reading,
           meaning: n.meaning || '',
           example: n.example || '',
           sourceLabel: n.sourceLabel || '',

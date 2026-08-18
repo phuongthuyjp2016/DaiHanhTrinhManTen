@@ -171,3 +171,75 @@ function dcBuildDao2Mondai3CardData(item, opts) {
     collocations: (item.co || []).map(function (c) { return { text: c }; })
   };
 }
+
+// Shared "Đã lưu vào sổ tay!" toast, anchored above whichever 📓 button
+// was clicked (never covering it) instead of a fixed spot on the page.
+// One shared implementation so every island's toast behaves identically
+// and a future fix only needs to happen once.
+var _dcNbToastStyleInjected = false;
+function dcEnsureToastStyle() {
+  if (_dcNbToastStyleInjected) return;
+  _dcNbToastStyleInjected = true;
+  const el = document.createElement('style');
+  el.textContent =
+    '.nb-toast{position:fixed;left:0;top:0;transform:translate(-50%,calc(-100% - 8px));' +
+    "background:linear-gradient(180deg,#3a3226,#241f18);color:#ffe9b0;font-family:'Baloo 2','Be Vietnam Pro',sans-serif;" +
+    'font-weight:700;font-size:12px;padding:6px 12px;border-radius:9px;box-shadow:0 4px 14px rgba(0,0,0,.3);' +
+    'z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;}' +
+    '.nb-toast.show{opacity:1;transform:translate(-50%,calc(-100% - 14px));}';
+  document.head.appendChild(el);
+}
+var _dcNbToastTimer = null;
+function dcShowNotebookToast(msg, anchorEl) {
+  dcEnsureToastStyle();
+  let el = document.getElementById('nb-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'nb-toast';
+    el.className = 'nb-toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = '📓 ' + msg;
+  if (anchorEl) {
+    const r = anchorEl.getBoundingClientRect();
+    el.style.left = (r.left + r.width / 2) + 'px';
+    el.style.top = r.top + 'px';
+  }
+  clearTimeout(_dcNbToastTimer);
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  _dcNbToastTimer = setTimeout(function () { el.classList.remove('show'); }, 1800);
+}
+
+// Same idea, for dao3-suongmu-tonghop-theonhom.html's ITEMS item shape
+// (id/pattern/group/meaning/nuance/ex_jp/ex_vn). The item's group accent
+// color isn't on the item itself in ITEMS — callers merge it in as
+// `groupColor` before calling (dao3's own render loop looks it up from its
+// GROUPS map; a saved Sổ Tay entry keeps its own copy in `raw.groupColor`).
+// opts: { q, notebookIds, interactive }
+function dcBuildDao3TonghopCardData(item, opts) {
+  opts = opts || {};
+  const q = opts.q || '';
+  const notebookIds = opts.notebookIds || null;
+  const interactive = opts.interactive !== false;
+  const nbId = 'dao3-suongmu-tonghop-theonhom.html::' + item.id;
+  const nbData = JSON.stringify({
+    source: 'dao3-suongmu-tonghop-theonhom.html', sourceLabel: 'Đảo 3 · Sương Mù - Tổng Hợp Theo Nhóm',
+    title: item.pattern, reading: '', meaning: item.meaning, raw: item
+  }).replace(/"/g, '&quot;');
+  const nbActive = !!(notebookIds && notebookIds.has(nbId));
+
+  return {
+    nbId, nbData,
+    nbActiveClass: nbActive ? ' active' : '',
+    interactive: interactive,
+    groupColor: item.groupColor || '#333',
+    patternHl: dcHighlightText(item.pattern, q),
+    meaningHl: dcHighlightText(item.meaning, q),
+    hasNuance: !!item.nuance,
+    nuanceHl: item.nuance ? dcHighlightText(item.nuance, q) : '',
+    exJpHl: dcHighlightText(item.ex_jp, q),
+    exVnHl: dcHighlightText(item.ex_vn, q)
+  };
+}
