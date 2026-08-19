@@ -1430,7 +1430,11 @@ const ISLANDS = [
     playable:false, comingSoon:true, quiz:[] },
   { name:'Đảo Tiếng Vọng', skill:'Nghe Hiểu · Bắt Từ Khóa (MD1)', boss:'Cá Mập Âm Thanh', item:'Tai Nghe Vàng', arc:'chinhphuc', color:'#4f9dbf', dark:'#356f8c', x:1260, y:460, accessory:'headphones',
     story:'Tiếng sóng vỗ mang theo những đoạn hội thoại bí ẩn, chỉ đôi tai tinh tường của Cá Mập Âm Thanh mới bắt trọn từ khóa.',
-    playable:false, comingSoon:true, quiz:[] },
+    playable:false, comingSoon:false, external:true, menuUrl:'dao5-index.html', quiz:[],
+    menuTools:[
+      { icon:'🎧', title:'Mondai 1 · Nghe Hiểu (Khoá Học Vấn Đề)', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html' }
+    ],
+    progressTools:['dao5-tiengvong-mondai1-nghe.html'] },
   { name:'Đảo Tiên Tri', skill:'Nghe Hiểu · Đọc Trước Dự Đoán (MD2)', boss:'Cá Mập Tiên Tri', item:'Quả Cầu Tiên Tri', arc:'chinhphuc', color:'#8f5fbf', dark:'#623f8c', x:1180, y:660, accessory:'orb',
     story:'Cá Mập Tiên Tri dạy cách đọc trước câu hỏi và dự đoán nội dung trước khi nghe.',
     playable:false, comingSoon:true, quiz:[] },
