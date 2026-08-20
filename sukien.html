@@ -17,7 +17,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, arrayUnion, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC84j3PM2_PInZbUm3IBCfQSessFndkSJ8",
@@ -60,9 +60,15 @@
     createGameEvent: async (code, event) => {
       await setDoc(doc(db, 'game_events', code), event);
     },
-    joinGameEvent: async (code, uid) => {
-      await updateDoc(doc(db, 'game_events', code), { participantUids: arrayUnion(uid) });
-    }
+    joinGameEvent: async (code, uid, name) => {
+      await updateDoc(doc(db, 'game_events', code), { participants: arrayUnion({ uid, name: name || 'Ẩn danh' }) });
+    },
+    startGameEvent: async (code) => {
+      await updateDoc(doc(db, 'game_events', code), { status: 'started', startedAt: Date.now() });
+    },
+    watchGameEvent: (code, cb) => onSnapshot(doc(db, 'game_events', code), (snap) => {
+      cb(snap.exists() ? { id: snap.id, ...snap.data() } : null);
+    })
   };
 </script>
 
@@ -109,9 +115,13 @@ let creating = false;
 let joinCodeInput = '';
 let joinError = '';
 let joining = false;
-let justCreatedCode = '';
 let copiedCode = '';
 let copyTimer = null;
+let view = 'list';
+let lobbyCode = '';
+let lobbyEvent = null;
+let lobbyUnsub = null;
+let startingEvent = false;
 
 function hostDisplayName() {
   return (profile && profile.displayName) || (currentUser && currentUser.name) || 'Nhà Thám Hiểm';
@@ -125,6 +135,24 @@ function requireAuth(then) {
     joinError = 'Đăng nhập thất bại, thử lại sau.';
     render();
   });
+}
+
+function enterLobby(code) {
+  view = 'lobby'; lobbyCode = code; lobbyEvent = null;
+  render();
+  if (lobbyUnsub) { lobbyUnsub(); lobbyUnsub = null; }
+  lobbyUnsub = window.skSync.watchGameEvent(code, (ev) => { lobbyEvent = ev; render(); });
+}
+function leaveLobby() {
+  if (lobbyUnsub) { lobbyUnsub(); lobbyUnsub = null; }
+  view = 'list'; lobbyCode = ''; lobbyEvent = null;
+  render();
+  loadEvents();
+}
+function startEventNow() {
+  if (!lobbyCode || startingEvent) return;
+  startingEvent = true; render();
+  window.skSync.startGameEvent(lobbyCode).then(() => { startingEvent = false; render(); }).catch(() => { startingEvent = false; render(); });
 }
 
 function loadEvents() {
@@ -164,13 +192,13 @@ function submitCreateEvent() {
     maxPlayers: newEvent.maxPlayers || 30,
     hostUid: uid,
     hostName: hostDisplayName(),
-    participantUids: [],
+    participants: [],
+    status: 'open',
     createdAt: Date.now()
   };
   window.skSync.createGameEvent(code, event).then(() => {
-    creating = false; showCreateForm = false; justCreatedCode = code;
-    render();
-    loadEvents();
+    creating = false; showCreateForm = false;
+    enterLobby(code);
   }).catch(() => { creating = false; formError = 'Không tạo được sự kiện, thử lại sau.'; render(); });
   });
 }
@@ -189,19 +217,22 @@ function submitJoinByCode() {
     window.skSync.fetchGameEventByCode(code).then(ev => {
       if (!ev) { joining = false; joinError = 'Không tìm thấy sự kiện với mã này.'; render(); return; }
       const uid = window.skSync.currentUid();
-      if (ev.hostUid === uid || (ev.participantUids || []).includes(uid)) {
-        joining = false; showJoinForm = false; render(); loadEvents(); return;
-      }
-      window.skSync.joinGameEvent(code, uid).then(() => {
-        joining = false; showJoinForm = false; render(); loadEvents();
-      }).catch(() => { joining = false; joinError = 'Không tham gia được, thử lại sau.'; render(); });
+      const alreadyIn = ev.hostUid === uid || (ev.participants || []).some(p => p.uid === uid);
+      const proceed = () => { joining = false; showJoinForm = false; enterLobby(code); };
+      if (alreadyIn) { proceed(); return; }
+      window.skSync.joinGameEvent(code, uid, hostDisplayName()).then(proceed)
+        .catch(() => { joining = false; joinError = 'Không tham gia được, thử lại sau.'; render(); });
     }).catch(() => { joining = false; joinError = 'Không tìm được sự kiện, thử lại sau.'; render(); });
   });
 }
 
 function joinFromList(code) {
   requireAuth(() => {
-    window.skSync.joinGameEvent(code, window.skSync.currentUid()).then(loadEvents);
+    const uid = window.skSync.currentUid();
+    const ev = events.find(e => (e.code || e.id) === code);
+    const alreadyIn = ev && (ev.hostUid === uid || (ev.participants || []).some(p => p.uid === uid));
+    if (alreadyIn) { enterLobby(code); return; }
+    window.skSync.joinGameEvent(code, uid, hostDisplayName()).then(() => enterLobby(code));
   });
 }
 
@@ -211,8 +242,6 @@ function copyCode(code) {
   clearTimeout(copyTimer);
   copyTimer = setTimeout(() => { copiedCode = ''; render(); }, 1500);
 }
-
-function dismissJustCreated() { justCreatedCode = ''; render(); }
 
 function stepHtml(st, hasArrow) {
   return `<div style="display:flex; align-items:flex-start;">
@@ -230,12 +259,11 @@ function eventRowHtml(ev) {
   const code = ev.code || ev.id;
   const modeInfo = EVENT_MODES.find(m => m.id === ev.mode) || EVENT_MODES[0];
   const isHost = !!(uid && ev.hostUid === uid);
-  const isJoined = !!(uid && (ev.participantUids || []).includes(uid));
-  const participantCount = (ev.participantUids || []).length + 1;
-  const joinDisabled = isHost || isJoined;
-  const joinLabel = isHost ? '👑 Host' : (isJoined ? '✓ Đã tham gia' : 'Tham gia');
-  const joinBtnStyle = joinDisabled
-    ? 'cursor:default; background:#e2d3ae; border:2px solid #b9a679; border-radius:12px; padding:8px 16px; font-weight:800; color:#6b5a3a; font-size:12px; white-space:nowrap;'
+  const isJoined = !!(uid && (ev.participants || []).some(p => p.uid === uid));
+  const participantCount = (ev.participants || []).length + 1;
+  const joinLabel = isHost ? '👑 Vào phòng' : (isJoined ? '✓ Vào phòng' : 'Tham gia');
+  const joinBtnStyle = (isHost || isJoined)
+    ? 'cursor:pointer; background:#e2d3ae; border:2px solid #b9a679; border-radius:12px; padding:8px 16px; font-weight:800; color:#5a3b22; font-size:12px; white-space:nowrap;'
     : 'cursor:pointer; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:12px; padding:8px 16px; font-weight:800; color:#5a3b22; font-size:12px; white-space:nowrap; box-shadow:0 3px 0 #9a5f14;';
   const justCopied = copiedCode === code;
   return `<div style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2px solid #b9761a; border-radius:14px; padding:12px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
@@ -249,11 +277,69 @@ function eventRowHtml(ev) {
       <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#0e5273; font-size:14px; letter-spacing:1.5px;">${code}</div>
       <div style="color:${justCopied ? '#2e8b57' : '#8b5e34'}; font-size:9.5px; font-weight:${justCopied ? '700' : '400'};">${justCopied ? '✓ Đã chép' : 'chép mã'}</div>
     </div>
-    <div ${joinDisabled ? '' : `onclick="joinFromList('${code}')"`} style="${joinBtnStyle}">${joinLabel}</div>
+    <div onclick="joinFromList('${code}')" style="${joinBtnStyle}">${joinLabel}</div>
   </div>`;
 }
 
+function lobbyParticipantRowHtml(p) {
+  return `<div style="display:flex; align-items:center; gap:8px; background:#fffaf0; border:1px solid #e2d3ae; border-radius:10px; padding:7px 12px;">
+    <span style="font-size:16px;">${p.isHost ? '🦈' : '🐟'}</span>
+    <span style="font-weight:700; color:#3a2a18; font-size:13px;">${escapeHtml(p.name)}</span>
+    ${p.isHost ? '<span style="margin-left:auto; font-size:10.5px; font-weight:800; color:#b9761a;">HOST 👑</span>' : ''}
+  </div>`;
+}
+
+function renderLobby() {
+  const ev = lobbyEvent;
+  const uid = window.skSync.currentUid();
+  let bodyHtml;
+  if (!ev) {
+    bodyHtml = `<div style="text-align:center; color:#0e5273; font-weight:700; font-size:13px; padding:30px 0;">⏳ Đang tải phòng chờ...</div>`;
+  } else {
+    const isHost = !!(uid && ev.hostUid === uid);
+    const participants = [{ uid: ev.hostUid, name: ev.hostName || 'Ẩn danh', isHost: true }]
+      .concat((ev.participants || []).map(p => ({ uid: p.uid, name: p.name || 'Ẩn danh', isHost: false })));
+    const started = ev.status === 'started';
+    let actionHtml;
+    if (isHost && !started) {
+      actionHtml = `<div onclick="startEventNow()" style="margin-top:18px; cursor:${startingEvent ? 'default' : 'pointer'}; background:${startingEvent ? '#e2d3ae' : 'linear-gradient(180deg,#ffd25a,#f5a623)'}; border:2px solid #b9761a; border-radius:14px; padding:13px; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; color:#5a3b22; box-shadow:0 4px 0 #9a5f14;">${startingEvent ? 'Đang bắt đầu...' : '▶ BẮT ĐẦU EVENT'}</div>`;
+    } else if (started) {
+      actionHtml = `<div style="margin-top:18px; text-align:center; color:#2e8b57; font-weight:800; font-size:14px; background:rgba(46,139,87,.12); border:1.5px solid #2e8b57; border-radius:12px; padding:12px;">🎮 Sự kiện đã bắt đầu! (Phần chơi trực tiếp sẽ được bổ sung sau)</div>`;
+    } else {
+      actionHtml = `<div style="margin-top:18px; text-align:center; color:#8b5e34; font-weight:700; font-size:13.5px;">⏳ Chờ Host bắt đầu...</div>`;
+    }
+    bodyHtml = `
+      <div style="text-align:center;">
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:19px;">🌊 ${escapeHtml(ev.name)}</div>
+        <div onclick="copyCode('${lobbyCode}')" style="cursor:pointer; display:inline-block; margin-top:8px; background:#fff; border:1.5px dashed #b9761a; border-radius:10px; padding:6px 14px;">
+          <span style="color:#8b5e34; font-size:11px; font-weight:600;">Event Code:</span>
+          <span style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#0e5273; font-size:15px; letter-spacing:2px; margin-left:6px;">${lobbyCode}</span>
+          <span style="color:${copiedCode === lobbyCode ? '#2e8b57' : '#8b5e34'}; font-size:10px; margin-left:6px;">${copiedCode === lobbyCode ? '✓ đã chép' : '(chép)'}</span>
+        </div>
+      </div>
+      <div style="margin-top:18px; font-weight:800; color:#5a3b22; font-size:13px;">👥 ${participants.length} người đang tham gia</div>
+      <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px; max-height:320px; overflow-y:auto;">
+        ${participants.map(lobbyParticipantRowHtml).join('')}
+      </div>
+      ${actionHtml}
+    `;
+  }
+  document.getElementById('app').innerHTML = `
+    <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
+      <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#0e5273; font-weight:700; font-size:14px; width:fit-content;">← Rời phòng chờ</div>
+      <div style="position:relative; z-index:4; max-width:480px; margin:14px auto; background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #b9761a; border-radius:20px; padding:24px; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
+        ${bodyHtml}
+      </div>
+    </div>
+  `;
+}
+
 function render() {
+  if (view === 'lobby') { renderLobby(); return; }
+  renderList();
+}
+
+function renderList() {
   const stepsHtml = EVENT_STEPS.map((st, i) => stepHtml(st, i < EVENT_STEPS.length - 1)).join('');
 
   let listHtml = '';
@@ -319,17 +405,6 @@ function render() {
       </div>
     </div>` : '';
 
-  const justCreatedHtml = justCreatedCode ? `
-    <div onclick="dismissJustCreated()" style="position:fixed; inset:0; z-index:60; background:rgba(3,26,45,.62); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:20px;">
-      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #2e8b57; border-radius:20px; padding:26px; max-width:380px; width:100%; text-align:center;">
-        <div style="font-size:34px;">🎉</div>
-        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:16px; margin-top:6px;">Đã tạo sự kiện! Bạn là Host 👑</div>
-        <div style="color:#8b5e34; font-size:12.5px; margin-top:6px;">Chia sẻ mã này để mời bạn bè tham gia</div>
-        <div onclick="copyCode('${justCreatedCode}')" style="cursor:pointer; margin-top:14px; background:#fff; border:2px dashed #b9761a; border-radius:12px; padding:12px; font-family:'Baloo 2',sans-serif; font-weight:800; color:#0e5273; font-size:26px; letter-spacing:4px;">${justCreatedCode}</div>
-        <div style="color:#8b5e34; font-size:11px; margin-top:6px;">(Bấm vào mã để sao chép)</div>
-        <div onclick="dismissJustCreated()" style="margin-top:16px; cursor:pointer; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:12px; padding:10px; font-weight:800; color:#5a3b22;">Đã hiểu</div>
-      </div>
-    </div>` : '';
 
   document.getElementById('app').innerHTML = `
     <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
@@ -365,7 +440,6 @@ function render() {
     </div>
     ${createModalHtml}
     ${joinModalHtml}
-    ${justCreatedHtml}
   `;
 }
 
