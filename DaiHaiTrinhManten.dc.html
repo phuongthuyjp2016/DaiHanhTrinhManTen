@@ -169,6 +169,11 @@
     .notebook-grid { grid-template-columns: 1fr; }
     @media (min-width: 820px) { .notebook-grid { grid-template-columns: repeat(2,1fr); } }
     @media (min-width: 1220px) { .notebook-grid { grid-template-columns: repeat(3,1fr); } }
+    .event-banner-desktop { display: none; }
+    @media (min-width: 900px) {
+      .event-banner-mobile { display: none; }
+      .event-banner-desktop { display: block; flex: 1 1 320px; min-width: 0; align-self: center; container-type: inline-size; }
+    }
     html { background: url('assets/art-001.webp') center top / cover no-repeat fixed, #0e5273; }
     body { margin:0; -webkit-font-smoothing:antialiased; background:transparent; }
     @media (max-width: 643px) { html { background: url('assets/art-002.webp') center top / cover no-repeat fixed, #0e5273; } }
@@ -272,6 +277,18 @@
         <div style="position:relative; width:100%; max-width:430px; flex:0 1 430px;">
           <img src="assets/art-004.webp" alt="ĐẠI HẢI TRÌNH MANTEN N1 — Hành trình chinh phục JLPT N1" draggable="false" style="width:100%; display:block; filter:drop-shadow(0 6px 12px rgba(3,26,45,.32));" />
         </div>
+
+        <!-- event banner: desktop places it in this header gap; mobile hides this copy and uses the full-width one below instead -->
+        <div class="event-banner-wrap event-banner-desktop" style="position:relative; overflow:hidden; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.28);">
+          <img src="assets/su_kien_banner.png" alt="Sự kiện" draggable="false" onClick="{{ eventBannerClick }}" style="{{ eventBannerImgStyle }}" />
+          <sc-if value="{{ eventComingSoon }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute; inset:0; background:rgba(6,20,35,.2); backdrop-filter:blur(1.5px) brightness(.92) saturate(85%); -webkit-backdrop-filter:blur(1.5px) brightness(.92) saturate(85%); pointer-events:none;"></div>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+              <span style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(11px,3.6cqw,26px); color:#ffe9b0; letter-spacing:.4px; text-shadow:0 2px 6px rgba(0,0,0,.6); border:1.5px solid #ffe9b0; border-radius:8px; padding:3px 9px; background:rgba(9,45,66,.85); white-space:nowrap;">⏳ SẮP DIỄN RA</span>
+            </div>
+          </sc-if>
+        </div>
+
         <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
           <div style="width:56px; height:56px; flex-shrink:0;" title="Hoa Tiêu">{{ compassRoseSvg }}</div>
           <div style="background:rgba(9,45,66,.55); border:2px solid #ffe9b0; border-radius:14px; padding:6px 10px; color:#ffe9b0; font-size:11px; font-weight:700; display:flex; flex-direction:column; align-items:center; gap:1px;">
@@ -295,6 +312,17 @@
             </sc-if>
           </div>
         </div>
+      </div>
+
+      <!-- event banner: mobile (full width, below header); desktop copy lives inside the header row above -->
+      <div class="event-banner-wrap event-banner-mobile" style="position:relative; z-index:6; margin-top:10px; border-radius:14px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,.28);">
+        <img src="assets/su_kien_banner.png" alt="Sự kiện" draggable="false" onClick="{{ eventBannerClick }}" style="{{ eventBannerImgStyle }}" />
+        <sc-if value="{{ eventComingSoon }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute; inset:0; background:rgba(6,20,35,.2); backdrop-filter:blur(1.5px) brightness(.92) saturate(85%); -webkit-backdrop-filter:blur(1.5px) brightness(.92) saturate(85%); pointer-events:none;"></div>
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+            <span style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(14px,4vw,22px); color:#ffe9b0; letter-spacing:1px; text-shadow:0 2px 6px rgba(0,0,0,.5); border:2px solid #ffe9b0; border-radius:12px; padding:6px 18px; background:rgba(9,45,66,.85);">⏳ SẮP DIỄN RA</span>
+          </div>
+        </sc-if>
       </div>
 
       <!-- la bàn gợi ý -->
@@ -1291,6 +1319,9 @@
 <script type="text/x-dc" data-dc-script>
 
 const STORAGE_KEY = 'dhtm_progress_v2';
+// Flip to true to simulate the event being live (for testing). When false the
+// homepage banner shows dimmed with a "Sắp diễn ra" overlay and isn't clickable.
+const EVENT_LIVE = false;
 const BGFIT = { backgroundRepeat:'no-repeat', backgroundPosition:'center', backgroundSize:'contain' };
 const bgOf = (path, extra) => Object.assign({}, BGFIT, { backgroundImage: path ? `url("${path}")` : 'none' }, extra || {});
 const CANVAS_W = 1560, CANVAS_H = 1130;
@@ -2186,6 +2217,7 @@ class Component extends DCLogic {
     }).catch(() => { this.setState({ leaderboardLoading: false, leaderboardFailed: true }); });
   };
   backFromLeaderboard = () => this.setState({ screen: 'map' });
+  eventBannerClick = () => { if (EVENT_LIVE) window.location.href = 'sukien.html'; };
   onRedeemInputChange = (e) => this.setState({ redeemInput: e.target.value, redeemError: '' });
   redeemCode = async () => {
     const raw = this.state.redeemInput.trim().toUpperCase();
@@ -2887,6 +2919,8 @@ class Component extends DCLogic {
       goToRedeem: this.goToRedeem, redeemInput: s.redeemInput, onRedeemInputChange: this.onRedeemInputChange, redeemCode: this.redeemCode,
       redeemError: s.redeemError, redeemSuccess: s.redeemSuccess, showUnlockAnim: s.showUnlockAnim, fireworkParticles, collectibleSummary,
       isLeaderboard: s.screen === 'leaderboard', goToLeaderboard: this.goToLeaderboard, backFromLeaderboard: this.backFromLeaderboard,
+      eventComingSoon: !EVENT_LIVE, eventBannerClick: this.eventBannerClick,
+      eventBannerImgStyle: { width:'100%', display:'block', cursor: EVENT_LIVE ? 'pointer' : 'default' },
       isFriendsScreen: s.screen === 'friends', goToFriends: this.goToFriends, backFromFriends: this.backFromFriends,
       hasIncomingRequests: !!(s.incomingRequests && s.incomingRequests.length),
       incomingRequestCount: (s.incomingRequests || []).length,

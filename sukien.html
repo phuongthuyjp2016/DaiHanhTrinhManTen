@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sự Kiện Hải Trình — Đại Hải Trình Manten</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Be Vietnam Pro',sans-serif; background:linear-gradient(180deg,#aee9ff 0%,#8fdcef 35%,#4fc3d9 70%,#1c9a95 100%); min-height:100dvh; }
+  a { text-decoration:none; }
+  input:focus { outline:2px solid #f5a623; }
+</style>
+</head>
+<body>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC84j3PM2_PInZbUm3IBCfQSessFndkSJ8",
+    authDomain: "daihanhtrinhmanten.firebaseapp.com",
+    projectId: "daihanhtrinhmanten",
+    storageBucket: "daihanhtrinhmanten.firebasestorage.app",
+    messagingSenderId: "30871212921",
+    appId: "1:30871212921:web:2788a345640d7c8e6715a8"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  let currentUid = null;
+
+  window.skSync = {
+    currentUid: () => currentUid,
+    signIn: async () => {
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      currentUid = result.user.uid;
+      return { uid: result.user.uid, name: result.user.displayName };
+    },
+    onAuthChanged: (cb) => onAuthStateChanged(auth, (user) => {
+      currentUid = user ? user.uid : null;
+      cb(user ? { uid: user.uid, name: user.displayName } : null);
+    }),
+    fetchGameEvents: async () => {
+      try {
+        const q = query(collection(db, 'game_events'), orderBy('createdAt', 'desc'), limit(30));
+        const snap = await getDocs(q);
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (e) { console.error('[skSync] fetchGameEvents failed', e); return []; }
+    },
+    fetchGameEventByCode: async (code) => {
+      try {
+        const snap = await getDoc(doc(db, 'game_events', code));
+        return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+      } catch (e) { console.error('[skSync] fetchGameEventByCode failed', e); return null; }
+    },
+    createGameEvent: async (code, event) => {
+      await setDoc(doc(db, 'game_events', code), event);
+    },
+    joinGameEvent: async (code, uid) => {
+      await updateDoc(doc(db, 'game_events', code), { participantUids: arrayUnion(uid) });
+    }
+  };
+</script>
+
+<div id="app"></div>
+
+<script>
+const PROFILE_KEY = 'dhtm_profile_v1';
+function loadLocalProfile() {
+  try { const r = localStorage.getItem(PROFILE_KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; }
+}
+
+const EVENT_MODES = [
+  { id: 'quiz', label: 'Quiz Battle', icon: '⚔️' },
+  { id: 'boss', label: 'Boss Battle', icon: '👹' },
+  { id: 'team', label: 'Team Battle', icon: '🛡️' },
+  { id: 'speed', label: 'Speed Battle', icon: '⚡' }
+];
+const EVENT_STEPS = [
+  { icon: '🚩', title: 'CHỌN CHẾ ĐỘ', desc: 'Quiz, Boss Battle, Team Battle...' },
+  { icon: '📄', title: 'CHỌN NỘI DUNG', desc: 'Chủ đề, bài học, độ khó...' },
+  { icon: '👥', title: 'CÀI ĐẶT', desc: 'Thời gian, số người, phần thưởng...' },
+  { icon: '🏁', title: 'TẠO & CHIA SẺ', desc: 'Nhận mã sự kiện để mời bạn bè' }
+];
+function genEventCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for (let i = 0; i < 5; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+let currentUser = null;
+let profile = loadLocalProfile();
+let events = [];
+let eventsLoading = true;
+let eventsError = '';
+let showCreateForm = false;
+let showJoinForm = false;
+let newEvent = { name: '', mode: 'quiz', topic: '', time: '20:30', maxPlayers: 30 };
+let formError = '';
+let creating = false;
+let joinCodeInput = '';
+let joinError = '';
+let joining = false;
+let justCreatedCode = '';
+let copiedCode = '';
+let copyTimer = null;
+
+function hostDisplayName() {
+  return (profile && profile.displayName) || (currentUser && currentUser.name) || 'Nhà Thám Hiểm';
+}
+
+function requireAuth(then) {
+  if (!window.skSync) { formError = 'Chưa kết nối được server, thử lại sau.'; joinError = formError; render(); return; }
+  if (window.skSync.currentUid()) { then(); return; }
+  window.skSync.signIn().then((u) => { currentUser = u; then(); }).catch(() => {
+    formError = 'Đăng nhập thất bại, thử lại sau.';
+    joinError = 'Đăng nhập thất bại, thử lại sau.';
+    render();
+  });
+}
+
+function loadEvents() {
+  eventsLoading = true; eventsError = '';
+  render();
+  window.skSync.fetchGameEvents().then(list => {
+    events = list || [];
+    eventsLoading = false;
+    render();
+  }).catch(() => { eventsLoading = false; eventsError = 'Không tải được danh sách sự kiện.'; render(); });
+}
+
+function openCreateForm() {
+  showCreateForm = true; formError = '';
+  newEvent = { name: '', mode: 'quiz', topic: '', time: '20:30', maxPlayers: 30 };
+  render();
+}
+function closeCreateForm() { showCreateForm = false; render(); }
+function selectMode(id) { newEvent.mode = id; render(); }
+function onNameInput(v) { newEvent.name = v; }
+function onTopicInput(v) { newEvent.topic = v; }
+function onTimeInput(v) { newEvent.time = v; }
+function onMaxInput(v) { newEvent.maxPlayers = parseInt(v, 10) || 0; }
+
+function submitCreateEvent() {
+  const name = (newEvent.name || '').trim();
+  if (!name) { formError = 'Nhập tên sự kiện.'; render(); return; }
+  requireAuth(() => {
+  const uid = window.skSync.currentUid();
+  creating = true; formError = ''; render();
+  const code = genEventCode();
+  const event = {
+    name,
+    mode: newEvent.mode,
+    topic: (newEvent.topic || '').trim(),
+    time: (newEvent.time || '').trim(),
+    maxPlayers: newEvent.maxPlayers || 30,
+    hostUid: uid,
+    hostName: hostDisplayName(),
+    participantUids: [],
+    createdAt: Date.now()
+  };
+  window.skSync.createGameEvent(code, event).then(() => {
+    creating = false; showCreateForm = false; justCreatedCode = code;
+    render();
+    loadEvents();
+  }).catch(() => { creating = false; formError = 'Không tạo được sự kiện, thử lại sau.'; render(); });
+  });
+}
+
+function openJoinForm() {
+  joinCodeInput = ''; joinError = ''; showJoinForm = true; render();
+}
+function closeJoinForm() { showJoinForm = false; render(); }
+function onJoinCodeInput(v) { joinCodeInput = v.toUpperCase(); }
+
+function submitJoinByCode() {
+  const code = (joinCodeInput || '').trim().toUpperCase();
+  if (!code) { joinError = 'Nhập mã sự kiện.'; render(); return; }
+  requireAuth(() => {
+    joining = true; joinError = ''; render();
+    window.skSync.fetchGameEventByCode(code).then(ev => {
+      if (!ev) { joining = false; joinError = 'Không tìm thấy sự kiện với mã này.'; render(); return; }
+      const uid = window.skSync.currentUid();
+      if (ev.hostUid === uid || (ev.participantUids || []).includes(uid)) {
+        joining = false; showJoinForm = false; render(); loadEvents(); return;
+      }
+      window.skSync.joinGameEvent(code, uid).then(() => {
+        joining = false; showJoinForm = false; render(); loadEvents();
+      }).catch(() => { joining = false; joinError = 'Không tham gia được, thử lại sau.'; render(); });
+    }).catch(() => { joining = false; joinError = 'Không tìm được sự kiện, thử lại sau.'; render(); });
+  });
+}
+
+function joinFromList(code) {
+  requireAuth(() => {
+    window.skSync.joinGameEvent(code, window.skSync.currentUid()).then(loadEvents);
+  });
+}
+
+function copyCode(code) {
+  try { navigator.clipboard.writeText(code); } catch (e) {}
+  copiedCode = code; render();
+  clearTimeout(copyTimer);
+  copyTimer = setTimeout(() => { copiedCode = ''; render(); }, 1500);
+}
+
+function dismissJustCreated() { justCreatedCode = ''; render(); }
+
+function stepHtml(st, hasArrow) {
+  return `<div style="display:flex; align-items:flex-start;">
+    <div style="text-align:center; width:108px;">
+      <div style="width:46px; height:46px; border-radius:50%; background:#173a63; color:#ffe27a; display:flex; align-items:center; justify-content:center; font-size:19px; margin:0 auto; border:2px solid #f5a623;">${st.icon}</div>
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:11px; margin-top:6px;">${st.title}</div>
+      <div style="color:#8b5e34; font-size:9.5px; margin-top:2px;">${st.desc}</div>
+    </div>
+    ${hasArrow ? '<div style="color:#b9761a; font-size:15px; margin:12px 2px 0;">┈┈▶</div>' : ''}
+  </div>`;
+}
+
+function eventRowHtml(ev) {
+  const uid = window.skSync.currentUid();
+  const code = ev.code || ev.id;
+  const modeInfo = EVENT_MODES.find(m => m.id === ev.mode) || EVENT_MODES[0];
+  const isHost = !!(uid && ev.hostUid === uid);
+  const isJoined = !!(uid && (ev.participantUids || []).includes(uid));
+  const participantCount = (ev.participantUids || []).length + 1;
+  const joinDisabled = isHost || isJoined;
+  const joinLabel = isHost ? '👑 Host' : (isJoined ? '✓ Đã tham gia' : 'Tham gia');
+  const joinBtnStyle = joinDisabled
+    ? 'cursor:default; background:#e2d3ae; border:2px solid #b9a679; border-radius:12px; padding:8px 16px; font-weight:800; color:#6b5a3a; font-size:12px; white-space:nowrap;'
+    : 'cursor:pointer; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:12px; padding:8px 16px; font-weight:800; color:#5a3b22; font-size:12px; white-space:nowrap; box-shadow:0 3px 0 #9a5f14;';
+  const justCopied = copiedCode === code;
+  return `<div style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2px solid #b9761a; border-radius:14px; padding:12px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+    <div style="width:44px; height:44px; border-radius:12px; background:#173a63; color:#ffe27a; display:flex; align-items:center; justify-content:center; font-size:21px; flex-shrink:0;">${modeInfo.icon}</div>
+    <div style="flex:1; min-width:160px;">
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#3a2a18; font-size:14.5px;">${escapeHtml(ev.name)}</div>
+      <div style="color:#8b5e34; font-size:11.5px; font-weight:600; margin-top:2px;">${modeInfo.label} · ${escapeHtml(ev.time || '')} · Host: ${escapeHtml(ev.hostName || 'Ẩn danh')}</div>
+      <div style="color:#8b5e34; font-size:11px; margin-top:1px;">👥 ${participantCount}/${ev.maxPlayers || 30} người</div>
+    </div>
+    <div onclick="copyCode('${code}')" title="Sao chép mã sự kiện" style="cursor:pointer; text-align:center; background:#fff; border:1.5px dashed #b9761a; border-radius:10px; padding:5px 10px; min-width:64px;">
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#0e5273; font-size:14px; letter-spacing:1.5px;">${code}</div>
+      <div style="color:${justCopied ? '#2e8b57' : '#8b5e34'}; font-size:9.5px; font-weight:${justCopied ? '700' : '400'};">${justCopied ? '✓ Đã chép' : 'chép mã'}</div>
+    </div>
+    <div ${joinDisabled ? '' : `onclick="joinFromList('${code}')"`} style="${joinBtnStyle}">${joinLabel}</div>
+  </div>`;
+}
+
+function render() {
+  const stepsHtml = EVENT_STEPS.map((st, i) => stepHtml(st, i < EVENT_STEPS.length - 1)).join('');
+
+  let listHtml = '';
+  if (eventsLoading) {
+    listHtml = `<div style="text-align:center; color:#0e5273; font-weight:700; font-size:13px; padding:20px 0;">⏳ Đang tải danh sách sự kiện...</div>`;
+  } else if (eventsError) {
+    listHtml = `<div style="text-align:center; color:#c0392b; font-weight:700; font-size:12.5px; padding:6px 0 14px;">${escapeHtml(eventsError)}</div>`;
+  } else if (!events.length) {
+    listHtml = `<div style="text-align:center; color:#0e5273; font-weight:600; font-size:13px; padding:20px 0; opacity:.85;">Chưa có sự kiện nào đang mở. Hãy là người đầu tiên tạo sự kiện!</div>`;
+  } else {
+    listHtml = `<div style="display:flex; flex-direction:column; gap:10px;">${events.map(eventRowHtml).join('')}</div>`;
+  }
+
+  const modeOptionsHtml = EVENT_MODES.map(m => {
+    const selected = newEvent.mode === m.id;
+    const style = selected
+      ? 'cursor:pointer; text-align:center; padding:10px 6px; border-radius:10px; border:2px solid #f5a623; background:linear-gradient(180deg,#fff3d6,#ffe6a8); color:#3a2a18;'
+      : 'cursor:pointer; text-align:center; padding:10px 6px; border-radius:10px; border:1.5px solid #d9cfb8; background:#fffaf0; color:#3a2a18;';
+    return `<div onclick="selectMode('${m.id}')" style="${style}">
+      <div style="font-size:18px;">${m.icon}</div>
+      <div style="font-size:11px; font-weight:700; margin-top:2px;">${m.label}</div>
+    </div>`;
+  }).join('');
+
+  const createModalHtml = showCreateForm ? `
+    <div onclick="closeCreateForm()" style="position:fixed; inset:0; z-index:60; background:rgba(3,26,45,.62); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #b9761a; border-radius:20px; padding:22px; max-width:440px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 14px 30px rgba(0,0,0,.4);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:17px;">TẠO SỰ KIỆN MỚI</div>
+          <div onclick="closeCreateForm()" style="cursor:pointer; color:#8b5e34; font-size:20px; font-weight:800;">✕</div>
+        </div>
+        <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:4px;">Tên sự kiện</div>
+        <input id="skName" value="${escapeHtml(newEvent.name)}" oninput="onNameInput(this.value)" placeholder="Nhập tên sự kiện của bạn..." style="width:100%; border:1.5px solid #b9761a; border-radius:10px; padding:9px 12px; font-size:13px; margin-bottom:12px;"/>
+        <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:6px;">Chế độ</div>
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:12px;">${modeOptionsHtml}</div>
+        <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:4px;">Chủ đề (không bắt buộc)</div>
+        <input value="${escapeHtml(newEvent.topic)}" oninput="onTopicInput(this.value)" placeholder="VD: Đọc hiểu N1, Từ vựng N1..." style="width:100%; border:1.5px solid #b9761a; border-radius:10px; padding:9px 12px; font-size:13px; margin-bottom:12px;"/>
+        <div style="display:flex; gap:10px; margin-bottom:12px;">
+          <div style="flex:1;">
+            <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:4px;">Thời gian</div>
+            <input value="${escapeHtml(newEvent.time)}" oninput="onTimeInput(this.value)" placeholder="20:30" style="width:100%; border:1.5px solid #b9761a; border-radius:10px; padding:9px 12px; font-size:13px;"/>
+          </div>
+          <div style="flex:1;">
+            <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:4px;">Số người tối đa</div>
+            <input type="number" value="${newEvent.maxPlayers}" oninput="onMaxInput(this.value)" style="width:100%; border:1.5px solid #b9761a; border-radius:10px; padding:9px 12px; font-size:13px;"/>
+          </div>
+        </div>
+        ${formError ? `<div style="color:#c0392b; font-size:12px; font-weight:700; margin-bottom:10px;">${escapeHtml(formError)}</div>` : ''}
+        <div onclick="submitCreateEvent()" style="margin-top:6px; text-align:center; cursor:${creating ? 'default' : 'pointer'}; background:${creating ? '#e2d3ae' : 'linear-gradient(180deg,#3d5a80,#173a63)'}; border:2px solid #0e2a4a; border-radius:14px; padding:12px; font-family:'Baloo 2',sans-serif; font-weight:800; color:${creating ? '#6b5a3a' : '#fff'}; font-size:15px;">${creating ? 'Đang tạo...' : '⚓ TẠO SỰ KIỆN'}</div>
+      </div>
+    </div>` : '';
+
+  const joinModalHtml = showJoinForm ? `
+    <div onclick="closeJoinForm()" style="position:fixed; inset:0; z-index:60; background:rgba(3,26,45,.62); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #3d5a80; border-radius:20px; padding:24px; max-width:380px; width:100%; text-align:center; box-shadow:0 14px 30px rgba(0,0,0,.4);">
+        <div style="font-size:30px;">🔑</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:16px; margin-top:4px;">Tham Gia Bằng Mã</div>
+        <div style="color:#8b5e34; font-size:12px; margin-top:4px;">Nhập mã sự kiện host đã chia sẻ với bạn</div>
+        <input value="${escapeHtml(joinCodeInput)}" oninput="onJoinCodeInput(this.value)" placeholder="VD: 8K4P2" maxlength="8" style="width:100%; margin-top:14px; text-align:center; letter-spacing:3px; text-transform:uppercase; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:20px; color:#0e5273; border:2px dashed #3d5a80; border-radius:12px; padding:12px;"/>
+        ${joinError ? `<div style="color:#c0392b; font-size:12px; font-weight:700; margin-top:10px;">${escapeHtml(joinError)}</div>` : ''}
+        <div onclick="submitJoinByCode()" style="margin-top:14px; cursor:${joining ? 'default' : 'pointer'}; background:${joining ? '#e2d3ae' : 'linear-gradient(180deg,#ffd25a,#f5a623)'}; border:2px solid #b9761a; border-radius:12px; padding:11px; font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22;">${joining ? 'Đang tham gia...' : 'Tham Gia'}</div>
+        <div onclick="closeJoinForm()" style="margin-top:10px; cursor:pointer; color:#8b5e34; font-size:12px; font-weight:700;">Hủy</div>
+      </div>
+    </div>` : '';
+
+  const justCreatedHtml = justCreatedCode ? `
+    <div onclick="dismissJustCreated()" style="position:fixed; inset:0; z-index:60; background:rgba(3,26,45,.62); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #2e8b57; border-radius:20px; padding:26px; max-width:380px; width:100%; text-align:center;">
+        <div style="font-size:34px;">🎉</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:16px; margin-top:6px;">Đã tạo sự kiện! Bạn là Host 👑</div>
+        <div style="color:#8b5e34; font-size:12.5px; margin-top:6px;">Chia sẻ mã này để mời bạn bè tham gia</div>
+        <div onclick="copyCode('${justCreatedCode}')" style="cursor:pointer; margin-top:14px; background:#fff; border:2px dashed #b9761a; border-radius:12px; padding:12px; font-family:'Baloo 2',sans-serif; font-weight:800; color:#0e5273; font-size:26px; letter-spacing:4px;">${justCreatedCode}</div>
+        <div style="color:#8b5e34; font-size:11px; margin-top:6px;">(Bấm vào mã để sao chép)</div>
+        <div onclick="dismissJustCreated()" style="margin-top:16px; cursor:pointer; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:12px; padding:10px; font-weight:800; color:#5a3b22;">Đã hiểu</div>
+      </div>
+    </div>` : '';
+
+  document.getElementById('app').innerHTML = `
+    <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
+      <a href="DaiHaiTrinhManten.dc.html" style="position:relative; z-index:5; cursor:pointer; color:#0e5273; font-weight:700; font-size:14px; width:fit-content; display:inline-block;">← Bản Đồ</a>
+
+      <div style="position:relative; z-index:4; max-width:900px; margin:14px auto 20px; background:linear-gradient(160deg,#0d2a4a,#173a63); border:2.5px solid #f5a623; border-radius:20px; padding:26px 22px; text-align:center; box-shadow:0 8px 0 rgba(0,0,0,.2), 0 14px 24px rgba(0,0,0,.3);">
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(20px,3.6vw,30px); color:#fff; text-shadow:0 3px 0 rgba(0,0,0,.3); letter-spacing:.5px;">🏴‍☠️ TẠO SỰ KIỆN CÙNG MANTEN</div>
+        <div style="margin-top:8px; display:inline-block; background:rgba(245,166,35,.18); border:1px solid #f5a623; border-radius:10px; padding:5px 14px; color:#ffe27a; font-weight:700; font-size:12.5px; letter-spacing:.5px;">HOST · THAM GIA · NHẬN THƯỞNG</div>
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:24px; margin-top:20px;">
+          <div style="min-width:88px;"><div style="font-size:26px;">👥</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Rủ bạn bè<br/>tham gia</div></div>
+          <div style="min-width:88px;"><div style="font-size:26px;">⚔️</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Chiến đấu<br/>kiến thức</div></div>
+          <div style="min-width:88px;"><div style="font-size:26px;">🎁</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Nhận EXP<br/>&amp; item</div></div>
+          <div style="min-width:88px;"><div style="font-size:26px;">🏆</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Leo rank<br/>cực đỉnh</div></div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:22px;">
+          <div onclick="openCreateForm()" style="cursor:pointer; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:14px; padding:12px 26px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; color:#5a3b22; box-shadow:0 4px 0 #9a5f14;">⚓ TẠO SỰ KIỆN NGAY!</div>
+          <div onclick="openJoinForm()" style="cursor:pointer; background:rgba(255,255,255,.12); border:2px solid #dbe9ff; border-radius:14px; padding:12px 26px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; color:#dbe9ff;">🔑 THAM GIA BẰNG MÃ</div>
+        </div>
+      </div>
+
+      <div style="position:relative; z-index:4; max-width:900px; margin:0 auto 20px; background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #b9761a; border-radius:18px; padding:18px; box-shadow:0 6px 0 rgba(0,0,0,.12);">
+        <div style="text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:15.5px; margin-bottom:14px;">QUY TRÌNH TẠO SỰ KIỆN</div>
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start;">${stepsHtml}</div>
+      </div>
+
+      <div style="position:relative; z-index:4; max-width:900px; margin:0 auto;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
+          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#0e5273; font-size:15.5px;">📋 DANH SÁCH SỰ KIỆN ĐANG MỞ</div>
+          <div onclick="loadEvents()" style="cursor:pointer; color:#0e5273; font-size:12px; font-weight:700;">🔄 Làm mới</div>
+        </div>
+        ${listHtml}
+      </div>
+    </div>
+    ${createModalHtml}
+    ${joinModalHtml}
+    ${justCreatedHtml}
+  `;
+}
+
+render();
+function waitForSync() {
+  if (!window.skSync) { setTimeout(waitForSync, 100); return; }
+  window.skSync.onAuthChanged((u) => { currentUser = u; });
+  loadEvents();
+}
+waitForSync();
+</script>
+
+</body>
+</html>
