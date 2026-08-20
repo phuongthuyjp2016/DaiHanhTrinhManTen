@@ -170,9 +170,11 @@
     @media (min-width: 820px) { .notebook-grid { grid-template-columns: repeat(2,1fr); } }
     @media (min-width: 1220px) { .notebook-grid { grid-template-columns: repeat(3,1fr); } }
     .event-banner-desktop { display: none; }
+    .dhtm-header-break { display: none; }
     @media (min-width: 900px) {
       .event-banner-mobile { display: none; }
       .event-banner-desktop { display: block; flex: 1 1 320px; min-width: 0; align-self: center; container-type: inline-size; }
+      .dhtm-header-break { display: block; flex-basis: 100%; height: 0; }
     }
     html { background: url('assets/art-001.webp') center top / cover no-repeat fixed, #0e5273; }
     body { margin:0; -webkit-font-smoothing:antialiased; background:transparent; }
@@ -288,6 +290,9 @@
             </div>
           </sc-if>
         </div>
+
+        <!-- forces the icon cluster below onto its own row on desktop, under the logo, so the event banner above can claim the full row width -->
+        <div class="dhtm-header-break"></div>
 
         <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
           <div style="width:56px; height:56px; flex-shrink:0;" title="Hoa Tiêu">{{ compassRoseSvg }}</div>

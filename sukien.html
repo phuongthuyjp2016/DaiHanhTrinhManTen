@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
-  body { margin:0; font-family:'Be Vietnam Pro',sans-serif; background:linear-gradient(180deg,#aee9ff 0%,#8fdcef 35%,#4fc3d9 70%,#1c9a95 100%); min-height:100dvh; }
+  body { margin:0; font-family:'Be Vietnam Pro',sans-serif; background:url('assets/background_event.png') center top / cover no-repeat fixed, #1c9a95; min-height:100dvh; }
   a { text-decoration:none; }
   input:focus { outline:2px solid #f5a623; }
 </style>
@@ -326,7 +326,7 @@ function renderLobby() {
   }
   document.getElementById('app').innerHTML = `
     <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
-      <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#0e5273; font-weight:700; font-size:14px; width:fit-content;">← Rời phòng chờ</div>
+      <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px; display:inline-block;">← Rời phòng chờ</div>
       <div style="position:relative; z-index:4; max-width:480px; margin:14px auto; background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #b9761a; border-radius:20px; padding:24px; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
         ${bodyHtml}
       </div>
@@ -344,11 +344,11 @@ function renderList() {
 
   let listHtml = '';
   if (eventsLoading) {
-    listHtml = `<div style="text-align:center; color:#0e5273; font-weight:700; font-size:13px; padding:20px 0;">⏳ Đang tải danh sách sự kiện...</div>`;
+    listHtml = `<div style="text-align:center; color:#ffe9b0; font-weight:700; font-size:13px; padding:20px 0; text-shadow:0 1px 3px rgba(0,0,0,.5);">⏳ Đang tải danh sách sự kiện...</div>`;
   } else if (eventsError) {
-    listHtml = `<div style="text-align:center; color:#c0392b; font-weight:700; font-size:12.5px; padding:6px 0 14px;">${escapeHtml(eventsError)}</div>`;
+    listHtml = `<div style="text-align:center; color:#ffb4a8; font-weight:700; font-size:12.5px; padding:6px 0 14px; text-shadow:0 1px 3px rgba(0,0,0,.5);">${escapeHtml(eventsError)}</div>`;
   } else if (!events.length) {
-    listHtml = `<div style="text-align:center; color:#0e5273; font-weight:600; font-size:13px; padding:20px 0; opacity:.85;">Chưa có sự kiện nào đang mở. Hãy là người đầu tiên tạo sự kiện!</div>`;
+    listHtml = `<div style="text-align:center; color:#ffe9b0; font-weight:600; font-size:13px; padding:20px 0; text-shadow:0 1px 3px rgba(0,0,0,.5);">Chưa có sự kiện nào đang mở. Hãy là người đầu tiên tạo sự kiện!</div>`;
   } else {
     listHtml = `<div style="display:flex; flex-direction:column; gap:10px;">${events.map(eventRowHtml).join('')}</div>`;
   }
@@ -408,7 +408,7 @@ function renderList() {
 
   document.getElementById('app').innerHTML = `
     <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
-      <a href="DaiHaiTrinhManten.dc.html" style="position:relative; z-index:5; cursor:pointer; color:#0e5273; font-weight:700; font-size:14px; width:fit-content; display:inline-block;">← Bản Đồ</a>
+      <a href="DaiHaiTrinhManten.dc.html" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; display:inline-block; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px;">← Bản Đồ</a>
 
       <div style="position:relative; z-index:4; max-width:900px; margin:14px auto 20px; background:linear-gradient(160deg,#0d2a4a,#173a63); border:2.5px solid #f5a623; border-radius:20px; padding:26px 22px; text-align:center; box-shadow:0 8px 0 rgba(0,0,0,.2), 0 14px 24px rgba(0,0,0,.3);">
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(20px,3.6vw,30px); color:#fff; text-shadow:0 3px 0 rgba(0,0,0,.3); letter-spacing:.5px;">🏴‍☠️ TẠO SỰ KIỆN CÙNG MANTEN</div>
@@ -431,9 +431,9 @@ function renderList() {
       </div>
 
       <div style="position:relative; z-index:4; max-width:900px; margin:0 auto;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
-          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#0e5273; font-size:15.5px;">📋 DANH SÁCH SỰ KIỆN ĐANG MỞ</div>
-          <div onclick="loadEvents()" style="cursor:pointer; color:#0e5273; font-size:12px; font-weight:700;">🔄 Làm mới</div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px; background:rgba(9,45,66,.55); border:1.5px solid #ffe9b0; border-radius:14px; padding:9px 16px;">
+          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#ffe9b0; font-size:15.5px;">📋 DANH SÁCH SỰ KIỆN ĐANG MỞ</div>
+          <div onclick="loadEvents()" style="cursor:pointer; color:#ffe9b0; font-size:12px; font-weight:700;">🔄 Làm mới</div>
         </div>
         ${listHtml}
       </div>
