@@ -22,7 +22,7 @@
   }
   /* Điện thoại/iPad: đua thuyền và câu hỏi xếp dọc như cũ. Chỉ màn PC rộng mới cho nằm cùng hàng. */
   .sk-game-layout { display:flex; flex-direction:column; align-items:center; }
-  .sk-game-boat-card { width:100%; max-width:520px; margin:12px auto 0; }
+  .sk-game-boat-card { width:100%; max-width:520px; margin:12px auto 0; container-type:inline-size; }
   .sk-game-question-card { width:100%; max-width:520px; margin:10px auto 14px; }
   @media (min-width: 1100px) {
     .sk-game-layout { flex-direction:row; align-items:flex-start; justify-content:center; gap:16px; }
@@ -746,31 +746,35 @@ function boatTrackHtml(ev, qIndex, isHost) {
   const trackMax = Math.max(tier * 3, Math.ceil((maxScore + 1) / tier) * tier + tier);
   const tickCount = trackMax / tier;
 
-  const trackBaseH = 34, trackHeight = 108;
+  // Toạ độ % trong khung khung_bang_dua_top.png (đo từ chính file ảnh): dải gỗ tiêu đề
+  // ~12-26% chiều cao, vùng trong suốt ở giữa ~29-79%, dải giấy da cuối ~80-92%. Vùng an toàn
+  // theo chiều ngang (tránh đè lên 2 thanh gỗ viền trái/phải) là ~7%-93%.
+  const lineTop = 66; // % — vị trí đường đua (nằm trong vùng trong suốt giữa khung)
+  const safeLeft = 8, safeRight = 92, safeWidth = safeRight - safeLeft;
   let islandsHtml = '';
   for (let i = 1; i <= tickCount; i++) {
     const val = i * tier;
-    const pct = (val / trackMax) * 100;
+    const pct = safeLeft + (val / trackMax) * safeWidth;
     const isFinish = i === tickCount;
     const isMilestone = i === tickCount - 1 && tickCount > 1;
     const icon = isFinish ? '🏆' : (isMilestone ? '🚩' : '🏝️');
     const label = isFinish ? 'KHO BÁU' : (isMilestone ? 'CỘT MỐC' : ('ĐẢO ' + i));
-    islandsHtml += `<div style="position:absolute; left:${pct}%; bottom:${trackBaseH + 2}px; transform:translateX(-50%); text-align:center;">
+    islandsHtml += `<div style="position:absolute; left:${pct}%; top:${lineTop}%; transform:translate(-50%,-100%); text-align:center;">
       <div style="font-size:20px;">${icon}</div>
-      <div style="font-size:7.5px; font-weight:800; color:#5a3b22; white-space:nowrap;">${label}</div>
-      <div style="font-size:7px; font-weight:700; color:#b9761a; white-space:nowrap;">${val} PT</div>
+      <div style="font-size:7.5px; font-weight:800; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">${label}</div>
+      <div style="font-size:7px; font-weight:700; color:#b9761a; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">${val} PT</div>
     </div>`;
   }
 
   const me = players.find(p => p.uid === uid) || players[0];
   const myScore = me ? (scores[me.uid] || 0) : 0;
-  const myPct = Math.max(0, Math.min(100, (myScore / trackMax) * 100));
+  const myPct = safeLeft + Math.max(0, Math.min(1, myScore / trackMax)) * safeWidth;
   const myAvatarHtml = me && me.avatarArt
     ? `<img src="${escapeHtml(me.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
     : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:12px;">${me && me.isHost ? '🦈' : '🐟'}</div>`;
   const myDelta = (me && animating) ? ((boatAnim.toScores[me.uid] || 0) - (boatAnim.fromScores[me.uid] || 0)) : 0;
   const myShipHtml = me ? `
-    <div onclick="${isHost ? `showBoatDetail('${me.uid}')` : ''}" style="position:absolute; left:${myPct}%; bottom:${trackBaseH - 4}px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; ${isHost ? 'cursor:pointer;' : ''}">
+    <div onclick="${isHost ? `showBoatDetail('${me.uid}')` : ''}" style="position:absolute; left:${myPct}%; top:${lineTop + 4}%; transform:translate(-50%,-100%); display:flex; flex-direction:column; align-items:center; ${isHost ? 'cursor:pointer;' : ''}">
       <div style="background:#173a63; border:1.5px solid #ffe27a; border-radius:10px; padding:2px 9px; display:flex; flex-direction:column; align-items:center;">
         <span style="font-size:10px; font-weight:800; color:#ffe27a; white-space:nowrap; max-width:90px; overflow:hidden; text-overflow:ellipsis;">${escapeHtml((me.name || '').toUpperCase())}</span>
         <span style="font-size:10.5px; font-weight:800; color:#fff;">${myScore} PT</span>
@@ -786,7 +790,7 @@ function boatTrackHtml(ev, qIndex, isHost) {
     </div>` : '';
 
   const overtakeHtml = (animating && boatAnim.overtakes.length)
-    ? `<div style="position:absolute; top:-2px; left:0; right:0; text-align:center;"><span style="display:inline-block; background:rgba(255,255,255,.8); border-radius:8px; padding:2px 10px; font-size:10px; font-weight:800; color:#c0392b;">${
+    ? `<div style="position:absolute; top:29%; left:8%; right:8%; text-align:center;"><span style="display:inline-block; background:rgba(255,255,255,.85); border-radius:8px; padding:2px 10px; font-size:10px; font-weight:800; color:#c0392b;">${
         boatAnim.overtakes.slice(0, 2).map(([u, v]) => {
           const un = (players.find(p => p.uid === u) || {}).name || '?';
           const vn = (players.find(p => p.uid === v) || {}).name || '?';
@@ -803,40 +807,35 @@ function boatTrackHtml(ev, qIndex, isHost) {
   const top4Html = top4.map((p, i) => {
     const avHtml = p.avatarArt
       ? `<img src="${escapeHtml(p.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
-      : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:13px;">${p.isHost ? '🦈' : '🐟'}</div>`;
+      : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:12px;">${p.isHost ? '🦈' : '🐟'}</div>`;
     const shipHtml = p.shipArt
       ? `<img src="${escapeHtml(p.shipArt)}" style="width:100%; height:100%; object-fit:contain;"/>`
-      : `<span style="font-size:14px;">🚢</span>`;
-    return `<div ${isHost ? `onclick="showBoatDetail('${p.uid}')"` : ''} style="display:flex; align-items:center; gap:6px; background:linear-gradient(180deg,#6b4a2e,#4a3220); border:1.5px solid #8b5e34; border-radius:10px; padding:6px 9px; flex:1 1 150px; min-width:140px; ${isHost ? 'cursor:pointer;' : ''}">
-      <div style="font-size:14px; width:18px; text-align:center; flex-shrink:0;">${rankMedal[i] || ('#' + (i + 1))}</div>
-      <div style="width:26px; height:26px; border-radius:50%; overflow:hidden; border:1.5px solid #ffe27a; background:#7fb3d5; flex-shrink:0;">${avHtml}</div>
+      : `<span style="font-size:13px;">🚢</span>`;
+    return `<div ${isHost ? `onclick="showBoatDetail('${p.uid}')"` : ''} style="display:flex; align-items:center; gap:4px; flex:1 1 22%; min-width:0; ${isHost ? 'cursor:pointer;' : ''}">
+      <div style="font-size:11px; width:13px; text-align:center; flex-shrink:0;">${rankMedal[i] || ('#' + (i + 1))}</div>
+      <div style="width:19px; height:19px; border-radius:50%; overflow:hidden; border:1.3px solid #5a3b22; background:#7fb3d5; flex-shrink:0;">${avHtml}</div>
       <div style="flex:1; min-width:0;">
-        <div style="font-weight:800; color:#fff; font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.name)}${p.isHost ? ' 👑' : ''}</div>
-        <div style="font-weight:700; color:#ffe27a; font-size:9.5px;">${scores[p.uid] || 0} PT</div>
+        <div style="font-weight:800; color:#3a2a18; font-size:8.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.name)}</div>
+        <div style="font-weight:700; color:#8c5a1e; font-size:8px;">${scores[p.uid] || 0} PT</div>
       </div>
-      <div style="width:16px; height:19px; flex-shrink:0;">${shipHtml}</div>
     </div>`;
   }).join('');
 
   return `
-    <div style="text-align:center;">
-      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:16px; letter-spacing:.3px;">🌊 ĐUA SÓNG VƯỢT MỐC</div>
-      <div style="font-size:10px; font-weight:700; color:#8b5e34; margin-top:2px;">✨ Càng nhiều điểm – Càng gần kho báu! ✨</div>
-    </div>
-    <div style="position:relative; height:${trackHeight}px; margin-top:8px;">
+    <div style="position:absolute; top:35%; left:50%; transform:translateX(-50%); width:80%; text-align:center; font-size:clamp(7px,1.8cqw,10px); font-weight:700; color:#5a3b22;">✨ Càng nhiều điểm – Càng gần kho báu! ✨</div>
+    <div style="position:absolute; inset:0;">
       ${overtakeHtml}
-      <div style="position:absolute; left:0; bottom:${trackBaseH + 2}px; text-align:center;">
+      <div style="position:absolute; left:${safeLeft}%; top:${lineTop}%; transform:translate(-50%,-100%); text-align:center;">
         <div style="font-size:15px;">⚓</div>
-        <div style="font-size:7px; font-weight:800; color:#5a3b22; white-space:nowrap;">BẮT ĐẦU</div>
+        <div style="font-size:7px; font-weight:800; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">BẮT ĐẦU</div>
       </div>
-      <div style="position:absolute; left:0; right:0; bottom:${trackBaseH}px; height:3px; background:repeating-linear-gradient(90deg,#8ecbe6 0,#8ecbe6 4px,transparent 4px,transparent 8px);"></div>
+      <div style="position:absolute; left:${safeLeft}%; right:${100 - safeRight}%; top:${lineTop}%; height:2px; background:repeating-linear-gradient(90deg,#8ecbe6 0,#8ecbe6 4px,transparent 4px,transparent 8px);"></div>
       ${islandsHtml}
       ${myShipHtml}
-    </div>
-    <div style="text-align:center; margin-top:2px; font-size:10.5px; font-weight:700; color:#8b5e34;">Tiếp tục tiến về phía trước, thuyền trưởng! 🔥</div>
-    <div style="margin-top:10px;">
-      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:11.5px;">🏆 TOP THUYỀN TRƯỞNG</div>
-      <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:6px;">${top4Html}</div>
+      <div style="position:absolute; left:${safeLeft}%; right:${100 - safeRight}%; top:80%; bottom:3%;">
+        <div style="display:flex; align-items:center; gap:3px; justify-content:center; font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:clamp(7px,1.8cqw,10px);">🏆 TOP THUYỀN TRƯỞNG</div>
+        <div style="display:flex; flex-wrap:wrap; gap:3px; margin-top:2px; height:calc(100% - 13px); align-content:center;">${top4Html}</div>
+      </div>
     </div>
   `;
 }
@@ -945,7 +944,7 @@ function renderGame() {
     <div class="sk-page-wrap">
       <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px; display:inline-block;">← Thoát</div>
       <div class="sk-game-layout">
-        <div class="sk-game-boat-card" style="position:relative; z-index:4; background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #b9761a; border-radius:18px; padding:8px 10px 6px; box-shadow:0 6px 0 rgba(0,0,0,.15), 0 10px 18px rgba(0,0,0,.25);">
+        <div class="sk-game-boat-card" style="position:relative; z-index:4; background:url('assets/khung_bang_dua_top.png') center / 100% 100% no-repeat; aspect-ratio:1774/887; filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));">
           ${boatTrackHtml(ev, qIndex, isHost)}
         </div>
         <div class="sk-game-question-card" style="position:relative; z-index:4; background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #b9761a; border-radius:20px; padding:22px; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
