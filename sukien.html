@@ -20,14 +20,21 @@
     .sk-stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px 10px; }
     .sk-stats-grid > div { min-width:0; }
   }
-  /* Điện thoại/iPad: đua thuyền và câu hỏi xếp dọc như cũ. Chỉ màn PC rộng mới cho nằm cùng hàng. */
+  /* Khung đua sóng full chiều ngang (không co hẹp lại thành cột hẹp cạnh câu hỏi) — mốc càng
+     nhiều thì khung càng cần rộng để thuyền/đảo không bị nhỏ dần, khó nhìn. Trên PC, TOP THUYỀN
+     TRƯỞNG chuyển sang cột dọc bên phải khung; trên điện thoại/iPad vẫn xếp dọc bên dưới. */
   .sk-game-layout { display:flex; flex-direction:column; align-items:center; }
-  .sk-game-boat-card { width:100%; max-width:520px; margin:12px auto 0; container-type:inline-size; }
+  .sk-game-boat-column { width:100%; max-width:520px; margin:12px auto 0; }
+  .sk-game-boat-card { width:100%; container-type:inline-size; }
+  .sk-game-leaderboard-list { display:flex; flex-wrap:wrap; gap:7px; margin-top:6px; }
+  .sk-game-leaderboard-card { flex:1 1 150px; min-width:140px; }
   .sk-game-question-card { width:100%; max-width:520px; margin:10px auto 14px; }
-  @media (min-width: 1100px) {
-    .sk-game-layout { flex-direction:row; align-items:flex-start; justify-content:center; gap:16px; }
-    .sk-game-boat-card { margin:14px 0; flex:0 1 440px; }
-    .sk-game-question-card { margin:14px 0; flex:0 1 560px; }
+  @media (min-width: 900px) {
+    .sk-game-boat-column { max-width:min(96vw, 1200px); display:flex; flex-direction:row; align-items:stretch; gap:14px; }
+    .sk-game-boat-card { flex:1 1 auto; }
+    .sk-game-leaderboard { flex:0 0 220px; margin-top:0 !important; display:flex; flex-direction:column; }
+    .sk-game-leaderboard-list { flex-direction:column; }
+    .sk-game-leaderboard-card { flex:0 0 auto; min-width:0; width:100%; }
   }
 </style>
 </head>
@@ -712,14 +719,7 @@ function renderLobby() {
   `;
 }
 
-function pickTierSize(maxScore) {
-  if (maxScore <= 600) return 100;
-  if (maxScore <= 1200) return 200;
-  if (maxScore <= 3000) return 500;
-  return 1000;
-}
-function boatTrackHtml(ev, qIndex, isHost) {
-  const uid = window.skSync.currentUid();
+function boatDisplayScores(ev, qIndex) {
   const players = boatPlayers(ev);
   const animating = boatAnim && boatAnim.qIndex === qIndex;
   const revealed = ev.questionState === 'result';
@@ -741,8 +741,13 @@ function boatTrackHtml(ev, qIndex, isHost) {
       scores[p.uid] = frozenScores[p.uid] || 0;
     }
   });
+  return { players, scores, animating };
+}
+function boatTrackHtml(ev, qIndex, isHost) {
+  const uid = window.skSync.currentUid();
+  const { players, scores, animating } = boatDisplayScores(ev, qIndex);
   const maxScore = Math.max(0, ...players.map(p => scores[p.uid]));
-  const tier = pickTierSize(maxScore);
+  const tier = 200; // cứ 200 điểm là 1 mốc (đảo)
   const trackMax = Math.max(tier * 3, Math.ceil((maxScore + 1) / tier) * tier + tier);
   const tickCount = trackMax / tier;
 
@@ -760,9 +765,9 @@ function boatTrackHtml(ev, qIndex, isHost) {
     const icon = isFinish ? '🏆' : (isMilestone ? '🚩' : '🏝️');
     const label = isFinish ? 'KHO BÁU' : (isMilestone ? 'CỘT MỐC' : ('ĐẢO ' + i));
     islandsHtml += `<div style="position:absolute; left:${pct}%; top:${lineTop}%; transform:translate(-50%,-100%); text-align:center;">
-      <div style="font-size:20px;">${icon}</div>
-      <div style="font-size:7.5px; font-weight:800; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">${label}</div>
-      <div style="font-size:7px; font-weight:700; color:#b9761a; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">${val} PT</div>
+      <div style="font-size:clamp(16px,3.4cqw,34px);">${icon}</div>
+      <div style="font-size:clamp(7px,1.4cqw,14px); font-weight:800; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">${label}</div>
+      <div style="font-size:clamp(6.5px,1.3cqw,13px); font-weight:700; color:#b9761a; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">${val} PT</div>
     </div>`;
   }
 
@@ -771,26 +776,26 @@ function boatTrackHtml(ev, qIndex, isHost) {
   const myPct = safeLeft + Math.max(0, Math.min(1, myScore / trackMax)) * safeWidth;
   const myAvatarHtml = me && me.avatarArt
     ? `<img src="${escapeHtml(me.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
-    : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:12px;">${me && me.isHost ? '🦈' : '🐟'}</div>`;
+    : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:clamp(10px,2cqw,20px);">${me && me.isHost ? '🦈' : '🐟'}</div>`;
   const myDelta = (me && animating) ? ((boatAnim.toScores[me.uid] || 0) - (boatAnim.fromScores[me.uid] || 0)) : 0;
   const myShipHtml = me ? `
     <div onclick="${isHost ? `showBoatDetail('${me.uid}')` : ''}" style="position:absolute; left:${myPct}%; top:${lineTop + 4}%; transform:translate(-50%,-100%); display:flex; flex-direction:column; align-items:center; ${isHost ? 'cursor:pointer;' : ''}">
-      <div style="background:#173a63; border:1.5px solid #ffe27a; border-radius:10px; padding:2px 9px; display:flex; flex-direction:column; align-items:center;">
-        <span style="font-size:10px; font-weight:800; color:#ffe27a; white-space:nowrap; max-width:90px; overflow:hidden; text-overflow:ellipsis;">${escapeHtml((me.name || '').toUpperCase())}</span>
-        <span style="font-size:10.5px; font-weight:800; color:#fff;">${myScore} PT</span>
+      <div style="background:#173a63; border:1.5px solid #ffe27a; border-radius:10px; padding:clamp(2px,.4cqw,5px) clamp(9px,1.8cqw,18px); display:flex; flex-direction:column; align-items:center;">
+        <span style="font-size:clamp(9px,1.9cqw,19px); font-weight:800; color:#ffe27a; white-space:nowrap; max-width:min(90px,26cqw); overflow:hidden; text-overflow:ellipsis;">${escapeHtml((me.name || '').toUpperCase())}</span>
+        <span style="font-size:clamp(10px,2.1cqw,21px); font-weight:800; color:#fff;">${myScore} PT</span>
       </div>
       <div style="width:6px; height:6px; background:#173a63; border-left:1.5px solid #ffe27a; border-bottom:1.5px solid #ffe27a; transform:rotate(-45deg); margin-top:-4px;"></div>
-      ${myDelta > 0 ? `<div style="font-size:10px; font-weight:800; color:#2e8b57; text-shadow:0 1px 2px rgba(255,255,255,.9); margin-top:1px;">+${myDelta}</div>` : ''}
-      <div style="position:relative; width:30px; height:34px; margin-top:2px;">
+      ${myDelta > 0 ? `<div style="font-size:clamp(9px,1.9cqw,19px); font-weight:800; color:#2e8b57; text-shadow:0 1px 2px rgba(255,255,255,.9); margin-top:1px;">+${myDelta}</div>` : ''}
+      <div style="position:relative; width:clamp(30px,6cqw,60px); height:clamp(34px,6.9cqw,69px); margin-top:2px;">
         ${me.shipArt
-          ? `<img src="${escapeHtml(me.shipArt)}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));"/>`
-          : `<span style="position:absolute; inset:0; font-size:28px; line-height:34px; text-align:center;">🚢</span>`}
-        <div style="position:absolute; top:-4px; right:-6px; width:16px; height:16px; border-radius:50%; overflow:hidden; border:1.5px solid #fff; background:#7fb3d5;">${myAvatarHtml}</div>
+          ? `<img src="${escapeHtml(me.shipArt)}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; transform:scaleX(-1); filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));"/>`
+          : `<span style="position:absolute; inset:0; font-size:clamp(28px,5.6cqw,56px); line-height:1; display:flex; align-items:center; justify-content:center;">🚢</span>`}
+        <div style="position:absolute; top:-4px; right:-6px; width:clamp(16px,3.2cqw,32px); height:clamp(16px,3.2cqw,32px); border-radius:50%; overflow:hidden; border:1.5px solid #fff; background:#7fb3d5;">${myAvatarHtml}</div>
       </div>
     </div>` : '';
 
   const overtakeHtml = (animating && boatAnim.overtakes.length)
-    ? `<div style="position:absolute; top:29%; left:8%; right:8%; text-align:center;"><span style="display:inline-block; background:rgba(255,255,255,.85); border-radius:8px; padding:2px 10px; font-size:10px; font-weight:800; color:#c0392b;">${
+    ? `<div style="position:absolute; top:29%; left:8%; right:8%; text-align:center;"><span style="display:inline-block; background:rgba(255,255,255,.85); border-radius:8px; padding:2px 10px; font-size:clamp(9px,1.9cqw,19px); font-weight:800; color:#c0392b;">${
         boatAnim.overtakes.slice(0, 2).map(([u, v]) => {
           const un = (players.find(p => p.uid === u) || {}).name || '?';
           const vn = (players.find(p => p.uid === v) || {}).name || '?';
@@ -799,43 +804,56 @@ function boatTrackHtml(ev, qIndex, isHost) {
       }</span></div>`
     : '';
 
-  // "TOP THUYỀN TRƯỞNG" không lặp lại chính người xem — họ đã thấy vị trí của mình trên
-  // đường đua phía trên rồi.
-  const sorted = players.filter(p => p.uid !== uid).sort((a, b) => scores[b.uid] - scores[a.uid]);
-  const top4 = sorted.slice(0, 4);
-  const rankMedal = ['🥇', '🥈', '🥉'];
-  const top4Html = top4.map((p, i) => {
-    const avHtml = p.avatarArt
-      ? `<img src="${escapeHtml(p.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
-      : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:12px;">${p.isHost ? '🦈' : '🐟'}</div>`;
-    const shipHtml = p.shipArt
-      ? `<img src="${escapeHtml(p.shipArt)}" style="width:100%; height:100%; object-fit:contain;"/>`
-      : `<span style="font-size:13px;">🚢</span>`;
-    return `<div ${isHost ? `onclick="showBoatDetail('${p.uid}')"` : ''} style="display:flex; align-items:center; gap:4px; flex:1 1 22%; min-width:0; ${isHost ? 'cursor:pointer;' : ''}">
-      <div style="font-size:11px; width:13px; text-align:center; flex-shrink:0;">${rankMedal[i] || ('#' + (i + 1))}</div>
-      <div style="width:19px; height:19px; border-radius:50%; overflow:hidden; border:1.3px solid #5a3b22; background:#7fb3d5; flex-shrink:0;">${avHtml}</div>
-      <div style="flex:1; min-width:0;">
-        <div style="font-weight:800; color:#3a2a18; font-size:8.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.name)}</div>
-        <div style="font-weight:700; color:#8c5a1e; font-size:8px;">${scores[p.uid] || 0} PT</div>
-      </div>
-    </div>`;
-  }).join('');
-
   return `
-    <div style="position:absolute; top:35%; left:50%; transform:translateX(-50%); width:80%; text-align:center; font-size:clamp(7px,1.8cqw,10px); font-weight:700; color:#5a3b22;">✨ Càng nhiều điểm – Càng gần kho báu! ✨</div>
+    <div style="position:absolute; top:35%; left:50%; transform:translateX(-50%); width:80%; text-align:center; font-size:clamp(7px,2.4cqw,17px); font-weight:700; color:#5a3b22;">✨ Càng nhiều điểm – Càng gần kho báu! ✨</div>
     <div style="position:absolute; inset:0;">
       ${overtakeHtml}
       <div style="position:absolute; left:${safeLeft}%; top:${lineTop}%; transform:translate(-50%,-100%); text-align:center;">
-        <div style="font-size:15px;">⚓</div>
-        <div style="font-size:7px; font-weight:800; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">BẮT ĐẦU</div>
+        <div style="font-size:clamp(13px,2.6cqw,26px);">⚓</div>
+        <div style="font-size:clamp(7px,1.4cqw,14px); font-weight:800; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6); white-space:nowrap;">BẮT ĐẦU</div>
       </div>
       <div style="position:absolute; left:${safeLeft}%; right:${100 - safeRight}%; top:${lineTop}%; height:2px; background:repeating-linear-gradient(90deg,#8ecbe6 0,#8ecbe6 4px,transparent 4px,transparent 8px);"></div>
       ${islandsHtml}
       ${myShipHtml}
-      <div style="position:absolute; left:${safeLeft}%; right:${100 - safeRight}%; top:80%; bottom:3%;">
-        <div style="display:flex; align-items:center; gap:3px; justify-content:center; font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:clamp(7px,1.8cqw,10px);">🏆 TOP THUYỀN TRƯỞNG</div>
-        <div style="display:flex; flex-wrap:wrap; gap:3px; margin-top:2px; height:calc(100% - 13px); align-content:center;">${top4Html}</div>
+      <div style="position:absolute; left:0; right:0; top:87%; text-align:center; font-size:clamp(8px,2.6cqw,19px); font-weight:700; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6);">Tiếp tục tiến về phía trước, thuyền trưởng! 🔥</div>
+    </div>
+  `;
+}
+// "TOP THUYỀN TRƯỞNG": tách riêng khỏi khung đua sóng, nằm ngay dưới nó — giữ đúng kiểu thẻ
+// gỗ tối màu của bản thiết kế gốc (trước khi ghép vào khung ảnh) vì giờ không còn bị gò trong
+// dải giấy da hẹp của khung nữa.
+function boatLeaderboardHtml(ev, isHost) {
+  const uid = window.skSync.currentUid();
+  const qIndex = ev.currentQuestionIndex;
+  const { players, scores } = boatDisplayScores(ev, qIndex);
+  // Luôn hiển thị, kể cả khi chỉ có 1 mình người xem — không loại chính họ ra khỏi bảng nữa
+  // (trước đây bị ẩn hẳn khi test một mình vì bảng lọc bỏ chính người xem).
+  const sorted = players.slice().sort((a, b) => scores[b.uid] - scores[a.uid]);
+  const top4 = sorted.slice(0, 4);
+  if (!top4.length) return '';
+  const rankMedal = ['🥇', '🥈', '🥉'];
+  const top4Html = top4.map((p, i) => {
+    const isMe = p.uid === uid;
+    const avHtml = p.avatarArt
+      ? `<img src="${escapeHtml(p.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
+      : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:13px;">${p.isHost ? '🦈' : '🐟'}</div>`;
+    const shipHtml = p.shipArt
+      ? `<img src="${escapeHtml(p.shipArt)}" style="width:100%; height:100%; object-fit:contain; transform:scaleX(-1);"/>`
+      : `<span style="font-size:14px;">🚢</span>`;
+    return `<div class="sk-game-leaderboard-card" ${isHost ? `onclick="showBoatDetail('${p.uid}')"` : ''} style="display:flex; align-items:center; gap:6px; background:linear-gradient(180deg,#6b4a2e,#4a3220); border:1.5px solid ${isMe ? '#ffe27a' : '#8b5e34'}; border-radius:10px; padding:6px 9px; ${isHost ? 'cursor:pointer;' : ''}">
+      <div style="font-size:14px; width:18px; text-align:center; flex-shrink:0;">${rankMedal[i] || ('#' + (i + 1))}</div>
+      <div style="width:26px; height:26px; border-radius:50%; overflow:hidden; border:1.5px solid #ffe27a; background:#7fb3d5; flex-shrink:0;">${avHtml}</div>
+      <div style="flex:1; min-width:0;">
+        <div style="font-weight:800; color:#fff; font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.name)}${p.isHost ? ' 👑' : ''}${isMe ? ' (Bạn)' : ''}</div>
+        <div style="font-weight:700; color:#ffe27a; font-size:9.5px;">${scores[p.uid] || 0} PT</div>
       </div>
+      <div style="width:16px; height:19px; flex-shrink:0;">${shipHtml}</div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="sk-game-leaderboard" style="margin-top:10px;">
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#ffe9b0; font-size:17px; text-shadow:0 1px 3px rgba(0,0,0,.6); text-align:center;">🏆 TOP THUYỀN TRƯỞNG</div>
+      <div class="sk-game-leaderboard-list">${top4Html}</div>
     </div>
   `;
 }
@@ -862,13 +880,16 @@ function boatDetailModalHtml(ev, uid) {
   const avatarHtml = player.avatarArt
     ? `<img src="${escapeHtml(player.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
     : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:18px;">${player.isHost ? '🦈' : '🐟'}</div>`;
+  const shipIconHtml = player.shipArt
+    ? `<img src="${escapeHtml(player.shipArt)}" style="width:20px; height:23px; object-fit:contain; transform:scaleX(-1); vertical-align:middle; margin-right:3px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));"/>`
+    : '🚢 ';
   return `
     <div onclick="closeBoatDetail()" style="position:fixed; inset:0; z-index:60; background:rgba(3,26,45,.62); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:20px;">
       <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,rgba(13,42,74,.95),rgba(23,58,99,.95)); border:2.5px solid #ffe9b0; border-radius:18px; padding:20px; max-width:320px; width:100%; box-shadow:0 14px 30px rgba(0,0,0,.4);">
         <div style="display:flex; align-items:center; gap:10px;">
           <div style="width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid #ffe9b0; background:#7fb3d5; flex-shrink:0;">${avatarHtml}</div>
           <div>
-            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#fff; font-size:16px;">🚢 ${escapeHtml(player.name)}${player.isHost ? ' 👑' : ''}</div>
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#fff; font-size:16px; display:flex; align-items:center;">${shipIconHtml}${escapeHtml(player.name)}${player.isHost ? ' 👑' : ''}</div>
             <div style="color:#ffe27a; font-size:11px; font-weight:700;">Rank #${rank}</div>
           </div>
           <div onclick="closeBoatDetail()" style="margin-left:auto; cursor:pointer; color:#cdeef2; font-size:18px; font-weight:800;">✕</div>
@@ -944,8 +965,11 @@ function renderGame() {
     <div class="sk-page-wrap">
       <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px; display:inline-block;">← Thoát</div>
       <div class="sk-game-layout">
-        <div class="sk-game-boat-card" style="position:relative; z-index:4; background:url('assets/khung_bang_dua_top.png') center / 100% 100% no-repeat; aspect-ratio:1774/887; filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));">
-          ${boatTrackHtml(ev, qIndex, isHost)}
+        <div class="sk-game-boat-column">
+          <div class="sk-game-boat-card" style="position:relative; z-index:4; background:url('assets/khung_bang_dua_top.png') center / 100% 100% no-repeat; aspect-ratio:1622/969; filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));">
+            ${boatTrackHtml(ev, qIndex, isHost)}
+          </div>
+          ${boatLeaderboardHtml(ev, isHost)}
         </div>
         <div class="sk-game-question-card" style="position:relative; z-index:4; background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #b9761a; border-radius:20px; padding:22px; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
           <div style="text-align:center; color:#8b5e34; font-weight:700; font-size:11.5px; letter-spacing:.5px;">${escapeHtml(ev.name)}</div>
