@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>N1 聴解 問題1 — Đảo Tiếng Vọng</title>
+<title id="pageTitle">N1 聴解 問題1 — Đảo Tiếng Vọng</title>
 <style>
   :root{ --sea1:#0e5273; --sea2:#2f8fd1; --foam:#eaf8fd;
     --ink:#12324a; --ink-soft:#4a7188; --gold1:#ffd25a; --gold2:#f5a623; --gold-ink:#5a3b22; --gold-shadow:#b9761a;
@@ -76,6 +76,8 @@
   .qtitle{ font-weight:800; color:var(--sea1); font-size:14.5px; }
   .reselect-btn{ background:none; border:1.5px solid var(--line); color:var(--ink-soft); font-size:11.5px; font-weight:700; padding:5px 10px; border-radius:10px; cursor:pointer; }
   .reselect-btn:hover{ border-color:var(--sea2); color:var(--sea1); }
+  .q-image-wrap{ margin-bottom:12px; text-align:center; }
+  .q-image-wrap img{ max-width:100%; border-radius:12px; border:1.5px solid var(--line); background:#fff; }
   .choice-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
   @media (max-width:520px){ .choice-grid{ grid-template-columns:1fr; } }
   .choice{ display:flex; gap:9px; align-items:flex-start; text-align:left; background:var(--foam); border:1.5px solid var(--line); border-radius:10px; padding:11px 13px; cursor:pointer; font-size:14px; color:var(--ink); }
@@ -140,7 +142,7 @@
 <div class="topbar">
   <div class="topbar-inner">
     <a href="DaiHaiTrinhManten.dc.html?island=4" class="back-link">← Quay về đảo</a>
-    <div class="brand">N1 聴解 · <b>MONDAI 1</b> · Đảo Tiếng Vọng</div>
+    <div class="brand" id="brandLabel">N1 聴解 · <b>MONDAI 1</b> · Đảo Tiếng Vọng</div>
   </div>
 </div>
 
@@ -149,133 +151,28 @@
 <script>
 const ISLAND_URL = 'DaiHaiTrinhManten.dc.html?island=4';
 const MASCOT_ART = 'assets/art-009.webp';
-const AUDIO_SRC = 'assets/audio/MD1/N1_7-2010.mp3';
+const SET_ID = new URLSearchParams(location.search).get('set') || '2010-07';
+const TOOL_KEY = location.pathname.split('/').pop() + '?set=' + SET_ID;
 
-const QUESTIONS = [
-  {
-    number: 1,
-    question: '女の人が電話で話しています。女の人は講演会の当日、何をしなければなりませんか。',
-    choices: ['参加費を支払う。','入場券を受け取る。','田中先生の本を買う。','名前と連絡先を言う。'],
-    correctAnswer: 1,
-    script: [
-      { speaker:'女', text:'もしもし、あのう、来週四日の講演会に参加したいんですが、まだあいてますか。' },
-      { speaker:'男', text:'ああ、田中先生の講演会ですね、少々お待ちください。調べますので。' },
-      { speaker:'女', text:'お願いします。' },
-      { speaker:'男', text:'あっ、もしもし、お待たせしました。まだ余裕がございますので、ご参加いただけます。' },
-      { speaker:'女', text:'ああ、そうですか。よかった。' },
-      { speaker:'男', text:'参加費は今週末までにお振込みください。' },
-      { speaker:'女', text:'はい。' },
-      { speaker:'男', text:'当日は一時間前からの開場となりますが。受付で入場券をお受け取りください。開始時間まで、先生の著書の展示販売も行っております。定価の二割引ですので、ぜひご利用ください。' },
-      { speaker:'女', text:'あっ、そうですか、わかりました。' },
-      { speaker:'男', text:'それでは、恐れ入りますが、お名前とご連絡先お願いします。' }
-    ],
-    explanation: 'Vào đúng ngày diễn ra buổi giảng (当日), người phụ nữ phải đến quầy lễ tân nhận vé vào cửa: 「受付で入場券をお受け取りください」. Việc đóng phí tham gia phải hoàn tất trước đó (今週末までにお振込み), còn việc nói tên/liên lạc là ngay lúc gọi điện đặt chỗ — không phải việc làm trong ngày diễn ra sự kiện.',
-    keypoint: '「受付で入場券を受け取ってください」は「当日」(ngày diễn ra) làm — cần phân biệt với việc đã xong trước đó (振込み) hoặc việc làm ngay lúc gọi điện (nói tên/liên lạc).'
-  },
-  {
-    number: 2,
-    question: '会社で女の人と男の人が会議について話しています。男の人が何をしなければなりませんか。',
-    choices: ['開始時間を早める。','時間を短くする。','議題を少なくする。','議題を事前に知らせる。'],
-    correctAnswer: 3,
-    script: [
-      { speaker:'女', text:'田中さん、例の金曜日の会議の件なんだけどね。' },
-      { speaker:'男', text:'はい。' },
-      { speaker:'女', text:'上のほうから、会議の効率化をはかるための指針っていうのが来てるんだけど。' },
-      { speaker:'男', text:'はい。' },
-      { speaker:'女', text:'それでね、まず会議の開始時間だけど、原則として、九時から十二時までの間って書いてある。' },
-      { speaker:'男', text:'ああ。会議は十時からの予定です。' },
-      { speaker:'女', text:'あっ、そうでしたね。それから、会議時間なんだけど、二時間を越えちゃいけない。' },
-      { speaker:'男', text:'ああ、それは何とかなりますね。' },
-      { speaker:'女', text:'それと、議題は四つ以下にして、遅くとも前日までにメールで参加者に知らせておくこと。' },
-      { speaker:'男', text:'あっ、そうなんですか。では、今日のうちにやっておきます。数のほうは問題ないですね。' },
-      { speaker:'女', text:'そうね、じゃあ、準備、よろしくね。' },
-      { speaker:'男', text:'はい、わかりました。' }
-    ],
-    explanation: 'Theo chỉ thị mới: giờ họp (10 giờ, nằm trong khung 9–12 giờ) và thời lượng (dưới 2 tiếng) đều đã đạt yêu cầu, không cần đổi. Chỉ còn việc gửi email thông báo nghị trình cho người tham dự trước 1 ngày, và người đàn ông nói sẽ làm ngay trong hôm nay: 「今日のうちにやっておきます」.',
-    keypoint: 'Chú ý câu「今日のうちにやっておきます」— dấu hiệu chỉ hành động SẼ làm ngay, đó chính là đáp án.'
-  },
-  {
-    number: 3,
-    question: 'ホテルで男がフロントに話しています。フロントの人はこの後、客室係りにどんな指示を出しますか。',
-    choices: ['洗面所を点検する。','毛布を補充する。','別の部屋を用意する。','荷物を運ぶ。'],
-    correctAnswer: 0,
-    script: [
-      { speaker:'女', text:'はい、フロントでございます。' },
-      { speaker:'男', text:'あのう、洗面台の水の流れが悪いんだけど、後、毛布もって来てくれないかな。' },
-      { speaker:'女', text:'大変申し訳ございません。あの、お客様。毛布はクローゼットの上の棚にございます。洗面台のほうは、係りの者を伺わせますので、しばらく、お待ちいただけますでしょうか。' },
-      { speaker:'男', text:'どのくらいかかるかな。疲れてて早く寝たいんだよね。' },
-      { speaker:'女', text:'それでしたら。ほかのお部屋にお移りいただくことも可能ですが。' },
-      { speaker:'男', text:'うーん、荷物あけちゃったし、とりあえず見てくれる。' },
-      { speaker:'女', text:'承知いたしました。すぐに手配いたします。' }
-    ],
-    explanation: 'Khách phàn nàn nước ở bồn rửa mặt chảy yếu. Lễ tân nói chăn đã có sẵn trong tủ nên không cần mang thêm, còn khoản bồn rửa sẽ cử nhân viên tới kiểm tra. Khách từ chối đổi phòng, chỉ muốn "xem giúp" (とりあえず見てくれる) — nên lễ tân sẽ chỉ đạo nhân viên phòng đi kiểm tra bồn rửa mặt.',
-    keypoint: '「見てくれる」= khách yêu cầu kiểm tra tại chỗ, không phải đổi phòng hay mang thêm chăn.'
-  },
-  {
-    number: 4,
-    question: '会社で男の人と女の人が話しています。女の人は、明日何をしなければなりませんか。',
-    choices: ['国内出張に出かける。','会議の通訳をする。','資料を作成する。','海外出張に出かける。'],
-    correctAnswer: 1,
-    script: [
-      { speaker:'男', text:'今度の国際共同プロジェクトについてなんだけど。' },
-      { speaker:'女', text:'はい、来月から予備調査のために、国連の支社を幾つか回る予定です。' },
-      { speaker:'男', text:'あっ、そう。それでね。この件で明日アメリカの会社から責任者がくるんだけど、君に通訳を頼めないかな。実は予定していた人は急にこられなくなってね。' },
-      { speaker:'女', text:'えっ？急に言われても、私に代役が務まりますか。' },
-      { speaker:'男', text:'できそうな人は君しかいないんだよ。会議の資料を読み込んで準備してくれないかな。頼むよ。' },
-      { speaker:'女', text:'えっ、そんな大役、自信ないんですが。' },
-      { speaker:'男', text:'何とかお願いします。' },
-      { speaker:'女', text:'はい。' },
-      { speaker:'男', text:'ああ、そうそう、例の海外出張の件は許可が下りたから、そっちのほうの準備もよろしく。' },
-      { speaker:'女', text:'はい、わかりました。' }
-    ],
-    explanation: 'Câu hỏi hỏi việc của "ngày mai" (明日). Ngày mai có người phụ trách từ công ty Mỹ đến, và cô được nhờ làm phiên dịch cho cuộc họp đó — đây chính là việc của ngày mai. Việc đọc tài liệu là chuẩn bị thêm, còn chuyến công tác nước ngoài tuy đã được duyệt nhưng chưa xác định ngày cụ thể.',
-    keypoint: 'Từ khóa「明日」giới hạn phạm vi câu hỏi — chỉ lấy đúng việc diễn ra vào ngày mai.'
-  },
-  {
-    number: 5,
-    question: '繊維工場の男の人が取引先の女の人と話しています。男の人はこの後、どうしますか。',
-    choices: ['最新の方法で生地を織る。','生地の色を変える。','生地から服を作る。','人手を増やす。'],
-    correctAnswer: 1,
-    script: [
-      { speaker:'男', text:'どうですか。この生地なんですけど。' },
-      { speaker:'女', text:'ああ、いいですね。この触り心地はなかなかほかではないんですよね。' },
-      { speaker:'男', text:'そうでしょう。うちでは昔からの織り方で作ってるんで、この独特の感じが出るんですよ。' },
-      { speaker:'女', text:'そうですか。新しいやり方ですと、こうはならないんですか。' },
-      { speaker:'男', text:'いや、無理ですね。手間がかかっても、うちではその点にこだわってますからね。' },
-      { speaker:'女', text:'なるほどね。色合いはかえられますか。' },
-      { speaker:'男', text:'ご希望をいっていただければ、微妙な違いも出せますよ。' },
-      { speaker:'女', text:'じゃあ、もう少し、淡い感じを出していただければ、私たちのイメージに合うんですが。' },
-      { speaker:'男', text:'ああ、そうですか。わかりました。じゃ、2、3日ください。' },
-      { speaker:'女', text:'後、こちらでは、多くに仕上げていただくことも可能ですか。' },
-      { speaker:'男', text:'うん、ちょっと時間かかりますね。今、人手が足りないんですよ。厳しくてね。' },
-      { speaker:'女', text:'ああ、そうですか。それですと、難しいですね。' },
-      { speaker:'男', text:'すみません。じゃ、ご希望に合うようにやってみます。' },
-      { speaker:'女', text:'はい、お願いします。' }
-    ],
-    explanation: 'Khách hàng nữ đưa ra 2 yêu cầu: đổi màu vải nhạt hơn (được đồng ý, hẹn 2–3 ngày) và tăng số lượng sản xuất (bị từ chối vì thiếu nhân lực). Cuối cùng người đàn ông nói sẽ cố làm theo đúng nguyện vọng của khách — điều duy nhất khả thi còn lại là đổi màu vải.',
-    keypoint: 'Yêu cầu đầu (đổi màu) được nhận lời「わかりました」; yêu cầu sau (tăng số lượng) bị từ chối vì「人手が足りない」.'
-  },
-  {
-    number: 6,
-    question: '電話で女の人と男の人が話しています。男の人はホテルにキャンセル料をいくら払わなければなりませんか。',
-    choices: ['10,000円','8,000円','2,000円','1,000円'],
-    correctAnswer: 1,
-    script: [
-      { speaker:'女', text:'はい、北国ホテルでございます。' },
-      { speaker:'男', text:'あのう、明日の予約お願いしてた山田ですが、急用ができてキャンセルしたいんですけど。' },
-      { speaker:'女', text:'かしこまりました。山田様ですね。一万円の部屋をご予約ですね。はい、そうしましたら、所定のキャンセル料をいただくことになりますが、よろしいでしょうか。' },
-      { speaker:'男', text:'えーと、キャンセル料は確か、80パーセントでしたっけ。' },
-      { speaker:'女', text:'えー、あのう。ご連絡なしの場合は全額。ご連絡いただいた場合は、当日が80パーセント、前日は二十パーセントとなっております。' },
-      { speaker:'男', text:'ええー、痛いなあ。' },
-      { speaker:'女', text:'あっ、お客様、申し訳ございません。前日の午後九時以降にご連絡いただいた場合は、当日扱いとさせていただいております。ただいま十時を回っておりますので。' },
-      { speaker:'男', text:'ええー。なに。もう当日扱いになるの？それはひどいなあ。' },
-      { speaker:'女', text:'誠に申し訳ございません。お送りしたパンフレットに明記しておりますので。' },
-      { speaker:'男', text:'そうか。しょうがないな。' }
-    ],
-    explanation: 'Phòng giá 10.000円. Không báo hủy trước: phí 100% (10.000円); báo hủy trong ngày: 80% (8.000円); báo hủy từ hôm trước: 20% (2.000円). Vì khách gọi hủy sau 21h hôm trước — quá giờ quy định — nên bị tính theo mức "hủy trong ngày": 80% × 10.000円 = 8.000円.',
-    keypoint: 'Phân biệt 3 mức phí theo thời điểm báo hủy: không báo (toàn phần) / báo trong ngày (80%) / báo từ hôm trước (20%).'
+let AUDIO_SRC = '';
+let EXAM_LABEL = SET_ID;
+let QUESTIONS = [];
+
+function bootSet() {
+  const data = window.MONDAI1_DATA && window.MONDAI1_DATA[SET_ID];
+  if (!data) {
+    document.getElementById('app').innerHTML = '<div class="plank"><div class="plank-inner"><p>Không tìm thấy bộ đề "' + SET_ID + '". Vui lòng quay lại đảo và chọn lại bộ đề.</p></div></div>';
+    return;
   }
-];
+  AUDIO_SRC = data.audioSrc;
+  EXAM_LABEL = data.examLabel;
+  QUESTIONS = data.questions;
+  player.src = AUDIO_SRC;
+  document.getElementById('pageTitle').textContent = `N1 聴解 問題1 (${EXAM_LABEL}) — Đảo Tiếng Vọng`;
+  document.getElementById('brandLabel').innerHTML = `N1 聴解 · <b>MONDAI 1 · ${EXAM_LABEL}</b> · Đảo Tiếng Vọng`;
+  selected = new Array(QUESTIONS.length).fill(null);
+  render();
+}
 
 let screen = 'intro'; // intro | quiz | results | review
 let selected = new Array(QUESTIONS.length).fill(null);
@@ -391,7 +288,7 @@ function goToQuiz() {
 function renderPlayerBar(note, sticky) {
   return `
   <div class="player-plank${sticky ? ' player-sticky' : ''}"><div class="player-card">
-    <div class="player-label">🎧 MONDAI 1</div>
+    <div class="player-label">🎧 MONDAI 1 · ${EXAM_LABEL}</div>
     <div class="player-row-main">
       <button class="player-icon-btn play-pause" id="playPauseBtn" onclick="togglePlayPause()">▶️</button>
       <button class="player-icon-btn" onclick="seekBy(-5)" title="Lùi 5 giây">⏪</button>
@@ -430,6 +327,7 @@ function renderQuiz() {
           <div class="qnum-badge"><div class="anchor-num">${q.number}</div><div class="qtitle">${q.number} 番</div></div>
           <button class="reselect-btn" onclick="clearChoice(${qi})">↺ Chọn lại</button>
         </div>
+        ${q.image ? `<div class="q-image-wrap"><img src="${q.image}" alt="Hình minh họa câu ${q.number}"></div>` : ''}
         <div class="choice-grid">
           ${q.choices.map((opt, oi) => `
             <div class="choice" id="choice-${qi}-${oi}" onclick="selectChoice(${qi},${oi})">
@@ -510,13 +408,13 @@ function saveProgress() {
   const correct = correctCount();
   const total = QUESTIONS.length;
   try {
-    const bkey = 'dao5_mondai1_best';
+    const bkey = 'dao5_mondai1_' + SET_ID + '_best';
     const prevBest = parseInt(localStorage.getItem(bkey) || '0', 10);
     if (correct > prevBest) localStorage.setItem(bkey, String(correct));
     const key = 'dc_tool_progress';
     const all = JSON.parse(localStorage.getItem(key) || '{}');
-    const best = Math.max(correct, (all['dao5-tiengvong-mondai1-nghe.html'] && all['dao5-tiengvong-mondai1-nghe.html'].correct) || 0);
-    all['dao5-tiengvong-mondai1-nghe.html'] = { correct: best, total };
+    const best = Math.max(correct, (all[TOOL_KEY] && all[TOOL_KEY].correct) || 0);
+    all[TOOL_KEY] = { correct: best, total };
     localStorage.setItem(key, JSON.stringify(all));
   } catch (e) {}
 }
@@ -532,7 +430,7 @@ function renderResults() {
   return `
   <div class="parchment">
     <img class="parchment-mascot" src="${MASCOT_ART}" alt="Cá Mập Âm Thanh">
-    <div class="parchment-title">⚓ MONDAI 1 · 結果発表</div>
+    <div class="parchment-title">⚓ MONDAI 1 · ${EXAM_LABEL} · 結果発表</div>
     <div class="score-grid">
       <div class="score-item"><div class="num baloo">${correct}/${total}</div><div class="lbl">正解数</div></div>
       <div class="score-item"><div class="num baloo">${pct}%</div><div class="lbl">正答率</div></div>
@@ -575,7 +473,7 @@ function renderReview() {
   const correct = correctCount();
   return `
   ${renderPlayerBar('', true)}
-  <div class="review-summary">MONDAI 1 · 答えと解説 — ${correct}/${QUESTIONS.length} 正解</div>
+  <div class="review-summary">MONDAI 1 · ${EXAM_LABEL} · 答えと解説 — ${correct}/${QUESTIONS.length} 正解</div>
   ${QUESTIONS.map((q, qi) => {
     const yourIdx = selected[qi];
     const isCorrect = yourIdx === q.correctAnswer;
@@ -586,6 +484,7 @@ function renderReview() {
         <div class="verdict-badge ${isCorrect ? 'ok' : 'no'}">${isCorrect ? '🟢 正解' : '🔴 不正解'}</div>
       </div>
       <div class="review-question">${q.question}</div>
+      ${q.image ? `<div class="q-image-wrap"><img src="${q.image}" alt="Hình minh họa câu ${q.number}"></div>` : ''}
 
       <div class="your-answer-row">
         <div class="ans-chip you ${isCorrect ? 'ok' : 'no'}">
@@ -597,7 +496,7 @@ function renderReview() {
       <div class="script-panel">
         <div class="script-panel-title">📜 SCRIPT — 会話の内容</div>
         ${q.script.map(line => `
-          <div class="script-line ${line.speaker === '女' ? 'spk-f' : 'spk-m'}">
+          <div class="script-line ${(line.spk ? line.spk === 'f' : line.speaker === '女') ? 'spk-f' : 'spk-m'}">
             <div class="spk">${line.speaker}</div>
             <div class="txt">${line.text}</div>
           </div>
@@ -618,7 +517,15 @@ function renderReview() {
   `;
 }
 
-render();
+(function loadSetData() {
+  const s = document.createElement('script');
+  s.src = `assets/audio/MD1/data/${SET_ID}.js`;
+  s.onload = bootSet;
+  s.onerror = () => {
+    document.getElementById('app').innerHTML = '<div class="plank"><div class="plank-inner"><p>Không tải được dữ liệu bộ đề "' + SET_ID + '".</p></div></div>';
+  };
+  document.head.appendChild(s);
+})();
 </script>
 </body>
 </html>
