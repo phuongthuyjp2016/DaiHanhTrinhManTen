@@ -7,9 +7,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
-  body { margin:0; font-family:'Be Vietnam Pro',sans-serif; background:url('assets/background_event.png') center top / cover no-repeat fixed, #1c9a95; min-height:100dvh; }
+  html { background: url('assets/background_event.png') center top / cover no-repeat fixed, #1c9a95; }
+  body { margin:0; font-family:'Be Vietnam Pro',sans-serif; background:transparent; min-height:100dvh; }
+  @media (max-width: 643px) { html { background: url('assets/background_event_sp.png') center top / cover no-repeat fixed, #1c9a95; } }
   a { text-decoration:none; }
   input:focus { outline:2px solid #f5a623; }
+  .sk-page-wrap { position:relative; min-height:100dvh; padding:18px 16px 40px; }
+  @media (max-width: 643px) { .sk-page-wrap { padding: 18px 32px 40px; } }
+  .sk-stats-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; margin-top:20px; }
+  .sk-stats-grid > div { min-width:88px; }
+  @media (max-width: 480px) {
+    .sk-stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px 10px; }
+    .sk-stats-grid > div { min-width:0; }
+  }
+  /* Điện thoại/iPad: đua thuyền và câu hỏi xếp dọc như cũ. Chỉ màn PC rộng mới cho nằm cùng hàng. */
+  .sk-game-layout { display:flex; flex-direction:column; align-items:center; }
+  .sk-game-boat-card { width:100%; max-width:520px; margin:12px auto 0; }
+  .sk-game-question-card { width:100%; max-width:520px; margin:10px auto 14px; }
+  @media (min-width: 1100px) {
+    .sk-game-layout { flex-direction:row; align-items:flex-start; justify-content:center; gap:16px; }
+    .sk-game-boat-card { margin:14px 0; flex:0 1 440px; }
+    .sk-game-question-card { margin:14px 0; flex:0 1 560px; }
+  }
 </style>
 </head>
 <body>
@@ -60,11 +79,11 @@
     createGameEvent: async (code, event) => {
       await setDoc(doc(db, 'game_events', code), event);
     },
-    joinGameEvent: async (code, uid, name) => {
-      await updateDoc(doc(db, 'game_events', code), { participants: arrayUnion({ uid, name: name || 'Ẩn danh' }) });
+    joinGameEvent: async (code, uid, name, avatarArt, shipArt) => {
+      await updateDoc(doc(db, 'game_events', code), { participants: arrayUnion({ uid, name: name || 'Ẩn danh', avatarArt: avatarArt || '', shipArt: shipArt || '' }) });
     },
-    startGameEvent: async (code) => {
-      await updateDoc(doc(db, 'game_events', code), { status: 'started', startedAt: Date.now() });
+    updateEventState: async (code, patch) => {
+      await updateDoc(doc(db, 'game_events', code), patch);
     },
     watchGameEvent: (code, cb) => onSnapshot(doc(db, 'game_events', code), (snap) => {
       cb(snap.exists() ? { id: snap.id, ...snap.data() } : null);
@@ -92,6 +111,219 @@ const EVENT_STEPS = [
   { icon: '👥', title: 'CÀI ĐẶT', desc: 'Thời gian, số người, phần thưởng...' },
   { icon: '🏁', title: 'TẠO & CHIA SẺ', desc: 'Nhận mã sự kiện để mời bạn bè' }
 ];
+// Fallback question bank — only used if an event doc has no `questions` field baked in
+// (e.g. a legacy event created before the real question-bank wiring below existed).
+const SAMPLE_QUESTIONS = [
+  { text: '「猶予」の読み方として正しいものはどれか。', choices: ['ゆうよ', 'ゆよ', 'いうよ', 'ようよ'], correct: 0 },
+  { text: '彼はプロジェクトの失敗を＿＿、責任を取って辞任した。', choices: ['契機に', '皮切りに', '限りに', 'よそに'], correct: 0 },
+  { text: '「たとえ雨が降ろうが、試合は決行する。」の「（よ）うが」に最も近い意味はどれか。', choices: ['～だとしても', '～たびに', '～に応じて', '～かたわら'], correct: 0 },
+  { text: '「覆水盆に返らず」の意味に最も近いものはどれか。', choices: ['一度したことは取り返しがつかない', '準備が肝心だ', '努力は必ず報われる', '見た目で判断してはいけない'], correct: 0 },
+  { text: 'この資料を＿＿、来週までに企画書を仕上げてください。', choices: ['踏まえて', '踏んで', '踏み込んで', '踏み出して'], correct: 0 }
+];
+const QUESTION_DURATION_SEC = 20;
+const DOKKAI_DURATION_SEC = 150; // đọc hiểu (đoản/trung/trường văn): 2 phút rưỡi mỗi câu hỏi
+const QUESTIONS_PER_EVENT = 10;
+
+// Chủ đề mà host có thể chọn khi tạo sự kiện. `source` trỏ tới kho đề thật nằm sẵn trong
+// các file đảo (không phải dữ liệu giả) — `available:false` là các chủ đề spec yêu cầu liệt
+// kê nhưng repo hiện chưa có kho đề tương ứng (AB/tìm kiếm thông tin/nghe MD1-5: không tìm
+// thấy dữ liệu 統合理解, 情報検索 hay bất kỳ file âm thanh/nghe nào trong dự án).
+const TOPICS = [
+  { id: 'tuvung', label: 'Từ vựng', available: true, source: { file: 'dao2-hailuu-mondai3-dongnghia.html', marker: 'var V=', kind: 'tuvung' } },
+  { id: 'ngupap', label: 'Ngữ pháp', available: true, source: { file: 'dao3-suongmu-powerdrill-full30.html', marker: 'QUIZ_DATA=', kind: 'ngupap' } },
+  { id: 'kanji', label: 'Kanji', available: true, source: { file: 'dao1-hantu-doc-kanji-quiz-data.js', marker: 'const VOCAB =', kind: 'kanji' } },
+  { id: 'doanvan', label: 'Đoản văn', available: true, source: { file: 'dao9-anhsang-mon8-doanvan.html', marker: 'const data =', kind: 'doanvan' } },
+  { id: 'trungvan', label: 'Trung văn', available: true, source: { file: 'dao9-anhsang-mon9-trungvan.html', marker: 'const baiList =', kind: 'trungvan' } },
+  { id: 'truongvan', label: 'Trường văn', available: true, source: { file: 'dao9-anhsang-mondai10-12-truongvan.html', marker: 'const DATA =', kind: 'truongvan' } },
+  { id: 'ab', label: 'AB', available: false },
+  { id: 'timkiem', label: 'Tìm kiếm thông tin', available: false },
+  { id: 'nghe1', label: 'Nghe MD1', available: false },
+  { id: 'nghe2', label: 'Nghe MD2', available: false },
+  { id: 'nghe3', label: 'Nghe MD3', available: false },
+  { id: 'nghe4', label: 'Nghe MD4', available: false },
+  { id: 'nghe5', label: 'Nghe MD5', available: false }
+];
+
+function stripTags(s) { return String(s == null ? '' : s).replace(/<[^>]*>/g, ''); }
+// Bôi đen từ mục tiêu trong câu ví dụ (mảng ứng viên vì câu có thể chia động từ khác dạng
+// từ điển — thử rút ngắn dần từng ứng viên để tìm phần thân từ dài nhất khớp trong câu).
+function highlightWord(sentence, candidates) {
+  let best = null;
+  (candidates || []).filter(Boolean).forEach(word => {
+    for (let len = word.length; len >= 2; len--) {
+      const stem = word.slice(0, len);
+      const idx = sentence.indexOf(stem);
+      if (idx !== -1) { if (!best || len > best.len) best = { idx, len }; break; }
+    }
+  });
+  if (!best) return escapeHtml(sentence);
+  return escapeHtml(sentence.slice(0, best.idx))
+    + '<b style="color:#c0392b; text-decoration:underline;">' + escapeHtml(sentence.slice(best.idx, best.idx + best.len)) + '</b>'
+    + escapeHtml(sentence.slice(best.idx + best.len));
+}
+function formatSec(s) {
+  if (s < 60) return s + 's';
+  const m = Math.floor(s / 60), r = s % 60;
+  return m + ':' + String(r).padStart(2, '0');
+}
+function shuffleArr(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Trích xuất literal JS (mảng/object) nằm ngay sau `marker` trong `text`, bằng cách quét
+// dấu ngoặc có nhận diện string ('/"/`) và comment `//` — an toàn hơn eval cả file (các file
+// đảo có gọi DOM ở cuối script, chạy cả file dễ throw lỗi không liên quan tới dữ liệu).
+function jsLiteralAfter(text, marker) {
+  const idx = text.indexOf(marker);
+  if (idx === -1) return null;
+  let i = idx + marker.length;
+  while (i < text.length && /\s/.test(text[i])) i++;
+  const start = i;
+  let depth = 0, inStr = false, strChar = '', esc = false, inComment = false;
+  for (; i < text.length; i++) {
+    const c = text[i];
+    if (inComment) { if (c === '\n') inComment = false; continue; }
+    if (inStr) {
+      if (esc) esc = false;
+      else if (c === '\\') esc = true;
+      else if (c === strChar) inStr = false;
+      continue;
+    }
+    if (c === '/' && text[i + 1] === '/') { inComment = true; continue; }
+    if (c === '"' || c === "'" || c === '`') { inStr = true; strChar = c; continue; }
+    if (c === '{' || c === '[') { depth++; continue; }
+    if (c === '}' || c === ']') {
+      depth--;
+      if (depth === 0) { i++; break; }
+      continue;
+    }
+  }
+  return text.slice(start, i);
+}
+function evalJsLiteral(text) { return new Function('return (' + text + ');')(); }
+
+async function fetchSourceLiteral(source) {
+  const res = await fetch(source.file);
+  const text = await res.text();
+  const literal = jsLiteralAfter(text, source.marker);
+  if (!literal) throw new Error('Không tìm thấy dữ liệu ' + source.marker + ' trong ' + source.file);
+  return evalJsLiteral(literal);
+}
+
+// Mỗi normalizer trả về mảng câu hỏi dạng chuẩn {text, choices, correct} (correct: index 0-based).
+function normalizeTuVung(V) {
+  return (V || []).filter(x => x && x.s && Array.isArray(x.op) && typeof x.a === 'number')
+    .map(x => ({ text: x.s, choices: x.op, correct: x.a, html: highlightWord(x.s, [x.k, x.h]) }));
+}
+function normalizeNguPhap(QUIZ_DATA) {
+  const out = [];
+  ((QUIZ_DATA && QUIZ_DATA.rounds) || []).forEach((round, ri) => {
+    (round.parts || []).forEach((part, pi) => {
+      if (part.type === 'single' || part.type === 'order') {
+        (part.items || []).forEach(it => {
+          if (it && it.q && Array.isArray(it.o) && typeof it.a === 'number') {
+            out.push({ text: it.q, choices: it.o, correct: it.a });
+          }
+        });
+      } else if (part.type === 'reading' && part.passage) {
+        const groupId = 'ngupap-' + ri + '-' + pi;
+        (part.items || []).forEach(it => {
+          if (it && Array.isArray(it.o) && typeof it.a === 'number') {
+            out.push({
+              passage: part.passage,
+              text: '【' + it.label + '】 ' + (part.title || ''),
+              choices: it.o,
+              correct: it.a - 1, // items trong "reading" đánh số đáp án từ 1, khác với single/order (0-based)
+              groupId
+            });
+          }
+        });
+      }
+    });
+  });
+  return out;
+}
+function normalizeKanji(VOCAB) {
+  return (VOCAB || []).filter(x => x && x.k && x.r && Array.isArray(x.wrong) && x.wrong.length === 3)
+    .map(x => {
+      const choices = shuffleArr([x.r].concat(x.wrong));
+      return { text: '「' + x.k + '」の読み方として正しいものはどれか。', choices, correct: choices.indexOf(x.r) };
+    });
+}
+function normalizeDoanVan(data) {
+  return (data || []).filter(x => x && x.question && Array.isArray(x.choices) && typeof x.correct === 'number')
+    .map(x => ({ text: x.question, passage: x.passage || '', choices: x.choices, correct: x.correct, durationSec: DOKKAI_DURATION_SEC }));
+}
+function normalizeTrungVan(baiList) {
+  const out = [];
+  (baiList || []).forEach((bai, bi) => {
+    const passage = stripTags(bai.passageHTML || '');
+    const groupId = 'trungvan-' + bi;
+    (bai.questions || []).forEach(q => {
+      if (q && q.q && Array.isArray(q.choices) && typeof q.correct === 'number') {
+        out.push({ text: stripTags(q.q), passage, choices: q.choices.map(stripTags), correct: q.correct, durationSec: DOKKAI_DURATION_SEC, groupId });
+      }
+    });
+  });
+  return out;
+}
+function normalizeTruongVan(DATA) {
+  const out = [];
+  (DATA || []).forEach((bai, bi) => {
+    const groupId = 'truongvan-' + bi;
+    (bai.questions || []).forEach(q => {
+      if (q && q.q && Array.isArray(q.options) && typeof q.answer === 'number') {
+        out.push({ text: q.q, passage: bai.passage || '', choices: q.options, correct: q.answer, durationSec: DOKKAI_DURATION_SEC, groupId });
+      }
+    });
+  });
+  return out;
+}
+const TOPIC_NORMALIZERS = {
+  tuvung: normalizeTuVung, ngupap: normalizeNguPhap, kanji: normalizeKanji,
+  doanvan: normalizeDoanVan, trungvan: normalizeTrungVan, truongvan: normalizeTruongVan
+};
+
+// Tải kho đề thật từ các đảo cho những chủ đề đã chọn, gộp lại rồi random ra tối đa
+// QUESTIONS_PER_EVENT câu. Được host gọi 1 lần lúc tạo sự kiện; kết quả ghi thẳng vào
+// Firestore (ev.questions) để mọi người chơi cùng 1 bộ câu hỏi giống nhau.
+async function buildQuestionPool(topicIds) {
+  const topics = TOPICS.filter(t => topicIds.includes(t.id) && t.available && t.source);
+  const lists = await Promise.all(topics.map(async t => {
+    try {
+      const raw = await fetchSourceLiteral(t.source);
+      return TOPIC_NORMALIZERS[t.source.kind](raw);
+    } catch (e) {
+      console.error('[buildQuestionPool] failed for topic', t.id, e);
+      return [];
+    }
+  }));
+  const flat = [].concat(...lists).filter(q => q.text && Array.isArray(q.choices) && q.choices.length >= 2 && typeof q.correct === 'number' && q.correct >= 0 && q.correct < q.choices.length);
+
+  // Gom các câu hỏi cùng 1 bài đọc (groupId) lại thành từng nhóm để random theo NHÓM chứ
+  // không random từng câu riêng lẻ — tránh việc 1 bài trung/trường văn có 2-3 câu hỏi nhưng
+  // chỉ 1 câu lọt vào bộ đề, còn các câu còn lại của bài đó bị rớt ngẫu nhiên.
+  const groupsByKey = {};
+  const groupOrder = [];
+  flat.forEach((q, i) => {
+    const key = q.groupId || ('__single_' + i);
+    if (!groupsByKey[key]) { groupsByKey[key] = []; groupOrder.push(key); }
+    groupsByKey[key].push(q);
+  });
+  const shuffledGroups = shuffleArr(groupOrder.map(k => groupsByKey[k]));
+  const pool = [];
+  for (const group of shuffledGroups) {
+    pool.push(...group);
+    if (pool.length >= QUESTIONS_PER_EVENT) break;
+  }
+  return pool;
+}
+
 function genEventCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let s = '';
@@ -109,9 +341,10 @@ let eventsLoading = true;
 let eventsError = '';
 let showCreateForm = false;
 let showJoinForm = false;
-let newEvent = { name: '', mode: 'quiz', topic: '', time: '20:30', maxPlayers: 30 };
+let newEvent = { name: '', mode: 'quiz', topics: [], time: '20:30', maxPlayers: 30 };
 let formError = '';
 let creating = false;
+let loadingQuestions = false;
 let joinCodeInput = '';
 let joinError = '';
 let joining = false;
@@ -122,9 +355,26 @@ let lobbyCode = '';
 let lobbyEvent = null;
 let lobbyUnsub = null;
 let startingEvent = false;
+let boatAnim = null; // mục 31: {qIndex, fromScores, toScores, overtakes, startedAt, duration}
+let boatAnimRaf = null;
+let selectedBoatUid = '';
 
 function hostDisplayName() {
   return (profile && profile.displayName) || (currentUser && currentUser.name) || 'Nhà Thám Hiểm';
+}
+function myAvatarArt() {
+  return (profile && profile.avatar && profile.avatar.art) || '';
+}
+// mục 31: đua thuyền dùng đúng kiểu tàu người chơi đã chọn ở màn onboarding (CHỌN KIỂU TÀU),
+// không phải hình tàu mặc định — cùng danh sách SHIP_TYPES với trang chính.
+const SHIP_TYPES = [
+  { id: 'sail', art: 'assets/art-086.webp' },
+  { id: 'warship', art: 'assets/art-087.webp' },
+  { id: 'speed', art: 'assets/art-088.webp' }
+];
+function myShipArt() {
+  const found = SHIP_TYPES.find(s => s.id === (profile && profile.shipType));
+  return (found || SHIP_TYPES[0]).art;
 }
 
 function requireAuth(then) {
@@ -138,13 +388,24 @@ function requireAuth(then) {
 }
 
 function enterLobby(code) {
-  view = 'lobby'; lobbyCode = code; lobbyEvent = null;
+  view = 'lobby'; lobbyCode = code; lobbyEvent = null; boatAnim = null; selectedBoatUid = '';
   render();
   if (lobbyUnsub) { lobbyUnsub(); lobbyUnsub = null; }
-  lobbyUnsub = window.skSync.watchGameEvent(code, (ev) => { lobbyEvent = ev; render(); });
+  lobbyUnsub = window.skSync.watchGameEvent(code, (ev) => {
+    const prevEv = lobbyEvent;
+    // mục 31: đúng lúc Host bấm "Hiện đáp án" (locked → result trên CÙNG câu hỏi), chạy
+    // animation thuyền từ điểm cũ sang điểm mới thay vì nhảy thẳng tới vị trí cuối.
+    if (prevEv && ev && prevEv.questionState === 'locked' && ev.questionState === 'result'
+        && prevEv.currentQuestionIndex === ev.currentQuestionIndex) {
+      startBoatAnimation(prevEv, ev);
+    }
+    lobbyEvent = ev; render();
+  });
 }
 function leaveLobby() {
   if (lobbyUnsub) { lobbyUnsub(); lobbyUnsub = null; }
+  if (boatAnimRaf) { cancelAnimationFrame(boatAnimRaf); boatAnimRaf = null; }
+  boatAnim = null; selectedBoatUid = '';
   view = 'list'; lobbyCode = ''; lobbyEvent = null;
   render();
   loadEvents();
@@ -152,8 +413,104 @@ function leaveLobby() {
 function startEventNow() {
   if (!lobbyCode || startingEvent) return;
   startingEvent = true; render();
-  window.skSync.startGameEvent(lobbyCode).then(() => { startingEvent = false; render(); }).catch(() => { startingEvent = false; render(); });
+  window.skSync.updateEventState(lobbyCode, {
+    status: 'started', startedAt: Date.now(),
+    currentQuestionIndex: 0, questionState: 'active', questionStartedAt: Date.now(), answers: []
+  }).then(() => { startingEvent = false; render(); }).catch(() => { startingEvent = false; render(); });
 }
+
+function submitAnswer(choiceIdx) {
+  const ev = lobbyEvent;
+  if (!ev || ev.questionState !== 'active') return;
+  const uid = window.skSync.currentUid();
+  if (!uid) return;
+  const qIndex = ev.currentQuestionIndex;
+  const q = (ev.questions && ev.questions.length ? ev.questions : SAMPLE_QUESTIONS)[qIndex];
+  const correct = choiceIdx === q.correct;
+  // mục 9 đặc tả: 100 điểm cơ bản + bonus tốc độ 0~50 điểm theo % thời gian còn lại lúc trả lời
+  // (rất nhanh ≈150, trung bình ≈125, gần hết giờ ≈105; sai luôn 0, không phạt điểm).
+  const duration = q.durationSec || QUESTION_DURATION_SEC;
+  const elapsedSec = (Date.now() - (ev.questionStartedAt || Date.now())) / 1000;
+  const remainingFrac = Math.max(0, Math.min(1, (duration - elapsedSec) / duration));
+  const speedBonus = correct ? Math.round(50 * remainingFrac) : 0;
+  const points = correct ? 100 + speedBonus : 0;
+  const record = { uid, name: hostDisplayName(), qIndex, choice: choiceIdx, correct, points, speedBonus, answeredAt: Date.now() };
+  // Cho phép đổi đáp án khi còn thời gian: thay bản ghi cũ của uid+qIndex này thay vì chỉ append.
+  const others = (ev.answers || []).filter(a => !(a.uid === uid && a.qIndex === qIndex));
+  window.skSync.updateEventState(lobbyCode, { answers: others.concat([record]) });
+}
+function lockQuestion() {
+  window.skSync.updateEventState(lobbyCode, { questionState: 'locked' });
+}
+function revealResult() {
+  window.skSync.updateEventState(lobbyCode, { questionState: 'result' });
+}
+function nextQuestion() {
+  const ev = lobbyEvent;
+  if (!ev) return;
+  if (boatAnimRaf) { cancelAnimationFrame(boatAnimRaf); boatAnimRaf = null; }
+  boatAnim = null;
+  const nextIdx = (ev.currentQuestionIndex || 0) + 1;
+  const total = (ev.questions && ev.questions.length) ? ev.questions.length : SAMPLE_QUESTIONS.length;
+  if (nextIdx >= total) {
+    window.skSync.updateEventState(lobbyCode, { status: 'ended' });
+  } else {
+    window.skSync.updateEventState(lobbyCode, { currentQuestionIndex: nextIdx, questionState: 'active', questionStartedAt: Date.now() });
+  }
+}
+
+// ===================== mục 31: Đua thuyền theo điểm =====================
+function boatPlayers(ev) {
+  const list = [{ uid: ev.hostUid, name: ev.hostName || 'Ẩn danh', avatarArt: ev.hostAvatarArt || '', shipArt: ev.hostShipArt || '', isHost: true }]
+    .concat((ev.participants || []).map(p => ({ uid: p.uid, name: p.name || 'Ẩn danh', avatarArt: p.avatarArt || '', shipArt: p.shipArt || '', isHost: false })));
+  const seen = {};
+  return list.filter(p => (seen[p.uid] ? false : (seen[p.uid] = true)));
+}
+function computeScores(ev, excludeQIndex) {
+  const scores = {};
+  boatPlayers(ev).forEach(p => { scores[p.uid] = 0; });
+  (ev.answers || []).forEach(a => {
+    if (excludeQIndex !== undefined && a.qIndex === excludeQIndex) return;
+    if (scores[a.uid] !== undefined) scores[a.uid] += (a.points || 0);
+  });
+  return scores;
+}
+function findOvertakes(fromScores, toScores, uids) {
+  const beforeOrder = uids.slice().sort((a, b) => fromScores[b] - fromScores[a]);
+  const afterOrder = uids.slice().sort((a, b) => toScores[b] - toScores[a]);
+  const beforeRank = {}; beforeOrder.forEach((u, i) => { beforeRank[u] = i; });
+  const afterRank = {}; afterOrder.forEach((u, i) => { afterRank[u] = i; });
+  const overtakes = [];
+  uids.forEach(u => {
+    uids.forEach(v => {
+      if (u === v) return;
+      if (beforeRank[u] > beforeRank[v] && afterRank[u] < afterRank[v]) overtakes.push([u, v]);
+    });
+  });
+  return overtakes;
+}
+function startBoatAnimation(prevEv, ev) {
+  const qIndex = ev.currentQuestionIndex;
+  const fromScores = computeScores(prevEv, qIndex);
+  const toScores = computeScores(ev);
+  const uids = Object.keys(toScores);
+  const overtakes = findOvertakes(fromScores, toScores, uids);
+  boatAnim = { qIndex, fromScores, toScores, overtakes, startedAt: Date.now(), duration: 1400 };
+  if (boatAnimRaf) cancelAnimationFrame(boatAnimRaf);
+  let lastFrame = 0;
+  const tick = (t) => {
+    if (!boatAnim) return;
+    if (t - lastFrame >= 33) { lastFrame = t; render(); }
+    if (Date.now() - boatAnim.startedAt < boatAnim.duration) {
+      boatAnimRaf = requestAnimationFrame(tick);
+    } else {
+      boatAnim = null; boatAnimRaf = null; render();
+    }
+  };
+  boatAnimRaf = requestAnimationFrame(tick);
+}
+function showBoatDetail(uid) { selectedBoatUid = uid; render(); }
+function closeBoatDetail() { selectedBoatUid = ''; render(); }
 
 function loadEvents() {
   eventsLoading = true; eventsError = '';
@@ -167,39 +524,60 @@ function loadEvents() {
 
 function openCreateForm() {
   showCreateForm = true; formError = '';
-  newEvent = { name: '', mode: 'quiz', topic: '', time: '20:30', maxPlayers: 30 };
+  newEvent = { name: '', mode: 'quiz', topics: [], time: '20:30', maxPlayers: 30 };
   render();
 }
 function closeCreateForm() { showCreateForm = false; render(); }
 function selectMode(id) { newEvent.mode = id; render(); }
 function onNameInput(v) { newEvent.name = v; }
-function onTopicInput(v) { newEvent.topic = v; }
+function toggleTopic(id) {
+  const topic = TOPICS.find(t => t.id === id);
+  if (!topic || !topic.available) return;
+  const idx = newEvent.topics.indexOf(id);
+  if (idx === -1) newEvent.topics.push(id); else newEvent.topics.splice(idx, 1);
+  render();
+}
 function onTimeInput(v) { newEvent.time = v; }
 function onMaxInput(v) { newEvent.maxPlayers = parseInt(v, 10) || 0; }
 
 function submitCreateEvent() {
   const name = (newEvent.name || '').trim();
   if (!name) { formError = 'Nhập tên sự kiện.'; render(); return; }
+  if (!newEvent.topics.length) { formError = 'Chọn ít nhất 1 chủ đề.'; render(); return; }
   requireAuth(() => {
   const uid = window.skSync.currentUid();
-  creating = true; formError = ''; render();
-  const code = genEventCode();
-  const event = {
-    name,
-    mode: newEvent.mode,
-    topic: (newEvent.topic || '').trim(),
-    time: (newEvent.time || '').trim(),
-    maxPlayers: newEvent.maxPlayers || 30,
-    hostUid: uid,
-    hostName: hostDisplayName(),
-    participants: [],
-    status: 'open',
-    createdAt: Date.now()
-  };
-  window.skSync.createGameEvent(code, event).then(() => {
-    creating = false; showCreateForm = false;
-    enterLobby(code);
-  }).catch(() => { creating = false; formError = 'Không tạo được sự kiện, thử lại sau.'; render(); });
+  creating = true; loadingQuestions = true; formError = ''; render();
+  buildQuestionPool(newEvent.topics).then(questions => {
+    loadingQuestions = false;
+    if (!questions.length) {
+      creating = false; formError = 'Không tải được câu hỏi cho các chủ đề đã chọn, thử lại sau.'; render(); return;
+    }
+    const code = genEventCode();
+    const topicLabels = TOPICS.filter(t => newEvent.topics.includes(t.id)).map(t => t.label);
+    const event = {
+      name,
+      mode: newEvent.mode,
+      topics: newEvent.topics,
+      topicLabels,
+      time: (newEvent.time || '').trim(),
+      maxPlayers: newEvent.maxPlayers || 30,
+      hostUid: uid,
+      hostName: hostDisplayName(),
+      hostAvatarArt: myAvatarArt(),
+      hostShipArt: myShipArt(),
+      participants: [],
+      status: 'open',
+      questions,
+      createdAt: Date.now()
+    };
+    window.skSync.createGameEvent(code, event).then(() => {
+      creating = false; showCreateForm = false;
+      enterLobby(code);
+    }).catch(() => { creating = false; formError = 'Không tạo được sự kiện, thử lại sau.'; render(); });
+  }).catch(() => {
+    creating = false; loadingQuestions = false;
+    formError = 'Không tải được câu hỏi cho các chủ đề đã chọn, thử lại sau.'; render();
+  });
   });
 }
 
@@ -220,7 +598,7 @@ function submitJoinByCode() {
       const alreadyIn = ev.hostUid === uid || (ev.participants || []).some(p => p.uid === uid);
       const proceed = () => { joining = false; showJoinForm = false; enterLobby(code); };
       if (alreadyIn) { proceed(); return; }
-      window.skSync.joinGameEvent(code, uid, hostDisplayName()).then(proceed)
+      window.skSync.joinGameEvent(code, uid, hostDisplayName(), myAvatarArt(), myShipArt()).then(proceed)
         .catch(() => { joining = false; joinError = 'Không tham gia được, thử lại sau.'; render(); });
     }).catch(() => { joining = false; joinError = 'Không tìm được sự kiện, thử lại sau.'; render(); });
   });
@@ -232,7 +610,7 @@ function joinFromList(code) {
     const ev = events.find(e => (e.code || e.id) === code);
     const alreadyIn = ev && (ev.hostUid === uid || (ev.participants || []).some(p => p.uid === uid));
     if (alreadyIn) { enterLobby(code); return; }
-    window.skSync.joinGameEvent(code, uid, hostDisplayName()).then(() => enterLobby(code));
+    window.skSync.joinGameEvent(code, uid, hostDisplayName(), myAvatarArt(), myShipArt()).then(() => enterLobby(code));
   });
 }
 
@@ -266,12 +644,12 @@ function eventRowHtml(ev) {
     ? 'cursor:pointer; background:#e2d3ae; border:2px solid #b9a679; border-radius:12px; padding:8px 16px; font-weight:800; color:#5a3b22; font-size:12px; white-space:nowrap;'
     : 'cursor:pointer; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:12px; padding:8px 16px; font-weight:800; color:#5a3b22; font-size:12px; white-space:nowrap; box-shadow:0 3px 0 #9a5f14;';
   const justCopied = copiedCode === code;
-  return `<div style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2px solid #b9761a; border-radius:14px; padding:12px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+  return `<div style="background:linear-gradient(180deg,rgba(253,246,232,.8),rgba(243,230,201,.8)); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); border:2px solid #b9761a; border-radius:14px; padding:12px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
     <div style="width:44px; height:44px; border-radius:12px; background:#173a63; color:#ffe27a; display:flex; align-items:center; justify-content:center; font-size:21px; flex-shrink:0;">${modeInfo.icon}</div>
     <div style="flex:1; min-width:160px;">
       <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#3a2a18; font-size:14.5px;">${escapeHtml(ev.name)}</div>
       <div style="color:#8b5e34; font-size:11.5px; font-weight:600; margin-top:2px;">${modeInfo.label} · ${escapeHtml(ev.time || '')} · Host: ${escapeHtml(ev.hostName || 'Ẩn danh')}</div>
-      <div style="color:#8b5e34; font-size:11px; margin-top:1px;">👥 ${participantCount}/${ev.maxPlayers || 30} người</div>
+      <div style="color:#8b5e34; font-size:11px; margin-top:1px;">👥 ${participantCount}/${ev.maxPlayers || 30} người${(ev.topicLabels && ev.topicLabels.length) ? ' · 📚 ' + escapeHtml(ev.topicLabels.join(', ')) : ''}</div>
     </div>
     <div onclick="copyCode('${code}')" title="Sao chép mã sự kiện" style="cursor:pointer; text-align:center; background:#fff; border:1.5px dashed #b9761a; border-radius:10px; padding:5px 10px; min-width:64px;">
       <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#0e5273; font-size:14px; letter-spacing:1.5px;">${code}</div>
@@ -282,7 +660,7 @@ function eventRowHtml(ev) {
 }
 
 function lobbyParticipantRowHtml(p) {
-  return `<div style="display:flex; align-items:center; gap:8px; background:#fffaf0; border:1px solid #e2d3ae; border-radius:10px; padding:7px 12px;">
+  return `<div style="display:flex; align-items:center; gap:8px; background:rgba(255,250,240,.75); border:1px solid #e2d3ae; border-radius:10px; padding:7px 12px;">
     <span style="font-size:16px;">${p.isHost ? '🦈' : '🐟'}</span>
     <span style="font-weight:700; color:#3a2a18; font-size:13px;">${escapeHtml(p.name)}</span>
     ${p.isHost ? '<span style="margin-left:auto; font-size:10.5px; font-weight:800; color:#b9761a;">HOST 👑</span>' : ''}
@@ -304,7 +682,7 @@ function renderLobby() {
     if (isHost && !started) {
       actionHtml = `<div onclick="startEventNow()" style="margin-top:18px; cursor:${startingEvent ? 'default' : 'pointer'}; background:${startingEvent ? '#e2d3ae' : 'linear-gradient(180deg,#ffd25a,#f5a623)'}; border:2px solid #b9761a; border-radius:14px; padding:13px; text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; color:#5a3b22; box-shadow:0 4px 0 #9a5f14;">${startingEvent ? 'Đang bắt đầu...' : '▶ BẮT ĐẦU EVENT'}</div>`;
     } else if (started) {
-      actionHtml = `<div style="margin-top:18px; text-align:center; color:#2e8b57; font-weight:800; font-size:14px; background:rgba(46,139,87,.12); border:1.5px solid #2e8b57; border-radius:12px; padding:12px;">🎮 Sự kiện đã bắt đầu! (Phần chơi trực tiếp sẽ được bổ sung sau)</div>`;
+      actionHtml = `<div style="margin-top:18px; text-align:center; color:#2e8b57; font-weight:800; font-size:14px; background:rgba(46,139,87,.12); border:1.5px solid #2e8b57; border-radius:12px; padding:12px;">🎮 Sự kiện đang diễn ra...</div>`;
     } else {
       actionHtml = `<div style="margin-top:18px; text-align:center; color:#8b5e34; font-weight:700; font-size:13.5px;">⏳ Chờ Host bắt đầu...</div>`;
     }
@@ -325,17 +703,302 @@ function renderLobby() {
     `;
   }
   document.getElementById('app').innerHTML = `
-    <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
+    <div class="sk-page-wrap">
       <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px; display:inline-block;">← Rời phòng chờ</div>
-      <div style="position:relative; z-index:4; max-width:480px; margin:14px auto; background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #b9761a; border-radius:20px; padding:24px; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
+      <div style="position:relative; z-index:4; max-width:480px; margin:14px auto; background:linear-gradient(180deg,rgba(253,246,232,.8),rgba(243,230,201,.8)); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); border:2.5px solid #b9761a; border-radius:20px; padding:24px; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
         ${bodyHtml}
       </div>
     </div>
   `;
 }
 
+function pickTierSize(maxScore) {
+  if (maxScore <= 600) return 100;
+  if (maxScore <= 1200) return 200;
+  if (maxScore <= 3000) return 500;
+  return 1000;
+}
+function boatTrackHtml(ev, qIndex, isHost) {
+  const uid = window.skSync.currentUid();
+  const players = boatPlayers(ev);
+  const animating = boatAnim && boatAnim.qIndex === qIndex;
+  const revealed = ev.questionState === 'result';
+  const t = animating ? Math.min(1, (Date.now() - boatAnim.startedAt) / boatAnim.duration) : 1;
+  const eased = 1 - Math.pow(1 - t, 3);
+  const finalScores = computeScores(ev);
+  // Chưa "Hiện đáp án" thì thuyền phải đứng yên ở điểm số TRƯỚC câu này — người chơi bấm chọn
+  // đáp án (dù đã lưu answer để tính điểm) không được làm thuyền nhúc nhích ngay lập tức.
+  const frozenScores = computeScores(ev, qIndex);
+  const scores = {};
+  players.forEach(p => {
+    if (animating) {
+      const from = boatAnim.fromScores[p.uid] || 0;
+      const to = boatAnim.toScores[p.uid] != null ? boatAnim.toScores[p.uid] : (finalScores[p.uid] || 0);
+      scores[p.uid] = Math.round(from + (to - from) * eased);
+    } else if (revealed) {
+      scores[p.uid] = finalScores[p.uid] || 0;
+    } else {
+      scores[p.uid] = frozenScores[p.uid] || 0;
+    }
+  });
+  const maxScore = Math.max(0, ...players.map(p => scores[p.uid]));
+  const tier = pickTierSize(maxScore);
+  const trackMax = Math.max(tier * 3, Math.ceil((maxScore + 1) / tier) * tier + tier);
+  const tickCount = trackMax / tier;
+
+  const trackBaseH = 34, trackHeight = 108;
+  let islandsHtml = '';
+  for (let i = 1; i <= tickCount; i++) {
+    const val = i * tier;
+    const pct = (val / trackMax) * 100;
+    const isFinish = i === tickCount;
+    const isMilestone = i === tickCount - 1 && tickCount > 1;
+    const icon = isFinish ? '🏆' : (isMilestone ? '🚩' : '🏝️');
+    const label = isFinish ? 'KHO BÁU' : (isMilestone ? 'CỘT MỐC' : ('ĐẢO ' + i));
+    islandsHtml += `<div style="position:absolute; left:${pct}%; bottom:${trackBaseH + 2}px; transform:translateX(-50%); text-align:center;">
+      <div style="font-size:20px;">${icon}</div>
+      <div style="font-size:7.5px; font-weight:800; color:#5a3b22; white-space:nowrap;">${label}</div>
+      <div style="font-size:7px; font-weight:700; color:#b9761a; white-space:nowrap;">${val} PT</div>
+    </div>`;
+  }
+
+  const me = players.find(p => p.uid === uid) || players[0];
+  const myScore = me ? (scores[me.uid] || 0) : 0;
+  const myPct = Math.max(0, Math.min(100, (myScore / trackMax) * 100));
+  const myAvatarHtml = me && me.avatarArt
+    ? `<img src="${escapeHtml(me.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
+    : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:12px;">${me && me.isHost ? '🦈' : '🐟'}</div>`;
+  const myDelta = (me && animating) ? ((boatAnim.toScores[me.uid] || 0) - (boatAnim.fromScores[me.uid] || 0)) : 0;
+  const myShipHtml = me ? `
+    <div onclick="${isHost ? `showBoatDetail('${me.uid}')` : ''}" style="position:absolute; left:${myPct}%; bottom:${trackBaseH - 4}px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; ${isHost ? 'cursor:pointer;' : ''}">
+      <div style="background:#173a63; border:1.5px solid #ffe27a; border-radius:10px; padding:2px 9px; display:flex; flex-direction:column; align-items:center;">
+        <span style="font-size:10px; font-weight:800; color:#ffe27a; white-space:nowrap; max-width:90px; overflow:hidden; text-overflow:ellipsis;">${escapeHtml((me.name || '').toUpperCase())}</span>
+        <span style="font-size:10.5px; font-weight:800; color:#fff;">${myScore} PT</span>
+      </div>
+      <div style="width:6px; height:6px; background:#173a63; border-left:1.5px solid #ffe27a; border-bottom:1.5px solid #ffe27a; transform:rotate(-45deg); margin-top:-4px;"></div>
+      ${myDelta > 0 ? `<div style="font-size:10px; font-weight:800; color:#2e8b57; text-shadow:0 1px 2px rgba(255,255,255,.9); margin-top:1px;">+${myDelta}</div>` : ''}
+      <div style="position:relative; width:30px; height:34px; margin-top:2px;">
+        ${me.shipArt
+          ? `<img src="${escapeHtml(me.shipArt)}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));"/>`
+          : `<span style="position:absolute; inset:0; font-size:28px; line-height:34px; text-align:center;">🚢</span>`}
+        <div style="position:absolute; top:-4px; right:-6px; width:16px; height:16px; border-radius:50%; overflow:hidden; border:1.5px solid #fff; background:#7fb3d5;">${myAvatarHtml}</div>
+      </div>
+    </div>` : '';
+
+  const overtakeHtml = (animating && boatAnim.overtakes.length)
+    ? `<div style="position:absolute; top:-2px; left:0; right:0; text-align:center;"><span style="display:inline-block; background:rgba(255,255,255,.8); border-radius:8px; padding:2px 10px; font-size:10px; font-weight:800; color:#c0392b;">${
+        boatAnim.overtakes.slice(0, 2).map(([u, v]) => {
+          const un = (players.find(p => p.uid === u) || {}).name || '?';
+          const vn = (players.find(p => p.uid === v) || {}).name || '?';
+          return `🚀 ${escapeHtml(un)} vượt qua ${escapeHtml(vn)}!`;
+        }).join(' · ')
+      }</span></div>`
+    : '';
+
+  // "TOP THUYỀN TRƯỞNG" không lặp lại chính người xem — họ đã thấy vị trí của mình trên
+  // đường đua phía trên rồi.
+  const sorted = players.filter(p => p.uid !== uid).sort((a, b) => scores[b.uid] - scores[a.uid]);
+  const top4 = sorted.slice(0, 4);
+  const rankMedal = ['🥇', '🥈', '🥉'];
+  const top4Html = top4.map((p, i) => {
+    const avHtml = p.avatarArt
+      ? `<img src="${escapeHtml(p.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
+      : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:13px;">${p.isHost ? '🦈' : '🐟'}</div>`;
+    const shipHtml = p.shipArt
+      ? `<img src="${escapeHtml(p.shipArt)}" style="width:100%; height:100%; object-fit:contain;"/>`
+      : `<span style="font-size:14px;">🚢</span>`;
+    return `<div ${isHost ? `onclick="showBoatDetail('${p.uid}')"` : ''} style="display:flex; align-items:center; gap:6px; background:linear-gradient(180deg,#6b4a2e,#4a3220); border:1.5px solid #8b5e34; border-radius:10px; padding:6px 9px; flex:1 1 150px; min-width:140px; ${isHost ? 'cursor:pointer;' : ''}">
+      <div style="font-size:14px; width:18px; text-align:center; flex-shrink:0;">${rankMedal[i] || ('#' + (i + 1))}</div>
+      <div style="width:26px; height:26px; border-radius:50%; overflow:hidden; border:1.5px solid #ffe27a; background:#7fb3d5; flex-shrink:0;">${avHtml}</div>
+      <div style="flex:1; min-width:0;">
+        <div style="font-weight:800; color:#fff; font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(p.name)}${p.isHost ? ' 👑' : ''}</div>
+        <div style="font-weight:700; color:#ffe27a; font-size:9.5px;">${scores[p.uid] || 0} PT</div>
+      </div>
+      <div style="width:16px; height:19px; flex-shrink:0;">${shipHtml}</div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div style="text-align:center;">
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:16px; letter-spacing:.3px;">🌊 ĐUA SÓNG VƯỢT MỐC</div>
+      <div style="font-size:10px; font-weight:700; color:#8b5e34; margin-top:2px;">✨ Càng nhiều điểm – Càng gần kho báu! ✨</div>
+    </div>
+    <div style="position:relative; height:${trackHeight}px; margin-top:8px;">
+      ${overtakeHtml}
+      <div style="position:absolute; left:0; bottom:${trackBaseH + 2}px; text-align:center;">
+        <div style="font-size:15px;">⚓</div>
+        <div style="font-size:7px; font-weight:800; color:#5a3b22; white-space:nowrap;">BẮT ĐẦU</div>
+      </div>
+      <div style="position:absolute; left:0; right:0; bottom:${trackBaseH}px; height:3px; background:repeating-linear-gradient(90deg,#8ecbe6 0,#8ecbe6 4px,transparent 4px,transparent 8px);"></div>
+      ${islandsHtml}
+      ${myShipHtml}
+    </div>
+    <div style="text-align:center; margin-top:2px; font-size:10.5px; font-weight:700; color:#8b5e34;">Tiếp tục tiến về phía trước, thuyền trưởng! 🔥</div>
+    <div style="margin-top:10px;">
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:11.5px;">🏆 TOP THUYỀN TRƯỞNG</div>
+      <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:6px;">${top4Html}</div>
+    </div>
+  `;
+}
+function boatDetailModalHtml(ev, uid) {
+  const players = boatPlayers(ev);
+  const player = players.find(p => p.uid === uid);
+  if (!player) return '';
+  const scores = computeScores(ev);
+  const sorted = players.slice().sort((a, b) => scores[b.uid] - scores[a.uid]);
+  const rank = sorted.findIndex(p => p.uid === uid) + 1;
+  const upto = (typeof ev.currentQuestionIndex === 'number') ? ev.currentQuestionIndex : 0;
+  const myAnswers = (ev.answers || []).filter(a => a.uid === uid);
+  let answeredCount = 0, correctCount = 0;
+  const historyRows = [];
+  for (let i = upto; i >= 0; i--) {
+    const a = myAnswers.find(x => x.qIndex === i);
+    if (a) { answeredCount++; if (a.correct) correctCount++; }
+    historyRows.push(`<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed rgba(255,255,255,.15);">
+      <span style="color:#cdeef2; font-size:11.5px;">Q${i + 1}</span>
+      <span style="font-weight:700; font-size:11.5px; color:${a ? (a.correct ? '#7ee0a8' : '#ff9a8b') : '#8ea0ac'};">${a ? '+' + a.points : 'chưa trả lời'}</span>
+    </div>`);
+  }
+  const accuracy = answeredCount ? Math.round((correctCount / answeredCount) * 100) : 0;
+  const avatarHtml = player.avatarArt
+    ? `<img src="${escapeHtml(player.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
+    : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:18px;">${player.isHost ? '🦈' : '🐟'}</div>`;
+  return `
+    <div onclick="closeBoatDetail()" style="position:fixed; inset:0; z-index:60; background:rgba(3,26,45,.62); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,rgba(13,42,74,.95),rgba(23,58,99,.95)); border:2.5px solid #ffe9b0; border-radius:18px; padding:20px; max-width:320px; width:100%; box-shadow:0 14px 30px rgba(0,0,0,.4);">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid #ffe9b0; background:#7fb3d5; flex-shrink:0;">${avatarHtml}</div>
+          <div>
+            <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#fff; font-size:16px;">🚢 ${escapeHtml(player.name)}${player.isHost ? ' 👑' : ''}</div>
+            <div style="color:#ffe27a; font-size:11px; font-weight:700;">Rank #${rank}</div>
+          </div>
+          <div onclick="closeBoatDetail()" style="margin-left:auto; cursor:pointer; color:#cdeef2; font-size:18px; font-weight:800;">✕</div>
+        </div>
+        <div style="margin-top:12px; text-align:center; background:rgba(255,255,255,.08); border-radius:12px; padding:10px;">
+          <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#ffe27a; font-size:22px;">${scores[uid] || 0} <span style="font-size:12px; color:#cdeef2;">điểm</span></div>
+          <div style="color:#cdeef2; font-size:11px; margin-top:2px;">Accuracy: ${accuracy}% (${correctCount}/${answeredCount} câu)</div>
+        </div>
+        <div style="margin-top:12px; max-height:200px; overflow-y:auto;">${historyRows.join('')}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderGame() {
+  const ev = lobbyEvent;
+  const uid = window.skSync.currentUid();
+  const isHost = !!(uid && ev.hostUid === uid);
+  const qIndex = ev.currentQuestionIndex;
+  const questions = (ev.questions && ev.questions.length) ? ev.questions : SAMPLE_QUESTIONS;
+  const q = questions[qIndex];
+  const total = questions.length;
+  const state = ev.questionState || 'active';
+  const answers = ev.answers || [];
+  const answersForQ = answers.filter(a => a.qIndex === qIndex);
+  const totalParticipants = (ev.participants || []).length + 1;
+  const myAnswer = answersForQ.find(a => a.uid === uid);
+  const duration = q.durationSec || QUESTION_DURATION_SEC;
+  const elapsed = Math.floor((Date.now() - (ev.questionStartedAt || Date.now())) / 1000);
+  const remaining = Math.max(0, duration - elapsed);
+  const numerals = ['①', '②', '③', '④'];
+
+  const choicesHtml = q.choices.map((c, i) => {
+    let bg = 'rgba(255,250,240,.85)', border = '#d9cfb8';
+    if (state === 'result') {
+      if (i === q.correct) { bg = 'rgba(46,139,87,.28)'; border = '#2e8b57'; }
+      else if (myAnswer && myAnswer.choice === i) { bg = 'rgba(192,57,43,.22)'; border = '#c0392b'; }
+    } else if (myAnswer && myAnswer.choice === i) {
+      bg = 'rgba(245,166,35,.28)'; border = '#f5a623';
+    }
+    const clickable = state === 'active';
+    return `<div ${clickable ? `onclick="submitAnswer(${i})"` : ''} style="cursor:${clickable ? 'pointer' : 'default'}; background:${bg}; border:2px solid ${border}; border-radius:12px; padding:12px 14px; margin-top:8px; font-weight:700; color:#3a2a18; font-size:14px;">${numerals[i]} ${escapeHtml(c)}</div>`;
+  }).join('');
+
+  let statusLineHtml;
+  if (state === 'active') {
+    statusLineHtml = myAnswer
+      ? `<div style="text-align:center; color:#2e8b57; font-weight:700; font-size:13px; margin-top:10px;">✓ Đã chọn ${numerals[myAnswer.choice]} · ⏱ Còn ${formatSec(remaining)} (có thể đổi đáp án)</div>`
+      : `<div style="text-align:center; color:#8b5e34; font-weight:700; font-size:13px; margin-top:10px;">⏱ Còn ${formatSec(remaining)}</div>`;
+  } else if (state === 'locked') {
+    statusLineHtml = `<div style="text-align:center; color:#8b5e34; font-weight:700; font-size:13px; margin-top:10px;">🔒 Đã khoá câu trả lời, chờ Host công bố đáp án...</div>`;
+  } else {
+    statusLineHtml = myAnswer
+      ? (myAnswer.correct
+          ? `<div style="text-align:center; color:#2e8b57; font-weight:800; font-size:14px; margin-top:10px;">🎉 Chính xác! +${myAnswer.points} điểm${myAnswer.speedBonus ? ` <span style="font-weight:700; font-size:11.5px; color:#b9761a;">(100 + ⚡${myAnswer.speedBonus} tốc độ)</span>` : ''}</div>`
+          : `<div style="text-align:center; color:#c0392b; font-weight:800; font-size:14px; margin-top:10px;">❌ Sai rồi, đáp án đúng là ${numerals[q.correct]}</div>`)
+      : `<div style="text-align:center; color:#8b5e34; font-weight:700; font-size:13px; margin-top:10px;">Bạn chưa trả lời câu này.</div>`;
+  }
+
+  const hostControlHtml = isHost ? `
+    <div style="margin-top:20px; border-top:2px dashed #b9a679; padding-top:14px;">
+      <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:13px; margin-bottom:8px;">🎛 HOST CONTROL</div>
+      <div style="color:#8b5e34; font-size:12.5px; font-weight:700;">👥 ${answersForQ.length} / ${totalParticipants} đã trả lời &nbsp;·&nbsp; ⏱ ${state === 'active' ? formatSec(remaining) : '--'}</div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+        ${state === 'active' ? `<div onclick="lockQuestion()" style="cursor:pointer; flex:1; text-align:center; background:linear-gradient(180deg,#e07a5f,#c0392b); border:2px solid #8c2c1e; border-radius:10px; padding:9px; font-weight:800; color:#fff; font-size:12.5px;">🔒 Đóng câu hỏi</div>` : ''}
+        ${state === 'locked' ? `<div onclick="revealResult()" style="cursor:pointer; flex:1; text-align:center; background:linear-gradient(180deg,#5fa8e0,#2c6bb0); border:2px solid #1e4c8c; border-radius:10px; padding:9px; font-weight:800; color:#fff; font-size:12.5px;">👁 Hiện đáp án</div>` : ''}
+        ${state === 'result' ? `<div onclick="nextQuestion()" style="cursor:pointer; flex:1; text-align:center; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:10px; padding:9px; font-weight:800; color:#5a3b22; font-size:12.5px;">${qIndex + 1 >= total ? '🏁 Kết thúc sự kiện' : '➡ Câu tiếp theo'}</div>` : ''}
+      </div>
+    </div>
+  ` : '';
+
+  document.getElementById('app').innerHTML = `
+    <div class="sk-page-wrap">
+      <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px; display:inline-block;">← Thoát</div>
+      <div class="sk-game-layout">
+        <div class="sk-game-boat-card" style="position:relative; z-index:4; background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #b9761a; border-radius:18px; padding:8px 10px 6px; box-shadow:0 6px 0 rgba(0,0,0,.15), 0 10px 18px rgba(0,0,0,.25);">
+          ${boatTrackHtml(ev, qIndex, isHost)}
+        </div>
+        <div class="sk-game-question-card" style="position:relative; z-index:4; background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #b9761a; border-radius:20px; padding:22px; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
+          <div style="text-align:center; color:#8b5e34; font-weight:700; font-size:11.5px; letter-spacing:.5px;">${escapeHtml(ev.name)}</div>
+          <div style="text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:16px; margin-top:2px;">Question ${qIndex + 1} / ${total}</div>
+          ${q.passage ? `<div style="margin-top:14px; background:rgba(255,255,255,.55); border-radius:12px; padding:14px; font-size:14px; font-weight:500; color:#3a3226; text-align:left; white-space:pre-wrap; line-height:1.6;">${escapeHtml(q.passage)}</div>` : ''}
+          <div style="margin-top:${q.passage ? '10px' : '14px'}; background:${q.passage ? 'rgba(245,166,35,.16)' : 'rgba(255,255,255,.6)'}; border:${q.passage ? '1.5px solid #f5a623' : 'none'}; border-radius:12px; padding:14px; font-size:15px; font-weight:700; color:#2b2620; text-align:${!q.passage && q.text.length > 120 ? 'left' : 'center'}; white-space:pre-wrap;">${q.html || escapeHtml(q.text)}</div>
+          ${choicesHtml}
+          ${statusLineHtml}
+          ${hostControlHtml}
+        </div>
+      </div>
+    </div>
+    ${isHost && selectedBoatUid ? boatDetailModalHtml(ev, selectedBoatUid) : ''}
+  `;
+}
+
+function renderResults() {
+  const ev = lobbyEvent;
+  const scores = {};
+  scores[ev.hostUid] = { name: ev.hostName || 'Ẩn danh', points: 0, isHost: true };
+  (ev.participants || []).forEach(p => { scores[p.uid] = { name: p.name || 'Ẩn danh', points: 0, isHost: false }; });
+  (ev.answers || []).forEach(a => { if (scores[a.uid]) scores[a.uid].points += (a.points || 0); });
+  const ranked = Object.values(scores).sort((a, b) => b.points - a.points);
+  const medal = ['🥇', '🥈', '🥉'];
+  const rowsHtml = ranked.map((r, i) => `
+    <div style="display:flex; align-items:center; gap:10px; background:rgba(255,250,240,.85); border:1px solid #e2d3ae; border-radius:10px; padding:9px 14px; margin-top:8px;">
+      <span style="font-size:18px; width:26px; text-align:center;">${medal[i] || (i + 1)}</span>
+      <span style="flex:1; font-weight:700; color:#3a2a18; font-size:13.5px;">${escapeHtml(r.name)}${r.isHost ? ' 👑' : ''}</span>
+      <span style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#b9761a; font-size:14px;">${r.points} pts</span>
+    </div>
+  `).join('');
+  document.getElementById('app').innerHTML = `
+    <div class="sk-page-wrap">
+      <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px; display:inline-block;">← Rời sự kiện</div>
+      <div style="position:relative; z-index:4; max-width:480px; margin:14px auto; background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #f5a623; border-radius:20px; padding:24px; text-align:center; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
+        <div style="font-size:34px;">🎉</div>
+        <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:18px; margin-top:4px;">SỰ KIỆN KẾT THÚC</div>
+        <div style="color:#8b5e34; font-size:12.5px; margin-top:2px;">${escapeHtml(ev.name)}</div>
+        <div style="margin-top:16px; text-align:left;">${rowsHtml}</div>
+      </div>
+    </div>
+  `;
+}
+
 function render() {
-  if (view === 'lobby') { renderLobby(); return; }
+  if (view === 'lobby') {
+    const ev = lobbyEvent;
+    if (ev && ev.status === 'ended') { renderResults(); return; }
+    if (ev && ev.status === 'started' && typeof ev.currentQuestionIndex === 'number' && ev.currentQuestionIndex >= 0) { renderGame(); return; }
+    renderLobby();
+    return;
+  }
   renderList();
 }
 
@@ -356,17 +1019,34 @@ function renderList() {
   const modeOptionsHtml = EVENT_MODES.map(m => {
     const selected = newEvent.mode === m.id;
     const style = selected
-      ? 'cursor:pointer; text-align:center; padding:10px 6px; border-radius:10px; border:2px solid #f5a623; background:linear-gradient(180deg,#fff3d6,#ffe6a8); color:#3a2a18;'
-      : 'cursor:pointer; text-align:center; padding:10px 6px; border-radius:10px; border:1.5px solid #d9cfb8; background:#fffaf0; color:#3a2a18;';
+      ? 'cursor:pointer; text-align:center; padding:10px 6px; border-radius:10px; border:2px solid #f5a623; background:linear-gradient(180deg,rgba(255,243,214,.85),rgba(255,230,168,.85)); color:#3a2a18;'
+      : 'cursor:pointer; text-align:center; padding:10px 6px; border-radius:10px; border:1.5px solid #d9cfb8; background:rgba(255,250,240,.75); color:#3a2a18;';
     return `<div onclick="selectMode('${m.id}')" style="${style}">
       <div style="font-size:18px;">${m.icon}</div>
       <div style="font-size:11px; font-weight:700; margin-top:2px;">${m.label}</div>
     </div>`;
   }).join('');
 
+  const topicOptionsHtml = TOPICS.map(t => {
+    const checked = newEvent.topics.includes(t.id);
+    if (!t.available) {
+      return `<div style="display:flex; align-items:center; gap:6px; padding:5px 7px; border-radius:8px; opacity:.55;">
+        <span style="font-size:13px;">☐</span>
+        <span style="font-size:12px; color:#8b5e34;">${escapeHtml(t.label)} <span style="font-size:9.5px;">(chưa có nội dung)</span></span>
+      </div>`;
+    }
+    const style = checked
+      ? 'cursor:pointer; display:flex; align-items:center; gap:6px; padding:5px 7px; border-radius:8px; background:rgba(245,166,35,.22); border:1.5px solid #f5a623;'
+      : 'cursor:pointer; display:flex; align-items:center; gap:6px; padding:5px 7px; border-radius:8px; background:rgba(255,250,240,.6); border:1.5px solid #d9cfb8;';
+    return `<div onclick="toggleTopic('${t.id}')" style="${style}">
+      <span style="font-size:13px;">${checked ? '☑' : '☐'}</span>
+      <span style="font-size:12.5px; font-weight:700; color:#3a2a18;">${escapeHtml(t.label)}</span>
+    </div>`;
+  }).join('');
+
   const createModalHtml = showCreateForm ? `
     <div onclick="closeCreateForm()" style="position:fixed; inset:0; z-index:60; background:rgba(3,26,45,.62); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:20px;">
-      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #b9761a; border-radius:20px; padding:22px; max-width:440px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 14px 30px rgba(0,0,0,.4);">
+      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #b9761a; border-radius:20px; padding:22px; max-width:440px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 14px 30px rgba(0,0,0,.4);">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
           <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:17px;">TẠO SỰ KIỆN MỚI</div>
           <div onclick="closeCreateForm()" style="cursor:pointer; color:#8b5e34; font-size:20px; font-weight:800;">✕</div>
@@ -375,8 +1055,8 @@ function renderList() {
         <input id="skName" value="${escapeHtml(newEvent.name)}" oninput="onNameInput(this.value)" placeholder="Nhập tên sự kiện của bạn..." style="width:100%; border:1.5px solid #b9761a; border-radius:10px; padding:9px 12px; font-size:13px; margin-bottom:12px;"/>
         <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:6px;">Chế độ</div>
         <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:12px;">${modeOptionsHtml}</div>
-        <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:4px;">Chủ đề (không bắt buộc)</div>
-        <input value="${escapeHtml(newEvent.topic)}" oninput="onTopicInput(this.value)" placeholder="VD: Đọc hiểu N1, Từ vựng N1..." style="width:100%; border:1.5px solid #b9761a; border-radius:10px; padding:9px 12px; font-size:13px; margin-bottom:12px;"/>
+        <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:6px;">Chủ đề (câu hỏi sẽ lấy từ kho đề tương ứng trong các đảo)</div>
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:6px 10px; margin-bottom:12px;">${topicOptionsHtml}</div>
         <div style="display:flex; gap:10px; margin-bottom:12px;">
           <div style="flex:1;">
             <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:4px;">Thời gian</div>
@@ -388,13 +1068,13 @@ function renderList() {
           </div>
         </div>
         ${formError ? `<div style="color:#c0392b; font-size:12px; font-weight:700; margin-bottom:10px;">${escapeHtml(formError)}</div>` : ''}
-        <div onclick="submitCreateEvent()" style="margin-top:6px; text-align:center; cursor:${creating ? 'default' : 'pointer'}; background:${creating ? '#e2d3ae' : 'linear-gradient(180deg,#3d5a80,#173a63)'}; border:2px solid #0e2a4a; border-radius:14px; padding:12px; font-family:'Baloo 2',sans-serif; font-weight:800; color:${creating ? '#6b5a3a' : '#fff'}; font-size:15px;">${creating ? 'Đang tạo...' : '⚓ TẠO SỰ KIỆN'}</div>
+        <div onclick="submitCreateEvent()" style="margin-top:6px; text-align:center; cursor:${creating ? 'default' : 'pointer'}; background:${creating ? '#e2d3ae' : 'linear-gradient(180deg,#3d5a80,#173a63)'}; border:2px solid #0e2a4a; border-radius:14px; padding:12px; font-family:'Baloo 2',sans-serif; font-weight:800; color:${creating ? '#6b5a3a' : '#fff'}; font-size:15px;">${loadingQuestions ? 'Đang tải kho đề...' : (creating ? 'Đang tạo...' : '⚓ TẠO SỰ KIỆN')}</div>
       </div>
     </div>` : '';
 
   const joinModalHtml = showJoinForm ? `
     <div onclick="closeJoinForm()" style="position:fixed; inset:0; z-index:60; background:rgba(3,26,45,.62); backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; padding:20px;">
-      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #3d5a80; border-radius:20px; padding:24px; max-width:380px; width:100%; text-align:center; box-shadow:0 14px 30px rgba(0,0,0,.4);">
+      <div onclick="event.stopPropagation()" style="background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #3d5a80; border-radius:20px; padding:24px; max-width:380px; width:100%; text-align:center; box-shadow:0 14px 30px rgba(0,0,0,.4);">
         <div style="font-size:30px;">🔑</div>
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:16px; margin-top:4px;">Tham Gia Bằng Mã</div>
         <div style="color:#8b5e34; font-size:12px; margin-top:4px;">Nhập mã sự kiện host đã chia sẻ với bạn</div>
@@ -407,17 +1087,17 @@ function renderList() {
 
 
   document.getElementById('app').innerHTML = `
-    <div style="position:relative; min-height:100dvh; padding:18px 16px 40px;">
+    <div class="sk-page-wrap">
       <a href="DaiHaiTrinhManten.dc.html" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; display:inline-block; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px;">← Bản Đồ</a>
 
-      <div style="position:relative; z-index:4; max-width:900px; margin:14px auto 20px; background:linear-gradient(160deg,#0d2a4a,#173a63); border:2.5px solid #f5a623; border-radius:20px; padding:26px 22px; text-align:center; box-shadow:0 8px 0 rgba(0,0,0,.2), 0 14px 24px rgba(0,0,0,.3);">
+      <div style="position:relative; z-index:4; max-width:900px; margin:14px auto 20px; background:linear-gradient(160deg,rgba(13,42,74,.78),rgba(23,58,99,.78)); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); border:2.5px solid #f5a623; border-radius:20px; padding:26px 22px; text-align:center; box-shadow:0 8px 0 rgba(0,0,0,.2), 0 14px 24px rgba(0,0,0,.3);">
         <div style="font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(20px,3.6vw,30px); color:#fff; text-shadow:0 3px 0 rgba(0,0,0,.3); letter-spacing:.5px;">🏴‍☠️ TẠO SỰ KIỆN CÙNG MANTEN</div>
         <div style="margin-top:8px; display:inline-block; background:rgba(245,166,35,.18); border:1px solid #f5a623; border-radius:10px; padding:5px 14px; color:#ffe27a; font-weight:700; font-size:12.5px; letter-spacing:.5px;">HOST · THAM GIA · NHẬN THƯỞNG</div>
-        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:24px; margin-top:20px;">
-          <div style="min-width:88px;"><div style="font-size:26px;">👥</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Rủ bạn bè<br/>tham gia</div></div>
-          <div style="min-width:88px;"><div style="font-size:26px;">⚔️</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Chiến đấu<br/>kiến thức</div></div>
-          <div style="min-width:88px;"><div style="font-size:26px;">🎁</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Nhận EXP<br/>&amp; item</div></div>
-          <div style="min-width:88px;"><div style="font-size:26px;">🏆</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Leo rank<br/>cực đỉnh</div></div>
+        <div class="sk-stats-grid">
+          <div><div style="font-size:26px;">👥</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Rủ bạn bè<br/>tham gia</div></div>
+          <div><div style="font-size:26px;">⚔️</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Chiến đấu<br/>kiến thức</div></div>
+          <div><div style="font-size:26px;">🎁</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Nhận EXP<br/>&amp; item</div></div>
+          <div><div style="font-size:26px;">🏆</div><div style="color:#dbe9ff; font-size:11.5px; font-weight:700; margin-top:4px;">Leo rank<br/>cực đỉnh</div></div>
         </div>
         <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:22px;">
           <div onclick="openCreateForm()" style="cursor:pointer; background:linear-gradient(180deg,#ffd25a,#f5a623); border:2px solid #b9761a; border-radius:14px; padding:12px 26px; font-family:'Baloo 2',sans-serif; font-weight:800; font-size:15px; color:#5a3b22; box-shadow:0 4px 0 #9a5f14;">⚓ TẠO SỰ KIỆN NGAY!</div>
@@ -425,7 +1105,7 @@ function renderList() {
         </div>
       </div>
 
-      <div style="position:relative; z-index:4; max-width:900px; margin:0 auto 20px; background:linear-gradient(180deg,#fdf6e8,#f3e6c9); border:2.5px solid #b9761a; border-radius:18px; padding:18px; box-shadow:0 6px 0 rgba(0,0,0,.12);">
+      <div style="position:relative; z-index:4; max-width:900px; margin:0 auto 20px; background:linear-gradient(180deg,rgba(253,246,232,.8),rgba(243,230,201,.8)); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); border:2.5px solid #b9761a; border-radius:18px; padding:18px; box-shadow:0 6px 0 rgba(0,0,0,.12);">
         <div style="text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:15.5px; margin-bottom:14px;">QUY TRÌNH TẠO SỰ KIỆN</div>
         <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start;">${stepsHtml}</div>
       </div>
@@ -450,6 +1130,24 @@ function waitForSync() {
   loadEvents();
 }
 waitForSync();
+
+// Ticks the visible countdown during an active question, and — if this browser is the
+// host — auto-locks answers once time's up (mục 16: everyone reacts without a refresh).
+setInterval(() => {
+  if (view !== 'lobby' || !lobbyEvent || lobbyEvent.status !== 'started') return;
+  const ev = lobbyEvent;
+  if (ev.questionState === 'active') {
+    const questions = (ev.questions && ev.questions.length) ? ev.questions : SAMPLE_QUESTIONS;
+    const q = questions[ev.currentQuestionIndex];
+    const duration = (q && q.durationSec) || QUESTION_DURATION_SEC;
+    const elapsed = (Date.now() - (ev.questionStartedAt || Date.now())) / 1000;
+    if (elapsed >= duration) {
+      const uid = window.skSync && window.skSync.currentUid();
+      if (uid && ev.hostUid === uid) lockQuestion();
+    }
+    render();
+  }
+}, 1000);
 </script>
 
 </body>
