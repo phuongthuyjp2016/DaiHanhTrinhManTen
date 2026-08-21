@@ -129,7 +129,7 @@ const SAMPLE_QUESTIONS = [
 ];
 const QUESTION_DURATION_SEC = 20;
 const DOKKAI_DURATION_SEC = 150; // đọc hiểu (đoản/trung/trường văn): 2 phút rưỡi mỗi câu hỏi
-const QUESTIONS_PER_EVENT = 10;
+const QUESTIONS_PER_EVENT = 20;
 
 // Chủ đề mà host có thể chọn khi tạo sự kiện. `source` trỏ tới kho đề thật nằm sẵn trong
 // các file đảo (không phải dữ liệu giả) — `available:false` là các chủ đề spec yêu cầu liệt
@@ -771,28 +771,77 @@ function boatTrackHtml(ev, qIndex, isHost) {
     </div>`;
   }
 
-  const me = players.find(p => p.uid === uid) || players[0];
-  const myScore = me ? (scores[me.uid] || 0) : 0;
-  const myPct = safeLeft + Math.max(0, Math.min(1, myScore / trackMax)) * safeWidth;
-  const myAvatarHtml = me && me.avatarArt
-    ? `<img src="${escapeHtml(me.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
-    : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:clamp(10px,2cqw,20px);">${me && me.isHost ? '🦈' : '🐟'}</div>`;
-  const myDelta = (me && animating) ? ((boatAnim.toScores[me.uid] || 0) - (boatAnim.fromScores[me.uid] || 0)) : 0;
-  const myShipHtml = me ? `
-    <div onclick="${isHost ? `showBoatDetail('${me.uid}')` : ''}" style="position:absolute; left:${myPct}%; top:${lineTop + 4}%; transform:translate(-50%,-100%); display:flex; flex-direction:column; align-items:center; ${isHost ? 'cursor:pointer;' : ''}">
-      <div style="background:#173a63; border:1.5px solid #ffe27a; border-radius:10px; padding:clamp(2px,.4cqw,5px) clamp(9px,1.8cqw,18px); display:flex; flex-direction:column; align-items:center;">
-        <span style="font-size:clamp(9px,1.9cqw,19px); font-weight:800; color:#ffe27a; white-space:nowrap; max-width:min(90px,26cqw); overflow:hidden; text-overflow:ellipsis;">${escapeHtml((me.name || '').toUpperCase())}</span>
-        <span style="font-size:clamp(10px,2.1cqw,21px); font-weight:800; color:#fff;">${myScore} PT</span>
+  // Hiện thuyền của TẤT CẢ người chơi trên đường đua — quá 20 người thì chỉ hiện top 20 (theo
+  // điểm), tránh rối mắt. Thuyền gần nhau về điểm được xếp vào các "làn" cao thấp khác nhau để
+  // đỡ đè lên nhau.
+  const sortedForTrack = players.slice().sort((a, b) => scores[b.uid] - scores[a.uid]);
+  const shownBoats = sortedForTrack.slice(0, 20);
+  const hiddenBoatCount = sortedForTrack.length - shownBoats.length;
+  // Xếp thuyền phân bổ đều cả PHÍA TRÊN lẫn PHÍA DƯỚI thanh tiến trình (thay vì dồn hết
+  // xuống 1 phía) để không đè lên câu "✨ Càng nhiều điểm..." (trên) lẫn câu "Tiếp tục tiến
+  // về phía trước" (dưới). Phía dưới có ít chỗ hơn (khoảng trống hẹp) nên nhận ít làn hơn.
+  const trackLaneCount = shownBoats.length > 12 ? 3 : 2;
+  const trackLaneGap = shownBoats.length > 12 ? 5 : 8;
+  const boatBlockHeightPct = 13;
+  const belowLaneCount = Math.max(1, Math.floor(trackLaneCount / 2));
+  const aboveLaneCount = trackLaneCount - belowLaneCount;
+  const belowAreaTop = lineTop + 2;
+  const belowAreaBottomLimit = 84;
+  const belowLaneHeightPct = belowLaneCount > 1
+    ? Math.max(1.5, (belowAreaBottomLimit - boatBlockHeightPct - belowAreaTop) / (belowLaneCount - 1))
+    : 0;
+  const belowPositions = [];
+  for (let b = 0; b < belowLaneCount; b++) belowPositions.push({ topPct: belowAreaTop + b * belowLaneHeightPct, anchorBottom: false });
+  const aboveAreaBottom = lineTop - 2;
+  const aboveAreaTopLimit = 42;
+  const aboveLaneHeightPct = aboveLaneCount > 1
+    ? Math.max(1.5, (aboveAreaBottom - boatBlockHeightPct - aboveAreaTopLimit) / (aboveLaneCount - 1))
+    : 0;
+  const abovePositions = [];
+  for (let a = 0; a < aboveLaneCount; a++) abovePositions.push({ topPct: aboveAreaBottom - a * aboveLaneHeightPct, anchorBottom: true });
+  const lanePositions = [];
+  { let bi = 0, ai = 0;
+    for (let i = 0; i < trackLaneCount; i++) {
+      if (i % 2 === 0 && bi < belowPositions.length) lanePositions.push(belowPositions[bi++]);
+      else if (ai < abovePositions.length) lanePositions.push(abovePositions[ai++]);
+      else lanePositions.push(belowPositions[bi++]);
+    }
+  }
+  const laneLast = new Array(trackLaneCount).fill(-999);
+  const boatsHtml = shownBoats.map(p => {
+    const isMe = p.uid === uid;
+    const pScore = scores[p.uid] || 0;
+    const pct = safeLeft + Math.max(0, Math.min(1, pScore / trackMax)) * safeWidth;
+    let lane = trackLaneCount - 1;
+    for (let i = 0; i < trackLaneCount; i++) {
+      if (Math.abs(laneLast[i] - pct) >= trackLaneGap) { lane = i; break; }
+    }
+    laneLast[lane] = pct;
+    const laneInfo = lanePositions[lane];
+    const topPct = laneInfo.topPct;
+    const boatTransform = laneInfo.anchorBottom ? 'translate(-50%,-100%)' : 'translateX(-50%)';
+    const avatarHtml = p.avatarArt
+      ? `<img src="${escapeHtml(p.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
+      : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:clamp(7px,1.4cqw,14px);">${p.isHost ? '🦈' : '🐟'}</div>`;
+    const delta = animating ? ((boatAnim.toScores[p.uid] || 0) - (boatAnim.fromScores[p.uid] || 0)) : 0;
+    const deltaBadge = delta > 0
+      ? `<div style="font-size:clamp(7px,1.4cqw,14px); font-weight:800; color:#2e8b57; text-shadow:0 1px 2px rgba(255,255,255,.8); white-space:nowrap;">+${delta}</div>`
+      : '';
+    return `<div ${isHost ? `onclick="showBoatDetail('${p.uid}')"` : ''} style="position:absolute; left:${pct}%; top:${topPct}%; transform:${boatTransform}; display:flex; flex-direction:column; align-items:center; ${isHost ? 'cursor:pointer;' : ''}">
+      ${deltaBadge}
+      <div style="font-size:clamp(6.5px,1.3cqw,13px); font-weight:800; color:${isMe ? '#ffe27a' : '#3a2a18'}; white-space:nowrap; max-width:min(72px,18cqw); overflow:hidden; text-overflow:ellipsis; ${isMe ? 'background:#173a63; border-radius:6px; padding:1px 6px;' : 'text-shadow:0 1px 2px rgba(255,255,255,.7);'}">${escapeHtml(p.name)}</div>
+      <div style="position:relative; width:clamp(20px,4cqw,40px); height:clamp(24px,4.8cqw,48px); margin-top:1px;">
+        ${p.shipArt
+          ? `<img src="${escapeHtml(p.shipArt)}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; transform:scaleX(-1); filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));"/>`
+          : `<span style="position:absolute; inset:0; font-size:clamp(18px,3.6cqw,36px); line-height:1; display:flex; align-items:center; justify-content:center;">🚢</span>`}
+        <div style="position:absolute; top:-3px; right:-4px; width:clamp(11px,2.2cqw,22px); height:clamp(11px,2.2cqw,22px); border-radius:50%; overflow:hidden; border:1.2px solid #fff; background:#7fb3d5;">${avatarHtml}</div>
       </div>
-      <div style="width:6px; height:6px; background:#173a63; border-left:1.5px solid #ffe27a; border-bottom:1.5px solid #ffe27a; transform:rotate(-45deg); margin-top:-4px;"></div>
-      ${myDelta > 0 ? `<div style="font-size:clamp(9px,1.9cqw,19px); font-weight:800; color:#2e8b57; text-shadow:0 1px 2px rgba(255,255,255,.9); margin-top:1px;">+${myDelta}</div>` : ''}
-      <div style="position:relative; width:clamp(30px,6cqw,60px); height:clamp(34px,6.9cqw,69px); margin-top:2px;">
-        ${me.shipArt
-          ? `<img src="${escapeHtml(me.shipArt)}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; transform:scaleX(-1); filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));"/>`
-          : `<span style="position:absolute; inset:0; font-size:clamp(28px,5.6cqw,56px); line-height:1; display:flex; align-items:center; justify-content:center;">🚢</span>`}
-        <div style="position:absolute; top:-4px; right:-6px; width:clamp(16px,3.2cqw,32px); height:clamp(16px,3.2cqw,32px); border-radius:50%; overflow:hidden; border:1.5px solid #fff; background:#7fb3d5;">${myAvatarHtml}</div>
-      </div>
-    </div>` : '';
+      <div style="font-size:clamp(6px,1.2cqw,12px); font-weight:700; color:#b9761a; text-shadow:0 1px 2px rgba(255,255,255,.7);">${pScore}pt</div>
+    </div>`;
+  }).join('');
+  const hiddenBoatNoteHtml = hiddenBoatCount > 0
+    ? `<div style="position:absolute; right:4%; top:11%; font-size:clamp(6px,1.2cqw,11px); font-weight:700; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6);">+${hiddenBoatCount} người chơi khác</div>`
+    : '';
 
   const overtakeHtml = (animating && boatAnim.overtakes.length)
     ? `<div style="position:absolute; top:29%; left:8%; right:8%; text-align:center;"><span style="display:inline-block; background:rgba(255,255,255,.85); border-radius:8px; padding:2px 10px; font-size:clamp(9px,1.9cqw,19px); font-weight:800; color:#c0392b;">${
@@ -814,7 +863,8 @@ function boatTrackHtml(ev, qIndex, isHost) {
       </div>
       <div style="position:absolute; left:${safeLeft}%; right:${100 - safeRight}%; top:${lineTop}%; height:2px; background:repeating-linear-gradient(90deg,#8ecbe6 0,#8ecbe6 4px,transparent 4px,transparent 8px);"></div>
       ${islandsHtml}
-      ${myShipHtml}
+      ${boatsHtml}
+      ${hiddenBoatNoteHtml}
       <div style="position:absolute; left:0; right:0; top:87%; text-align:center; font-size:clamp(8px,2.6cqw,19px); font-weight:700; color:#5a3b22; text-shadow:0 1px 2px rgba(255,255,255,.6);">Tiếp tục tiến về phía trước, thuyền trưởng! 🔥</div>
     </div>
   `;
@@ -829,10 +879,10 @@ function boatLeaderboardHtml(ev, isHost) {
   // Luôn hiển thị, kể cả khi chỉ có 1 mình người xem — không loại chính họ ra khỏi bảng nữa
   // (trước đây bị ẩn hẳn khi test một mình vì bảng lọc bỏ chính người xem).
   const sorted = players.slice().sort((a, b) => scores[b.uid] - scores[a.uid]);
-  const top4 = sorted.slice(0, 4);
-  if (!top4.length) return '';
+  const top10 = sorted.slice(0, 10);
+  if (!top10.length) return '';
   const rankMedal = ['🥇', '🥈', '🥉'];
-  const top4Html = top4.map((p, i) => {
+  const top10Html = top10.map((p, i) => {
     const isMe = p.uid === uid;
     const avHtml = p.avatarArt
       ? `<img src="${escapeHtml(p.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
@@ -853,7 +903,7 @@ function boatLeaderboardHtml(ev, isHost) {
   return `
     <div class="sk-game-leaderboard" style="margin-top:10px;">
       <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#ffe9b0; font-size:17px; text-shadow:0 1px 3px rgba(0,0,0,.6); text-align:center;">🏆 TOP THUYỀN TRƯỞNG</div>
-      <div class="sk-game-leaderboard-list">${top4Html}</div>
+      <div class="sk-game-leaderboard-list">${top10Html}</div>
     </div>
   `;
 }
