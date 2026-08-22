@@ -1,7 +1,5 @@
 # JLPT N1 聴解 問題 1 (2010-07)
 
-> Đã đối chiếu với script chính thức `1. N1 7-2010(script).pdf` (Desktop\file scrip nghe\) — cả 6 đáp án khớp đúng thứ tự như đề gốc.
-> Phương pháp áp dụng: xem [[JLPT_N1_Cách làm nghe Mondai 1]]
 
 ---
 

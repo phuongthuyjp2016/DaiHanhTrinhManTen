@@ -1,7 +1,5 @@
 # Phân Tích Cách Nghe JLPT N1 2011-07 — 問題1 (Mondai 1)
 
-> Nguồn script: `N1_Choukai_MD1_2011_07.pptx.pdf` (Mankai Academy). Đáp án đúng lấy theo dấu ⭐ trong slide gốc.
-> Phương pháp áp dụng: xem [[JLPT_N1_Cách làm nghe Mondai 1]]
 
 ---
 
@@ -98,7 +96,6 @@ M：はい。じゃあ、さっそく、対策を練っておきます。
 
 **Đáp án đúng: 4** (質問を予想して準備する)
 
-> ⚠️ Bản phân tích cũ (trước bản sửa này) kết luận nhầm đáp án là **3**, do dùng script bịa/sai — đã sửa lại theo script gốc từ PDF.
 
 **Giải thích:**
 Đáp án 1 (in tài liệu phát) đã làm xong: "それは昨日、何とか" (cái đó hôm qua xong rồi) → loại. Đáp án 2, 3 (sửa/học thuộc bài phát biểu) — nam sinh nói thẳng "原稿を暗記するくらい練習した" (đã luyện đến mức THUỘC LÒNG rồi) → đây là việc ĐÃ LÀM, không phải việc sắp làm → loại cả hai. Điểm mấu chốt là gợi ý MỚI từ nữ sinh (dạng câu gợi ý điển hình "〜ておいたほうがいいかもね"): "質疑応答でどんな質問が出るか予想して、シュミレーションしておいたほうがいいかもね" (nên dự đoán câu hỏi Q&A và luyện tập mô phỏng trước). Nam sinh xác nhận rõ ràng ở câu cuối: "はい。じゃあ、**さっそく**、対策を練っておきます" — さっそく (ngay lập tức) là tín hiệu bắt đầu hành động mới, đúng dạng まず/後 (bước tiếp theo cần làm ngay) → đáp án 4.

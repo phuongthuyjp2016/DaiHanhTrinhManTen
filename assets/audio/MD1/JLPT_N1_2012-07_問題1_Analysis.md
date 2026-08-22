@@ -1,7 +1,5 @@
 ﻿# Phân Tích Cách Nghe JLPT N1 2012-07 — 問題1 (Mondai 1)
 
-> Nguồn script: `N1_Choukai_MD1_2012_07.pptx.pdf` (Mankai Academy) + đối chiếu đề gốc `3. N1 7-2012.pdf`. Đáp án đúng lấy từ **script chính thức có đáp án** `3. N1 7-2012(script).pdf` (Desktop\file scrip nghe\) — tất cả 6 câu khớp 100% với (正解: X) trong file này.
-> Phương pháp áp dụng: xem [[JLPT_N1_Cách làm nghe Mondai 1]]
 
 ---
 

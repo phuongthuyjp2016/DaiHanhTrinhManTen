@@ -1,6 +1,5 @@
 # N1 聴解 問題1 — 2023年12月 — Câu 1–5
 
-> Cấu trúc: **Số câu → 4 đáp án → Câu hỏi và script → Đáp án → Giải thích**  
 > Đáp án nhanh: **1–③ | 2–③ | 3–② | 4–③ | 5–④**
 
 ---
