@@ -2,8 +2,6 @@
 
 **Phần 1: Đề 12/2010**
 
-> ⚠️ **Đã sửa lỗi**: bản trước sắp xếp sai thứ tự đáp án 1-2-3-4 ở câu 1番, 3番, 6番 (lệch vị trí so với đề gốc, khiến số đáp án đúng bị ghi sai dù nội dung chữ đúng). Đã đối chiếu lại toàn bộ với script chính thức `1. N1 12-2010(script).pdf` và đề gốc `1. N1 12-2010.pdf` (Desktop\file scrip nghe\ và \file toàn bộ\) — đúng thứ tự 100% theo đề thi thật.
-> Phương pháp áp dụng: xem [[JLPT_N1_Cách làm nghe Mondai 1]]
 
 ---
 

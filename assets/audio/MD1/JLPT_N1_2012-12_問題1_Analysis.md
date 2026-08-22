@@ -1,7 +1,5 @@
 # Phân Tích Cách Nghe JLPT N1 2012-12 — 問題1 (Mondai 1)
 
-> Nguồn: script chính thức có đáp án `3. N1 12-2012 (script).pdf` + text đáp án đối chiếu từ đề gốc `3. N1 12-2012.pdf` (Desktop\file scrip nghe\ và \file toàn bộ\). Tất cả 6 câu lấy trực tiếp từ (正解: X) chính thức — không suy luận.
-> Phương pháp áp dụng: xem [[JLPT_N1_Cách làm nghe Mondai 1]]
 
 ---
 

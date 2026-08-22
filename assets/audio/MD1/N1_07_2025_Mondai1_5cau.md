@@ -1,6 +1,5 @@
 # JLPT N1 07/2025 - 聴解 問題1
 
-> Phạm vi trích xuất: bản câu hỏi trang 34-35; bản script trang 1-4, dừng sau câu 5 của 問題1.
 
 ## 1番
 

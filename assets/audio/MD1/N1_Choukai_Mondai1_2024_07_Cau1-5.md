@@ -1,6 +1,5 @@
 # N1 聴解 問題1 — 2024年7月 — Câu 1–5
 
-> Cấu trúc: **Số câu → 4 đáp án → Câu hỏi và script → Đáp án → Giải thích**  
 > Đáp án nhanh: **1–③ | 2–② | 3–① | 4–② | 5–③**
 
 ---
