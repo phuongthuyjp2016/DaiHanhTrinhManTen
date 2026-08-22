@@ -86,14 +86,25 @@
     createGameEvent: async (code, event) => {
       await setDoc(doc(db, 'game_events', code), event);
     },
-    joinGameEvent: async (code, uid, name, avatarArt, shipArt) => {
-      await updateDoc(doc(db, 'game_events', code), { participants: arrayUnion({ uid, name: name || 'Ẩn danh', avatarArt: avatarArt || '', shipArt: shipArt || '' }) });
+    joinGameEvent: async (code, uid, name, avatarArt, shipArt, house) => {
+      await updateDoc(doc(db, 'game_events', code), { participants: arrayUnion({ uid, name: name || 'Ẩn danh', avatarArt: avatarArt || '', shipArt: shipArt || '', house: house || '' }) });
     },
     updateEventState: async (code, patch) => {
       await updateDoc(doc(db, 'game_events', code), patch);
     },
     watchGameEvent: (code, cb) => onSnapshot(doc(db, 'game_events', code), (snap) => {
       cb(snap.exists() ? { id: snap.id, ...snap.data() } : null);
+    }),
+    // Mỗi người trả lời ghi vào 1 document RIÊNG (id = uid_qIndex) thay vì cùng ghi đè 1 mảng
+    // "answers" dùng chung trên document sự kiện — tránh việc N người bấm gần như đồng thời
+    // (ví dụ 20 người) làm mất đáp án của nhau do write sau ghi đè write trước (last-write-wins
+    // trên field mảng). Chỉ khi Host khoá câu hỏi mới gộp các document này lại thành mảng chính
+    // thức trên document sự kiện (xem lockQuestion() ở script chính).
+    submitLiveAnswer: async (code, uid, qIndex, record) => {
+      await setDoc(doc(db, 'game_events', code, 'answers', uid + '_' + qIndex), record);
+    },
+    watchLiveAnswers: (code, cb) => onSnapshot(collection(db, 'game_events', code, 'answers'), (snap) => {
+      cb(snap.docs.map(d => d.data()));
     })
   };
 </script>
@@ -128,6 +139,7 @@ const SAMPLE_QUESTIONS = [
   { text: 'この資料を＿＿、来週までに企画書を仕上げてください。', choices: ['踏まえて', '踏んで', '踏み込んで', '踏み出して'], correct: 0 }
 ];
 const QUESTION_DURATION_SEC = 20;
+const NGUPAP_DURATION_SEC = 30; // ngữ pháp: 30s mỗi câu (từ vựng/kanji vẫn dùng mặc định 20s)
 const DOKKAI_DURATION_SEC = 150; // đọc hiểu (đoản/trung/trường văn): 2 phút rưỡi mỗi câu hỏi
 const QUESTIONS_PER_EVENT = 20;
 
@@ -234,7 +246,7 @@ function normalizeNguPhap(QUIZ_DATA) {
       if (part.type === 'single' || part.type === 'order') {
         (part.items || []).forEach(it => {
           if (it && it.q && Array.isArray(it.o) && typeof it.a === 'number') {
-            out.push({ text: it.q, choices: it.o, correct: it.a });
+            out.push({ text: it.q, choices: it.o, correct: it.a, durationSec: NGUPAP_DURATION_SEC });
           }
         });
       } else if (part.type === 'reading' && part.passage) {
@@ -246,7 +258,8 @@ function normalizeNguPhap(QUIZ_DATA) {
               text: '【' + it.label + '】 ' + (part.title || ''),
               choices: it.o,
               correct: it.a - 1, // items trong "reading" đánh số đáp án từ 1, khác với single/order (0-based)
-              groupId
+              groupId,
+              durationSec: NGUPAP_DURATION_SEC
             });
           }
         });
@@ -362,6 +375,11 @@ let lobbyCode = '';
 let lobbyEvent = null;
 let lobbyUnsub = null;
 let startingEvent = false;
+// Danh sách đáp án "sống" (ghi nhận tức thời, mỗi người 1 document riêng) — dùng để đếm số
+// người đã trả lời realtime trong lúc câu hỏi đang active, tránh phải đợi Host khoá câu mới
+// thấy. Khi Host khoá câu, dữ liệu này mới được gộp vào mảng "answers" chính thức của sự kiện.
+let liveAnswers = [];
+let liveAnswersUnsub = null;
 let boatAnim = null; // mục 31: {qIndex, fromScores, toScores, overtakes, startedAt, duration}
 let boatAnimRaf = null;
 let selectedBoatUid = '';
@@ -383,6 +401,29 @@ function myShipArt() {
   const found = SHIP_TYPES.find(s => s.id === (profile && profile.shipType));
   return (found || SHIP_TYPES[0]).art;
 }
+// Danh sách Nhóm Nhà (House) — hiện avatar + nhóm nhà người chơi đã chọn ở phòng chờ và bảng
+// xếp hạng cuối sự kiện. Cùng danh sách HOUSES với trang chính (DaiHaiTrinhManten.dc.html).
+const HOUSES = [
+  { id: 'same', label: 'Same', art: 'assets/art-076.webp', color: '#3f9dd6' },
+  { id: 'ryuu', label: 'Ryuu', art: 'assets/art-077.webp', color: '#2f6fd1' },
+  { id: 'hebi', label: 'Hebi', art: 'assets/art-078.webp', color: '#e05c5c' },
+  { id: 'tora', label: 'Tora', art: 'assets/art-079.webp', color: '#e8a92c' },
+  { id: 'taka', label: 'Taka', art: 'assets/art-080.webp', color: '#e0a12e' },
+  { id: 'kuma', label: 'Kuma', art: 'assets/art-081.webp', color: '#a9793f' },
+  { id: 'kitsune', label: 'Kitsune', art: 'assets/art-082.webp', color: '#9b5fd0' },
+  { id: 'raion', label: 'Raion', art: 'assets/art-083.webp', color: '#d99a2b' },
+  { id: 'okami', label: 'Okami', art: 'assets/art-084.webp', color: '#c2453c' },
+  { id: 'hyou', label: 'Hyou', art: 'assets/art-085.webp', color: '#7fb9dd' }
+];
+function myHouse() {
+  return (profile && profile.house) || '';
+}
+function houseBadgeHtml(houseId, size) {
+  const h = HOUSES.find(x => x.id === houseId);
+  if (!h) return '';
+  const s = size || 22;
+  return `<div title="Nhóm Nhà ${escapeHtml(h.label)}" style="width:${s}px; height:${s}px; flex-shrink:0; border-radius:50%; overflow:hidden; border:2px solid ${h.color}; background:#fffaf0; box-shadow:0 2px 4px ${h.color}88;"><img src="${escapeHtml(h.art)}" style="width:100%; height:100%; object-fit:cover;"/></div>`;
+}
 
 function requireAuth(then) {
   if (!window.skSync) { formError = 'Chưa kết nối được server, thử lại sau.'; joinError = formError; render(); return; }
@@ -394,9 +435,7 @@ function requireAuth(then) {
   });
 }
 
-function enterLobby(code) {
-  view = 'lobby'; lobbyCode = code; lobbyEvent = null; boatAnim = null; selectedBoatUid = '';
-  render();
+function subscribeLobbyListeners(code) {
   if (lobbyUnsub) { lobbyUnsub(); lobbyUnsub = null; }
   lobbyUnsub = window.skSync.watchGameEvent(code, (ev) => {
     const prevEv = lobbyEvent;
@@ -408,15 +447,48 @@ function enterLobby(code) {
     }
     lobbyEvent = ev; render();
   });
+  if (liveAnswersUnsub) { liveAnswersUnsub(); liveAnswersUnsub = null; }
+  liveAnswersUnsub = window.skSync.watchLiveAnswers(code, (list) => { liveAnswers = list; render(); });
+}
+function enterLobby(code) {
+  view = 'lobby'; lobbyCode = code; lobbyEvent = null; boatAnim = null; selectedBoatUid = ''; liveAnswers = [];
+  render();
+  subscribeLobbyListeners(code);
 }
 function leaveLobby() {
   if (lobbyUnsub) { lobbyUnsub(); lobbyUnsub = null; }
+  if (liveAnswersUnsub) { liveAnswersUnsub(); liveAnswersUnsub = null; }
   if (boatAnimRaf) { cancelAnimationFrame(boatAnimRaf); boatAnimRaf = null; }
-  boatAnim = null; selectedBoatUid = '';
+  boatAnim = null; selectedBoatUid = ''; liveAnswers = [];
   view = 'list'; lobbyCode = ''; lobbyEvent = null;
   render();
   loadEvents();
 }
+// Điện thoại thường "đóng băng" tab/app khi người dùng chuyển sang app khác một lúc rồi quay
+// lại — trình duyệt có thể ngắt ngầm kết nối realtime của Firestore (onSnapshot) mà không báo
+// lỗi, nên màn hình bị kẹt ở trạng thái cũ dù Host đã chuyển câu từ lâu. Khi tab/app hiện lại
+// (hoặc trang được khôi phục từ bfcache, hoặc mạng vừa có lại), chủ động lấy dữ liệu mới nhất
+// 1 lần bằng getDoc (không phụ thuộc listener cũ còn sống hay không) rồi dựng lại listener
+// realtime từ đầu để tiếp tục nhận cập nhật.
+let lobbyRecovering = false;
+async function recoverLobbyIfStale() {
+  if (view !== 'lobby' || !lobbyCode || lobbyRecovering) return;
+  lobbyRecovering = true;
+  const code = lobbyCode;
+  try {
+    if (window.skSync && window.skSync.fetchGameEventByCode) {
+      const fresh = await window.skSync.fetchGameEventByCode(code);
+      if (fresh && lobbyCode === code) { lobbyEvent = fresh; render(); }
+    }
+  } catch (e) { console.error('[recoverLobbyIfStale] fetch failed', e); }
+  if (lobbyCode === code) subscribeLobbyListeners(code);
+  lobbyRecovering = false;
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') recoverLobbyIfStale();
+});
+window.addEventListener('pageshow', (e) => { if (e.persisted) recoverLobbyIfStale(); });
+window.addEventListener('online', () => recoverLobbyIfStale());
 function startEventNow() {
   if (!lobbyCode || startingEvent) return;
   startingEvent = true; render();
@@ -442,12 +514,24 @@ function submitAnswer(choiceIdx) {
   const speedBonus = correct ? Math.round(50 * remainingFrac) : 0;
   const points = correct ? 100 + speedBonus : 0;
   const record = { uid, name: hostDisplayName(), qIndex, choice: choiceIdx, correct, points, speedBonus, answeredAt: Date.now() };
-  // Cho phép đổi đáp án khi còn thời gian: thay bản ghi cũ của uid+qIndex này thay vì chỉ append.
-  const others = (ev.answers || []).filter(a => !(a.uid === uid && a.qIndex === qIndex));
-  window.skSync.updateEventState(lobbyCode, { answers: others.concat([record]) });
+  // Ghi vào document riêng của người này (uid_qIndex) thay vì đọc-sửa-ghi cả mảng "answers"
+  // dùng chung — cách cũ khi có ~20 người bấm gần như đồng thời sẽ bị mất đáp án do write của
+  // người này ghi đè lên write (dựa trên dữ liệu cũ) của người khác. Cho đổi đáp án khi còn thời
+  // gian: ghi đè document cùng id là được, không cần xoá gì thêm.
+  liveAnswers = liveAnswers.filter(a => !(a.uid === uid && a.qIndex === qIndex)).concat([record]);
+  render();
+  window.skSync.submitLiveAnswer(lobbyCode, uid, qIndex, record).catch((e) => console.error('[submitAnswer] failed', e));
 }
 function lockQuestion() {
-  window.skSync.updateEventState(lobbyCode, { questionState: 'locked' });
+  const ev = lobbyEvent;
+  if (!ev) return;
+  const qIndex = ev.currentQuestionIndex;
+  // Chỉ khi Host khoá câu mới gộp các đáp án "sống" (ghi nhận tức thời từng người) của câu này
+  // thành mảng "answers" chính thức trên document sự kiện — vì chỉ Host ghi field này (1 writer
+  // duy nhất) nên không còn race-condition mất đáp án như cách làm cũ.
+  const finalForQ = liveAnswers.filter(a => a.qIndex === qIndex);
+  const merged = (ev.answers || []).filter(a => a.qIndex !== qIndex).concat(finalForQ);
+  window.skSync.updateEventState(lobbyCode, { questionState: 'locked', answers: merged });
 }
 function revealResult() {
   window.skSync.updateEventState(lobbyCode, { questionState: 'result' });
@@ -468,8 +552,8 @@ function nextQuestion() {
 
 // ===================== mục 31: Đua thuyền theo điểm =====================
 function boatPlayers(ev) {
-  const list = [{ uid: ev.hostUid, name: ev.hostName || 'Ẩn danh', avatarArt: ev.hostAvatarArt || '', shipArt: ev.hostShipArt || '', isHost: true }]
-    .concat((ev.participants || []).map(p => ({ uid: p.uid, name: p.name || 'Ẩn danh', avatarArt: p.avatarArt || '', shipArt: p.shipArt || '', isHost: false })));
+  const list = [{ uid: ev.hostUid, name: ev.hostName || 'Ẩn danh', avatarArt: ev.hostAvatarArt || '', shipArt: ev.hostShipArt || '', house: ev.hostHouse || '', isHost: true }]
+    .concat((ev.participants || []).map(p => ({ uid: p.uid, name: p.name || 'Ẩn danh', avatarArt: p.avatarArt || '', shipArt: p.shipArt || '', house: p.house || '', isHost: false })));
   const seen = {};
   return list.filter(p => (seen[p.uid] ? false : (seen[p.uid] = true)));
 }
@@ -572,6 +656,7 @@ function submitCreateEvent() {
       hostName: hostDisplayName(),
       hostAvatarArt: myAvatarArt(),
       hostShipArt: myShipArt(),
+      hostHouse: myHouse(),
       participants: [],
       status: 'open',
       questions,
@@ -605,7 +690,7 @@ function submitJoinByCode() {
       const alreadyIn = ev.hostUid === uid || (ev.participants || []).some(p => p.uid === uid);
       const proceed = () => { joining = false; showJoinForm = false; enterLobby(code); };
       if (alreadyIn) { proceed(); return; }
-      window.skSync.joinGameEvent(code, uid, hostDisplayName(), myAvatarArt(), myShipArt()).then(proceed)
+      window.skSync.joinGameEvent(code, uid, hostDisplayName(), myAvatarArt(), myShipArt(), myHouse()).then(proceed)
         .catch(() => { joining = false; joinError = 'Không tham gia được, thử lại sau.'; render(); });
     }).catch(() => { joining = false; joinError = 'Không tìm được sự kiện, thử lại sau.'; render(); });
   });
@@ -617,7 +702,7 @@ function joinFromList(code) {
     const ev = events.find(e => (e.code || e.id) === code);
     const alreadyIn = ev && (ev.hostUid === uid || (ev.participants || []).some(p => p.uid === uid));
     if (alreadyIn) { enterLobby(code); return; }
-    window.skSync.joinGameEvent(code, uid, hostDisplayName(), myAvatarArt(), myShipArt()).then(() => enterLobby(code));
+    window.skSync.joinGameEvent(code, uid, hostDisplayName(), myAvatarArt(), myShipArt(), myHouse()).then(() => enterLobby(code));
   });
 }
 
@@ -667,10 +752,14 @@ function eventRowHtml(ev) {
 }
 
 function lobbyParticipantRowHtml(p) {
+  const avatarHtml = p.avatarArt
+    ? `<img src="${escapeHtml(p.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
+    : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:15px;">${p.isHost ? '🦈' : '🐟'}</div>`;
   return `<div style="display:flex; align-items:center; gap:8px; background:rgba(255,250,240,.75); border:1px solid #e2d3ae; border-radius:10px; padding:7px 12px;">
-    <span style="font-size:16px;">${p.isHost ? '🦈' : '🐟'}</span>
-    <span style="font-weight:700; color:#3a2a18; font-size:13px;">${escapeHtml(p.name)}</span>
-    ${p.isHost ? '<span style="margin-left:auto; font-size:10.5px; font-weight:800; color:#b9761a;">HOST 👑</span>' : ''}
+    <div style="width:30px; height:30px; flex-shrink:0; border-radius:50%; overflow:hidden; border:1.5px solid #b9761a; background:#7fb3d5;">${avatarHtml}</div>
+    <span style="flex:1; font-weight:700; color:#3a2a18; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.name)}</span>
+    ${p.isHost ? '<span style="font-size:10.5px; font-weight:800; color:#b9761a; white-space:nowrap;">HOST 👑</span>' : ''}
+    ${houseBadgeHtml(p.house, 26)}
   </div>`;
 }
 
@@ -682,8 +771,8 @@ function renderLobby() {
     bodyHtml = `<div style="text-align:center; color:#0e5273; font-weight:700; font-size:13px; padding:30px 0;">⏳ Đang tải phòng chờ...</div>`;
   } else {
     const isHost = !!(uid && ev.hostUid === uid);
-    const participants = [{ uid: ev.hostUid, name: ev.hostName || 'Ẩn danh', isHost: true }]
-      .concat((ev.participants || []).map(p => ({ uid: p.uid, name: p.name || 'Ẩn danh', isHost: false })));
+    const participants = [{ uid: ev.hostUid, name: ev.hostName || 'Ẩn danh', avatarArt: ev.hostAvatarArt || '', house: ev.hostHouse || '', isHost: true }]
+      .concat((ev.participants || []).map(p => ({ uid: p.uid, name: p.name || 'Ẩn danh', avatarArt: p.avatarArt || '', house: p.house || '', isHost: false })));
     const started = ev.status === 'started';
     let actionHtml;
     if (isHost && !started) {
@@ -964,7 +1053,11 @@ function renderGame() {
   const total = questions.length;
   const state = ev.questionState || 'active';
   const answers = ev.answers || [];
-  const answersForQ = answers.filter(a => a.qIndex === qIndex);
+  // Lúc câu hỏi còn "active", mảng "answers" chính thức trên document sự kiện CHƯA có đáp án
+  // của câu này (chỉ Host mới gộp vào lúc khoá câu — xem lockQuestion()); trong lúc đó phải
+  // đọc từ liveAnswers (mỗi người ghi 1 document riêng, đếm được realtime, ko bị mất do va chạm
+  // khi nhiều người bấm cùng lúc) để hiện đúng số người đã trả lời + trạng thái của chính mình.
+  const answersForQ = (state === 'active' ? liveAnswers : answers).filter(a => a.qIndex === qIndex);
   const totalParticipants = (ev.participants || []).length + 1;
   const myAnswer = answersForQ.find(a => a.uid === uid);
   const duration = q.durationSec || QUESTION_DURATION_SEC;
@@ -1039,18 +1132,25 @@ function renderGame() {
 function renderResults() {
   const ev = lobbyEvent;
   const scores = {};
-  scores[ev.hostUid] = { name: ev.hostName || 'Ẩn danh', points: 0, isHost: true };
-  (ev.participants || []).forEach(p => { scores[p.uid] = { name: p.name || 'Ẩn danh', points: 0, isHost: false }; });
+  scores[ev.hostUid] = { name: ev.hostName || 'Ẩn danh', avatarArt: ev.hostAvatarArt || '', house: ev.hostHouse || '', points: 0, isHost: true };
+  (ev.participants || []).forEach(p => { scores[p.uid] = { name: p.name || 'Ẩn danh', avatarArt: p.avatarArt || '', house: p.house || '', points: 0, isHost: false }; });
   (ev.answers || []).forEach(a => { if (scores[a.uid]) scores[a.uid].points += (a.points || 0); });
   const ranked = Object.values(scores).sort((a, b) => b.points - a.points);
   const medal = ['🥇', '🥈', '🥉'];
-  const rowsHtml = ranked.map((r, i) => `
+  const rowsHtml = ranked.map((r, i) => {
+    const avatarHtml = r.avatarArt
+      ? `<img src="${escapeHtml(r.avatarArt)}" style="width:100%; height:100%; object-fit:cover;"/>`
+      : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:15px;">${r.isHost ? '🦈' : '🐟'}</div>`;
+    return `
     <div style="display:flex; align-items:center; gap:10px; background:rgba(255,250,240,.85); border:1px solid #e2d3ae; border-radius:10px; padding:9px 14px; margin-top:8px;">
-      <span style="font-size:18px; width:26px; text-align:center;">${medal[i] || (i + 1)}</span>
-      <span style="flex:1; font-weight:700; color:#3a2a18; font-size:13.5px;">${escapeHtml(r.name)}${r.isHost ? ' 👑' : ''}</span>
-      <span style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#b9761a; font-size:14px;">${r.points} pts</span>
+      <span style="font-size:18px; width:26px; text-align:center; flex-shrink:0;">${medal[i] || (i + 1)}</span>
+      <div style="width:32px; height:32px; flex-shrink:0; border-radius:50%; overflow:hidden; border:1.5px solid #b9761a; background:#7fb3d5;">${avatarHtml}</div>
+      <span style="flex:1; font-weight:700; color:#3a2a18; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(r.name)}${r.isHost ? ' 👑' : ''}</span>
+      ${houseBadgeHtml(r.house, 28)}
+      <span style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#b9761a; font-size:14px; flex-shrink:0;">${r.points} pts</span>
     </div>
-  `).join('');
+  `;
+  }).join('');
   document.getElementById('app').innerHTML = `
     <div class="sk-page-wrap">
       <div onclick="leaveLobby()" style="position:relative; z-index:5; cursor:pointer; color:#ffe9b0; font-weight:700; font-size:13px; width:fit-content; background:rgba(9,45,66,.6); border:1.5px solid #ffe9b0; border-radius:12px; padding:6px 14px; display:inline-block;">← Rời sự kiện</div>
