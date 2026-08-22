@@ -169,6 +169,9 @@
     .notebook-grid { grid-template-columns: 1fr; }
     @media (min-width: 820px) { .notebook-grid { grid-template-columns: repeat(2,1fr); } }
     @media (min-width: 1220px) { .notebook-grid { grid-template-columns: repeat(3,1fr); } }
+    .tool-list-wide { width:100%; max-width:1200px; display:flex; flex-direction:column; gap:14px; }
+    @media (min-width: 760px) { .tool-list-wide { display:grid; grid-template-columns: repeat(2,1fr); } }
+    @media (min-width: 1120px) { .tool-list-wide { grid-template-columns: repeat(3,1fr); } }
     html { background: url('assets/art-001.webp') center top / cover no-repeat fixed, #0e5273; }
     body { margin:0; -webkit-font-smoothing:antialiased; background:transparent; }
     @media (max-width: 643px) { html { background: url('assets/art-002.webp') center top / cover no-repeat fixed, #0e5273; } }
@@ -672,7 +675,8 @@
     <div style="position:relative; min-height:100dvh; padding:18px 16px; display:flex; flex-direction:column;">
       <div onClick="{{ backToMap }}" style="cursor:pointer; color:#ffe9b0; font-weight:700; font-size:14px; display:flex; align-items:center; gap:6px; width:fit-content;">← Bản Đồ</div>
 
-      <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:12px; max-width:440px; margin:0 auto; padding:16px 0;">
+      <div style="flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:12px; padding:16px 0;">
+       <div style="width:100%; max-width:440px; display:flex; flex-direction:column; align-items:center; gap:12px;">
         <sc-if value="{{ currentIsland.hasBossArt }}" hint-placeholder-val="{{ false }}">
           <sc-if value="{{ currentIsland.hasBossArt }}" hint-placeholder-val="{{ false }}">
           <div style="{{ currentIsland.bossArtWrap }}"><div style="{{ currentIsland.bossBgStyle }}"></div></div>
@@ -710,8 +714,23 @@
           <div style="color:#ffe9b0; font-size:12px; font-weight:700;">{{ currentIsland.setStatusLabel }}</div>
           <button onClick="{{ goToIslandSets }}" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:16px; padding:14px 32px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:16px; color:#5a3b22; cursor:pointer; box-shadow:0 6px 0 #b9761a;">📋 Chọn Bộ Đề</button>
         </sc-if>
-        <sc-if value="{{ currentIsland.hasMenuTools }}" hint-placeholder-val="{{ false }}">
-          <div style="width:100%; display:flex; flex-direction:column; gap:14px; margin-top:10px; text-align:left;">
+       </div>
+        <sc-if value="{{ currentIsland.hasMenuToolsNarrow }}" hint-placeholder-val="{{ false }}">
+          <div style="width:100%; max-width:440px; display:flex; flex-direction:column; gap:14px; margin-top:10px; text-align:left;">
+            <sc-for list="{{ currentIsland.menuTools }}" as="tool" hint-placeholder-count="2">
+              <a href="{{ tool.url }}" style="display:flex; align-items:center; gap:14px; text-decoration:none; background:rgba(9,45,66,.55); border:1.5px solid rgba(255,233,176,.35); border-radius:16px; padding:16px 18px;">
+                <div style="flex:0 0 auto; width:48px; height:48px; border-radius:50%; background:linear-gradient(180deg,#ffd25a,#f5a623); display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 0 #b9761a;">{{ tool.icon }}</div>
+                <div style="flex:1;">
+                  <div style="font-family:'Baloo 2',sans-serif; font-weight:700; color:#fff; font-size:16px; margin-bottom:3px;">{{ tool.title }}</div>
+                  <div style="color:#a9cfdd; font-size:12.5px; line-height:1.5;">{{ tool.desc }}</div>
+                </div>
+                <div style="flex:0 0 auto; color:#ffe9b0; font-size:20px; font-weight:700;">›</div>
+              </a>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ currentIsland.hasMenuToolsWide }}" hint-placeholder-val="{{ false }}">
+          <div class="tool-list-wide" style="margin-top:10px; text-align:left;">
             <sc-for list="{{ currentIsland.menuTools }}" as="tool" hint-placeholder-count="2">
               <a href="{{ tool.url }}" style="display:flex; align-items:center; gap:14px; text-decoration:none; background:rgba(9,45,66,.55); border:1.5px solid rgba(255,233,176,.35); border-radius:16px; padding:16px 18px;">
                 <div style="flex:0 0 auto; width:48px; height:48px; border-radius:50%; background:linear-gradient(180deg,#ffd25a,#f5a623); display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 4px 0 #b9761a;">{{ tool.icon }}</div>
@@ -725,7 +744,7 @@
           </div>
         </sc-if>
         <sc-if value="{{ currentIsland.externalNoTools }}" hint-placeholder-val="{{ false }}">
-          <a href="{{ currentIsland.menuUrl }}" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:16px; padding:14px 32px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:16px; color:#5a3b22; cursor:pointer; box-shadow:0 6px 0 #b9761a; text-decoration:none; display:inline-block;">⚔ Vào Đảo</a>
+          <a href="{{ currentIsland.menuUrl }}" style="background:linear-gradient(180deg,#ffd25a,#f5a623); border:none; border-radius:16px; padding:14px 32px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:16px; color:#5a3b22; cursor:pointer; box-shadow:0 6px 0 #b9761a; text-decoration:none; display:inline-block; margin-top:10px;">⚔ Vào Đảo</a>
         </sc-if>
       </div>
     </div>
@@ -1430,7 +1449,7 @@ const ISLANDS = [
     playable:false, comingSoon:true, quiz:[] },
   { name:'Đảo Tiếng Vọng', skill:'Nghe Hiểu · Bắt Từ Khóa (MD1)', boss:'Cá Mập Âm Thanh', item:'Tai Nghe Vàng', arc:'chinhphuc', color:'#4f9dbf', dark:'#356f8c', x:1260, y:460, accessory:'headphones',
     story:'Tiếng sóng vỗ mang theo những đoạn hội thoại bí ẩn, chỉ đôi tai tinh tường của Cá Mập Âm Thanh mới bắt trọn từ khóa.',
-    playable:false, comingSoon:false, external:true, menuUrl:'dao5-index.html', quiz:[],
+    playable:false, comingSoon:false, external:true, menuUrl:'dao5-index.html', quiz:[], wideMenuTools:true,
     menuTools:[
       { icon:'🎧', title:'Mondai 1 · Đề 2010-07', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html?set=2010-07' },
       { icon:'🎧', title:'Mondai 1 · Đề 2010-12', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html?set=2010-12' },
@@ -3099,6 +3118,8 @@ class Component extends DCLogic {
         story: currentIslandData.story, playable: currentIslandData.playable, comingSoon: currentIslandData.comingSoon, item: currentIslandData.item,
         external: currentIslandData.external, menuUrl: currentIslandData.menuUrl,
         menuTools: currentIslandData.menuTools || [], hasMenuTools: !!(currentIslandData.menuTools && currentIslandData.menuTools.length),
+        hasMenuToolsNarrow: !!(currentIslandData.menuTools && currentIslandData.menuTools.length) && !currentIslandData.wideMenuTools,
+        hasMenuToolsWide: !!(currentIslandData.menuTools && currentIslandData.menuTools.length) && !!currentIslandData.wideMenuTools,
         externalNoTools: !!currentIslandData.external && !(currentIslandData.menuTools && currentIslandData.menuTools.length),
         showRewardNote: !currentIslandData.isTreasure,
         setStatusLabel: `📋 ${islandEntry.done.length}/${(currentIslandData.sets || []).length} bộ đề · cần ≥${Math.max(1, Math.ceil((currentIslandData.sets || []).length * 0.8))} để đánh bại Thủ Hộ`,
