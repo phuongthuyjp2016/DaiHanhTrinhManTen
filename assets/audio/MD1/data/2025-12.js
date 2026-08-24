@@ -37,7 +37,7 @@ window.MONDAI1_DATA['2025-12'] = {
       { speaker:'部長', spk:'f', text:'それから、合同会議の前に私たち営業部内の打ち合わせも必要になるので、えっと、合同会議の週の月曜日も予約を入れてくれますか？23日の次の週もね。' },
       { speaker:'男', spk:'m', text:'承知しました。' }
     ],
-    explanation: '合同会議 được tổ chức 「隔週」, bắt đầu từ 「6月9日」, nên trước hết phải đặt ngày 9 và 23. Vì chuyến công tác ngày 24 có thể được đẩy sớm, 部長 yêu cầu 「念のため、翌週も押さえておいて」, nên đặt thêm ngày 30. Ngoài ra, 打ち合わせ nội bộ phải diễn ra vào 「合同会議の週の月曜日」, tương ứng ngày 7 và 21. 部長 còn nói rõ 「23日の次の週もね」, nên phải đặt thêm thứ Hai ngày 28. Tổng cộng là 「7日・9日・21日・23日・28日・30日」.',
+    explanation: '合同会議 được tổ chức 「隔週」, bắt đầu từ 「6月9日」, nên trước hết phải đặt ngày 9 và 23. \nVì chuyến công tác ngày 24 có thể được đẩy sớm, 部長 yêu cầu 「念のため、翌週も押さえておいて」, nên đặt thêm ngày 30. \nNgoài ra, 打ち合わせ nội bộ phải diễn ra vào 「合同会議の週の月曜日」, tương ứng ngày 7 và 21. 部長 còn nói rõ 「23日の次の週もね」, nên phải đặt thêm thứ Hai ngày 28. Tổng cộng là 「7日・9日・21日・23日・28日・30日」.',
     keypoint: '合同会議 được tổ chức 「隔週」, bắt đầu từ 「6月9日」, nên trước hết phải đặt ngày 9 và 23.'
   },
   {

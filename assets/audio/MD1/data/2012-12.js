@@ -45,7 +45,7 @@ window.MONDAI1_DATA['2012-12'] = {
       { speaker:'女', spk:'f', text:'業種によっても、写真の雰囲気、変えたほうがいいんだって。まあ、とりあえず話を聞きに行ったら?' },
       { speaker:'男', spk:'m', text:'そうだよね。そうする。ありがとう。' }
     ],
-    explanation: 'Đáp án 1 (đăng ký trang web tìm việc) là việc của NỮ, đã làm rồi ("登録したよ") — không phải việc nam sẽ làm → loại. Đáp án 3 (đọc sách về tìm việc) nam đã có rồi: "それは大丈夫。面接対策の本、先輩にもらったから" → loại theo quy tắc "đã có/đã làm". Đáp án 4 (chụp ảnh thẻ) được nhắc tới nhưng chỉ ở mức chung chung ("早く準備しといたほうがいいよね"), chưa xác định ngành nghề nên cũng chưa chốt được kiểu ảnh ("まだそこまでは") — không phải việc làm **đầu tiên**. Gợi ý cốt lõi được nữ nhắc lại **hai lần**: "大学の就職課には相談に行った?" và "まずはうちの大学の就職情報を押さえといたら?" — và câu chốt cuối cùng "とりあえず話を聞きに行ったら?" / "そうする" xác nhận quay lại đúng gợi ý này → đáp án 2. Việc được nhắc lại nhiều lần trong hội thoại thường là tín hiệu đáp án chính, khác với các ý được nêu rồi bỏ qua chỉ một lần.',
+    explanation: 'Đáp án 1 (đăng ký trang web tìm việc) là việc của NỮ, đã làm rồi ("登録したよ") — không phải việc nam sẽ làm → loại. \nĐáp án 3 (đọc sách về tìm việc) nam đã có rồi: "それは大丈夫。面接対策の本、先輩にもらったから" → loại theo quy tắc "đã có/đã làm". \nĐáp án 4 (chụp ảnh thẻ) được nhắc tới nhưng chỉ ở mức chung chung ("早く準備しといたほうがいいよね"), chưa xác định ngành nghề nên cũng chưa chốt được kiểu ảnh ("まだそこまでは") — không phải việc làm **đầu tiên**. \nGợi ý cốt lõi được nữ nhắc lại **hai lần**: "大学の就職課には相談に行った?" và "まずはうちの大学の就職情報を押さえといたら?" — và câu chốt cuối cùng "とりあえず話を聞きに行ったら?" / "そうする" xác nhận quay lại đúng gợi ý này → đáp án 2. \nViệc được nhắc lại nhiều lần trong hội thoại thường là tín hiệu đáp án chính, khác với các ý được nêu rồi bỏ qua chỉ một lần.',
     keypoint: 'Đáp án 1 (đăng ký trang web tìm việc) là việc của NỮ, đã làm rồi ("登録したよ") — không phải việc nam sẽ làm → loại.'
   },
   {
@@ -64,7 +64,7 @@ window.MONDAI1_DATA['2012-12'] = {
       { speaker:'女', spk:'f', text:'はい。' },
       { speaker:'男', spk:'m', text:'次の会議で検討するから、それまでに頼むよ。原稿を取りまとめて、印刷会社に送ったあとも、チェックや修正に時間がかかるからなあ。急いでとりかかろう。' }
     ],
-    explanation: 'Vấn đề bìa catalogue (表紙のデザイン) chỉ là chủ đề bàn bạc chung, nhưng phần THIẾT KẾ được giao hẳn cho người khác: "デザインについては…担当は佐藤君が適任だな。手配は彼に頼もう" → đáp án 2 (đổi thiết kế bìa) không phải việc của nữ → loại. Đáp án 3 (tìm hiểu về quản lý chất lượng) chỉ là Ý TƯỞNG nội dung cho ảnh bìa (kèm theo phần việc của Sato), không phải việc nữ phải làm → loại. Đáp án 4 (gửi bản thảo cho nhà in) là bước xảy ra SAU khi bản thảo hoàn thành — câu "原稿を取りまとめて、印刷会社に送ったあとも" chỉ đang mô tả quy trình tương lai, chưa phải việc làm ngay → loại. Phần việc được giao rõ ràng, trực tiếp cho nữ: "商品説明のとこは、君にお願いするよ" → đáp án 1 (viết văn bản giới thiệu sản phẩm mới), đúng nghĩa với "新商品の説明のところ、文書を新たに作らないとねえ" ở đầu đoạn.',
+    explanation: 'Vấn đề bìa catalogue (表紙のデザイン) chỉ là chủ đề bàn bạc chung, nhưng phần THIẾT KẾ được giao hẳn cho người khác: "デザインについては…担当は佐藤君が適任だな。手配は彼に頼もう" → đáp án 2 (đổi thiết kế bìa) không phải việc của nữ → loại. \nĐáp án 3 (tìm hiểu về quản lý chất lượng) chỉ là Ý TƯỞNG nội dung cho ảnh bìa (kèm theo phần việc của Sato), không phải việc nữ phải làm → loại. \nĐáp án 4 (gửi bản thảo cho nhà in) là bước xảy ra SAU khi bản thảo hoàn thành — câu "原稿を取りまとめて、印刷会社に送ったあとも" chỉ đang mô tả quy trình tương lai, chưa phải việc làm ngay → loại. \nPhần việc được giao rõ ràng, trực tiếp cho nữ: "商品説明のとこは、君にお願いするよ" → đáp án 1 (viết văn bản giới thiệu sản phẩm mới), đúng nghĩa với "新商品の説明のところ、文書を新たに作らないとねえ" ở đầu đoạn.',
     keypoint: 'Vấn đề bìa catalogue (表紙のデザイン) chỉ là chủ đề bàn bạc chung, nhưng phần THIẾT KẾ được giao hẳn cho người khác: "デザインについては…担当は佐藤君が適任だな。'
   },
   {
@@ -88,7 +88,7 @@ window.MONDAI1_DATA['2012-12'] = {
       { speaker:'男', spk:'m', text:'あっ、それは一通り。' },
       { speaker:'女', spk:'f', text:'そう。じゃあ、再来週、途中経過教えてください。' }
     ],
-    explanation: 'Cô giáo mở đầu bằng gợi ý "まずは…インタビューの質問項目を作ってみましょうか" (đáp án 2), nhưng khi nam sinh thú nhận không biết đặt câu hỏi thế nào, cô phát hiện nguyên nhân: "関連する文献はまだ調べてませんか" (chưa tra cứu tài liệu liên quan) → chốt lại: "今までの研究で…調べてからよね" (phải tra cứu nghiên cứu trước đã) — đây chính là điều chỉnh giống dạng でも/ただ: ý ban đầu (đáp án 2) bị thay bằng bước tiên quyết mới (đáp án 3) vì phát hiện thiếu sót. Đáp án 1 (phỏng vấn) không thể làm ngay vì câu hỏi phỏng vấn còn chưa xong, phụ thuộc vào việc tra cứu tài liệu trước → loại. Đáp án 4 (đọc luận văn khóa trước) đã làm rồi: "それは一通り" → loại. Vậy việc phải làm trước tiên là đáp án 3.',
+    explanation: 'Cô giáo mở đầu bằng gợi ý "まずは…インタビューの質問項目を作ってみましょうか" (đáp án 2), nhưng khi nam sinh thú nhận không biết đặt câu hỏi thế nào, cô phát hiện nguyên nhân: "関連する文献はまだ調べてませんか" (chưa tra cứu tài liệu liên quan) → chốt lại: "今までの研究で…調べてからよね" (phải tra cứu nghiên cứu trước đã) — đây chính là điều chỉnh giống dạng でも/ただ: ý ban đầu (đáp án 2) bị thay bằng bước tiên quyết mới (đáp án 3) vì phát hiện thiếu sót. \nĐáp án 1 (phỏng vấn) không thể làm ngay vì câu hỏi phỏng vấn còn chưa xong, phụ thuộc vào việc tra cứu tài liệu trước → loại. \nĐáp án 4 (đọc luận văn khóa trước) đã làm rồi: "それは一通り" → loại. \nVậy việc phải làm trước tiên là đáp án 3.',
     keypoint: 'Cô giáo mở đầu bằng gợi ý "まずは…インタビューの質問項目を作ってみましょうか" (đáp án 2), nhưng khi nam sinh thú nhận không biết đặt câu hỏi thế nào, cô phát hiện nguyên nhân: "関連する文献はまだ調べてませんか"'
   },
   {
@@ -105,7 +105,7 @@ window.MONDAI1_DATA['2012-12'] = {
       { speaker:'男', spk:'m', text:'セール中っていうのも、もっと全面に押し出しましょうか。' },
       { speaker:'女', spk:'f', text:'うーん、それは弄らなくてもいいかな。あんまり派手になりすぎてもって思うから。' }
     ],
-    explanation: 'Mục tiêu được nêu rõ ngay từ đầu: "体験記を見てもらいたいんだよね。そこへ誘導しかけ、もっと考えられない?" — mọi thay đổi đều nhằm dẫn người xem ĐẾN trang trải nghiệm sử dụng (使用体験), không phải làm nổi bật bản thân trang giới thiệu sản phẩm → loại đáp án 2 (dễ nhầm vì có nhắc "製品紹介"). Cả hai điều chỉnh được nêu ("トップページのリンク…目立つような色に" và "製品紹介から体験ページへのほうも") đều PHỤC VỤ cùng một mục đích: làm nổi bật đường dẫn tới trang trải nghiệm → đáp án 3. Đáp án 4 (đẩy mạnh thông tin sale) bị từ chối thẳng: "それは弄らなくてもいいかな" → loại. Đáp án 1 không được nhắc đến trong hội thoại → loại.',
+    explanation: 'Mục tiêu được nêu rõ ngay từ đầu: "体験記を見てもらいたいんだよね。そこへ誘導しかけ、もっと考えられない?" — mọi thay đổi đều nhằm dẫn người xem ĐẾN trang trải nghiệm sử dụng (使用体験), không phải làm nổi bật bản thân trang giới thiệu sản phẩm → loại đáp án 2 (dễ nhầm vì có nhắc "製品紹介"). \nCả hai điều chỉnh được nêu ("トップページのリンク…目立つような色に" và "製品紹介から体験ページへのほうも") đều PHỤC VỤ cùng một mục đích: làm nổi bật đường dẫn tới trang trải nghiệm → đáp án 3. \nĐáp án 4 (đẩy mạnh thông tin sale) bị từ chối thẳng: "それは弄らなくてもいいかな" → loại. \nĐáp án 1 không được nhắc đến trong hội thoại → loại.',
     keypoint: 'Mục tiêu được nêu rõ ngay từ đầu: "体験記を見てもらいたいんだよね。'
   },
   {
@@ -127,7 +127,7 @@ window.MONDAI1_DATA['2012-12'] = {
       { speaker:'男', spk:'m', text:'打ち合わせを踏まえて、企画書はこちらで作成しますから、原稿締め切りは二ヶ月後を目安にということで、だいじょうぶでしょうか。' },
       { speaker:'女', spk:'f', text:'はい、わかりました。' }
     ],
-    explanation: 'Đáp án 1 (quyết định chủ đề bài viết) đã được BIÊN TẬP VIÊN chốt sẵn ngay từ đầu cuộc gọi (ファッション、食文化、美容と健康) — không phải việc du học sinh làm → loại. Đáp án 3 (viết đề xuất/企画書) biên tập viên nói rõ "企画書はこちらで作成します" — do TÒA SOẠN làm, không phải du học sinh → loại. Đáp án 4 (tham dự họp) chỉ diễn ra "一時帰国の前に" (trước khi về nước tháng sau) và phải DỰA TRÊN thông tin đã tổng hợp — là bước sau, chưa phải việc đầu tiên → loại. Việc chụp ảnh cũng bị dời sang tháng sau (lúc về nước) nên không phải việc "ngay bây giờ". Yêu cầu cụ thể cho hiện tại: "今ご存知の内容で結構ですので…情報を簡単にまとめておいていただけませんか" → đáp án 2, đây là việc duy nhất được yêu cầu làm **ngay, trước cả việc về nước và trước cuộc họp**.',
+    explanation: 'Đáp án 1 (quyết định chủ đề bài viết) đã được BIÊN TẬP VIÊN chốt sẵn ngay từ đầu cuộc gọi (ファッション、食文化、美容と健康) — không phải việc du học sinh làm → loại. \nĐáp án 3 (viết đề xuất/企画書) biên tập viên nói rõ "企画書はこちらで作成します" — do TÒA SOẠN làm, không phải du học sinh → loại. \nĐáp án 4 (tham dự họp) chỉ diễn ra "一時帰国の前に" (trước khi về nước tháng sau) và phải DỰA TRÊN thông tin đã tổng hợp — là bước sau, chưa phải việc đầu tiên → loại. Việc chụp ảnh cũng bị dời sang tháng sau (lúc về nước) nên không phải việc "ngay bây giờ". \nYêu cầu cụ thể cho hiện tại: "今ご存知の内容で結構ですので…情報を簡単にまとめておいていただけませんか" → đáp án 2, đây là việc duy nhất được yêu cầu làm **ngay, trước cả việc về nước và trước cuộc họp**.',
     keypoint: 'Đáp án 1 (quyết định chủ đề bài viết) đã được BIÊN TẬP VIÊN chốt sẵn ngay từ đầu cuộc gọi (ファッション、食文化、美容と健康) — không phải việc du học sinh làm → loại.'
   }
   ]

@@ -18,7 +18,7 @@ window.MONDAI1_DATA['2012-07'] = {
       { speaker:'男', spk:'m', text:'黒いのは続けるんですね。' },
       { speaker:'女', spk:'f', text:'はい、二週間はやめないでください。' }
     ],
-    explanation: 'Đây là dạng câu hỏi cần lọc 3 loại thuốc theo 3 mốc thời gian khác nhau — bẫy nằm ở việc nhầm lẫn "quy trình chung" với việc phải làm riêng tối nay. Quy trình chung khi còn ngứa là bôi đen rồi bôi trắng (cả sáng và tối), nhưng có ngoại lệ CHO HÔM NAY: 「今日はもうこの黒いのは塗ってありますので、今日の夜は塗らないで結構です」 (đen hôm nay đã bôi rồi → tối nay không cần bôi đen nữa) → loại hũ đen khỏi câu trả lời tối nay. Hũ nhỏ chỉ dùng sau khi hết ngứa 2-3 ngày (「2、3日して、かゆくなくなったら…この小さい容器の薬に切り替えてください」) — hiện tại chưa đến lúc đó → loại hũ nhỏ. Vậy tối nay chỉ còn lại hũ trắng cần bôi. Bẫy phụ 「黒いのは続けるんですね」「二週間はやめないでください」 chỉ xác nhận đen vẫn phải dùng các ngày sau (trong 2 tuần), không liên quan đến câu hỏi tối NAY.',
+    explanation: 'Đây là dạng câu hỏi cần lọc 3 loại thuốc theo 3 mốc thời gian khác nhau — bẫy nằm ở việc nhầm lẫn "quy trình chung" với việc phải làm riêng tối nay. Quy trình chung khi còn ngứa là bôi đen rồi bôi trắng (cả sáng và tối), nhưng có ngoại lệ CHO HÔM NAY: 「今日はもうこの黒いのは塗ってありますので、今日の夜は塗らないで結構です」 (đen hôm nay đã bôi rồi → tối nay không cần bôi đen nữa) → loại hũ đen khỏi câu trả lời tối nay. \nHũ nhỏ chỉ dùng sau khi hết ngứa 2-3 ngày (「2、3日して、かゆくなくなったら…この小さい容器の薬に切り替えてください」) — hiện tại chưa đến lúc đó → loại hũ nhỏ. Vậy tối nay chỉ còn lại hũ trắng cần bôi. \nBẫy phụ 「黒いのは続けるんですね」「二週間はやめないでください」 chỉ xác nhận đen vẫn phải dùng các ngày sau (trong 2 tuần), không liên quan đến câu hỏi tối NAY.',
     keypoint: 'Đây là dạng câu hỏi cần lọc 3 loại thuốc theo 3 mốc thời gian khác nhau — bẫy nằm ở việc nhầm lẫn "quy trình chung" với việc phải làm riêng tối nay.'
   },
   {
@@ -35,7 +35,7 @@ window.MONDAI1_DATA['2012-07'] = {
       { speaker:'女', spk:'f', text:'あ、そういうのはサークルのほうで用意するから、大丈夫だよ。' },
       { speaker:'男', spk:'m', text:'そうなんだ。どんな感じなんだろう。楽しみだな。' }
     ],
-    explanation: 'Nam hỏi "事前に登録するとか…ないの?" (có cần đăng ký trước không?) → nữ trả lời thẳng "特に何も" (không cần gì cả) → loại đáp án 1. Việc tìm hiểu sinh vật sông ("川の生物について…説明を聞くの") diễn ra **tại chỗ, do người khác giảng**, không phải nam tự tra cứu trước → loại đáp án 2. Nữ nói rõ cần chuẩn bị: "濡れてもいい靴で行った方がいいよ" (nên đi giày có thể bị ướt) → đáp án 3, đúng cấu trúc gợi ý "~た方がいいよ" điển hình của việc cần chuẩn bị. Nam đề xuất thêm túi rác/găng tay nhưng bị từ chối ngay: "そういうのはサークルのほうで用意するから、大丈夫だよ" (câu lạc bộ đã chuẩn bị sẵn) → loại đáp án 4.',
+    explanation: 'Nam hỏi "事前に登録するとか…ないの?" (có cần đăng ký trước không?) → nữ trả lời thẳng "特に何も" (không cần gì cả) → loại đáp án 1. \nViệc tìm hiểu sinh vật sông ("川の生物について…説明を聞くの") diễn ra **tại chỗ, do người khác giảng**, không phải nam tự tra cứu trước → loại đáp án 2. \nNữ nói rõ cần chuẩn bị: "濡れてもいい靴で行った方がいいよ" (nên đi giày có thể bị ướt) → đáp án 3, đúng cấu trúc gợi ý "~た方がいいよ" điển hình của việc cần chuẩn bị. \nNam đề xuất thêm túi rác/găng tay nhưng bị từ chối ngay: "そういうのはサークルのほうで用意するから、大丈夫だよ" (câu lạc bộ đã chuẩn bị sẵn) → loại đáp án 4.',
     keypoint: 'Nam hỏi "事前に登録するとか…ないの?" (có cần đăng ký trước không?) → nữ trả lời thẳng "特に何も" (không cần gì cả) → loại đáp án 1.'
   },
   {
@@ -53,7 +53,7 @@ window.MONDAI1_DATA['2012-07'] = {
       { speaker:'男', spk:'m', text:'株価の予想のところは田中君にみてもらった?' },
       { speaker:'女', spk:'f', text:'はい。コメントいただいて、すでに修正してあります。' }
     ],
-    explanation: 'Dạng Review đúng chuẩn: khen trước, でも/問題は mới là ý thật. Đoạn đầu khen: "見出しもいいし、最初の分析の部分もとても読みやすい" → đáp án 1 (世界経済の動向, tiêu đề) và đáp án 2 (市場分析, phần phân tích đầu) đều ĐÃ ĐƯỢC KHEN TỐT → loại cả hai. Câu chuyển ý "**問題は**政府の景気の所かな" (vấn đề là ở phần chính sách/tình hình kinh tế chính phủ) — từ khóa "問題は" đóng vai trò như でも, báo hiệu góp ý thật → đáp án 3. Đáp án 4 (株価の予想 = phần dự đoán giá cổ phiếu) đã được xử lý xong: "コメントいただいて、**すでに修正してあります**" (đã sửa xong rồi) → loại theo quy tắc "~てある = đã làm".',
+    explanation: 'Dạng Review đúng chuẩn: khen trước, でも/問題は mới là ý thật. Đoạn đầu khen: "見出しもいいし、最初の分析の部分もとても読みやすい" → đáp án 1 (世界経済の動向, tiêu đề) và đáp án 2 (市場分析, phần phân tích đầu) đều ĐÃ ĐƯỢC KHEN TỐT → loại cả hai. \nCâu chuyển ý "**問題は**政府の景気の所かな" (vấn đề là ở phần chính sách/tình hình kinh tế chính phủ) — từ khóa "問題は" đóng vai trò như でも, báo hiệu góp ý thật → đáp án 3. \nĐáp án 4 (株価の予想 = phần dự đoán giá cổ phiếu) đã được xử lý xong: "コメントいただいて、**すでに修正してあります**" (đã sửa xong rồi) → loại theo quy tắc "~てある = đã làm".',
     keypoint: 'Dạng Review đúng chuẩn: khen trước, でも/問題は mới là ý thật.'
   },
   {
@@ -72,7 +72,7 @@ window.MONDAI1_DATA['2012-07'] = {
       { speaker:'女', spk:'f', text:'うーん、そこはセールスポイントの一つだからね。味のバランスも変わるし。むしろ、外側を変えられない？例えば、箱を二段にして、ご飯を下の段に入れちゃうとかね。' },
       { speaker:'男', spk:'m', text:'なるほど。そうすれば、おかずはこのまま全部見せられますね。わかりました。早速検討してみます。' }
     ],
-    explanation: 'Ba lời khen đầu đều bị loại vì đã tốt/đã làm xong: "容器の色もなかなかいい" → loại đáp án 1; "味付けにも変化があって、飽きが来ない" → loại đáp án 2. Vấn đề thật xuất hiện sau ただ: "ただ、品数の分だけ、入れ物が大きくなってる…あんまり大きいともちにくくない?" (hộp to quá, khó cầm). Nam đề xuất hướng giải quyết SAI: "少しおかずの数を減らしたほうがいいでしょうか?" nhưng bị bác ngay bằng むしろ (thay vào đó): "そこはセールスポイントの一つ…むしろ、外側を変えられない?" → đáp án 3 (giảm số món) bị từ chối trực tiếp → loại. Đề xuất thay thế cuối cùng — cũng là đề xuất được cả hai đồng thuận ("なるほど…早速検討してみます") — là đổi hình dạng bên ngoài hộp (箱を二段にして) → đáp án 4.',
+    explanation: 'Ba lời khen đầu đều bị loại vì đã tốt/đã làm xong: "容器の色もなかなかいい" → loại đáp án 1; "味付けにも変化があって、飽きが来ない" → loại đáp án 2. \nVấn đề thật xuất hiện sau ただ: "ただ、品数の分だけ、入れ物が大きくなってる…あんまり大きいともちにくくない?" (hộp to quá, khó cầm). Nam đề xuất hướng giải quyết SAI: "少しおかずの数を減らしたほうがいいでしょうか?" nhưng bị bác ngay bằng むしろ (thay vào đó): "そこはセールスポイントの一つ…むしろ、外側を変えられない?" → đáp án 3 (giảm số món) bị từ chối trực tiếp → loại. \nĐề xuất thay thế cuối cùng — cũng là đề xuất được cả hai đồng thuận ("なるほど…早速検討してみます") — là đổi hình dạng bên ngoài hộp (箱を二段にして) → đáp án 4.',
     keypoint: 'Ba lời khen đầu đều bị loại vì đã tốt/đã làm xong: "容器の色もなかなかいい" → loại đáp án 1; "味付けにも変化があって、飽きが来ない" → loại đáp án 2.'
   },
   {
@@ -91,7 +91,7 @@ window.MONDAI1_DATA['2012-07'] = {
       { speaker:'男', spk:'m', text:'ちょっと見栄えは良くないけど、いまある資料も処分しなくて済むしな。よし、そうしよう。僕は先に行って会場の準備をしておくから、悪いけど、資料の方はお願い出来るかな？' },
       { speaker:'女', spk:'f', text:'はい、では、至急取り掛かります。' }
     ],
-    explanation: 'Đây là dạng đề xuất ban đầu bị **thay đổi giữa chừng** — bẫy lớn nhất trong câu này. Đề xuất ĐẦU TIÊN của sếp là "つくりなおしてもらえるかな" (làm lại tài liệu → nghe giống đáp án 1), NHƯNG chính sếp tự nhận ra không kịp giờ: "資料を作り直して人数分コピーするじゃ、**間に合わないかもしれない**" → nữ xác nhận "厳しいかもしれません" → đề xuất 1 bị hủy → loại đáp án 1. Đề xuất THAY THẾ, chốt cuối cùng: "訂正が必要な部分を**リストにして**一枚の紙にまとめて配ろうか" → đáp án 2, được nữ đồng ý rõ ràng ("それでしたら、なんとかなると思います") và xác nhận hành động ngay ở câu cuối: "至急取り掛かります". Đáp án 3 (hủy tài liệu) bị loại trực tiếp: "いまある資料も**処分しなくて済む**" (không cần hủy). Đáp án 4 (mang đến hội trường) là đề xuất ban đầu của NỮ ở đầu bài nhưng bị chặn lại vì phát hiện lỗi cần sửa trước, và cuối cùng người ĐI hội trường là nam ("僕は先に行って会場の準備をしておく"), không phải nữ → loại.',
+    explanation: 'Đây là dạng đề xuất ban đầu bị **thay đổi giữa chừng** — bẫy lớn nhất trong câu này. Đề xuất ĐẦU TIÊN của sếp là "つくりなおしてもらえるかな" (làm lại tài liệu → nghe giống đáp án 1), NHƯNG chính sếp tự nhận ra không kịp giờ: "資料を作り直して人数分コピーするじゃ、**間に合わないかもしれない**" → nữ xác nhận "厳しいかもしれません" → đề xuất 1 bị hủy → loại đáp án 1. \nĐề xuất THAY THẾ, chốt cuối cùng: "訂正が必要な部分を**リストにして**一枚の紙にまとめて配ろうか" → đáp án 2, được nữ đồng ý rõ ràng ("それでしたら、なんとかなると思います") và xác nhận hành động ngay ở câu cuối: "至急取り掛かります". \nĐáp án 3 (hủy tài liệu) bị loại trực tiếp: "いまある資料も**処分しなくて済む**" (không cần hủy). \nĐáp án 4 (mang đến hội trường) là đề xuất ban đầu của NỮ ở đầu bài nhưng bị chặn lại vì phát hiện lỗi cần sửa trước, và cuối cùng người ĐI hội trường là nam ("僕は先に行って会場の準備をしておく"), không phải nữ → loại.',
     keypoint: 'Đây là dạng đề xuất ban đầu bị **thay đổi giữa chừng** — bẫy lớn nhất trong câu này.'
   },
   {
@@ -111,7 +111,7 @@ window.MONDAI1_DATA['2012-07'] = {
       { speaker:'女', spk:'f', text:'それなら、分析結果は本当は項目ごとにもう少し深く分析するとよかったんだけど、まあ、これは今後の課題ということにしましょう。' },
       { speaker:'男', spk:'m', text:'はい、わかりました。では、ご指摘いただいたところをかきなおして、来週持ってきます。' }
     ],
-    explanation: 'Bài này có TỚI 3 chương bị nhận xét, nên bẫy chính là phân biệt "có vấn đề nhưng **bỏ qua**" với "có vấn đề và **phải sửa ngay**". Chương 5 (もとめ/kết luận) nam tự hỏi trước, cô giáo thừa nhận có vấn đề nhưng chốt: "今回はもう**時間がないから**、まあ、**いいでしょう**" (hết thời gian rồi, thôi bỏ qua) → loại đáp án 4. Chương 4 (研究の分析結果) cũng bị nhận xét chưa sâu nhưng được hoãn: "まあ、これは**今後の課題**ということにしましょう" (coi như bài tập về sau) → loại đáp án 3. Chỉ có chương 1 (研究の背景) hội đủ 2 điều kiện của việc PHẢI SỬA: (1) lời phê rõ ràng, không giảm nhẹ — "読みやすいとは**決していえない**ですよ" / "ここはちょっと**手を入れたほうがいい**と思います", và (2) còn đủ thời gian để sửa — "**あと一週間あるから**" → đáp án 1. Câu chốt của nam ở cuối ("ご指摘いただいたところをかきなおして…") xác nhận lại đúng phần được yêu cầu sửa ngay.',
+    explanation: 'Bài này có TỚI 3 chương bị nhận xét, nên bẫy chính là phân biệt "có vấn đề nhưng **bỏ qua**" với "có vấn đề và **phải sửa ngay**". Chương 5 (もとめ/kết luận) nam tự hỏi trước, cô giáo thừa nhận có vấn đề nhưng chốt: "今回はもう**時間がないから**、まあ、**いいでしょう**" (hết thời gian rồi, thôi bỏ qua) → loại đáp án 4. \nChương 4 (研究の分析結果) cũng bị nhận xét chưa sâu nhưng được hoãn: "まあ、これは**今後の課題**ということにしましょう" (coi như bài tập về sau) → loại đáp án 3. \nChỉ có chương 1 (研究の背景) hội đủ 2 điều kiện của việc PHẢI SỬA: (1) lời phê rõ ràng, không giảm nhẹ — "読みやすいとは**決していえない**ですよ" / "ここはちょっと**手を入れたほうがいい**と思います", và (2) còn đủ thời gian để sửa — "**あと一週間あるから**" → đáp án 1. Câu chốt của nam ở cuối ("ご指摘いただいたところをかきなおして…") xác nhận lại đúng phần được yêu cầu sửa ngay.',
     keypoint: 'Bài này có TỚI 3 chương bị nhận xét, nên bẫy chính là phân biệt "có vấn đề nhưng **bỏ qua**" với "có vấn đề và **phải sửa ngay**".'
   }
   ]
