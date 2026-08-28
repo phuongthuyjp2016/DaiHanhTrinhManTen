@@ -383,7 +383,7 @@ function awardExp(amount) {
   if (!profile) return false;
   let exp = (profile.exp || 0) + amount, level = profile.level || 1, expToNext = profile.expToNext || 100;
   let leveledUp = false;
-  while (exp >= expToNext) { exp -= expToNext; level += 1; expToNext = Math.round(expToNext * 1.25); leveledUp = true; }
+  while (exp >= expToNext) { exp -= expToNext; level += 1; expToNext = Math.round(expToNext * (level >= 10 ? 1.4 : 1.25)); leveledUp = true; }
   profile.exp = exp; profile.level = level; profile.expToNext = expToNext;
   saveLocalProfile(profile);
   return leveledUp;

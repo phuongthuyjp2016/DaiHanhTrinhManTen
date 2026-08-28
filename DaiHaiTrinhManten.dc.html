@@ -2463,7 +2463,7 @@ class Component extends DCLogic {
     if (profile) {
       const coinsEarned = 100, expEarned = 150;
       let exp = profile.exp + expEarned, level = profile.level, expToNext = profile.expToNext;
-      while (exp >= expToNext) { exp -= expToNext; level += 1; expToNext = Math.round(expToNext * 1.25); }
+      while (exp >= expToNext) { exp -= expToNext; level += 1; expToNext = Math.round(expToNext * (level >= 10 ? 1.4 : 1.25)); }
       const badges = [...profile.badges, 'Bậc Thầy Dokkai', 'Mắt Thần Tri Thức'];
       const log = [...profile.log, { date: todayStr(), text: 'Chinh phục Thư Viện Ánh Sáng — Bậc Thầy Dokkai!' }];
       profile = { ...profile, coins: profile.coins + coinsEarned, score: profile.score + coinsEarned, exp, level, expToNext, badges, log, streak: updateStreak(profile), progress: newProgress };
@@ -2611,7 +2611,7 @@ class Component extends DCLogic {
       if (guardianJustDefeated) { coinsEarned += 50; expEarned += 60; }
       if (perfectJustAchieved) { coinsEarned += 80; expEarned += 100; }
       let exp = profile.exp + expEarned, level = profile.level, expToNext = profile.expToNext;
-      while (exp >= expToNext) { exp -= expToNext; level += 1; expToNext = Math.round(expToNext * 1.25); }
+      while (exp >= expToNext) { exp -= expToNext; level += 1; expToNext = Math.round(expToNext * (level >= 10 ? 1.4 : 1.25)); }
       let badges = profile.badges, log = profile.log;
       if (guardianJustDefeated) { badges = [...badges, node.item]; log = [...log, { date: todayStr(), text: `Đánh bại ${node.boss} tại ${node.name}, nhận ${node.item}!` }]; }
       if (perfectJustAchieved) { badges = [...badges, `⭐⭐⭐ Perfect Clear: ${node.name}`]; log = [...log, { date: todayStr(), text: `PERFECT CLEAR tại ${node.name}!` }]; }
