@@ -147,13 +147,30 @@ const QUESTIONS_PER_EVENT = 20;
 // các file đảo (không phải dữ liệu giả) — `available:false` là các chủ đề spec yêu cầu liệt
 // kê nhưng repo hiện chưa có kho đề tương ứng (AB/tìm kiếm thông tin/nghe MD1-5: không tìm
 // thấy dữ liệu 統合理解, 情報検索 hay bất kỳ file âm thanh/nghe nào trong dự án).
+// mục 39 (chỉnh lại theo phản hồi): KHÔNG tách "Đảo 10" thành chủ đề riêng — mà gộp thẳng kho
+// đề của Đảo 10 vào ĐÚNG chủ đề tương ứng đã có sẵn (từ vựng/ngữ pháp/kanji), giống hệt cách
+// các đảo khác đã được gộp. Kho đề thi tổng hợp Đảo 10 (dao10-daichien-dethi-data.js) đánh số
+// mon1-mon6 đúng theo thứ tự 6 vấn đề từ vựng/ngữ pháp chuẩn của đề thi N1 thật:
+// mon1=漢字読み(kanji) mon2=文脈規定(từ vựng theo văn cảnh) mon3=言い換え類義(từ vựng đồng nghĩa)
+// mon4=用法(cách dùng từ) mon5=文法(ngữ pháp) mon6=文の組み立て(sắp xếp từ — loại, xem lý do ở
+// normalizeDaiChienDeThiByMon). Mỗi chủ đề giờ có THỂ có NHIỀU nguồn (`source` là mảng).
 const TOPICS = [
-  { id: 'tuvung', label: 'Từ vựng', available: true, source: { file: 'dao2-hailuu-mondai3-dongnghia.html', marker: 'var V=', kind: 'tuvung' } },
-  { id: 'ngupap', label: 'Ngữ pháp', available: true, source: { file: 'dao3-suongmu-powerdrill-full30.html', marker: 'QUIZ_DATA=', kind: 'ngupap' } },
-  { id: 'kanji', label: 'Kanji', available: true, source: { file: 'dao1-hantu-doc-kanji-quiz-data.js', marker: 'const VOCAB =', kind: 'kanji' } },
-  { id: 'doanvan', label: 'Đoản văn', available: true, source: { file: 'dao9-anhsang-mon8-doanvan.html', marker: 'const data =', kind: 'doanvan' } },
-  { id: 'trungvan', label: 'Trung văn', available: true, source: { file: 'dao9-anhsang-mon9-trungvan.html', marker: 'const baiList =', kind: 'trungvan' } },
-  { id: 'truongvan', label: 'Trường văn', available: true, source: { file: 'dao9-anhsang-mondai10-12-truongvan.html', marker: 'const DATA =', kind: 'truongvan' } },
+  { id: 'tuvung', label: 'Từ vựng', available: true, source: [
+    { file: 'dao2-hailuu-mondai3-dongnghia.html', marker: 'var V=', kind: 'tuvung' },
+    { file: 'dao10-daichien-tuvung30.html', marker: 'const Q=', kind: 'daichien_tuvung' },
+    { file: 'dao10-daichien-dethi-data.js', marker: 'const FULL_DATA=', kind: 'daichien_dethi_tuvung' }
+  ] },
+  { id: 'ngupap', label: 'Ngữ pháp', available: true, source: [
+    { file: 'dao3-suongmu-powerdrill-full30.html', marker: 'QUIZ_DATA=', kind: 'ngupap' },
+    { file: 'dao10-daichien-dethi-data.js', marker: 'const FULL_DATA=', kind: 'daichien_dethi_nguphap' }
+  ] },
+  { id: 'kanji', label: 'Kanji', available: true, source: [
+    { file: 'dao1-hantu-doc-kanji-quiz-data.js', marker: 'const VOCAB =', kind: 'kanji' },
+    { file: 'dao10-daichien-dethi-data.js', marker: 'const FULL_DATA=', kind: 'daichien_dethi_kanji' }
+  ] },
+  { id: 'doanvan', label: 'Đoản văn', available: true, source: [{ file: 'dao9-anhsang-mon8-doanvan.html', marker: 'const data =', kind: 'doanvan' }] },
+  { id: 'trungvan', label: 'Trung văn', available: true, source: [{ file: 'dao9-anhsang-mon9-trungvan.html', marker: 'const baiList =', kind: 'trungvan' }] },
+  { id: 'truongvan', label: 'Trường văn', available: true, source: [{ file: 'dao9-anhsang-mondai10-12-truongvan.html', marker: 'const DATA =', kind: 'truongvan' }] },
   { id: 'ab', label: 'AB', available: false },
   { id: 'timkiem', label: 'Tìm kiếm thông tin', available: false },
   { id: 'nghe1', label: 'Nghe MD1', available: false },
@@ -234,33 +251,35 @@ async function fetchSourceLiteral(source) {
   return evalJsLiteral(literal);
 }
 
-// Mỗi normalizer trả về mảng câu hỏi dạng chuẩn {text, choices, correct} (correct: index 0-based).
+// Mỗi normalizer trả về mảng câu hỏi dạng chuẩn {text, choices, correct, explain?} (correct:
+// index 0-based; explain: chuỗi giải thích hiện ra sau khi Host mở đáp án, có thể để trống).
 function normalizeTuVung(V) {
   return (V || []).filter(x => x && x.s && Array.isArray(x.op) && typeof x.a === 'number')
-    .map(x => ({ text: x.s, choices: x.op, correct: x.a, html: highlightWord(x.s, [x.k, x.h]) }));
+    .map(x => {
+      const explainParts = [];
+      if (x.m) explainParts.push(x.m);
+      if (x.vi) explainParts.push(x.vi);
+      if (x.co && x.co.length) explainParts.push('Cụm hay dùng: ' + x.co.slice(0, 2).join('、'));
+      return { text: x.s, choices: x.op, correct: x.a, html: highlightWord(x.s, [x.k, x.h]), explain: explainParts.join(' — ') };
+    });
 }
 function normalizeNguPhap(QUIZ_DATA) {
   const out = [];
-  ((QUIZ_DATA && QUIZ_DATA.rounds) || []).forEach((round, ri) => {
-    (round.parts || []).forEach((part, pi) => {
-      if (part.type === 'single' || part.type === 'order') {
+  // mục 31 (fix): CHỈ lấy dạng "single" (trắc nghiệm 1 câu độc lập, chọn 1 trong 4) — trả lời
+  // gọn trong 30s. Bỏ hẳn 2 dạng còn lại:
+  // - "order" (sắp xếp từ／文の組み立て問題, có dấu ★): chính là "bài sao" — phải sắp xếp cả câu,
+  //   không phải chọn nhanh 1 trong 4.
+  // - "reading" (1 đoạn văn dài, nhiều chỗ trống [1][2][3]... điền từ đáp án — 空欄補充問題):
+  //   chính là "bài đục lỗ" người dùng mô tả — phải đọc cả đoạn văn mới điền được, không làm
+  //   kịp trong 30s như 1 câu đơn.
+  (QUIZ_DATA && QUIZ_DATA.rounds || []).forEach((round) => {
+    (round.parts || []).forEach((part) => {
+      if (part.type === 'single') {
         (part.items || []).forEach(it => {
           if (it && it.q && Array.isArray(it.o) && typeof it.a === 'number') {
-            out.push({ text: it.q, choices: it.o, correct: it.a, durationSec: NGUPAP_DURATION_SEC });
-          }
-        });
-      } else if (part.type === 'reading' && part.passage) {
-        const groupId = 'ngupap-' + ri + '-' + pi;
-        (part.items || []).forEach(it => {
-          if (it && Array.isArray(it.o) && typeof it.a === 'number') {
-            out.push({
-              passage: part.passage,
-              text: '【' + it.label + '】 ' + (part.title || ''),
-              choices: it.o,
-              correct: it.a - 1, // items trong "reading" đánh số đáp án từ 1, khác với single/order (0-based)
-              groupId,
-              durationSec: NGUPAP_DURATION_SEC
-            });
+            // FIX: it.a đánh số đáp án từ 1 (đã bị hiểu nhầm là 0-based trước đây) — phải trừ 1,
+            // nếu không đáp án đúng trong đảo sẽ bị lệch 1 vị trí khi đưa vào sự kiện.
+            out.push({ text: it.q, choices: it.o, correct: it.a - 1, durationSec: NGUPAP_DURATION_SEC, explain: [it.hint, it.vi].filter(Boolean).join(' — ') });
           }
         });
       }
@@ -272,12 +291,12 @@ function normalizeKanji(VOCAB) {
   return (VOCAB || []).filter(x => x && x.k && x.r && Array.isArray(x.wrong) && x.wrong.length === 3)
     .map(x => {
       const choices = shuffleArr([x.r].concat(x.wrong));
-      return { text: '「' + x.k + '」の読み方として正しいものはどれか。', choices, correct: choices.indexOf(x.r) };
+      return { text: '「' + x.k + '」の読み方として正しいものはどれか。', choices, correct: choices.indexOf(x.r), explain: [x.m, x.ex ? stripTags(x.ex) : ''].filter(Boolean).join(' — ') };
     });
 }
 function normalizeDoanVan(data) {
   return (data || []).filter(x => x && x.question && Array.isArray(x.choices) && typeof x.correct === 'number')
-    .map(x => ({ text: x.question, passage: x.passage || '', choices: x.choices, correct: x.correct, durationSec: DOKKAI_DURATION_SEC }));
+    .map(x => ({ text: x.question, passage: x.passage || '', choices: x.choices, correct: x.correct, durationSec: DOKKAI_DURATION_SEC, explain: (x.shortFeedback && x.shortFeedback.correct) || '' }));
 }
 function normalizeTrungVan(baiList) {
   const out = [];
@@ -286,7 +305,9 @@ function normalizeTrungVan(baiList) {
     const groupId = 'trungvan-' + bi;
     (bai.questions || []).forEach(q => {
       if (q && q.q && Array.isArray(q.choices) && typeof q.correct === 'number') {
-        out.push({ text: stripTags(q.q), passage, choices: q.choices.map(stripTags), correct: q.correct, durationSec: DOKKAI_DURATION_SEC, groupId });
+        const ex = q.explain || {};
+        const explain = stripTags([ex.main, ex.chain].filter(Boolean).join(' '));
+        out.push({ text: stripTags(q.q), passage, choices: q.choices.map(stripTags), correct: q.correct, durationSec: DOKKAI_DURATION_SEC, groupId, explain });
       }
     });
   });
@@ -298,30 +319,103 @@ function normalizeTruongVan(DATA) {
     const groupId = 'truongvan-' + bi;
     (bai.questions || []).forEach(q => {
       if (q && q.q && Array.isArray(q.options) && typeof q.answer === 'number') {
-        out.push({ text: q.q, passage: bai.passage || '', choices: q.options, correct: q.answer, durationSec: DOKKAI_DURATION_SEC, groupId });
+        out.push({ text: q.q, passage: bai.passage || '', choices: q.options, correct: q.answer, durationSec: DOKKAI_DURATION_SEC, groupId, explain: stripTags(q.explain || '') });
       }
     });
   });
   return out;
 }
+// Đảo 10 (Đại Chiến) — kho từ vựng riêng theo dạng "câu ví dụ + hỏi cách đọc", cùng shape
+// {label, q, opts (chuỗi), ans (chuỗi — không phải index!)} cho mọi round/loại "m".
+function normalizeDaiChienTuVung(Q) {
+  return (Q || []).filter(x => x && x.label && Array.isArray(x.opts) && typeof x.ans === 'string')
+    .map(x => {
+      const correct = x.opts.indexOf(x.ans);
+      if (correct < 0) return null;
+      const explainParts = [];
+      if (x.ex && x.ex.mean) explainParts.push(stripTags(x.ex.mean));
+      if (x.ex && Array.isArray(x.ex.syn) && x.ex.syn.length) {
+        explainParts.push('Đồng nghĩa: ' + x.ex.syn.slice(0, 2).map(s => s.jp + (s.vn ? '（' + s.vn + '）' : '')).join('、'));
+      }
+      return { text: x.label, passage: stripTags(x.q || ''), choices: x.opts, correct, explain: explainParts.join(' — ') };
+    }).filter(Boolean);
+}
+// Đảo 10 (Đại Chiến) — kho đề thi tổng hợp mon1-6 theo từng kỳ thi, đánh số ĐÚNG theo 6 vấn đề
+// từ vựng/ngữ pháp chuẩn của đề thi N1 thật: mon1=漢字読み(kanji) mon2=文脈規定(từ vựng theo văn
+// cảnh) mon3=言い換え類義(từ vựng đồng nghĩa) mon4=用法(cách dùng từ) mon5=文法(ngữ pháp)
+// mon6=文の組み立て(sắp xếp từ). mon6 có order/star_word/full_sentence giống hệt dạng "order"
+// của ngữ pháp thường — cùng lý do bị loại (không chọn nhanh 1/4 trong 30s được) nên KHÔNG đưa
+// mon6 vào sự kiện. Hàm nhận thêm `monKeys` để mỗi chủ đề (kanji/tuvung/ngupap) chỉ lấy đúng
+// phần mon tương ứng của mình từ CÙNG 1 file nguồn này (xem 3 hàm mỏng bên dưới).
+function normalizeDaiChienDeThiByMon(FULL_DATA, monKeys) {
+  const out = [];
+  Object.keys(FULL_DATA || {}).forEach(examKey => {
+    const exam = FULL_DATA[examKey] || {};
+    monKeys.forEach(monKey => {
+      (exam[monKey] || []).forEach(item => {
+        if (!item) return;
+        let text, choices, correct, explain = '';
+        if (monKey === 'mon4') {
+          if (!Array.isArray(item.options) || !item.word) return;
+          choices = item.options.map(o => o.text);
+          correct = item.options.findIndex(o => o.correct);
+          text = '「' + item.word + '」の使い方として最も適切な文はどれか。';
+          const correctOpt = item.options[correct];
+          explain = [item.meaning_vn, correctOpt && correctOpt.translate].filter(Boolean).join(' — ');
+        } else {
+          if (!Array.isArray(item.options) || typeof item.ans !== 'number') return;
+          correct = item.ans - 1;
+          const isPlainOptions = typeof item.options[0] === 'string';
+          choices = isPlainOptions ? item.options : item.options.map(o => o.word || '');
+          if (monKey === 'mon1') {
+            text = item.kanji ? ('「' + item.kanji + '」の読み方として正しいものはどれか。') : (item.question || '');
+            explain = [item.meaning_vn, item.set1].filter(Boolean).join(' — ');
+          } else {
+            text = item.question || '';
+            const correctOpt = !isPlainOptions ? item.options[correct] : null;
+            explain = correctOpt ? [correctOpt.meaning_jp, correctOpt.meaning_vn].filter(Boolean).join(' — ') : (item.exp_s || item.translate || '');
+          }
+        }
+        if (!text || !Array.isArray(choices) || choices.length < 2 || typeof correct !== 'number' || correct < 0 || correct >= choices.length) return;
+        out.push({ text, choices, correct, explain: stripTags(explain || '') });
+      });
+    });
+  });
+  return out;
+}
+function normalizeDaiChienDeThiKanji(FULL_DATA) { return normalizeDaiChienDeThiByMon(FULL_DATA, ['mon1']); }
+function normalizeDaiChienDeThiTuVung(FULL_DATA) { return normalizeDaiChienDeThiByMon(FULL_DATA, ['mon2', 'mon3', 'mon4']); }
+function normalizeDaiChienDeThiNguPhap(FULL_DATA) { return normalizeDaiChienDeThiByMon(FULL_DATA, ['mon5']); }
 const TOPIC_NORMALIZERS = {
   tuvung: normalizeTuVung, ngupap: normalizeNguPhap, kanji: normalizeKanji,
-  doanvan: normalizeDoanVan, trungvan: normalizeTrungVan, truongvan: normalizeTruongVan
+  doanvan: normalizeDoanVan, trungvan: normalizeTrungVan, truongvan: normalizeTruongVan,
+  daichien_tuvung: normalizeDaiChienTuVung,
+  daichien_dethi_kanji: normalizeDaiChienDeThiKanji,
+  daichien_dethi_tuvung: normalizeDaiChienDeThiTuVung,
+  daichien_dethi_nguphap: normalizeDaiChienDeThiNguPhap
 };
 
 // Tải kho đề thật từ các đảo cho những chủ đề đã chọn, gộp lại rồi random ra tối đa
-// QUESTIONS_PER_EVENT câu. Được host gọi 1 lần lúc tạo sự kiện; kết quả ghi thẳng vào
-// Firestore (ev.questions) để mọi người chơi cùng 1 bộ câu hỏi giống nhau.
-async function buildQuestionPool(topicIds) {
+// numQuestions câu (Host chọn số câu lúc tạo sự kiện, mặc định QUESTIONS_PER_EVENT). Được host
+// gọi 1 lần lúc tạo sự kiện; kết quả ghi thẳng vào Firestore (ev.questions) để mọi người chơi
+// cùng 1 bộ câu hỏi giống nhau.
+async function buildQuestionPool(topicIds, numQuestions) {
+  const targetCount = numQuestions || QUESTIONS_PER_EVENT;
+  // Mỗi chủ đề có thể gồm NHIỀU nguồn (VD "Từ vựng" gộp cả đảo 2 lẫn đảo 10) — tải hết các
+  // nguồn con của mọi chủ đề đã chọn, gộp phẳng lại làm 1 kho đề cho chủ đề đó.
   const topics = TOPICS.filter(t => topicIds.includes(t.id) && t.available && t.source);
   const lists = await Promise.all(topics.map(async t => {
-    try {
-      const raw = await fetchSourceLiteral(t.source);
-      return TOPIC_NORMALIZERS[t.source.kind](raw);
-    } catch (e) {
-      console.error('[buildQuestionPool] failed for topic', t.id, e);
-      return [];
-    }
+    const sources = Array.isArray(t.source) ? t.source : [t.source];
+    const subLists = await Promise.all(sources.map(async src => {
+      try {
+        const raw = await fetchSourceLiteral(src);
+        return TOPIC_NORMALIZERS[src.kind](raw);
+      } catch (e) {
+        console.error('[buildQuestionPool] failed for topic', t.id, 'source', src.file, e);
+        return [];
+      }
+    }));
+    return [].concat(...subLists);
   }));
   const flat = [].concat(...lists).filter(q => q.text && Array.isArray(q.choices) && q.choices.length >= 2 && typeof q.correct === 'number' && q.correct >= 0 && q.correct < q.choices.length);
 
@@ -339,7 +433,7 @@ async function buildQuestionPool(topicIds) {
   const pool = [];
   for (const group of shuffledGroups) {
     pool.push(...group);
-    if (pool.length >= QUESTIONS_PER_EVENT) break;
+    if (pool.length >= targetCount) break;
   }
   return pool;
 }
@@ -361,7 +455,7 @@ let eventsLoading = true;
 let eventsError = '';
 let showCreateForm = false;
 let showJoinForm = false;
-let newEvent = { name: '', mode: 'quiz', topics: [], time: '20:30', maxPlayers: 30 };
+let newEvent = { name: '', mode: 'quiz', topics: [], time: '20:30', maxPlayers: 30, numQuestions: QUESTIONS_PER_EVENT };
 let formError = '';
 let creating = false;
 let loadingQuestions = false;
@@ -380,6 +474,21 @@ let startingEvent = false;
 // thấy. Khi Host khoá câu, dữ liệu này mới được gộp vào mảng "answers" chính thức của sự kiện.
 let liveAnswers = [];
 let liveAnswersUnsub = null;
+let liveAnswersRenderTimer = null;
+// mục 33: KHÔNG dùng ev.questionStartedAt (đồng hồ của máy Host) để tính tốc độ trả lời, vì
+// đồng hồ hệ thống giữa các máy có thể lệch nhau vài giây tới vài chục giây — người có đồng hồ
+// chạy trước sẽ luôn bị tính "gần hết giờ" (chỉ được 100đ), người có đồng hồ chạy sau luôn được
+// tính "vừa mới bắt đầu" (luôn được 150đ), bất kể bấm nhanh hay chậm thật. Thay vào đó, mỗi máy
+// tự ghi lại THỜI ĐIỂM CỦA CHÍNH NÓ khi lần đầu thấy câu hỏi này chuyển sang active, rồi so
+// sánh với chính đồng hồ của nó lúc bấm — không còn phụ thuộc lệch giờ giữa các máy nữa.
+let localQuestionShownAt = null;
+let localQuestionShownQIndex = null;
+function maybeAnchorQuestionStart(ev) {
+  if (ev && ev.questionState === 'active' && localQuestionShownQIndex !== ev.currentQuestionIndex) {
+    localQuestionShownQIndex = ev.currentQuestionIndex;
+    localQuestionShownAt = Date.now();
+  }
+}
 let boatAnim = null; // mục 31: {qIndex, fromScores, toScores, overtakes, startedAt, duration}
 let boatAnimRaf = null;
 let selectedBoatUid = '';
@@ -445,21 +554,35 @@ function subscribeLobbyListeners(code) {
         && prevEv.currentQuestionIndex === ev.currentQuestionIndex) {
       startBoatAnimation(prevEv, ev);
     }
+    maybeAnchorQuestionStart(ev);
     lobbyEvent = ev; render();
   });
   if (liveAnswersUnsub) { liveAnswersUnsub(); liveAnswersUnsub = null; }
-  liveAnswersUnsub = window.skSync.watchLiveAnswers(code, (list) => { liveAnswers = list; render(); });
+  // mục 32: khi đông người (VD 20 người) cùng trả lời trong ít giây, mỗi đáp án của người khác
+  // gửi lên đều bắn 1 snapshot mới về listener này — nếu render() lại ngay lập tức mỗi lần, màn
+  // hình câu hỏi (kể cả các nút đáp án) bị thay mới liên tục, thỉnh thoảng "nuốt mất" cú chạm
+  // đang thực hiện dở (đặc biệt trên mobile, giữa touchstart và touchend) → cảm giác "bấm mãi
+  // không ăn". Dồn các cập nhật dồn dập lại, chỉ render tối đa ~4 lần/giây là đủ mượt cho cả
+  // đồng hồ đếm ngược lẫn số người đã trả lời của Host, mà đỡ hẳn nguy cơ này.
+  liveAnswersUnsub = window.skSync.watchLiveAnswers(code, (list) => {
+    liveAnswers = list;
+    if (liveAnswersRenderTimer) return;
+    liveAnswersRenderTimer = setTimeout(() => { liveAnswersRenderTimer = null; render(); }, 250);
+  });
 }
 function enterLobby(code) {
   view = 'lobby'; lobbyCode = code; lobbyEvent = null; boatAnim = null; selectedBoatUid = ''; liveAnswers = [];
+  localQuestionShownAt = null; localQuestionShownQIndex = null;
   render();
   subscribeLobbyListeners(code);
 }
 function leaveLobby() {
   if (lobbyUnsub) { lobbyUnsub(); lobbyUnsub = null; }
   if (liveAnswersUnsub) { liveAnswersUnsub(); liveAnswersUnsub = null; }
+  if (liveAnswersRenderTimer) { clearTimeout(liveAnswersRenderTimer); liveAnswersRenderTimer = null; }
   if (boatAnimRaf) { cancelAnimationFrame(boatAnimRaf); boatAnimRaf = null; }
   boatAnim = null; selectedBoatUid = ''; liveAnswers = [];
+  localQuestionShownAt = null; localQuestionShownQIndex = null;
   view = 'list'; lobbyCode = ''; lobbyEvent = null;
   render();
   loadEvents();
@@ -467,9 +590,9 @@ function leaveLobby() {
 // Điện thoại thường "đóng băng" tab/app khi người dùng chuyển sang app khác một lúc rồi quay
 // lại — trình duyệt có thể ngắt ngầm kết nối realtime của Firestore (onSnapshot) mà không báo
 // lỗi, nên màn hình bị kẹt ở trạng thái cũ dù Host đã chuyển câu từ lâu. Khi tab/app hiện lại
-// (hoặc trang được khôi phục từ bfcache, hoặc mạng vừa có lại), chủ động lấy dữ liệu mới nhất
-// 1 lần bằng getDoc (không phụ thuộc listener cũ còn sống hay không) rồi dựng lại listener
-// realtime từ đầu để tiếp tục nhận cập nhật.
+// (hoặc trang được khôi phục từ bfcache, hoặc mạng vừa có lại, hoặc cửa sổ được focus lại), chủ
+// động lấy dữ liệu mới nhất 1 lần bằng getDoc (không phụ thuộc listener cũ còn sống hay không)
+// rồi dựng lại listener realtime từ đầu để tiếp tục nhận cập nhật.
 let lobbyRecovering = false;
 async function recoverLobbyIfStale() {
   if (view !== 'lobby' || !lobbyCode || lobbyRecovering) return;
@@ -478,7 +601,7 @@ async function recoverLobbyIfStale() {
   try {
     if (window.skSync && window.skSync.fetchGameEventByCode) {
       const fresh = await window.skSync.fetchGameEventByCode(code);
-      if (fresh && lobbyCode === code) { lobbyEvent = fresh; render(); }
+      if (fresh && lobbyCode === code) { maybeAnchorQuestionStart(fresh); lobbyEvent = fresh; render(); }
     }
   } catch (e) { console.error('[recoverLobbyIfStale] fetch failed', e); }
   if (lobbyCode === code) subscribeLobbyListeners(code);
@@ -489,6 +612,9 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('pageshow', (e) => { if (e.persisted) recoverLobbyIfStale(); });
 window.addEventListener('online', () => recoverLobbyIfStale());
+// 'focus' bắn đáng tin cậy hơn 'visibilitychange' trên một số trình duyệt mobile khi quay lại
+// app — thêm kênh dự phòng này để rút ngắn độ trễ nhận biết "đã quay lại".
+window.addEventListener('focus', () => recoverLobbyIfStale());
 function startEventNow() {
   if (!lobbyCode || startingEvent) return;
   startingEvent = true; render();
@@ -509,7 +635,12 @@ function submitAnswer(choiceIdx) {
   // mục 9 đặc tả: 100 điểm cơ bản + bonus tốc độ 0~50 điểm theo % thời gian còn lại lúc trả lời
   // (rất nhanh ≈150, trung bình ≈125, gần hết giờ ≈105; sai luôn 0, không phạt điểm).
   const duration = q.durationSec || QUESTION_DURATION_SEC;
-  const elapsedSec = (Date.now() - (ev.questionStartedAt || Date.now())) / 1000;
+  // mục 33 (fix): tính elapsedSec bằng CHÍNH đồng hồ của máy này so với thời điểm CHÍNH máy này
+  // thấy câu hỏi active (localQuestionShownAt) — không so với ev.questionStartedAt (đồng hồ máy
+  // Host), tránh bug "1 người luôn được đúng 100đ, 1 người luôn được đúng 150đ" do lệch giờ hệ
+  // thống giữa các thiết bị chứ không phải do tốc độ trả lời thật.
+  const startRef = (localQuestionShownQIndex === qIndex && localQuestionShownAt) ? localQuestionShownAt : (ev.questionStartedAt || Date.now());
+  const elapsedSec = (Date.now() - startRef) / 1000;
   const remainingFrac = Math.max(0, Math.min(1, (duration - elapsedSec) / duration));
   const speedBonus = correct ? Math.round(50 * remainingFrac) : 0;
   const points = correct ? 100 + speedBonus : 0;
@@ -615,7 +746,7 @@ function loadEvents() {
 
 function openCreateForm() {
   showCreateForm = true; formError = '';
-  newEvent = { name: '', mode: 'quiz', topics: [], time: '20:30', maxPlayers: 30 };
+  newEvent = { name: '', mode: 'quiz', topics: [], time: '20:30', maxPlayers: 30, numQuestions: QUESTIONS_PER_EVENT };
   render();
 }
 function closeCreateForm() { showCreateForm = false; render(); }
@@ -630,6 +761,7 @@ function toggleTopic(id) {
 }
 function onTimeInput(v) { newEvent.time = v; }
 function onMaxInput(v) { newEvent.maxPlayers = parseInt(v, 10) || 0; }
+function onNumQuestionsInput(v) { newEvent.numQuestions = Math.max(1, Math.min(50, parseInt(v, 10) || QUESTIONS_PER_EVENT)); }
 
 function submitCreateEvent() {
   const name = (newEvent.name || '').trim();
@@ -638,7 +770,7 @@ function submitCreateEvent() {
   requireAuth(() => {
   const uid = window.skSync.currentUid();
   creating = true; loadingQuestions = true; formError = ''; render();
-  buildQuestionPool(newEvent.topics).then(questions => {
+  buildQuestionPool(newEvent.topics, newEvent.numQuestions).then(questions => {
     loadingQuestions = false;
     if (!questions.length) {
       creating = false; formError = 'Không tải được câu hỏi cho các chủ đề đã chọn, thử lại sau.'; render(); return;
@@ -862,9 +994,15 @@ function boatTrackHtml(ev, qIndex, isHost) {
 
   // Hiện thuyền của TẤT CẢ người chơi trên đường đua — quá 20 người thì chỉ hiện top 20 (theo
   // điểm), tránh rối mắt. Thuyền gần nhau về điểm được xếp vào các "làn" cao thấp khác nhau để
-  // đỡ đè lên nhau.
+  // đỡ đè lên nhau. mục 36 (fix): LUÔN dành riêng 1 chỗ cho thuyền của chính người xem, cộng
+  // thêm top 19 người điểm cao nhất còn lại — trước đây lấy top 20 tuyệt đối theo điểm nên nếu
+  // bản thân đứng ngoài top 20 thì tự thấy mình biến mất khỏi đường đua.
   const sortedForTrack = players.slice().sort((a, b) => scores[b.uid] - scores[a.uid]);
-  const shownBoats = sortedForTrack.slice(0, 20);
+  const meForTrack = sortedForTrack.find(p => p.uid === uid);
+  const othersForTrack = sortedForTrack.filter(p => p.uid !== uid);
+  const shownBoats = meForTrack
+    ? [meForTrack].concat(othersForTrack.slice(0, 19)).sort((a, b) => scores[b.uid] - scores[a.uid])
+    : othersForTrack.slice(0, 20);
   const hiddenBoatCount = sortedForTrack.length - shownBoats.length;
   // Xếp thuyền phân bổ đều cả PHÍA TRÊN lẫn PHÍA DƯỚI thanh tiến trình (thay vì dồn hết
   // xuống 1 phía) để không đè lên câu "✨ Càng nhiều điểm..." (trên) lẫn câu "Tiếp tục tiến
@@ -916,7 +1054,7 @@ function boatTrackHtml(ev, qIndex, isHost) {
     const deltaBadge = delta > 0
       ? `<div style="font-size:clamp(7px,1.4cqw,14px); font-weight:800; color:#2e8b57; text-shadow:0 1px 2px rgba(255,255,255,.8); white-space:nowrap;">+${delta}</div>`
       : '';
-    return `<div ${isHost ? `onclick="showBoatDetail('${p.uid}')"` : ''} style="position:absolute; left:${pct}%; top:${topPct}%; transform:${boatTransform}; display:flex; flex-direction:column; align-items:center; ${isHost ? 'cursor:pointer;' : ''}">
+    return `<div onclick="showBoatDetail('${p.uid}')" style="position:absolute; left:${pct}%; top:${topPct}%; transform:${boatTransform}; display:flex; flex-direction:column; align-items:center; cursor:pointer;">
       ${deltaBadge}
       <div style="font-size:clamp(6.5px,1.3cqw,13px); font-weight:800; color:${isMe ? '#ffe27a' : '#3a2a18'}; white-space:nowrap; max-width:min(72px,18cqw); overflow:hidden; text-overflow:ellipsis; ${isMe ? 'background:#173a63; border-radius:6px; padding:1px 6px;' : 'text-shadow:0 1px 2px rgba(255,255,255,.7);'}">${escapeHtml(p.name)}</div>
       <div style="position:relative; width:clamp(20px,4cqw,40px); height:clamp(24px,4.8cqw,48px); margin-top:1px;">
@@ -979,7 +1117,7 @@ function boatLeaderboardHtml(ev, isHost) {
     const shipHtml = p.shipArt
       ? `<img src="${escapeHtml(p.shipArt)}" style="width:100%; height:100%; object-fit:contain; transform:scaleX(-1);"/>`
       : `<span style="font-size:14px;">🚢</span>`;
-    return `<div class="sk-game-leaderboard-card" ${isHost ? `onclick="showBoatDetail('${p.uid}')"` : ''} style="display:flex; align-items:center; gap:6px; background:linear-gradient(180deg,#6b4a2e,#4a3220); border:1.5px solid ${isMe ? '#ffe27a' : '#8b5e34'}; border-radius:10px; padding:6px 9px; ${isHost ? 'cursor:pointer;' : ''}">
+    return `<div class="sk-game-leaderboard-card" onclick="showBoatDetail('${p.uid}')" style="display:flex; align-items:center; gap:6px; background:linear-gradient(180deg,#6b4a2e,#4a3220); border:1.5px solid ${isMe ? '#ffe27a' : '#8b5e34'}; border-radius:10px; padding:6px 9px; cursor:pointer;">
       <div style="font-size:14px; width:18px; text-align:center; flex-shrink:0;">${rankMedal[i] || ('#' + (i + 1))}</div>
       <div style="width:26px; height:26px; border-radius:50%; overflow:hidden; border:1.5px solid #ffe27a; background:#7fb3d5; flex-shrink:0;">${avHtml}</div>
       <div style="flex:1; min-width:0;">
@@ -1092,6 +1230,15 @@ function renderGame() {
       : `<div style="text-align:center; color:#8b5e34; font-weight:700; font-size:13px; margin-top:10px;">Bạn chưa trả lời câu này.</div>`;
   }
 
+  // mục 6/35: sau khi Host mở đáp án, hiện thêm phần giải thích/mẹo phân biệt lấy từ đúng dữ
+  // liệu gốc trong đảo (mỗi normalizer đã gắn kèm field "explain" khi build bộ đề sự kiện).
+  const explainHtml = (state === 'result' && q.explain)
+    ? `<div style="margin-top:10px; background:rgba(255,248,225,.75); border:1.5px solid #ffcc02; border-radius:12px; padding:10px 14px; text-align:left;">
+        <div style="font-weight:800; color:#e65100; font-size:11px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px;">💡 Giải thích</div>
+        <div style="font-size:12.5px; color:#5d4037; line-height:1.7; white-space:pre-wrap;">${escapeHtml(q.explain)}</div>
+      </div>`
+    : '';
+
   const hostControlHtml = isHost ? `
     <div style="margin-top:20px; border-top:2px dashed #b9a679; padding-top:14px;">
       <div style="font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:13px; margin-bottom:8px;">🎛 HOST CONTROL</div>
@@ -1121,11 +1268,12 @@ function renderGame() {
           <div style="margin-top:${q.passage ? '10px' : '14px'}; background:${q.passage ? 'rgba(245,166,35,.16)' : 'rgba(255,255,255,.6)'}; border:${q.passage ? '1.5px solid #f5a623' : 'none'}; border-radius:12px; padding:14px; font-size:15px; font-weight:700; color:#2b2620; text-align:${!q.passage && q.text.length > 120 ? 'left' : 'center'}; white-space:pre-wrap;">${q.html || escapeHtml(q.text)}</div>
           ${choicesHtml}
           ${statusLineHtml}
+          ${explainHtml}
           ${hostControlHtml}
         </div>
       </div>
     </div>
-    ${isHost && selectedBoatUid ? boatDetailModalHtml(ev, selectedBoatUid) : ''}
+    ${selectedBoatUid ? boatDetailModalHtml(ev, selectedBoatUid) : ''}
   `;
 }
 
@@ -1239,6 +1387,10 @@ function renderList() {
             <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:4px;">Số người tối đa</div>
             <input type="number" value="${newEvent.maxPlayers}" oninput="onMaxInput(this.value)" style="width:100%; border:1.5px solid #b9761a; border-radius:10px; padding:9px 12px; font-size:13px;"/>
           </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="color:#5a3b22; font-weight:700; font-size:12px; margin-bottom:4px;">Số câu hỏi (1-50)</div>
+          <input type="number" min="1" max="50" value="${newEvent.numQuestions}" oninput="onNumQuestionsInput(this.value)" style="width:100%; border:1.5px solid #b9761a; border-radius:10px; padding:9px 12px; font-size:13px;"/>
         </div>
         ${formError ? `<div style="color:#c0392b; font-size:12px; font-weight:700; margin-bottom:10px;">${escapeHtml(formError)}</div>` : ''}
         <div onclick="submitCreateEvent()" style="margin-top:6px; text-align:center; cursor:${creating ? 'default' : 'pointer'}; background:${creating ? '#e2d3ae' : 'linear-gradient(180deg,#3d5a80,#173a63)'}; border:2px solid #0e2a4a; border-radius:14px; padding:12px; font-family:'Baloo 2',sans-serif; font-weight:800; color:${creating ? '#6b5a3a' : '#fff'}; font-size:15px;">${loadingQuestions ? 'Đang tải kho đề...' : (creating ? 'Đang tạo...' : '⚓ TẠO SỰ KIỆN')}</div>
