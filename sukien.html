@@ -327,6 +327,19 @@ function normalizeTruongVan(DATA) {
 }
 // Đảo 10 (Đại Chiến) — kho từ vựng riêng theo dạng "câu ví dụ + hỏi cách đọc", cùng shape
 // {label, q, opts (chuỗi), ans (chuỗi — không phải index!)} cho mọi round/loại "m".
+// Nguồn tuvung30.html đánh dấu từ mục tiêu trong câu ví dụ bằng <hl>...</hl> (kể cả câu hỏi
+// "下線の言葉..." — nghĩa đen là "từ được GẠCH CHÂN" — lẫn câu hỏi đọc kanji). Trước đây bị
+// stripTags() xoá trắng luôn cặp thẻ này nên câu ví dụ mất hết dấu hiệu từ nào là từ đang hỏi
+// (VD: hỏi "từ gạch chân nghĩa gần nhất là gì" mà không có từ nào được gạch chân cả). Hàm này
+// giữ lại phần chữ bên trong, chuyển thành in đậm + gạch chân giống hệt style .hl gốc trong đảo
+// (font-weight:700; border-bottom:2px solid) thay vì xoá đi.
+function convertHlHighlight(s) {
+  const parts = String(s || '').split(/<hl>|<\/hl>/);
+  return parts.map((part, i) => i % 2 === 1
+    ? '<b style="text-decoration:underline; text-decoration-color:#6a4fd6; text-decoration-thickness:2px; text-underline-offset:2px; color:#6a4fd6;">' + escapeHtml(part) + '</b>'
+    : escapeHtml(part)
+  ).join('');
+}
 function normalizeDaiChienTuVung(Q) {
   return (Q || []).filter(x => x && x.label && Array.isArray(x.opts) && typeof x.ans === 'string')
     .map(x => {
@@ -337,7 +350,7 @@ function normalizeDaiChienTuVung(Q) {
       if (x.ex && Array.isArray(x.ex.syn) && x.ex.syn.length) {
         explainParts.push('Đồng nghĩa: ' + x.ex.syn.slice(0, 2).map(s => s.jp + (s.vn ? '（' + s.vn + '）' : '')).join('、'));
       }
-      return { text: x.label, passage: stripTags(x.q || ''), choices: x.opts, correct, explain: explainParts.join(' — ') };
+      return { text: x.label, passage: stripTags(x.q || ''), passageHtml: convertHlHighlight(x.q || ''), choices: x.opts, correct, explain: explainParts.join(' — ') };
     }).filter(Boolean);
 }
 // Đảo 10 (Đại Chiến) — kho đề thi tổng hợp mon1-6 theo từng kỳ thi, đánh số ĐÚNG theo 6 vấn đề
@@ -1264,7 +1277,7 @@ function renderGame() {
         <div class="sk-game-question-card" style="position:relative; z-index:4; background:linear-gradient(180deg,rgba(253,246,232,.9),rgba(243,230,201,.9)); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:2.5px solid #b9761a; border-radius:20px; padding:22px; box-shadow:0 8px 0 rgba(0,0,0,.15), 0 14px 24px rgba(0,0,0,.25);">
           <div style="text-align:center; color:#8b5e34; font-weight:700; font-size:11.5px; letter-spacing:.5px;">${escapeHtml(ev.name)}</div>
           <div style="text-align:center; font-family:'Baloo 2',sans-serif; font-weight:800; color:#5a3b22; font-size:16px; margin-top:2px;">Question ${qIndex + 1} / ${total}</div>
-          ${q.passage ? `<div style="margin-top:14px; background:rgba(255,255,255,.55); border-radius:12px; padding:14px; font-size:14px; font-weight:500; color:#3a3226; text-align:left; white-space:pre-wrap; line-height:1.6;">${escapeHtml(q.passage)}</div>` : ''}
+          ${q.passage ? `<div style="margin-top:14px; background:rgba(255,255,255,.55); border-radius:12px; padding:14px; font-size:14px; font-weight:500; color:#3a3226; text-align:left; white-space:pre-wrap; line-height:1.6;">${q.passageHtml || escapeHtml(q.passage)}</div>` : ''}
           <div style="margin-top:${q.passage ? '10px' : '14px'}; background:${q.passage ? 'rgba(245,166,35,.16)' : 'rgba(255,255,255,.6)'}; border:${q.passage ? '1.5px solid #f5a623' : 'none'}; border-radius:12px; padding:14px; font-size:15px; font-weight:700; color:#2b2620; text-align:${!q.passage && q.text.length > 120 ? 'left' : 'center'}; white-space:pre-wrap;">${q.html || escapeHtml(q.text)}</div>
           ${choicesHtml}
           ${statusLineHtml}
