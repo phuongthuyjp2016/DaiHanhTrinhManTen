@@ -39,30 +39,30 @@ body.nb-embed .container{padding-top:10px}
 .pb{background:linear-gradient(90deg,#f5a623,#ffd25a);height:5px;border-radius:99px;transition:width 0.3s}
 .qcard{background:#fdf6e8;border-radius:12px;border:1px solid #c9a769;padding:18px;margin-bottom:12px}
 .qwd{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-.qk{font-size:24px;font-weight:600;color:#534AB7}
-.qh{font-size:13px;color:#7F77DD;background:#EEEDFE;padding:2px 8px;border-radius:6px}
+.qk{font-size:24px;font-weight:600;color:#1f8a76}
+.qh{font-size:13px;color:#4fad9c;background:#e5f6f1;padding:2px 8px;border-radius:6px}
 .qs{font-size:16px;line-height:1.8;margin-bottom:4px}
-.ul{text-decoration:underline;text-decoration-color:#534AB7;color:#534AB7;font-weight:500}
+.ul{text-decoration:underline;text-decoration-color:#1f8a76;color:#1f8a76;font-weight:500}
 .og{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .ob{background:#fdf6e8;border:1px solid #ccc;border-radius:8px;padding:12px;font-size:14px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px}
 .ob .nm{font-size:12px;color:#aaa;min-width:14px}
-.ob:hover:not(:disabled){border-color:#534AB7;background:#EEEDFE}
+.ob:hover:not(:disabled){border-color:#1f8a76;background:#e5f6f1}
 .ob.ok{background:#EAF3DE;border-color:#3B6D11;color:#173404}
 .ob.ng{background:#FCEBEB;border-color:#A32D2D;color:#501313}
 .ob.rv{background:#EAF3DE;border-color:#3B6D11;color:#173404}
 .ob:disabled{cursor:default}
 .exp{background:#fdf6e8;border:1px solid #CECBF6;border-radius:10px;padding:14px;font-size:13px;line-height:1.8;margin-bottom:12px;display:none}
 .exp.show{display:block}
-.ew{font-size:17px;font-weight:600;color:#534AB7}
-.eh{font-size:12px;color:#7F77DD;background:#EEEDFE;padding:1px 6px;border-radius:5px;margin-left:6px}
-.esyi{display:inline-block;font-size:12px;background:#EEEDFE;color:#3C3489;border-radius:6px;padding:2px 8px;margin:2px 2px 2px 0}
-.esyi.pri{background:#534AB7;color:#fff}
+.ew{font-size:17px;font-weight:600;color:#1f8a76}
+.eh{font-size:12px;color:#4fad9c;background:#e5f6f1;padding:1px 6px;border-radius:5px;margin-left:6px}
+.esyi{display:inline-block;font-size:12px;background:#e5f6f1;color:#0f5c4d;border-radius:6px;padding:2px 8px;margin:2px 2px 2px 0}
+.esyi.pri{background:#1f8a76;color:#fff}
 .bnav{display:flex;justify-content:flex-end;margin-top:4px}
 .bnext{background:linear-gradient(180deg,#ffd25a,#f5a623);color:#5a3b22;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;display:none;width:100%}
 .bnext.show{display:block}
 .res{background:#fdf6e8;border-radius:12px;border:1px solid #c9a769;padding:32px 20px;text-align:center;display:none}
 .res.show{display:block}
-.rs{font-size:48px;font-weight:600;color:#534AB7}
+.rs{font-size:48px;font-weight:600;color:#1f8a76}
 .rt{font-size:18px;color:#888;margin-bottom:10px}
 .rm{font-size:14px;color:#444;margin-bottom:20px}
 .br{background:linear-gradient(180deg,#ffd25a,#f5a623);color:#5a3b22;border:none;border-radius:8px;padding:10px 24px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
@@ -139,11 +139,11 @@ body.nb-embed .container{padding-top:10px}
     <div class="pbi"><span id="qn">1/20</span><span id="sm">正解:0</span></div>
     <div class="pbw"><div class="pb" id="pb" style="width:0%"></div></div>
     <div class="qcard">
-      <div class="qwd"><span class="qbadge" id="qqn">1</span><span class="qk" id="qk"></span><span class="qh" id="qhi"></span><button onclick="speakJapanese(document.getElementById('qhi').textContent)" style="background:none;border:none;cursor:pointer;font-size:18px;padding:2px 4px;color:#7F77DD;flex-shrink:0" title="発音">🔊</button><span style="font-size:11px;color:#aaa" id="qmt"></span></div>
+      <div class="qwd"><span class="qbadge" id="qqn">1</span><span class="qk" id="qk"></span><span class="qh" id="qhi"></span><button onclick="speakJapanese(document.getElementById('qhi').textContent)" style="background:none;border:none;cursor:pointer;font-size:18px;padding:2px 4px;color:#4fad9c;flex-shrink:0" title="発音">🔊</button><span style="font-size:11px;color:#aaa" id="qmt"></span></div>
       <div id="qvi" style="font-size:12px;color:#b45309;background:#FFFBEB;border-radius:6px;padding:3px 8px;margin-bottom:8px;display:none">🇻🇳 <span id="qvt"></span></div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
       <div class="qs" id="qsen" style="flex:1"></div>
-      <button onclick="speakJapanese(currentSentence)" style="background:none;border:none;cursor:pointer;font-size:22px;padding:4px;flex-shrink:0;color:#534AB7" title="読み上げ">🔊</button>
+      <button onclick="speakJapanese(currentSentence)" style="background:none;border:none;cursor:pointer;font-size:22px;padding:4px;flex-shrink:0;color:#1f8a76" title="読み上げ">🔊</button>
     </div>
     </div>
     <div class="og" id="og"></div>
@@ -327,7 +327,7 @@ function rv(list){
 }
 function startQ(){var rf=document.getElementById('qr').value;var cs=document.getElementById('qc').value;var pool=rf==='all'?V.slice():V.filter(function(v){return v.r===rf;});var cnt=cs==='all'?pool.length:Math.min(parseInt(cs),pool.length);qq=pool.slice(0,cnt);qi=0;sc=0;document.getElementById('qs').style.display='none';document.getElementById('qa').classList.add('active');document.getElementById('res').classList.remove('show');showQ();}
 function showQ(){var q=qq[qi],tot=qq.length;document.getElementById('qn').textContent=(qi+1)+' / '+tot;document.getElementById('sm').textContent='正解: '+sc;document.getElementById('pb').style.width=((qi/tot)*100)+'%';document.getElementById('qk').textContent=q.k;document.getElementById('qhi').textContent=q.h;document.getElementById('qmt').textContent='第'+q.r+'回 · '+q.p;var s=q.s;if(s.indexOf(q.k)>=0){s=s.replace(q.k,'<span class="ul">'+q.k+'</span>');}else if(s.indexOf(q.h)>=0){s=s.replace(q.h,'<span class="ul">'+q.h+'</span>');}currentSentence=q.s;document.getElementById('qsen').innerHTML=s;document.getElementById('qqn').textContent=q.n||'';document.getElementById('qvt').textContent=q.vi||'';document.getElementById('qvi').style.display='none';document.getElementById('og').innerHTML=q.op.map(function(o,i){return '<button class="ob" onclick="sel('+i+')" id="o'+i+'"><span class="nm">'+(i+1)+'</span>'+o+'</button>';}).join('');document.getElementById('exp').classList.remove('show');document.getElementById('bn').classList.remove('show');ans=false;}
-function sel(c){if(ans)return;ans=true;var q=qq[qi],co=q.a;if(c===co){sc++;if(allCorrect.indexOf(q.k)<0)allCorrect.push(q.k);onCorrectAnswer();}else{onWrongAnswer();}localStorage.setItem('dao2_mondai3_correct',JSON.stringify(allCorrect));reportToolProgress(allCorrect.length,V.length);for(var i=0;i<q.op.length;i++){var b=document.getElementById('o'+i);b.disabled=true;if(i===co)b.classList.add(c===co&&i===c?'ok':'rv');if(i===c&&c!==co)b.classList.add('ng');}var sh=q.sy.map(function(s,i){return '<span class="esyi'+(i===0?' pri':'')+'">'+ s+'</span>';}).join('');document.getElementById('exp').innerHTML='<div style="margin-bottom:8px"><span class="ew">'+q.k+'</span><span class="eh">'+q.h+'</span></div><div style="font-size:13px;color:#333;margin:4px 0">📖 '+q.m+'</div><div style="font-size:12px;color:#b45309;background:#FFFBEB;border-radius:6px;padding:3px 8px;margin:4px 0;display:inline-block">🇻🇳 '+(q.vi||'')+'</div><div style="margin:8px 0"><span style="font-size:11px;color:#7F77DD;font-weight:500">≒ 類義語：</span><br>'+sh+'</div><div style="font-size:11px;color:#888">📌 '+q.co.map(function(c){return '<span class="ct">'+c+'</span>';}).join('')+'</div>';if(q.vi){document.getElementById('qvi').style.display='inline-block';}document.getElementById('exp').classList.add('show');document.getElementById('sm').textContent='正解: '+sc;document.getElementById('bn').classList.add('show');}
+function sel(c){if(ans)return;ans=true;var q=qq[qi],co=q.a;if(c===co){sc++;if(allCorrect.indexOf(q.k)<0)allCorrect.push(q.k);onCorrectAnswer();}else{onWrongAnswer();}localStorage.setItem('dao2_mondai3_correct',JSON.stringify(allCorrect));reportToolProgress(allCorrect.length,V.length);for(var i=0;i<q.op.length;i++){var b=document.getElementById('o'+i);b.disabled=true;if(i===co)b.classList.add(c===co&&i===c?'ok':'rv');if(i===c&&c!==co)b.classList.add('ng');}var sh=q.sy.map(function(s,i){return '<span class="esyi'+(i===0?' pri':'')+'">'+ s+'</span>';}).join('');document.getElementById('exp').innerHTML='<div style="margin-bottom:8px"><span class="ew">'+q.k+'</span><span class="eh">'+q.h+'</span></div><div style="font-size:13px;color:#333;margin:4px 0">📖 '+q.m+'</div><div style="font-size:12px;color:#b45309;background:#FFFBEB;border-radius:6px;padding:3px 8px;margin:4px 0;display:inline-block">🇻🇳 '+(q.vi||'')+'</div><div style="margin:8px 0"><span style="font-size:11px;color:#4fad9c;font-weight:500">≒ 類義語：</span><br>'+sh+'</div><div style="font-size:11px;color:#888">📌 '+q.co.map(function(c){return '<span class="ct">'+c+'</span>';}).join('')+'</div>';if(q.vi){document.getElementById('qvi').style.display='inline-block';}document.getElementById('exp').classList.add('show');document.getElementById('sm').textContent='正解: '+sc;document.getElementById('bn').classList.add('show');}
 function nextQ(){qi++;if(qi>=qq.length)showRes();else showQ();}
 function showRes(){document.getElementById('qa').classList.remove('active');document.getElementById('res').classList.add('show');var tot=qq.length,pct=Math.round((sc/tot)*100);document.getElementById('rsc').textContent=sc;document.getElementById('rtl').textContent='/ '+tot+' 問';document.getElementById('rmsg').textContent=(pct>=90?'🎉 素晴らしい！N1合格レベルです！':pct>=70?'👍 よくできました！':pct>=50?'📚 復習が必要です。':'💪 もっと練習！')+'（正答率: '+pct+'%）';}
 function resetQ(){document.getElementById('res').classList.remove('show');document.getElementById('qs').style.display='';document.getElementById('qa').classList.remove('active');}
