@@ -139,6 +139,7 @@ function dcBuildDao1KanjiCardData(item, opts) {
     hasCollocations: !!(item.collocations && item.collocations.length),
     collocations: (item.collocations || []).map(function (c) { return { text: c }; }),
     hasSynonyms: !!(item.synonyms && item.synonyms.length),
+    hasSynonymsOnly: !(item.collocations && item.collocations.length) && !!(item.synonyms && item.synonyms.length),
     synonyms: (item.synonyms || []).map(function (s, i) { return { text: s, mainClass: i === 0 ? ' main' : '' }; })
   };
 }

@@ -1,61 +1,59 @@
 <!--STYLE-->
 .dc-kanji-card{
   background:#fdf6e8;border-radius:16px;
-  border:2px solid #c9a769;
+  border:2px solid #9dc0da;
   box-shadow:0 3px 14px rgba(0,0,0,.07);
   overflow:hidden;transition:all .2s;cursor:pointer;
 }
 .dc-kanji-card:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.12);}
-.dc-kanji-card.expanded{border-color:#7986cb;}
+.dc-kanji-card.expanded{border-color:#1f4e79;}
 .dc-kanji-card.nb-highlight{animation:dcKanjiCardGlow 1.1s ease-in-out 2;}
 @keyframes dcKanjiCardGlow{
   0%,100%{box-shadow:0 3px 14px rgba(0,0,0,.07);}
-  50%{box-shadow:0 0 0 4px rgba(245,166,35,.55),0 6px 22px rgba(0,0,0,.12);}
+  50%{box-shadow:0 0 0 4px rgba(31,78,121,.35),0 6px 22px rgba(0,0,0,.12);}
 }
-.dc-kanji-card:nth-child(6n+1){border-top:4px solid #e53935;}
-.dc-kanji-card:nth-child(6n+2){border-top:4px solid #1565c0;}
-.dc-kanji-card:nth-child(6n+3){border-top:4px solid #2e7d32;}
-.dc-kanji-card:nth-child(6n+4){border-top:4px solid #6a1b9a;}
-.dc-kanji-card:nth-child(6n+5){border-top:4px solid #e65100;}
-.dc-kanji-card:nth-child(6n+6){border-top:4px solid #00695c;}
 
-.dc-kanji-card .card-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px 12px;padding:14px 14px 10px;}
+.dc-kanji-card .card-head{
+  display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px 12px;
+  padding:16px 16px 14px;background:#fffaf0;
+  border-bottom:1px solid #e2d3ae;
+}
 .dc-kanji-card .k-big{
-  font-family:'Noto Serif JP',serif;font-size:2.4rem;font-weight:700;
-  color:#e53935;line-height:1.15;text-shadow:0 1px 4px rgba(229,57,53,.18);
-  min-width:54px;max-width:100%;word-break:break-word;flex:0 1 auto;
+  font-family:'Noto Serif JP',serif;font-size:2.3rem;font-weight:700;
+  color:#1a1a1a;line-height:.95;flex:0 0 auto;
 }
-.dc-kanji-card .k-meta{flex:1 1 100%;min-width:0;order:3;margin-top:4px;}
+.dc-kanji-card .k-meta{flex:1 1 160px;min-width:0;padding-top:2px;}
+.dc-kanji-card .k-rm-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;}
 .dc-kanji-card .k-reading{
-  font-family:'Noto Sans JP',sans-serif;font-size:.95rem;
-  font-weight:700;color:#1565c0;margin-bottom:2px;
-  overflow-wrap:break-word;
+  font-family:'Noto Sans JP',sans-serif;font-size:1.15rem;
+  font-weight:700;color:#1a1a1a;overflow-wrap:break-word;
 }
-.dc-kanji-card .k-meaning{font-size:.8rem;color:#546e7a;overflow-wrap:break-word;}
+.dc-kanji-card .k-meaning{font-size:.92rem;font-weight:600;color:#1a1a1a;overflow-wrap:break-word;}
 .dc-kanji-card .k-badge{
-  font-size:.65rem;background:#e8eaf6;color:#283593;
-  padding:2px 8px;border-radius:10px;display:inline-block;
-  margin-top:3px;font-weight:700;
+  font-size:.7rem;background:#eaf4fb;color:#1f4e79;border:1px solid #9dc0da;
+  padding:3px 10px;border-radius:20px;font-weight:700;white-space:nowrap;
 }
-.dc-kanji-card .card-head-right{display:flex;align-items:center;gap:6px;flex-shrink:0;order:2;margin-left:auto;}
+.dc-kanji-card .card-head-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto;}
 .dc-kanji-card .expand-btn{
-  background:none;border:none;font-size:.82rem;color:#546e7a;
+  background:none;border:none;font-size:.8rem;color:#7a6a52;
   cursor:pointer;padding:4px;transition:transform .2s;
 }
 .dc-kanji-card.expanded .expand-btn{transform:rotate(180deg);}
 
 .dc-kanji-card .speak-btn{
-  background:none;border:1.5px solid #c9a769;border-radius:8px;
-  padding:5px 7px;cursor:pointer;color:#546e7a;line-height:0;
-  transition:all .18s;
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(180deg,#4a90c4,#1f4e79);
+  border:none;box-shadow:0 2px 0 #143654;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:#fff;transition:transform .15s;
 }
-.dc-kanji-card .speak-btn:hover{border-color:#1565c0;color:#1565c0;background:#e3f2fd;}
-.dc-kanji-card .speak-btn.speaking{border-color:#e53935;color:#e53935;animation:dcKanjiSpeakPulse .8s infinite;}
-@keyframes dcKanjiSpeakPulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.dc-kanji-card .speak-btn:active{transform:translateY(1px);box-shadow:0 1px 0 #143654;}
+.dc-kanji-card .speak-btn.speaking{animation:dcKanjiSpeakPulse .8s infinite;}
+@keyframes dcKanjiSpeakPulse{0%,100%{opacity:1;}50%{opacity:.55;}}
 
 .dc-kanji-card .nb-btn{
-  background:none;border:1.5px solid #c9a769;border-radius:8px;
-  padding:4px 7px;cursor:pointer;color:#546e7a;line-height:1;font-size:17px;
+  background:none;border:1.5px solid #9dc0da;border-radius:8px;
+  padding:4px 7px;cursor:pointer;color:#7a6a52;line-height:1;font-size:16px;
   transition:all .18s;
 }
 .dc-kanji-card .nb-btn:hover{border-color:#f5a623;color:#f5a623;background:#fff8e6;}
@@ -66,126 +64,112 @@
 }
 
 .dc-kanji-card .card-ex{
-  font-family:'Noto Sans JP',sans-serif;font-size:.84rem;color:#444;
-  background:#f8f8fc;border-left:3px solid #1565c0;
-  border-radius:0 8px 8px 0;padding:7px 12px;
-  margin:0 14px 10px;line-height:1.8;
+  font-family:'Noto Sans JP',sans-serif;font-size:.95rem;color:#1a1a1a;
+  background:#fff;border:1px solid #9dc0da;border-radius:10px;
+  padding:11px 13px;margin:14px 16px 0;line-height:1.7;
 }
-.dc-kanji-card .card-ex b{color:#e53935;font-size:.95rem;}
+.dc-kanji-card .card-ex b{border-bottom:3px solid #f5a623;font-weight:700;padding-bottom:1px;}
 
-.dc-kanji-card .card-detail{display:none;padding:0 14px 14px;}
+.dc-kanji-card .card-detail{display:none;padding:16px;}
 .dc-kanji-card.expanded .card-detail{display:block;}
 
-.dc-kanji-card .sec{margin-bottom:12px;}
+.dc-kanji-card .sec{margin-bottom:14px;}
+.dc-kanji-card .sec:last-child{margin-bottom:0;}
 .dc-kanji-card .sec-label{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.08em;margin-bottom:7px;
-  display:flex;align-items:center;gap:5px;
+  font-size:.72rem;font-weight:800;
+  text-transform:uppercase;letter-spacing:.03em;color:#1f4e79;
+  margin-bottom:8px;display:flex;align-items:center;gap:5px;
 }
 
-.dc-kanji-card .parts-table{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;margin-bottom:0;}
-.dc-kanji-card .parts-table th{
-  font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;
-  padding:6px 9px;text-align:left;font-weight:700;
+.dc-kanji-card .parts-list{display:flex;flex-direction:column;gap:9px;}
+.dc-kanji-card .part-card{
+  background:#fff;border:1px solid #9dc0da;border-radius:12px;
+  display:grid;grid-template-columns:64px 1.3fr 1fr;
 }
-.dc-kanji-card .th-kanji{background:#f3e5f5;color:#6a1b9a;}
-.dc-kanji-card .th-hv   {background:#e8eaf6;color:#283593;}
-.dc-kanji-card .th-on   {background:#ffebee;color:#c62828;}
-.dc-kanji-card .th-kun  {background:#e3f2fd;color:#1565c0;}
-.dc-kanji-card .th-meaning{background:#e8f5e9;color:#2e7d32;}
-.dc-kanji-card .parts-table td{padding:9px 9px;border-bottom:1px solid #f0f0f8;vertical-align:middle;}
-.dc-kanji-card .parts-table tr:last-child td{border-bottom:none;}
-.dc-kanji-card .parts-table tr:hover td{background:#fafafe;}
-.dc-kanji-card .td-k{font-family:'Noto Serif JP',serif;font-size:1.7rem;font-weight:700;color:#1a1a2e;}
-.dc-kanji-card .td-hv{font-weight:800;color:#6a1b9a;font-size:.8rem;letter-spacing:.05em;}
-.dc-kanji-card .td-on{color:#c62828;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:.82rem;}
-.dc-kanji-card .td-kun{color:#1565c0;font-family:'Noto Sans JP',sans-serif;font-size:.8rem;}
-.dc-kanji-card .td-m{color:#444;font-size:.78rem;}
+.dc-kanji-card .part-k{
+  text-align:center;padding:10px 6px;border-right:1px solid #cfe2ef;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.dc-kanji-card .part-k .td-k{font-family:'Noto Serif JP',serif;font-size:1.7rem;font-weight:700;color:#1a1a1a;line-height:1;}
+.dc-kanji-card .part-k .td-hv{font-size:.75rem;font-weight:800;letter-spacing:.02em;color:#1f4e79;margin-top:3px;}
+.dc-kanji-card .part-yomi{padding:10px 12px;border-right:1px solid #cfe2ef;display:flex;flex-direction:column;gap:6px;justify-content:center;min-width:0;}
+.dc-kanji-card .yomi-row{display:flex;gap:7px;align-items:baseline;}
+.dc-kanji-card .yomi-tag{flex-shrink:0;border-radius:5px;padding:2px 7px;font-size:.68rem;font-weight:800;letter-spacing:.04em;}
+.dc-kanji-card .yomi-tag.on{background:#ede9fb;color:#5a4bb5;}
+.dc-kanji-card .yomi-tag.kun{background:#e8f1f8;color:#1f4e79;}
+.dc-kanji-card .yomi-val{font-family:'Noto Sans JP',sans-serif;font-size:.82rem;font-weight:700;white-space:pre-line;line-height:1.4;overflow-wrap:break-word;}
+.dc-kanji-card .yomi-val.on{color:#5a4bb5;}
+.dc-kanji-card .yomi-val.kun{color:#1f4e79;}
+.dc-kanji-card .part-m{padding:10px 12px;display:flex;flex-direction:column;gap:5px;justify-content:center;}
+.dc-kanji-card .m-tag{align-self:flex-start;background:#e8f3ea;color:#2f7d55;border-radius:5px;padding:2px 7px;font-size:.68rem;font-weight:800;letter-spacing:.02em;}
+.dc-kanji-card .part-m-text{font-size:.8rem;color:#1a1a1a;line-height:1.45;overflow-wrap:break-word;}
 
-.dc-kanji-card .confuse-box{
-  background:#fffde7;border:1.5px solid #f9a825;border-radius:10px;
-  padding:10px 13px;margin-bottom:12px;
-}
-.dc-kanji-card .confuse-title{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:#f57f17;margin-bottom:5px;
-  display:flex;align-items:center;gap:4px;
-}
-.dc-kanji-card .confuse-text{font-size:.82rem;color:#5d4037;line-height:1.65;font-family:'Noto Sans JP',sans-serif;}
-
-.dc-kanji-card .wrong-sec{margin-bottom:12px;}
-.dc-kanji-card .wrong-label{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:#e53935;margin-bottom:6px;
-  display:flex;align-items:center;gap:4px;
-}
-.dc-kanji-card .wrong-list{display:flex;flex-direction:column;gap:5px;}
-.dc-kanji-card .wrong-item{
-  display:flex;align-items:flex-start;gap:10px;
-  background:#fce4ec;border-radius:9px;padding:7px 11px;
-  border-left:3px solid #e57373;
-}
-.dc-kanji-card .wrong-r{
-  font-family:'Noto Sans JP',sans-serif;font-size:.88rem;
-  font-weight:700;color:#e53935;min-width:72px;flex-shrink:0;
-}
-.dc-kanji-card .wrong-m{font-size:.78rem;color:#555;line-height:1.55;white-space:pre-line;}
-
-.dc-kanji-card .col-sec{margin-bottom:12px;}
-.dc-kanji-card .col-label{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:#00695c;margin-bottom:6px;
-  display:flex;align-items:center;gap:4px;
-}
-.dc-kanji-card .col-list{display:flex;flex-direction:column;gap:4px;}
-.dc-kanji-card .col-item{
-  font-family:'Noto Sans JP',sans-serif;font-size:.81rem;
-  background:#e3f2fd;border-radius:8px;padding:6px 11px;
-  color:#0d47a1;line-height:1.6;
-  border-left:3px solid #90caf9;
+.dc-kanji-card .mnemonic-box{
+  background:#fff;border:1px solid #9dc0da;border-radius:10px;
+  padding:11px 13px;font-size:.85rem;color:#1a1a1a;line-height:1.65;
 }
 
-.dc-kanji-card .syn-sec{}
-.dc-kanji-card .syn-label{
-  font-size:.68rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.07em;color:#2e7d32;margin-bottom:6px;
-  display:flex;align-items:center;gap:4px;
+.dc-kanji-card .trap-box{
+  background:#fdf0ee;border:1px solid #edb9b0;border-radius:10px;
+  padding:11px 13px;display:flex;flex-direction:column;gap:7px;
 }
-.dc-kanji-card .syn-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.dc-kanji-card .trap-item{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;}
+.dc-kanji-card .trap-x{color:#b3402f;font-weight:800;font-size:.8rem;flex-shrink:0;}
+.dc-kanji-card .trap-r{font-family:'Noto Sans JP',sans-serif;font-size:.88rem;font-weight:700;color:#b3402f;flex-shrink:0;}
+.dc-kanji-card .trap-m{font-size:.78rem;color:#1a1a1a;line-height:1.5;}
+
+.dc-kanji-card .remember-box{
+  border:2px solid #9dc0da;border-radius:14px;overflow:hidden;
+}
+.dc-kanji-card .remember-head{
+  background:#1f4e79;color:#fff;
+  font-size:.72rem;font-weight:800;letter-spacing:.03em;padding:9px 13px;
+}
+.dc-kanji-card .remember-body{padding:13px 13px 3px;}
+.dc-kanji-card .remember-body .sec{margin-bottom:13px;}
+.dc-kanji-card .remember-sub{
+  font-size:.7rem;font-weight:800;
+  letter-spacing:.02em;color:#1f4e79;margin-bottom:7px;text-transform:uppercase;
+}
+.dc-kanji-card .item-list{display:flex;flex-direction:column;gap:7px;}
+.dc-kanji-card .item-card{
+  background:#fff;border:1px solid #9dc0da;border-radius:9px;
+  padding:9px 11px;font-family:'Noto Sans JP',sans-serif;font-size:.85rem;
+  color:#1a1a1a;line-height:1.55;overflow-wrap:break-word;
+}
+.dc-kanji-card .syn-chip-row{display:flex;flex-wrap:wrap;gap:6px;}
 .dc-kanji-card .syn-chip{
-  background:#e8f5e9;color:#1b5e20;
-  border:1px solid #a5d6a7;border-radius:20px;
-  padding:3px 11px;font-family:'Noto Sans JP',sans-serif;
-  font-size:.79rem;font-weight:600;
-}
-.dc-kanji-card .syn-chip.main{
-  background:#c8e6c9;border-color:#66bb6a;
-  font-weight:800;font-size:.83rem;
+  background:#fff;border:1px solid #9dc0da;color:#1f4e79;
+  border-radius:20px;padding:5px 12px;font-family:'Noto Sans JP',sans-serif;
+  font-size:.82rem;font-weight:700;
 }
 .dc-kanji-card mark{background:#fff59d;border-radius:3px;padding:0 2px;}
-@media(max-width:600px){.dc-kanji-card .k-big{font-size:2rem;}}
+@media(max-width:600px){
+  .dc-kanji-card .k-big{font-size:1.9rem;}
+  .dc-kanji-card .part-card{grid-template-columns:52px 1.2fr 1fr;}
+}
 <!--/STYLE-->
 <!--CARD-->
 <div class="dc-kanji-card{{{expandedClass}}}" data-nb-id="{{nbId}}" data-pinned="{{{pinnedAttr}}}" onclick="dcKanjiCardToggle(this)">
   <div class="card-head">
     <div class="k-big">{{{kHl}}}</div>
     <div class="k-meta">
-      <div class="k-reading">【{{{rHl}}}】</div>
-      <div class="k-meaning">{{{mHl}}}</div>
-      <div class="k-badge">{{rLabel}} [{{order}}]</div>
+      <div class="k-rm-row">
+        <span class="k-reading">{{{rHl}}}</span>
+        <span class="k-meaning">{{{mHl}}}</span>
+      </div>
     </div>
     <div class="card-head-right">
-      {{#if interactive}}
-      <button class="nb-btn{{{nbActiveClass}}}" data-nb="{{{nbData}}}" title="Thêm vào Sổ Tay" onclick="event.stopPropagation();dcKanjiCardToggleNotebook(this)">📓</button>
-      {{/if}}
+      <span class="k-badge">{{rLabel}} · từ {{order}}</span>
       <button class="speak-btn" data-speak="{{speakTxt}}" onclick="event.stopPropagation();dcKanjiCardSpeak(this)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
           <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
         </svg>
       </button>
       {{#if interactive}}
+      <button class="nb-btn{{{nbActiveClass}}}" data-nb="{{{nbData}}}" title="Thêm vào Sổ Tay" onclick="event.stopPropagation();dcKanjiCardToggleNotebook(this)">📓</button>
       <button class="expand-btn" onclick="event.stopPropagation();dcKanjiCardToggle(this.closest('.dc-kanji-card'))">▼</button>
       {{/if}}
     </div>
@@ -194,65 +178,82 @@
   <div class="card-detail">
     {{#if hasParts}}
     <div class="sec">
-      <div class="sec-label" style="color:#283593;">📊 Phân tích chữ Hán</div>
-      <table class="parts-table">
-        <thead><tr>
-          <th class="th-kanji">漢字</th>
-          <th class="th-hv">Hán Việt</th>
-          <th class="th-on">音読み</th>
-          <th class="th-kun">訓読み</th>
-          <th class="th-meaning">Nghĩa</th>
-        </tr></thead>
-        <tbody>
-          {{#each parts}}
-          <tr>
-            <td class="td-k">{{this.kanji}}</td>
-            <td class="td-hv">{{this.hanviet}}</td>
-            <td class="td-on">{{this.on}}</td>
-            <td class="td-kun">{{this.kun}}</td>
-            <td class="td-m">{{this.meaning}}</td>
-          </tr>
-          {{/each}}
-        </tbody>
-      </table>
+      <div class="sec-label">📊 Từng chữ Hán</div>
+      <div class="parts-list">
+        {{#each parts}}
+        <div class="part-card">
+          <div class="part-k">
+            <div class="td-k">{{this.kanji}}</div>
+            <div class="td-hv">{{this.hanviet}}</div>
+          </div>
+          <div class="part-yomi">
+            <div class="yomi-row"><span class="yomi-tag on">ON</span><span class="yomi-val on">{{this.on}}</span></div>
+            <div class="yomi-row"><span class="yomi-tag kun">KUN</span><span class="yomi-val kun">{{this.kun}}</span></div>
+          </div>
+          <div class="part-m">
+            <span class="m-tag">NGHĨA</span>
+            <div class="part-m-text">{{this.meaning}}</div>
+          </div>
+        </div>
+        {{/each}}
+      </div>
     </div>
     {{/if}}
     {{#if hasConfuse}}
-    <div class="confuse-box">
-      <div class="confuse-title">⚠ Điểm dễ nhầm</div>
-      <div class="confuse-text">{{confuse}}</div>
+    <div class="sec">
+      <div class="sec-label">💡 Mẹo nhớ cách đọc</div>
+      <div class="mnemonic-box">{{confuse}}</div>
     </div>
     {{/if}}
     {{#if hasWrong}}
-    <div class="wrong-sec">
-      <div class="wrong-label">❌ Bẫy đáp án</div>
-      <div class="wrong-list">
+    <div class="sec">
+      <div class="sec-label" style="color:#b3402f;">⚠ Dễ chọn nhầm</div>
+      <div class="trap-box">
         {{#each wrong}}
-        <div class="wrong-item">
-          <span class="wrong-r">{{this.r}}</span>
-          <span class="wrong-m">{{this.meaning}}</span>
+        <div class="trap-item">
+          <span class="trap-x">✕</span>
+          <span class="trap-r">{{this.r}}</span>
+          <span class="trap-m">{{this.meaning}}</span>
         </div>
         {{/each}}
       </div>
     </div>
     {{/if}}
     {{#if hasCollocations}}
-    <div class="col-sec">
-      <div class="col-label">🔗 Cụm hay dùng</div>
-      <div class="col-list">
-        {{#each collocations}}
-        <div class="col-item">{{this.text}}</div>
-        {{/each}}
+    <div class="sec remember-box">
+      <div class="remember-head">PHẢI NHỚ — CỤM CỐ ĐỊNH &amp; ĐỒNG NGHĨA</div>
+      <div class="remember-body">
+        <div class="sec">
+          <div class="remember-sub">Cụm cố định</div>
+          <div class="item-list">
+            {{#each collocations}}
+            <div class="item-card">{{this.text}}</div>
+            {{/each}}
+          </div>
+        </div>
+        <div class="sec">
+          <div class="remember-sub">Đồng nghĩa</div>
+          <div class="syn-chip-row">
+            {{#each synonyms}}
+            <span class="syn-chip">{{this.text}}</span>
+            {{/each}}
+          </div>
+        </div>
       </div>
     </div>
     {{/if}}
-    {{#if hasSynonyms}}
-    <div class="syn-sec">
-      <div class="syn-label">≈ Đồng nghĩa</div>
-      <div class="syn-chips">
-        {{#each synonyms}}
-        <span class="syn-chip{{this.mainClass}}">{{this.text}}</span>
-        {{/each}}
+    {{#if hasSynonymsOnly}}
+    <div class="sec remember-box">
+      <div class="remember-head">PHẢI NHỚ — ĐỒNG NGHĨA</div>
+      <div class="remember-body">
+        <div class="sec">
+          <div class="remember-sub">Đồng nghĩa</div>
+          <div class="syn-chip-row">
+            {{#each synonyms}}
+            <span class="syn-chip">{{this.text}}</span>
+            {{/each}}
+          </div>
+        </div>
       </div>
     </div>
     {{/if}}
