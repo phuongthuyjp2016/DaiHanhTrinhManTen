@@ -99,7 +99,7 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
 <div class="wrap">
   <h1>JLPT N1 — 問題4 用法クイズ</h1>
   <p class="sub">第83〜92回 ＋ 復習問題 全10セット</p>
-  <div id="menu-area"><div class="menu" id="menu"></div></div>
+  <div id="menu-area"><div id="m4-resume-banner" style="display:none"></div><div class="menu" id="menu"></div></div>
   <div id="quiz-area" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;">
       <button id="prev-btn-top" onclick="prevQ()" disabled style="flex:1;padding:9px;border-radius:8px;border:1px solid #c9a769;background:#e6d9b8;color:#7a5a3a;font-size:14px;cursor:pointer;font-family:inherit;">← 前へ</button>
@@ -122,6 +122,7 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
     <div class="btn-row">
       <button class="back-btn" onclick="goMenu()">← メニューへ</button>
       <button id="prev-btn" onclick="prevQ()" disabled style="padding:10px 16px;border-radius:8px;border:1px solid #c9a769;background:#e6d9b8;color:#7a5a3a;font-size:14px;cursor:pointer;font-family:inherit;">← 前へ</button>
+      <button id="skip-btn" onclick="skipQ()" style="padding:10px 16px;border-radius:8px;border:1px solid #c9a769;background:none;color:#7a5a3a;font-size:14px;cursor:pointer;font-family:inherit;">Bỏ qua →</button>
       <button class="next-btn" id="next-btn">次へ →</button>
     </div>
   </div>
@@ -436,11 +437,19 @@ function buildFeedback(q, chosen){
   return h;
 }
 
+function allAllQs(){
+  var out=[];
+  sections.forEach(function(sec){ sec[1].forEach(function(r){ out=out.concat(allData[r].qs); }); });
+  return out;
+}
+
 function resumeProgress(){
   var prog=loadProgress();
-  if(!prog||!allData[prog.round]) return;
+  if(!prog) return;
+  var qs = prog.round==='__ALL__' ? allAllQs() : (allData[prog.round] && allData[prog.round].qs);
+  if(!qs) return;
   currentRound=prog.round;
-  shuffled=allData[prog.round].qs.slice();
+  shuffled=qs.slice();
   cur=Math.min(prog.cur, shuffled.length-1);
   score=0; answered=false; wrongItems=[];
   document.getElementById('menu-area').style.display='none';
@@ -449,9 +458,28 @@ function resumeProgress(){
   showQ();
 }
 
+function renderM4ResumeBanner(){
+  var el=document.getElementById('m4-resume-banner');
+  var prog=loadProgress();
+  var qs = prog && (prog.round==='__ALL__' ? allAllQs() : (allData[prog.round] && allData[prog.round].qs));
+  if(!prog || !qs || prog.cur<1 || prog.cur>=qs.length){ el.style.display='none'; return; }
+  var roundLabel = prog.round==='__ALL__' ? 'Tất cả' : prog.round;
+  el.style.display='';
+  el.innerHTML='<div style="background:#fff8e6;border:2px solid #f5a623;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px">'
+    +'<span>📍 Lần trước bạn đang làm dở <b style="color:#b9761a">'+roundLabel+'</b>, dừng ở câu <b style="color:#b9761a">'+(prog.cur+1)+'/'+qs.length+'</b></span>'
+    +'<div style="display:flex;gap:8px"><button onclick="resumeProgress()" style="background:#f5a623;color:#5a3b22;border:none;border-radius:7px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer">Tiếp tục →</button>'
+    +'<button onclick="localStorage.removeItem(\'mondai4_progress\');renderM4ResumeBanner();" style="background:#eee;color:#666;border:none;border-radius:7px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer">Xóa</button></div></div>';
+}
+
 function buildMenu(){
   const menu = document.getElementById('menu');
   menu.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'menu-btn' + (scores['__ALL__']!==undefined?' done':'');
+  const allChip = scores['__ALL__']!==undefined?`<span class="score-chip">${scores['__ALL__']}/${TOTAL_Q4}</span>`:'';
+  allBtn.innerHTML = `<div class="round-title">🔀 Tất cả (toàn bộ ${TOTAL_Q4} câu) ${allChip}</div>`;
+  allBtn.onclick = ()=>startRound('__ALL__');
+  menu.appendChild(allBtn);
   sections.forEach(sec => {
     const lbl = document.createElement('div');
     lbl.className = 'section-label';
@@ -478,7 +506,7 @@ function loadProgress(){
 
 function startRound(r){
   currentRound = r;
-  shuffled = allData[r].qs.slice();
+  shuffled = (r==='__ALL__' ? allAllQs() : allData[r].qs).slice();
   cur = 0; score = 0; answered = false; wrongItems = [];
   document.getElementById('menu-area').style.display='none';
   document.getElementById('score-card').classList.remove('show');
@@ -548,6 +576,7 @@ function pick(chosen){
   }
   localStorage.setItem('dao2_mondai4_correct',JSON.stringify(allCorrect4));
   reportToolProgress(allCorrect4.length,TOTAL_Q4);
+  saveProgress(currentRound, cur);
   var nb=document.getElementById('next-btn');
   nb.textContent=cur<shuffled.length-1?'次へ →':'結果を見る →';
   nb.classList.add('show');
@@ -568,11 +597,23 @@ function prevQ(){
   document.getElementById('feedback').style.display='none';
   document.getElementById('next-btn').classList.remove('show');
   var nbt=document.getElementById('next-btn-top'); if(nbt) nbt.style.display='none';
+  saveProgress(currentRound, cur);
   showQ();
+}
+
+function skipQ(){
+  if(!answered){
+    answered=true;
+    document.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});
+  }
+  cur++;
+  if(cur>=shuffled.length) showScore();
+  else { saveProgress(currentRound, cur); showQ(); }
 }
 
 function showScore(){
   scores[currentRound]=score;
+  try{ localStorage.removeItem('mondai4_progress'); }catch(e){}
   document.getElementById('quiz-area').style.display='none';
   document.getElementById('prog').style.width='100%';
   const sc=document.getElementById('score-card');
@@ -596,21 +637,24 @@ function goMenu(){
   document.getElementById('quiz-area').style.display='none';
   document.getElementById('score-card').classList.remove('show');
   document.getElementById('menu-area').style.display='';
+  buildMenu();
+  renderM4ResumeBanner();
 }
 
 function nextQ(){
   cur++;
   if(cur>=shuffled.length) showScore();
-  else showQ();
+  else { saveProgress(currentRound, cur); showQ(); }
 }
 
 document.getElementById('next-btn').onclick=function(){
   cur++;
   if(cur>=shuffled.length) showScore();
-  else showQ();
+  else { saveProgress(currentRound, cur); showQ(); }
 };
 
 buildMenu();
+renderM4ResumeBanner();
 </script>
 </body>
 </html>
