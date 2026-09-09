@@ -219,6 +219,7 @@
 <div class="footer-icons">
   <div class="footer-left">
     <button class="back-btn" id="back-btn" onclick="goBack()" disabled>← Câu trước</button>
+    <button class="back-btn" id="skip-btn" onclick="skipQuestion()">Bỏ qua →</button>
     <span class="progress-label" id="progress-label"></span>
   </div>
   <div class="footer-right">
@@ -866,6 +867,8 @@ function updateStats() {
   // back button
   const backBtn = document.getElementById('back-btn');
   if (backBtn) backBtn.disabled = (history.length === 0);
+  const skipBtn = document.getElementById('skip-btn');
+  if (skipBtn) skipBtn.style.display = (idx >= deck.length) ? 'none' : '';
   // progress label
   const pl = document.getElementById('progress-label');
   if (pl) pl.textContent = idx > 0 ? '📍 ' + modeLabel(currentMode) + ' · câu ' + (idx+1) : '';
@@ -966,6 +969,14 @@ function pick(i) {
 }
 
 function nextQ() { window.speechSynthesis.cancel(); idx++; updateStats(); renderQuestion(); }
+
+function skipQuestion() {
+  if (!answered) {
+    answered = true;
+    opts.forEach((o,j) => { const btn=document.getElementById('opt'+j); if(btn) btn.disabled = true; });
+  }
+  nextQ();
+}
 
 function renderDone(el) {
   const t = okCount+ngCount;
