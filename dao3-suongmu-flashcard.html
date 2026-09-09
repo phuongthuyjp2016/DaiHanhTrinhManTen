@@ -64,6 +64,12 @@
   }
   button:active{transform:scale(.95);}
   .btn-nav{background:#e4d6fa; color:#4b2e8c;}
+  .resume-banner{background:#fff8ec;border:2px solid var(--accent);border-radius:12px;padding:11px 14px;margin-bottom:10px;width:100%;max-width:480px;font-size:13px;color:var(--text);}
+  .resume-banner b{color:var(--accent);}
+  .resume-banner button{border:none;border-radius:7px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;}
+  .resume-go{background:var(--accent);color:#fff;}
+  .resume-clear{background:#eee;color:#666;}
+  .btn-skip{background:#fff;color:var(--muted);border:1.5px solid #d8c4f2;font-weight:600;}
   .btn-flip{background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff;}
   .btn-know{background:#fff; color:var(--good); border:1.5px solid var(--good); font-weight:700;}
   .btn-unknow{background:#fff; color:var(--bad); border:1.5px solid var(--bad); font-weight:700;}
@@ -90,6 +96,8 @@
 
 <h1>📘 Flashcard Ngữ pháp N1</h1>
 <div class="sub" id="subtitle">99 mẫu ngữ pháp N1 + 8 mẫu 限り (107 thẻ) — bấm vào thẻ để xem nghĩa</div>
+
+<div id="flashcard-resume-banner" style="display:none"></div>
 
 <div class="topbar">
   <select id="rangeSelect">
@@ -127,6 +135,9 @@
   <div class="row2">
     <button class="btn-unknow" id="btnUnknow">❌ Chưa thuộc</button>
     <button class="btn-know" id="btnKnow">✅ Đã thuộc</button>
+  </div>
+  <div class="row2" style="margin-top:8px">
+    <button class="btn-skip" id="btnSkip">⏭ Bỏ qua</button>
   </div>
 </div>
 
@@ -318,6 +329,46 @@ function renderCard(){
   progressFill.style.width = ((pos)/activeList.length*100) + "%";
   knowCountEl.textContent = known.size;
   unknowCountEl.textContent = unknown.size;
+  saveFlashcardProgress();
+}
+
+const FLASHCARD_PROGRESS_KEY = 'suongmu_flashcard_progress';
+function saveFlashcardProgress(){
+  try{
+    localStorage.setItem(FLASHCARD_PROGRESS_KEY, JSON.stringify({
+      activeList: activeList, pos: pos, known: [...known], unknown: [...unknown],
+      rangeVal: document.getElementById('rangeSelect').value
+    }));
+  }catch(e){}
+}
+function loadFlashcardProgress(){
+  try{ return JSON.parse(localStorage.getItem(FLASHCARD_PROGRESS_KEY)||'null'); }catch(e){ return null; }
+}
+function clearFlashcardProgress(){
+  try{ localStorage.removeItem(FLASHCARD_PROGRESS_KEY); }catch(e){}
+  const el = document.getElementById('flashcard-resume-banner');
+  if(el) el.style.display='none';
+}
+const _flashcardResumeSnapshot = loadFlashcardProgress();
+function renderFlashcardResumeBanner(){
+  const banner = document.getElementById('flashcard-resume-banner');
+  if(!banner) return;
+  const p = _flashcardResumeSnapshot;
+  if(!p || !p.activeList || p.pos<1 || p.pos>=p.activeList.length){ banner.style.display='none'; return; }
+  banner.style.display='';
+  banner.innerHTML = '<div class="resume-banner">📍 Lần trước dừng ở thẻ <b>'+(p.pos+1)+'/'+p.activeList.length+'</b> (thuộc '+p.known.length+', chưa thuộc '+p.unknown.length+')'
+    + '<div style="display:flex;gap:8px;margin-top:6px"><button class="resume-go" onclick="continueFlashcard()">Tiếp tục →</button><button class="resume-clear" onclick="clearFlashcardProgress()">Xóa</button></div></div>';
+}
+function continueFlashcard(){
+  const p = _flashcardResumeSnapshot;
+  if(!p) return;
+  activeList = p.activeList;
+  pos = p.pos;
+  known = new Set(p.known);
+  unknown = new Set(p.unknown);
+  if(p.rangeVal) document.getElementById('rangeSelect').value = p.rangeVal;
+  renderCard();
+  document.getElementById('flashcard-resume-banner').style.display='none';
 }
 
 function flip(){
@@ -348,6 +399,7 @@ document.getElementById('btnUnknow').onclick = ()=>{
   unknown.add(i); known.delete(i);
   next();
 };
+document.getElementById('btnSkip').onclick = next;
 
 document.getElementById('shuffleBtn').onclick = ()=>{
   for(let i=activeList.length-1;i>0;i--){
@@ -377,6 +429,7 @@ document.getElementById('restartBtn').onclick = ()=>{
 };
 
 renderCard();
+renderFlashcardResumeBanner();
 </script>
 </body>
 </html>
