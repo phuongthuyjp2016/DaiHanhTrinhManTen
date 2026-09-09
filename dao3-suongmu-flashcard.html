@@ -99,6 +99,8 @@
 
 <div id="flashcard-resume-banner" style="display:none"></div>
 
+<input type="text" id="cardSearch" placeholder="🔍 Tìm theo mẫu ngữ pháp hoặc nghĩa..." style="width:100%;max-width:480px;padding:8px 14px;border:1px solid #d8c4f2;border-radius:10px;font-family:inherit;font-size:13px;margin-bottom:8px;box-sizing:border-box;background:#fff">
+
 <div class="topbar">
   <select id="rangeSelect">
     <option value="1-107">Tất cả (1–107)</option>
@@ -410,17 +412,30 @@ document.getElementById('shuffleBtn').onclick = ()=>{
   renderCard();
 };
 
-document.getElementById('rangeSelect').onchange = (e)=>{
-  const val = e.target.value;
+let cardSearchQuery = '';
+function getRangeIndices(){
+  const val = document.getElementById('rangeSelect').value;
   if(val === 'unknown'){
-    activeList = Array.from(unknown);
-    if(activeList.length===0){ activeList = order.slice(); alert('Chưa có thẻ nào đánh dấu "chưa thuộc", hiển thị tất cả.'); }
-  } else {
-    const [a,b] = val.split('-').map(Number);
-    activeList = order.slice(a-1,b);
+    let list = Array.from(unknown);
+    if(list.length===0){ list = order.slice(); alert('Chưa có thẻ nào đánh dấu "chưa thuộc", hiển thị tất cả.'); }
+    return list;
   }
+  const [a,b] = val.split('-').map(Number);
+  return order.slice(a-1,b);
+}
+function applyCardFilters(){
+  let list = getRangeIndices();
+  if(cardSearchQuery){
+    list = list.filter(i => data[i].p.toLowerCase().includes(cardSearchQuery) || data[i].m.toLowerCase().includes(cardSearchQuery));
+  }
+  activeList = list;
   pos = 0;
   renderCard();
+}
+document.getElementById('rangeSelect').onchange = applyCardFilters;
+document.getElementById('cardSearch').oninput = (e)=>{
+  cardSearchQuery = e.target.value.trim().toLowerCase();
+  applyCardFilters();
 };
 
 document.getElementById('restartBtn').onclick = ()=>{
