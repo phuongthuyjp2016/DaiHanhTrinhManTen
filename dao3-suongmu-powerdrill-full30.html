@@ -176,6 +176,13 @@ section#quiz{display:none;}
   border-radius:2px;
 }
 .q-item{margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--line);}
+.skip-btn{float:right;background:none;border:1px solid var(--line);color:var(--ink-soft);font-size:11.5px;padding:3px 10px;border-radius:12px;cursor:pointer;font-family:inherit;}
+.skip-btn:hover{border-color:var(--gold);color:var(--gold);}
+.resume-banner{background:#fdf6e8;border:2px solid var(--gold);border-radius:6px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--ink);}
+.resume-banner b{color:var(--hanko);}
+.resume-banner button{border:none;border-radius:5px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;margin-top:8px;}
+.resume-go{background:var(--gold);color:#fff;}
+.resume-clear{background:#eee;color:#666;margin-left:8px;}
 .q-item:last-child{border-bottom:none;}
 .q-num{
   font-family:"Helvetica Neue",Arial,sans-serif;
@@ -314,7 +321,9 @@ footer{
   <nav class="crumb" id="crumb"><button onclick="goHome()">⟵ 一覧へ戻る</button></nav>
 
   <section id="home">
+    <div id="drill-resume-banner" style="display:none"></div>
     <div class="section-label">文法 第1回〜第30回</div>
+    <div class="grid" id="allRoundsGrid"></div>
     <div class="grid" id="roundGrid"></div>
 
     <div class="section-label">集中トレーニング</div>
@@ -480,6 +489,14 @@ function onWrongAnswer() {
 }
 
 function buildHome(){
+  const ag = document.getElementById('allRoundsGrid');
+  const doneAll = RESULTS['all'];
+  ag.innerHTML = `<div class="tile" style="grid-column:1/-1;text-align:left;display:flex;align-items:center;justify-content:space-between;">
+    <div><div class="num" style="font-size:16px">🔀 Làm tất cả 30 vòng</div><div class="lab">Toàn bộ câu hỏi, liên tục</div></div>
+    ${doneAll? `<div class="score-pill">${doneAll.score}/${doneAll.total}</div>` : ''}
+  </div>`;
+  ag.querySelector('.tile').onclick = ()=>openAllRounds();
+  renderDrillResumeBanner();
   const rg = document.getElementById('roundGrid');
   rg.innerHTML = '';
   QUIZ_DATA.rounds.forEach(r=>{
@@ -517,17 +534,63 @@ function goHome(){
   window.scrollTo(0,0);
 }
 
-function openRound(id){
+function openRound(id, restoredAnswers){
   const r = QUIZ_DATA.rounds.find(x=>x.id===id);
-  state = {mode:'round', id, answers:{}, submitted:false};
+  state = {mode:'round', id, answers:restoredAnswers||{}, submitted:false};
   renderRound(r);
   showQuiz();
+  reapplyAnsweredState();
 }
-function openTraining(id){
+function openTraining(id, restoredAnswers){
   const t = QUIZ_DATA.trainings.find(x=>x.id===id);
-  state = {mode:'train', id, answers:{}, submitted:false};
+  state = {mode:'train', id, answers:restoredAnswers||{}, submitted:false};
   renderTraining(t);
   showQuiz();
+  reapplyAnsweredState();
+}
+function openAllRounds(restoredAnswers){
+  state = {mode:'all', id:null, answers:restoredAnswers||{}, submitted:false};
+  renderAllRounds();
+  showQuiz();
+  reapplyAnsweredState();
+}
+function renderAllRounds(){
+  document.getElementById('quizTitle').textContent = '🔀 Tất cả';
+  const totalQ = QUIZ_DATA.rounds.reduce((s,r)=>s+r.parts.reduce((s2,p)=>s2+p.items.length,0),0);
+  document.getElementById('quizMeta').textContent = totalQ + '問';
+  let html = '';
+  QUIZ_DATA.rounds.forEach(r=>{
+    html += `<div class="part-title" style="margin-top:22px;font-weight:700">${r.name}</div>`;
+    r.parts.forEach((part,pIdx)=>{
+      html += `<div class="part" data-part="${r.id}_${pIdx}"><div class="part-title">${part.title}</div>`;
+      if(part.missing_note){
+        html += `<div class="notebox">${part.missing_note}</div>`;
+      }
+      if(part.type==='reading' && part.passage){
+        html += `<div class="passage">${escapeHtml(part.passage)}</div>`;
+      }
+      part.items.forEach((it,iIdx)=>{
+        const id = r.id+'_'+pIdx+'_'+iIdx;
+        const label = part.type==='reading' ? ('【'+it.label+'】') : (iIdx+1);
+        const qtext = part.type==='order' ? it.q.replace('___','＿＿').replace('★','【★】') : it.q;
+        const correctText = it.o[it.a-1];
+        const optsJson = escapeAttr(JSON.stringify(it.o));
+        const viText = it.vi ? escapeAttr(it.vi) : '';
+        const hintText = it.hint ? escapeAttr(it.hint) : '';
+        html += `<div class="q-item" data-q="${id}" data-correct-text="${escapeAttr(correctText)}" data-ptype="${part.type}" data-opts="${optsJson}" data-vi="${viText}" data-hint="${hintText}">
+          <button class="skip-btn" onclick="skipQItem('${id}')">Bỏ qua</button>
+          <span class="q-num">${label}</span><span class="q-text">${escapeHtml(qtext)}</span>
+          <div class="opts">`;
+        it.o.forEach((opt,oIdx)=>{
+          html += optHtml(id,oIdx,opt,it.a-1);
+        });
+        html += `</div><div class="hint-box" id="hint_${id}"></div><div class="explain" id="exp_${id}"></div></div>`;
+      });
+      html += `</div>`;
+    });
+  });
+  document.getElementById('quizBody').innerHTML = html;
+  attachOptHandlers();
 }
 function showQuiz(){
   document.getElementById('home').style.display='none';
@@ -561,6 +624,7 @@ function renderRound(r){
       const viText = it.vi ? escapeAttr(it.vi) : '';
       const hintText = it.hint ? escapeAttr(it.hint) : '';
       html += `<div class="q-item" data-q="${id}" data-correct-text="${escapeAttr(correctText)}" data-ptype="${part.type}" data-opts="${optsJson}" data-vi="${viText}" data-hint="${hintText}">
+        <button class="skip-btn" onclick="skipQItem('${id}')">Bỏ qua</button>
         <span class="q-num">${label}</span><span class="q-text">${escapeHtml(qtext)}</span>
         <div class="opts">`;
       it.o.forEach((opt,oIdx)=>{
@@ -584,6 +648,7 @@ function renderTraining(t){
     const optsJson = escapeAttr(JSON.stringify([it.a,it.b]));
     const viText = it.vi ? escapeAttr(it.vi) : '';
     html += `<div class="q-item" data-q="${id}" data-correct-text="${escapeAttr(correctText)}" data-ptype="ab" data-opts="${optsJson}" data-vi="${viText}" data-hint="">
+      <button class="skip-btn" onclick="skipQItem('${id}')">Bỏ qua</button>
       <span class="q-num">${iIdx+1}</span><span class="q-text">${escapeHtml(it.q)}</span>
       <div class="ab-row">
         ${optHtmlAB(id,'a',it.a,it.ans)}
@@ -627,7 +692,7 @@ function attachOptHandlers(){
       if(!isCorrect) { el.classList.add('wrong'); onWrongAnswer(); }
       else {
         el.classList.add('sel');
-        const globalQid = state.mode+'_'+state.id+'_'+qidStr;
+        const globalQid = state.mode==='all' ? ('round_'+qidStr) : (state.mode+'_'+state.id+'_'+qidStr);
         if(!everCorrect.has(globalQid)){
           everCorrect.add(globalQid);
           try{ localStorage.setItem(EVER_CORRECT_KEY, JSON.stringify([...everCorrect])); }catch(e){}
@@ -648,9 +713,106 @@ function attachOptHandlers(){
       showExplain(qidStr, correctText, ptype, optsList, viText, selectedText);
 
       updateLiveScore();
+      saveDrillProgress();
     });
   });
   updateLiveScore();
+}
+
+function skipQItem(qidStr){
+  if(state.answers[qidStr] !== undefined) return;
+  state.answers[qidStr] = '__skip__';
+  const group = document.querySelectorAll(`.opt[data-qid="${qidStr}"]`);
+  group.forEach(o=>{
+    o.style.pointerEvents = 'none';
+    if(o.getAttribute('data-correct')==='true'){ o.classList.add('correct'); }
+  });
+  const qItem = document.querySelector(`.q-item[data-q="${qidStr}"]`);
+  if(qItem){
+    const correctText = qItem.getAttribute('data-correct-text');
+    const ptype = qItem.getAttribute('data-ptype');
+    let optsList = [];
+    try{ optsList = JSON.parse(qItem.getAttribute('data-opts')||'[]'); }catch(e){}
+    const viText = qItem.getAttribute('data-vi') || '';
+    showExplain(qidStr, correctText, ptype, optsList, viText, '');
+  }
+  updateLiveScore();
+  saveDrillProgress();
+}
+
+function reapplyAnsweredState(){
+  Object.keys(state.answers).forEach(qidStr=>{
+    const val = state.answers[qidStr];
+    const group = document.querySelectorAll(`.opt[data-qid="${qidStr}"]`);
+    if(!group.length) return;
+    group.forEach(o=>{
+      o.style.pointerEvents = 'none';
+      if(o.getAttribute('data-correct')==='true') o.classList.add('correct');
+      else if(o.getAttribute('data-val')===val) o.classList.add('wrong');
+    });
+    const qItem = document.querySelector(`.q-item[data-q="${qidStr}"]`);
+    if(!qItem) return;
+    const correctText = qItem.getAttribute('data-correct-text');
+    const ptype = qItem.getAttribute('data-ptype');
+    let optsList = [];
+    try{ optsList = JSON.parse(qItem.getAttribute('data-opts')||'[]'); }catch(e){}
+    const viText = qItem.getAttribute('data-vi') || '';
+    const hintText = qItem.getAttribute('data-hint') || '';
+    if(hintText) showHint(qidStr, hintText);
+    let selectedText = '';
+    if(val !== '__skip__'){
+      const selEl = document.querySelector(`.opt[data-qid="${qidStr}"][data-val="${val}"]`);
+      if(selEl) selectedText = selEl.querySelector('span:last-child').textContent;
+    }
+    showExplain(qidStr, correctText, ptype, optsList, viText, selectedText);
+  });
+  updateLiveScore();
+}
+
+const DRILL_PROGRESS_KEY = 'jpdrill_progress';
+function saveDrillProgress(){
+  try{ localStorage.setItem(DRILL_PROGRESS_KEY, JSON.stringify({mode:state.mode, id:state.id, answers:state.answers})); }catch(e){}
+}
+function loadDrillProgress(){
+  try{ return JSON.parse(localStorage.getItem(DRILL_PROGRESS_KEY)||'null'); }catch(e){ return null; }
+}
+function clearDrillProgress(){
+  try{ localStorage.removeItem(DRILL_PROGRESS_KEY); }catch(e){}
+  const el = document.getElementById('drill-resume-banner');
+  if(el) el.style.display='none';
+}
+function renderDrillResumeBanner(){
+  const el = document.getElementById('drill-resume-banner');
+  if(!el) return;
+  const p = loadDrillProgress();
+  const answeredCount = p ? Object.keys(p.answers||{}).length : 0;
+  if(!p || answeredCount<1){ el.style.display='none'; return; }
+  let label = '', total = 0;
+  if(p.mode==='round'){
+    const r = QUIZ_DATA.rounds.find(x=>x.id===p.id);
+    if(!r){ el.style.display='none'; return; }
+    label = r.name;
+    total = r.parts.reduce((s,pt)=>s+pt.items.length,0);
+  } else if(p.mode==='all'){
+    label = 'Tất cả';
+    total = QUIZ_DATA.rounds.reduce((s,r)=>s+r.parts.reduce((s2,pt)=>s2+pt.items.length,0),0);
+  } else {
+    const t = QUIZ_DATA.trainings.find(x=>x.id===p.id);
+    if(!t){ el.style.display='none'; return; }
+    label = t.name;
+    total = t.items.length;
+  }
+  if(answeredCount>=total){ el.style.display='none'; return; }
+  el.style.display='';
+  el.innerHTML = `<div class="resume-banner">📍 Lần trước bạn đang làm dở <b>${label}</b>, đã trả lời <b>${answeredCount}/${total}</b> câu.
+    <div><button class="resume-go" onclick="continueDrill()">Tiếp tục →</button><button class="resume-clear" onclick="clearDrillProgress()">Xóa</button></div></div>`;
+}
+function continueDrill(){
+  const p = loadDrillProgress();
+  if(!p) return;
+  if(p.mode==='round') openRound(p.id, p.answers);
+  else if(p.mode==='all') openAllRounds(p.answers);
+  else openTraining(p.id, p.answers);
 }
 
 function countTotalAnswered(){
@@ -665,6 +827,19 @@ function countTotalAnswered(){
           answered++;
           if(parseInt(state.answers[id])===it.a-1) score++;
         }
+      });
+    });
+  } else if(state.mode==='all'){
+    QUIZ_DATA.rounds.forEach(r=>{
+      r.parts.forEach((part,pIdx)=>{
+        part.items.forEach((it,iIdx)=>{
+          total++;
+          const id = r.id+'_'+pIdx+'_'+iIdx;
+          if(state.answers[id]!==undefined){
+            answered++;
+            if(parseInt(state.answers[id])===it.a-1) score++;
+          }
+        });
       });
     });
   } else {
@@ -693,9 +868,10 @@ function updateLiveScore(){
     </div>`;
   if(done){
     state.submitted = true;
-    const key = (state.mode==='round'?'r_':'t_')+state.id;
+    const key = state.mode==='round' ? 'r_'+state.id : (state.mode==='all' ? 'all' : 't_'+state.id);
     RESULTS[key] = {score,total};
     saveResults();
+    clearDrillProgress();
   }
 }
 
@@ -755,6 +931,7 @@ function showExplain(qidStr, correctText, ptype, optsList, viText, selectedText)
 
 function retryQuiz(){
   if(state.mode==='round') openRound(state.id);
+  else if(state.mode==='all') openAllRounds();
   else openTraining(state.id);
 }
 
