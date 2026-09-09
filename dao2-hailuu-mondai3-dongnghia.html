@@ -57,7 +57,15 @@ body.nb-embed .container{padding-top:10px}
 .eh{font-size:12px;color:#4fad9c;background:#e5f6f1;padding:1px 6px;border-radius:5px;margin-left:6px}
 .esyi{display:inline-block;font-size:12px;background:#e5f6f1;color:#0f5c4d;border-radius:6px;padding:2px 8px;margin:2px 2px 2px 0}
 .esyi.pri{background:#1f8a76;color:#fff}
-.bnav{display:flex;justify-content:flex-end;margin-top:4px}
+.bnav{display:flex;justify-content:space-between;margin-top:4px}
+.bskip{background:none;border:1px solid #c9a769;color:#7a5a3a;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer}
+.bskip:hover{background:#fdf6e8}
+.m3-resume{background:#fff8e6;border:2px solid #f5a623;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}
+.m3-resume b{color:#b9761a}
+.m3-resume-btns{display:flex;gap:8px}
+.m3-resume button{border:none;border-radius:7px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer}
+.m3-resume .m3-go{background:#f5a623;color:#5a3b22}
+.m3-resume .m3-clear{background:#eee;color:#666}
 .bnext{background:linear-gradient(180deg,#ffd25a,#f5a623);color:#5a3b22;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:700;cursor:pointer;display:none;width:100%}
 .bnext.show{display:block}
 .res{background:#fdf6e8;border-radius:12px;border:1px solid #c9a769;padding:32px 20px;text-align:center;display:none}
@@ -118,6 +126,7 @@ body.nb-embed .container{padding-top:10px}
 </div>
 <div id="tq" style="display:none">
   <div class="qsetup" id="qs">
+    <div id="m3-resume-banner" style="display:none"></div>
     <h2>練習設定</h2>
     <div class="srow"><label>出題範囲</label>
       <select id="qr">
@@ -148,7 +157,7 @@ body.nb-embed .container{padding-top:10px}
     </div>
     <div class="og" id="og"></div>
     <div class="exp" id="exp"></div>
-    <div class="bnav"><button class="bnext" id="bn" onclick="nextQ()">次の問題 →</button></div>
+    <div class="bnav"><button class="bskip" id="bs" onclick="skipQ()">Bỏ qua →</button><button class="bnext" id="bn" onclick="nextQ()">次の問題 →</button></div>
   </div>
   <div class="res" id="res">
     <div class="rs" id="rsc">0</div><div class="rt" id="rtl">/0問</div>
@@ -325,12 +334,31 @@ function rv(list){
     return dcRenderCardTemplate(CARD_TEMPLATE,data);
   }).join('');
 }
-function startQ(){var rf=document.getElementById('qr').value;var cs=document.getElementById('qc').value;var pool=rf==='all'?V.slice():V.filter(function(v){return v.r===rf;});var cnt=cs==='all'?pool.length:Math.min(parseInt(cs),pool.length);qq=pool.slice(0,cnt);qi=0;sc=0;document.getElementById('qs').style.display='none';document.getElementById('qa').classList.add('active');document.getElementById('res').classList.remove('show');showQ();}
+var M3_PROGRESS_KEY='dao2_mondai3_progress';
+function saveM3Progress(){try{localStorage.setItem(M3_PROGRESS_KEY,JSON.stringify({qr:document.getElementById('qr').value,qc:document.getElementById('qc').value,qi:qi,sc:sc,total:qq.length}));}catch(e){}}
+function loadM3Progress(){try{return JSON.parse(localStorage.getItem(M3_PROGRESS_KEY)||'null');}catch(e){return null;}}
+function clearM3Progress(){try{localStorage.removeItem(M3_PROGRESS_KEY);}catch(e){}document.getElementById('m3-resume-banner').style.display='none';}
+function renderM3ResumeBanner(){
+  var el=document.getElementById('m3-resume-banner');
+  var p=loadM3Progress();
+  if(!p||p.qi<1||p.qi>=p.total){el.style.display='none';return;}
+  el.style.display='';
+  el.innerHTML='<div class="m3-resume"><span>📍 Lần trước bạn đang làm dở, dừng ở câu <b>'+(p.qi+1)+'/'+p.total+'</b> (đúng '+p.sc+')</span><div class="m3-resume-btns"><button class="m3-go" onclick="continueM3()">Tiếp tục →</button><button class="m3-clear" onclick="clearM3Progress()">Xóa</button></div></div>';
+}
+function continueM3(){
+  var p=loadM3Progress();
+  if(!p)return;
+  document.getElementById('qr').value=p.qr;
+  document.getElementById('qc').value=p.qc;
+  startQ(p.qi,p.sc);
+}
+function startQ(resumeIdx,resumeSc){var rf=document.getElementById('qr').value;var cs=document.getElementById('qc').value;var pool=rf==='all'?V.slice():V.filter(function(v){return v.r===rf;});var cnt=cs==='all'?pool.length:Math.min(parseInt(cs),pool.length);qq=pool.slice(0,cnt);qi=resumeIdx||0;sc=resumeSc||0;document.getElementById('qs').style.display='none';document.getElementById('qa').classList.add('active');document.getElementById('res').classList.remove('show');showQ();}
 function showQ(){var q=qq[qi],tot=qq.length;document.getElementById('qn').textContent=(qi+1)+' / '+tot;document.getElementById('sm').textContent='正解: '+sc;document.getElementById('pb').style.width=((qi/tot)*100)+'%';document.getElementById('qk').textContent=q.k;document.getElementById('qhi').textContent=q.h;document.getElementById('qmt').textContent='第'+q.r+'回 · '+q.p;var s=q.s;if(s.indexOf(q.k)>=0){s=s.replace(q.k,'<span class="ul">'+q.k+'</span>');}else if(s.indexOf(q.h)>=0){s=s.replace(q.h,'<span class="ul">'+q.h+'</span>');}currentSentence=q.s;document.getElementById('qsen').innerHTML=s;document.getElementById('qqn').textContent=q.n||'';document.getElementById('qvt').textContent=q.vi||'';document.getElementById('qvi').style.display='none';document.getElementById('og').innerHTML=q.op.map(function(o,i){return '<button class="ob" onclick="sel('+i+')" id="o'+i+'"><span class="nm">'+(i+1)+'</span>'+o+'</button>';}).join('');document.getElementById('exp').classList.remove('show');document.getElementById('bn').classList.remove('show');ans=false;}
-function sel(c){if(ans)return;ans=true;var q=qq[qi],co=q.a;if(c===co){sc++;if(allCorrect.indexOf(q.k)<0)allCorrect.push(q.k);onCorrectAnswer();}else{onWrongAnswer();}localStorage.setItem('dao2_mondai3_correct',JSON.stringify(allCorrect));reportToolProgress(allCorrect.length,V.length);for(var i=0;i<q.op.length;i++){var b=document.getElementById('o'+i);b.disabled=true;if(i===co)b.classList.add(c===co&&i===c?'ok':'rv');if(i===c&&c!==co)b.classList.add('ng');}var sh=q.sy.map(function(s,i){return '<span class="esyi'+(i===0?' pri':'')+'">'+ s+'</span>';}).join('');document.getElementById('exp').innerHTML='<div style="margin-bottom:8px"><span class="ew">'+q.k+'</span><span class="eh">'+q.h+'</span></div><div style="font-size:13px;color:#333;margin:4px 0">📖 '+q.m+'</div><div style="font-size:12px;color:#b45309;background:#FFFBEB;border-radius:6px;padding:3px 8px;margin:4px 0;display:inline-block">🇻🇳 '+(q.vi||'')+'</div><div style="margin:8px 0"><span style="font-size:11px;color:#4fad9c;font-weight:500">≒ 類義語：</span><br>'+sh+'</div><div style="font-size:11px;color:#888">📌 '+q.co.map(function(c){return '<span class="ct">'+c+'</span>';}).join('')+'</div>';if(q.vi){document.getElementById('qvi').style.display='inline-block';}document.getElementById('exp').classList.add('show');document.getElementById('sm').textContent='正解: '+sc;document.getElementById('bn').classList.add('show');}
-function nextQ(){qi++;if(qi>=qq.length)showRes();else showQ();}
-function showRes(){document.getElementById('qa').classList.remove('active');document.getElementById('res').classList.add('show');var tot=qq.length,pct=Math.round((sc/tot)*100);document.getElementById('rsc').textContent=sc;document.getElementById('rtl').textContent='/ '+tot+' 問';document.getElementById('rmsg').textContent=(pct>=90?'🎉 素晴らしい！N1合格レベルです！':pct>=70?'👍 よくできました！':pct>=50?'📚 復習が必要です。':'💪 もっと練習！')+'（正答率: '+pct+'%）';}
-function resetQ(){document.getElementById('res').classList.remove('show');document.getElementById('qs').style.display='';document.getElementById('qa').classList.remove('active');}
+function sel(c){if(ans)return;ans=true;var q=qq[qi],co=q.a;if(c===co){sc++;if(allCorrect.indexOf(q.k)<0)allCorrect.push(q.k);onCorrectAnswer();}else{onWrongAnswer();}localStorage.setItem('dao2_mondai3_correct',JSON.stringify(allCorrect));reportToolProgress(allCorrect.length,V.length);saveM3Progress();for(var i=0;i<q.op.length;i++){var b=document.getElementById('o'+i);b.disabled=true;if(i===co)b.classList.add(c===co&&i===c?'ok':'rv');if(i===c&&c!==co)b.classList.add('ng');}var sh=q.sy.map(function(s,i){return '<span class="esyi'+(i===0?' pri':'')+'">'+ s+'</span>';}).join('');document.getElementById('exp').innerHTML='<div style="margin-bottom:8px"><span class="ew">'+q.k+'</span><span class="eh">'+q.h+'</span></div><div style="font-size:13px;color:#333;margin:4px 0">📖 '+q.m+'</div><div style="font-size:12px;color:#b45309;background:#FFFBEB;border-radius:6px;padding:3px 8px;margin:4px 0;display:inline-block">🇻🇳 '+(q.vi||'')+'</div><div style="margin:8px 0"><span style="font-size:11px;color:#4fad9c;font-weight:500">≒ 類義語：</span><br>'+sh+'</div><div style="font-size:11px;color:#888">📌 '+q.co.map(function(c){return '<span class="ct">'+c+'</span>';}).join('')+'</div>';if(q.vi){document.getElementById('qvi').style.display='inline-block';}document.getElementById('exp').classList.add('show');document.getElementById('sm').textContent='正解: '+sc;document.getElementById('bn').classList.add('show');}
+function nextQ(){qi++;if(qi>=qq.length)showRes();else{saveM3Progress();showQ();}}
+function skipQ(){if(!ans){ans=true;for(var i=0;i<qq[qi].op.length;i++){var b=document.getElementById('o'+i);if(b)b.disabled=true;}}nextQ();}
+function showRes(){document.getElementById('qa').classList.remove('active');document.getElementById('res').classList.add('show');clearM3Progress();var tot=qq.length,pct=Math.round((sc/tot)*100);document.getElementById('rsc').textContent=sc;document.getElementById('rtl').textContent='/ '+tot+' 問';document.getElementById('rmsg').textContent=(pct>=90?'🎉 素晴らしい！N1合格レベルです！':pct>=70?'👍 よくできました！':pct>=50?'📚 復習が必要です。':'💪 もっと練習！')+'（正答率: '+pct+'%）';}
+function resetQ(){document.getElementById('res').classList.remove('show');document.getElementById('qs').style.display='';document.getElementById('qa').classList.remove('active');renderM3ResumeBanner();}
 function shuf(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
 
 function pickVoice(utt) {
@@ -365,4 +393,5 @@ fetch('dao2-hailuu-mondai3-dongnghia-card-template.html').then(function(r){retur
   rv(V);
   openFromNotebookParam();
 }).catch(function(e){console.error('Không tải được template thẻ từ vựng',e);});
+renderM3ResumeBanner();
 </script></body></html>
