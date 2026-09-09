@@ -265,16 +265,18 @@ function renderIntro() {
     <div class="point-box">
       <div class="pt-title">💡 Cách làm bài (Mondai 1 · 課題理解)</div>
       <ul>
-        <li>Câu hỏi được đọc <b>trước</b> hội thoại — hãy đọc trước 4 lựa chọn trong lúc chờ để đoán hướng nội dung.</li>
-        <li>Câu hỏi thường hỏi việc làm <b>tiếp theo / đúng lúc đó</b> (これから, 明日, 当日...) — chú ý mốc thời gian được hỏi.</li>
-        <li>Đáp án đúng thường nằm ở <b>quyết định cuối cùng</b> trong hội thoại, không phải ý kiến ban đầu.</li>
+        <li><b>Xác định người làm</b> trước — Nam hay Nữ cần làm gì tiếp theo.</li>
+        <li><b>Xác định dạng bài</b> — まず (trước tiên) / 後 (sau đó) / Kì hạn (deadline) / Review (góp ý) — mỗi dạng có từ khóa đúng/sai riêng.</li>
+        <li>Đáp án đúng thường nằm ở <b>quyết định cuối cùng</b> trong hội thoại, không phải ý kiến ban đầu — coi chừng た/てある/ておいた (đã làm rồi) và bẫy tráo tân ngữ.</li>
         <li>Chọn đáp án cho cả 6 câu bên dưới, có thể đổi ý bất cứ lúc nào trước khi nộp bài.</li>
         <li>Sau khi nộp bài mới được xem đáp án đúng, script hội thoại và giải thích.</li>
       </ul>
+      <div style="margin-top:10px; font-size:12.5px; color:var(--ink-soft);">Xem đầy đủ 4 dạng bài, dấu hiệu nhận biết đáp án sai và các bẫy ở nút "📖 Xem cách làm đầy đủ" bên dưới.</div>
     </div>
 
-    <div class="center">
+    <div class="center" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
       <button class="gold-btn" onclick="goToQuiz()">🎧 Bắt Đầu Nghe</button>
+      <button class="ghost-btn" onclick="window.location.href='dao5-tiengvong-phuongphap.html'">📖 Xem cách làm đầy đủ</button>
     </div>
   </div></div>`;
 }
