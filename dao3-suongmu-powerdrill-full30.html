@@ -321,6 +321,7 @@ footer{
   <nav class="crumb" id="crumb"><button onclick="goHome()">⟵ 一覧へ戻る</button></nav>
 
   <section id="home">
+    <input type="text" id="drillSearchInput" placeholder="🔍 Tìm theo câu hỏi hoặc số vòng..." style="width:100%;padding:9px 14px;border-radius:6px;border:1px solid var(--line);font-family:inherit;font-size:14px;margin-bottom:14px;box-sizing:border-box;background:var(--card);color:var(--ink);">
     <div id="drill-resume-banner" style="display:none"></div>
     <div class="section-label">文法 第1回〜第30回</div>
     <div class="grid" id="allRoundsGrid"></div>
@@ -488,18 +489,36 @@ function onWrongAnswer() {
   comboCount = 0;
 }
 
+let drillSearchQuery = '';
+function roundMatchesSearch(r, q){
+  if(r.name.toLowerCase().includes(q)) return true;
+  return r.parts.some(part=>
+    (part.passage && part.passage.toLowerCase().includes(q)) ||
+    part.items.some(it=> (it.q&&it.q.toLowerCase().includes(q)) || (it.o&&it.o.some(o=>o.toLowerCase().includes(q))))
+  );
+}
+function trainingMatchesSearch(t, q){
+  if(t.name.toLowerCase().includes(q)) return true;
+  return t.items.some(it=> (it.q||'').toLowerCase().includes(q) || (it.a||'').toLowerCase().includes(q) || (it.b||'').toLowerCase().includes(q));
+}
 function buildHome(){
+  const q = drillSearchQuery;
   const ag = document.getElementById('allRoundsGrid');
-  const doneAll = RESULTS['all'];
-  ag.innerHTML = `<div class="tile" style="grid-column:1/-1;text-align:left;display:flex;align-items:center;justify-content:space-between;">
-    <div><div class="num" style="font-size:16px">🔀 Làm tất cả 30 vòng</div><div class="lab">Toàn bộ câu hỏi, liên tục</div></div>
-    ${doneAll? `<div class="score-pill">${doneAll.score}/${doneAll.total}</div>` : ''}
-  </div>`;
-  ag.querySelector('.tile').onclick = ()=>openAllRounds();
-  renderDrillResumeBanner();
+  if(q){
+    ag.innerHTML = '';
+  } else {
+    const doneAll = RESULTS['all'];
+    ag.innerHTML = `<div class="tile" style="grid-column:1/-1;text-align:left;display:flex;align-items:center;justify-content:space-between;">
+      <div><div class="num" style="font-size:16px">🔀 Làm tất cả 30 vòng</div><div class="lab">Toàn bộ câu hỏi, liên tục</div></div>
+      ${doneAll? `<div class="score-pill">${doneAll.score}/${doneAll.total}</div>` : ''}
+    </div>`;
+    ag.querySelector('.tile').onclick = ()=>openAllRounds();
+    renderDrillResumeBanner();
+  }
   const rg = document.getElementById('roundGrid');
   rg.innerHTML = '';
-  QUIZ_DATA.rounds.forEach(r=>{
+  const filteredRounds = q ? QUIZ_DATA.rounds.filter(r=>roundMatchesSearch(r,q)) : QUIZ_DATA.rounds;
+  filteredRounds.forEach(r=>{
     const totalQ = r.parts.reduce((s,p)=>s+p.items.length,0);
     const key = 'r_'+r.id;
     const done = RESULTS[key];
@@ -514,7 +533,8 @@ function buildHome(){
 
   const tg = document.getElementById('trainGrid');
   tg.innerHTML = '';
-  QUIZ_DATA.trainings.forEach(t=>{
+  const filteredTrainings = q ? QUIZ_DATA.trainings.filter(t=>trainingMatchesSearch(t,q)) : QUIZ_DATA.trainings;
+  filteredTrainings.forEach(t=>{
     const key = 't_'+t.id;
     const done = RESULTS[key];
     const div = document.createElement('div');
@@ -524,6 +544,9 @@ function buildHome(){
     div.onclick = ()=>openTraining(t.id);
     tg.appendChild(div);
   });
+  if(q && filteredRounds.length===0 && filteredTrainings.length===0){
+    rg.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:24px;">Không tìm thấy vòng/bài luyện nào chứa từ khóa này.</div>';
+  }
 }
 
 function goHome(){
@@ -935,6 +958,10 @@ function retryQuiz(){
   else openTraining(state.id);
 }
 
+document.getElementById('drillSearchInput').addEventListener('input', (e)=>{
+  drillSearchQuery = e.target.value.trim().toLowerCase();
+  buildHome();
+});
 buildHome();
 </script>
 </body>
