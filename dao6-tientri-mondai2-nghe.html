@@ -286,8 +286,9 @@ function renderIntro() {
       </ul>
     </div>
 
-    <div class="center">
+    <div class="center" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
       <button class="gold-btn" onclick="goToQuiz()">🔮 Bắt Đầu Nghe</button>
+      <button class="ghost-btn" onclick="window.location.href='dao6-tientri-phuongphap.html'">📖 Xem cách làm đầy đủ</button>
     </div>
   </div></div>`;
 }
@@ -342,7 +343,6 @@ function renderQuiz() {
           <div class="qnum-badge"><div class="anchor-num">${q.number}</div><div class="qtitle">${q.number} 番</div></div>
           <button class="reselect-btn" onclick="clearChoice(${qi})">↺ Chọn lại</button>
         </div>
-        <div class="q-question">${q.question}</div>
         <div class="choice-grid">
           ${q.choices.map((opt, oi) => `
             <div class="choice" id="choice-${qi}-${oi}" onclick="selectChoice(${qi},${oi})">
