@@ -1,7 +1,7 @@
 window.MONDAI2_DATA = window.MONDAI2_DATA || {};
 window.MONDAI2_DATA['2010-12'] = {
   examLabel: '2010-12',
-  audioSrc: 'assets/audio/MD2/N1_2010-12.mp3',
+  audioSrc: 'assets/audio/MD2/N1_12-2010.mp3',
   summaryHtml: "<ul><li>Nhiều câu trong đề này áp dụng <b>\"ai nói mới tính\"</b>: đáp án sai thường là suy đoán/gợi ý của người KHÔNG được hỏi, hoặc của người thứ ba — luôn kiểm tra chủ thể phát biểu trước khi chọn.</li><li><b>Bẫy nhân quả</b> (7番): một chi tiết có thật trong bài vẫn có thể sai nếu nó là HỆ QUẢ chứ không phải NGUYÊN NHÂN được hỏi.</li><li><b>Bí kíp tiền-tinh thần xét trên 4 đáp án, không phải script</b> (6番): B là đáp án tiền duy nhất (không có tinh thần đối trọng) → đúng quy trình là dự đoán B trước, nhưng script phủ định trực tiếp nên phải quay xe sang D — dự đoán từ bí kíp vẫn có thể sai, quan trọng là biết quay xe khi nghe.</li></ul>",
   questions: [
   {

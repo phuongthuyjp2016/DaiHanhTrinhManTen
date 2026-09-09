@@ -1,7 +1,7 @@
 window.MONDAI2_DATA = window.MONDAI2_DATA || {};
 window.MONDAI2_DATA['2011-12'] = {
   examLabel: '2011-12',
-  audioSrc: 'assets/audio/MD2/N1_2011-12.mp3',
+  audioSrc: 'assets/audio/MD2/N1_12-2011.mp3',
   summaryHtml: "<ul><li><b>Bẫy đảo ngược cặp gần giống</b> (2番): khi 2 đáp án là một cặp đối lập gần nghĩa (温度 vs 湿度), câu trả lời thường xác nhận MỘT cái đã làm đúng và ẩn ý cái còn lại bị bỏ sót — phải nghe kỹ câu xác nhận để không chọn nhầm ngược.</li><li><b>Bẫy nhân quả ở cấp độ \"băn khoăn bị giải quyết\"</b> (3番): nhiều lý do được nêu ra và LẦN LƯỢT bị phản biện/hoá giải trong lúc thảo luận không phải là lý do cuối cùng dẫn tới quyết định — lý do thật thường được nhắc ở đầu bài và xác nhận lại ở cuối bằng だけど/でも/とにかく.</li><li><b>\"Ai nói mới tính\" xuất hiện dày đặc</b> (1番, 4番, 7番): khi câu hỏi chỉ định rõ người, luôn kiểm tra đáp án có phải do CHÍNH người đó tự nói ra hay chỉ là suy đoán/lời kể của người khác (kể cả khi người đó không phủ định thẳng mà chỉ im lặng/không xác nhận).</li><li><b>\"二人が共通して\"</b> (6番): dạng câu hỏi hiếm gặp đòi hỏi TÌM GIAO ĐIỂM giữa 2 người nói — mọi ý chỉ được 1 người xác nhận hoặc bị người kia phản bác đều loại; tín hiệu rõ nhất là các từ như こちらも/私も khi người thứ hai chủ động xác nhận lại ý người thứ nhất.</li></ul>",
   questions: [
   {

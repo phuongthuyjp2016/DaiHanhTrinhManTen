@@ -1,7 +1,7 @@
 window.MONDAI2_DATA = window.MONDAI2_DATA || {};
 window.MONDAI2_DATA['2012-07'] = {
   examLabel: '2012-07',
-  audioSrc: 'assets/audio/MD2/N1_2012-07.mp3',
+  audioSrc: 'assets/audio/MD2/N1_7-2012.mp3',
   summaryHtml: "<ul><li><b>Bẫy \"tưởng bị cạnh tranh sẽ đổi ý, nhưng chốt vẫn giữ sở thích ban đầu\"</b> (2番): người nói cân nhắc nhiều lựa chọn khác vì lựa chọn đầu tiên có trở ngại (đông người/khó khăn), nhưng câu chốt cuối cùng vẫn quay lại đúng lựa chọn ban đầu — trở ngại không đồng nghĩa với bị loại.</li><li><b>Bẫy phủ định kép \"tránh được/không cần\" ở cuối câu</b> (3番): 2 đáp án sai được nhắc tới bằng cụm khẳng định KHÔNG XẢY RA (回避できました/打つことなく) — dễ chọn nhầm nếu chỉ bắt từ khóa mà không để ý cấu trúc phủ định.</li><li><b>Bẫy đảo ngược cảm xúc — cùng 1 chi tiết, 2 người đánh giá trái ngược</b> (4番): một đặc điểm bị người này CHÊ lại được người kia dùng でも biến thành điểm KHEN — câu hỏi hỏi đúng người nào thì chỉ ý người đó tính.</li><li><b>Bẫy nhân quả — hiện trường/hậu quả bị nhầm thành nguyên nhân</b> (5番): đáp án mô tả tình trạng SAU sự việc (đồ vật rơi vãi) khác loại hẳn với đáp án mô tả HÀNH VI dẫn tới sự việc — nhận diện được từ chính đáp án text, không cần đợi nghe.</li><li><b>Bẫy khen 2 điểm đã tốt trước, lời khuyên thật nằm ở kỹ thuật thứ 3</b> (6番): mẫu bẫy liệt kê ưu điểm trước rồi mới lộ gợi ý cải thiện thật — giống bẫy đã gặp ở đề khác nhưng lặp lại đủ nhiều để xác nhận là mẫu phổ biến của Mondai 2.</li><li><b>Từ khóa nhấn mạnh giữa danh sách liệt kê đồng đẳng: とりわけ/最大</b> (7番): khi câu hỏi có 「一番」, tìm đúng cụm nhấn mạnh này trong script thay vì đoán theo thứ tự xuất hiện hay độ dài mô tả.</li></ul>",
   questions: [
   {

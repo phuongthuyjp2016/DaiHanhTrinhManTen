@@ -1,7 +1,7 @@
 window.MONDAI2_DATA = window.MONDAI2_DATA || {};
 window.MONDAI2_DATA['2011-07'] = {
   examLabel: '2011-07',
-  audioSrc: 'assets/audio/MD2/N1_2011-07.mp3',
+  audioSrc: 'assets/audio/MD2/N1_7-2011.mp3',
   summaryHtml: "<ul><li><b>Bẫy liệt kê ưu điểm trước rồi mới lộ vấn đề thật</b> (1番): ngược với bẫy đồng đẳng thông thường (liệt kê rồi ý chính ở cuối), ở đây 3 đáp án sai được KHEN HẾT LỜI trước, chỉ 1 câu ngắn sau まあ、強いて挙げるとすると mới là câu trả lời thật — cảnh giác khi thấy 1 loạt lời khen liên tiếp cho 3/4 đáp án.</li><li><b>Bẫy nhượng bộ \"X も大切ですが/もちろん X も必要ですが\" xuất hiện tới 2 lần trong cùng 1 đề</b> (6番, 7番) — đủ để xác nhận đây là mẫu bẫy phổ biến, không phải ngẫu nhiên: hễ thấy cấu trúc này, đáp án đi kèm gần như luôn SAI, ý đúng nằm ở câu KHÔNG có が/もちろん đi kèm.</li><li><b>Bẫy \"đã làm rồi/đã hết khả năng\"</b> (4番): một đáp án có thể bị loại không phải vì sai nội dung mà vì nó thuộc THÌ đã xảy ra hoặc đã hết dư địa, không còn là \"quyết định mới\" mà câu hỏi yêu cầu — khác với bẫy nhân quả (loại vì là hệ quả) hay bẫy đồng đẳng (loại vì chỉ là liệt kê ngang hàng).</li><li><b>Ý chính có thể xuất hiện SỚM rồi bị các ý phụ liệt kê \"chôn vùi\" ở giữa bài</b> (5番): không phải lúc nào ý đúng cũng nằm ở cuối — đôi khi nó được nhắc ngay đầu, tạm thời bị lu mờ bởi phần liệt kê, và chỉ được xác nhận chắc chắn khi xuất hiện lại ở câu chốt (thường có やはり).</li></ul>",
   questions: [
   {
