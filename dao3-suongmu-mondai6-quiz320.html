@@ -151,6 +151,7 @@
     <p>Bộ 320 câu điền sao — Đầy đủ 320/320 câu, chia 16 set x 20 câu</p>
   </header>
 
+  <input type="text" id="quizSearchInput" placeholder="🔍 Tìm câu hỏi theo nội dung, đáp án hoặc ngữ pháp..." style="width:100%;padding:9px 14px;border-radius:10px;border:1.5px solid var(--line);font-family:inherit;font-size:14px;margin-bottom:12px;box-sizing:border-box;">
   <div id="setSelectArea"></div>
   <div id="quizWrapArea" style="display:none;">
     <span class="back-link" id="backToSets">← Quay về danh sách set</span>
@@ -1928,7 +1929,35 @@ function onWrongAnswer() {
   comboCount = 0;
 }
 
+let quizSearchQuery = '';
+function jumpToQuestionBySearch(n){
+  const setIndex = Math.floor((n-1)/SET_SIZE);
+  const idxInSet = (n-1)%SET_SIZE;
+  startSet(setIndex, idxInSet, 0);
+}
 function renderSetSelector(){
+  if(quizSearchQuery){
+    const q = quizSearchQuery;
+    const matches = window.QUIZ_DATA.filter(item => item.full.toLowerCase().includes(q) || item.grammar.toLowerCase().includes(q) || item.choices.some(c=>c.toLowerCase().includes(q)));
+    let sh = `<div style="margin-bottom:10px;color:var(--muted);font-size:.85rem;">Tìm thấy ${matches.length} câu</div>`;
+    if(matches.length===0){
+      sh += `<div class="remember-box" style="text-align:center;color:#888;">Không tìm thấy câu nào khớp.</div>`;
+    } else {
+      sh += '<div class="set-grid">';
+      matches.forEach(item=>{
+        sh += `<div class="set-btn" data-jump="${item.n}" style="text-align:left;grid-column:1/-1;">
+          <span class="set-num">Câu ${item.n}</span>
+          <span class="set-range">${item.full}</span>
+        </div>`;
+      });
+      sh += '</div>';
+    }
+    document.getElementById('setSelectArea').innerHTML = sh;
+    document.querySelectorAll('[data-jump]').forEach(btn=>{
+      btn.addEventListener('click', ()=> jumpToQuestionBySearch(parseInt(btn.dataset.jump)));
+    });
+    return;
+  }
   let html = '';
   const saved = loadProgress();
   const savedIsAll = saved && saved.set==='all';
@@ -2148,6 +2177,10 @@ function showResult(){
 
 
 document.getElementById('backToSets').addEventListener('click', backToSets);
+document.getElementById('quizSearchInput').addEventListener('input', (e)=>{
+  quizSearchQuery = e.target.value.trim().toLowerCase();
+  renderSetSelector();
+});
 renderSetSelector();
 </script>
 <footer>JLPT N1 — Mondai 6 (文の文法②) · Bộ 320 câu — ĐẦY ĐỦ 320/320 câu · 16 set</footer>
