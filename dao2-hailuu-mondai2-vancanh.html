@@ -42,7 +42,9 @@ header h1{font-family:'Baloo 2','Noto Serif JP',serif;font-weight:800;color:#ffe
 .q-block:nth-child(6n+5){border-top:4px solid #e65100;}
 .q-block:nth-child(6n+6){border-top:4px solid #00695c;}
 .q-head{padding:14px 16px 10px;}
-.q-num{font-size:.72rem;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
+.q-num{font-size:.72rem;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.skip-btn{background:none;border:1px solid var(--border);color:var(--muted);font-size:.68rem;font-weight:600;letter-spacing:0;text-transform:none;padding:3px 10px;border-radius:12px;cursor:pointer;font-family:inherit;}
+.skip-btn:hover{background:var(--bg);}
 .q-sent-wrap{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;}
 .q-sent{flex:1;font-family:'Noto Serif JP',serif;font-size:1.1rem;line-height:1.9;color:#1a1a2e;background:#f8f9ff;border-left:4px solid var(--blue);border-radius:0 10px 10px 0;padding:10px 14px;}
 .blank{color:var(--blue);font-weight:700;}
@@ -154,7 +156,8 @@ header h1{font-family:'Baloo 2','Noto Serif JP',serif;font-weight:800;color:#ffe
 
 <div class="filter-bar">
   <span class="flabel">Đề:</span>
-  <button class="fbtn active" onclick="setRound(25,this)">第25回</button>
+  <button class="fbtn" onclick="setRound('all',this)">🔀 Tất cả</button>
+<button class="fbtn active" onclick="setRound(25,this)">第25回</button>
 <button class="fbtn " onclick="setRound(26,this)">第26回</button>
 <button class="fbtn " onclick="setRound(27,this)">第27回</button>
 <button class="fbtn " onclick="setRound(28,this)">第28回</button>
@@ -342,15 +345,26 @@ function esc(s){
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function allRoundKeysVC(){
+  return Object.keys(DATA).sort(function(a,b){
+    if(a==='ontap') return 1;
+    if(b==='ontap') return -1;
+    return Number(a)-Number(b);
+  });
+}
+
 function buildRound(round){
-  const qs = DATA[String(round)] || [];
-  document.getElementById('hdr-round').textContent = round==='ontap' ? '📝 Ôn tập tổng hợp' : '第'+round+'回';
-  if(qs.length===0){
-    document.getElementById('main').innerHTML = '<div style="padding:40px;text-align:center;color:#888;">⚠️ Đợt này đang được cập nhật.</div>';
-    return;
-  }
+  const isAll = round==='all';
+  const roundKeys = isAll ? allRoundKeysVC() : [String(round)];
+  document.getElementById('hdr-round').textContent = isAll ? '🔀 Tất cả ('+TOTAL_Q_VC+' câu)' : (round==='ontap' ? '📝 Ôn tập tổng hợp' : '第'+round+'回');
+  let anyQs = false;
   let html = '';
+  roundKeys.forEach(function(r){
+  const qs = DATA[String(r)] || [];
+  if(qs.length===0) return;
+  anyQs = true;
   qs.forEach((q, qi)=>{
+    const round = r;
     const ansIdx = q.a - 1;
     const qid = 'q'+round+'x'+qi;
     const sentBlank = esc(q.s).replace('（　）','<span class="blank" id="blank_'+qid+'">（　　）</span>');
@@ -400,7 +414,7 @@ function buildRound(round){
 
     html += `<div class="q-block" id="${qid}">
       <div class="q-head">
-        <div class="q-num">問 ${qi+1} / ${qs.length}　[${round==='ontap'?'Ôn tập tổng hợp':'第'+round+'回'}]</div>
+        <div class="q-num">問 ${qi+1} / ${qs.length}　[${round==='ontap'?'Ôn tập tổng hợp':'第'+round+'回'}]<button class="skip-btn" onclick="skipQ('${qid}',${ansIdx},'${round}',${qi})">Bỏ qua →</button></div>
         <div class="q-sent-wrap">
           <div class="q-sent" id="sent_${qid}">${sentBlank}</div>
           <button class="speak-btn" onclick="spkSent('${round}',${qi},this)">
@@ -416,10 +430,15 @@ function buildRound(round){
       <div class="analysis-panel" id="analysis_${qid}">${analysisHtml}</div>
     </div>`;
   });
+  });
+  if(!anyQs){
+    document.getElementById('main').innerHTML = '<div style="padding:40px;text-align:center;color:#888;">⚠️ Đợt này đang được cập nhật.</div>';
+    return;
+  }
   document.getElementById('main').innerHTML = html;
   window.scrollTo(0,0);
+  try{ localStorage.setItem('dao2_mondai2_vancanh_lastround', String(round)); }catch(e){}
 }
-
 function pick(qid, chosen, ansIdx, round, qi){
   const choicesWrap = document.getElementById('choices_'+qid);
   choicesWrap.querySelectorAll('.choice').forEach(c=>{c.classList.add('disabled');c.onclick=null;});
@@ -465,6 +484,34 @@ function pick(qid, chosen, ansIdx, round, qi){
   }
   localStorage.setItem('dao2_mondai2_vancanh_correct',JSON.stringify(allCorrectVC));
   reportToolProgress(allCorrectVC.length,TOTAL_Q_VC);
+}
+
+function skipQ(qid, ansIdx, round, qi){
+  const choicesWrap = document.getElementById('choices_'+qid);
+  if(!choicesWrap || choicesWrap.classList.contains('disabled-skip')) return;
+  choicesWrap.classList.add('disabled-skip');
+  choicesWrap.querySelectorAll('.choice').forEach(c=>{c.classList.add('disabled');c.onclick=null;});
+  choicesWrap.querySelectorAll('.c-kana').forEach(el=>el.classList.remove('kana-hidden'));
+  choicesWrap.querySelectorAll('.c-kj').forEach(el=>el.classList.remove('kana-hidden'));
+  const corrEl = document.getElementById('ch_'+qid+'_'+ansIdx);
+  if(corrEl) corrEl.classList.add('reveal-correct');
+  const blankEl = document.getElementById('blank_'+qid);
+  const q = DATA[String(round)][qi];
+  const correctW = q.w[ansIdx];
+  if(blankEl){ blankEl.outerHTML = '<span class="filled">（'+esc(correctW.k)+'）</span>'; }
+  const svEl = document.getElementById('sv_'+qid);
+  const hintEl = document.getElementById('hint_'+qid);
+  const tipEl = document.getElementById('tip_'+qid);
+  if(svEl) svEl.classList.add('show');
+  if(hintEl) hintEl.classList.add('hidden');
+  if(tipEl) tipEl.classList.add('show');
+  const fb = document.getElementById('fb_'+qid);
+  fb.className='feedback';
+  fb.innerHTML='⏭ Đã bỏ qua. Đáp án: <strong>'+esc(correctW.k)+'（'+esc(correctW.r)+'）</strong><span class="fb-meaning">📖 '+esc(correctW.v)+'</span>';
+  const ap = document.getElementById('analysis_'+qid);
+  if(ap) ap.classList.add('show');
+  const nextBlock = document.getElementById(qid).nextElementSibling;
+  if(nextBlock) nextBlock.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function doSearch(){
@@ -546,7 +593,25 @@ if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 }
 
-buildRound(25);
+(function(){
+  let savedRound = null;
+  try{ savedRound = localStorage.getItem('dao2_mondai2_vancanh_lastround'); }catch(e){}
+  let btn = null;
+  if(savedRound){
+    document.querySelectorAll('.fbtn').forEach(b=>{
+      const oc = b.getAttribute('onclick')||'';
+      const m = oc.match(/setRound\('?([^,']+)'?,/);
+      if(m && m[1]===savedRound) btn = b;
+    });
+  }
+  if(btn){
+    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    buildRound(savedRound);
+  } else {
+    buildRound(25);
+  }
+})();
 </script>
 </body>
 </html>
