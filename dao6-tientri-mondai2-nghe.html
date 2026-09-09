@@ -176,7 +176,7 @@ function bootSet() {
   EXAM_LABEL = data.examLabel;
   QUESTIONS = data.questions;
   SUMMARY_HTML = data.summaryHtml || '';
-  if (AUDIO_SRC) player.src = AUDIO_SRC;
+  if (AUDIO_SRC) { player.src = AUDIO_SRC; player.load(); }
   document.getElementById('pageTitle').textContent = `N1 聴解 問題2 (${EXAM_LABEL}) — Đảo Tiên Tri`;
   document.getElementById('brandLabel').innerHTML = `N1 聴解 · <b>MONDAI 2 · ${EXAM_LABEL}</b> · Đảo Tiên Tri`;
   selected = new Array(QUESTIONS.length).fill(null);
@@ -197,10 +197,22 @@ function fmtTime(sec) {
 }
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
+let PLAYER_ERROR_MSG = '';
+
 function togglePlayPause() {
   if (NO_AUDIO) return;
-  if (player.paused || player.ended) player.play().catch(() => {});
+  if (player.paused || player.ended) {
+    player.play().catch(err => {
+      PLAYER_ERROR_MSG = 'Không phát được audio (' + (err && err.message ? err.message : err) + '). Thử bấm lại hoặc tải lại trang.';
+      showPlayerError();
+    });
+  }
   else player.pause();
+}
+
+function showPlayerError() {
+  const el = document.getElementById('playerErrorNote');
+  if (el) el.textContent = '⚠ ' + PLAYER_ERROR_MSG;
 }
 function seekBy(delta) {
   if (NO_AUDIO) return;
@@ -237,6 +249,12 @@ player.addEventListener('pause', () => syncPlayerUI());
 player.addEventListener('ended', () => syncPlayerUI());
 player.addEventListener('loadedmetadata', () => syncPlayerUI());
 player.addEventListener('timeupdate', () => syncPlayerUI());
+player.addEventListener('error', () => {
+  const codes = { 1:'bị hủy', 2:'lỗi mạng', 3:'lỗi giải mã file', 4:'định dạng không hỗ trợ' };
+  const code = player.error ? player.error.code : 0;
+  PLAYER_ERROR_MSG = 'Không tải được audio (' + (codes[code] || 'không rõ lý do') + '). Thử tải lại trang hoặc đổi mạng.';
+  showPlayerError();
+});
 
 function syncPlayerUI() {
   const btn = document.getElementById('playPauseBtn');
@@ -326,6 +344,7 @@ function renderPlayerBar(note, sticky) {
         <input type="range" class="vol-bar" min="0" max="1" step="0.01" value="1" oninput="onVolumeInput(this.value)">
       </div>
     </div>
+    <div class="player-note" id="playerErrorNote" style="color:#ffb3b3;">${PLAYER_ERROR_MSG ? '⚠ ' + PLAYER_ERROR_MSG : ''}</div>
     `}
     ${note ? `<div class="player-note">${note}</div>` : ''}
   </div></div>`;
