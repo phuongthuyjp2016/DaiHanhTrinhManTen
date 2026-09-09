@@ -157,7 +157,7 @@ header span{font-size:.8rem;color:#b0a898;}
 
 /* QUIZ — đề thi style */
 #screen-quiz{display:none;}
-.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}.btn-skip{background:none;border:1px solid #cbb98a;color:#7a5a3a;font-size:.72rem;padding:4px 10px;border-radius:12px;cursor:pointer;font-family:inherit;}.btn-skip:hover{background:#f3ecd8;}
 .quiz-round{font-family:'Noto Serif JP',serif;font-size:.9rem;font-weight:700;color:#283593;}
 .quiz-score{font-size:.82rem;color:var(--muted);}
 .progress-wrap{height:4px;background:var(--border);border-radius:2px;margin-bottom:20px;overflow:hidden;}
@@ -330,6 +330,7 @@ header span{font-size:.8rem;color:#b0a898;}
 <div id=&quot;screen-quiz&quot;>
   <div class=&quot;quiz-header&quot;>
     <span class=&quot;quiz-round&quot; id=&quot;q-round-label&quot;></span>
+    <button class=&quot;btn-skip&quot; onclick=&quot;skipQuestion()&quot;>Bỏ qua →</button>
     <span class=&quot;quiz-score&quot; id=&quot;q-score&quot;>✓ 0　✗ 0</span>
   </div>
   <div class=&quot;progress-wrap&quot;><div class=&quot;progress-fill&quot; id=&quot;progress-fill&quot; style=&quot;width:0%&quot;></div></div>
@@ -515,7 +516,7 @@ function onCorrectAnswer(){
   let big=false;
   let sub=pickHype();
   if(comboCount>=2)showComboToast(comboCount);
-  if(comboCount>0 && comboCount%COMBO_TARGET===0){
+  if(comboCount>0 &amp;&amp; comboCount%COMBO_TARGET===0){
     gained+=COMBO_BONUS;
     big=true;
     sub='Chuỗi '+comboCount+' câu đúng — Bùng nổ!';
@@ -764,6 +765,8 @@ function nextQuestion(){
   if(session.idx>=session.queue.length){localStorage.removeItem('jlpt_session');showResult();}
   else{localStorage.setItem('jlpt_session',JSON.stringify(session));renderQuestion();}
 }
+
+function skipQuestion(){ nextQuestion(); }
 
 // ── Result ──
 function showResult(){
