@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cách Làm Mondai 1 — Đảo Tiếng Vọng</title>
+<style>
+  :root{ --sea1:#0e5273; --sea2:#2f8fd1; --foam:#eaf8fd;
+    --ink:#12324a; --ink-soft:#4a7188; --gold1:#ffd25a; --gold2:#f5a623; --gold-ink:#5a3b22; --gold-shadow:#b9761a;
+    --line:#e3d9bf; --card:#fffdf6; }
+  *{box-sizing:border-box;}
+  html{ background:url('assets/art-001.webp') center top / cover no-repeat fixed, #0e5273; }
+  @media (max-width:643px){ html{ background:url('assets/art-002.webp') center top / cover no-repeat fixed, #0e5273; } }
+  body{ margin:0; min-height:100dvh; background:transparent;
+    color:var(--ink); font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic","Segoe UI",sans-serif;
+    line-height:1.7; padding-bottom:40px; }
+  .baloo{ font-family:'Baloo 2',sans-serif; font-weight:800; }
+  .topbar{ background:linear-gradient(180deg,#12658f,#0e5273); padding:12px 18px; position:sticky; top:0; z-index:20; box-shadow:0 2px 10px rgba(0,0,0,.3); border-bottom:2px solid rgba(255,233,176,.35); }
+  .topbar-inner{ max-width:840px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .back-link{ color:#fff; font-weight:700; font-size:13px; text-decoration:none; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.5); border-radius:14px; padding:6px 14px; white-space:nowrap; }
+  .brand{ font-size:13px; letter-spacing:0.04em; color:#eaf8fd; font-weight:700; }
+  .brand b{ color:#ffe9b0; }
+  .wrap{ max-width:780px; margin:0 auto; padding:22px 16px; }
+
+  .plank{ background:linear-gradient(180deg,#ffe9b0,#f5a623); border-radius:22px; padding:4px; box-shadow:0 10px 30px rgba(0,0,0,.35); margin-bottom:18px; }
+  .plank-inner{ background:var(--card); border-radius:19px; padding:24px; border:2px dashed #e3c67a; }
+
+  .isle-tag{ display:inline-block; background:var(--sea2); color:#fff; font-size:11.5px; font-weight:700; padding:4px 12px; border-radius:10px; margin-bottom:10px; }
+  .page-title{ font-size:26px; color:var(--sea1); margin:2px 0 4px; }
+  .page-sub{ font-size:13.5px; color:var(--ink-soft); font-weight:700; margin-bottom:6px; }
+
+  .infographic{ width:100%; border-radius:14px; border:1.5px solid var(--line); margin:16px 0; display:block; }
+
+  h2.sec{ font-size:16.5px; color:var(--sea1); margin:0 0 10px; padding-bottom:8px; border-bottom:2px dashed var(--line); }
+  h3.subsec{ font-size:14px; color:var(--gold-shadow); margin:16px 0 8px; }
+
+  table.cmp{ width:100%; border-collapse:collapse; font-size:13px; margin-bottom:6px; }
+  table.cmp th, table.cmp td{ border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  table.cmp th{ background:var(--foam); color:var(--sea1); font-weight:800; }
+  table.cmp td{ color:var(--ink-soft); }
+
+  ul.method-list{ margin:0 0 4px; padding-left:20px; font-size:14px; color:var(--ink); }
+  ul.method-list li{ margin-bottom:10px; }
+  ul.method-list b{ color:var(--sea1); }
+
+  ol.steps{ margin:0 0 4px; padding-left:22px; font-size:14px; color:var(--ink); }
+  ol.steps li{ margin-bottom:10px; }
+  ol.steps b{ color:var(--sea1); }
+
+  .flow-strip{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; justify-content:center; background:var(--foam); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:6px; font-weight:800; color:var(--sea1); font-size:13px; }
+  .flow-strip .arrow{ color:var(--gold-shadow); font-weight:900; }
+
+  .callout{ background:#fff8e6; border:1.5px dashed var(--gold2); border-radius:12px; padding:14px 16px; margin:14px 0; }
+  .callout .ct{ font-weight:800; color:var(--gold-shadow); font-size:13.5px; margin-bottom:6px; }
+  .callout .cb{ font-size:13.5px; color:var(--ink-soft); }
+  .callout b{ color:var(--sea1); }
+
+  .redirect-box{ background:var(--foam); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:13.5px; color:var(--ink-soft); }
+  .redirect-box b{ color:var(--sea1); }
+
+  .center{ text-align:center; margin-top:18px; }
+  .gold-btn{ background:linear-gradient(180deg,var(--gold1),var(--gold2)); border:none; border-radius:16px; padding:14px 30px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; color:var(--gold-ink); cursor:pointer; box-shadow:0 6px 0 var(--gold-shadow); text-decoration:none; display:inline-block; }
+  .ghost-btn{ background:#fff; border:1.5px solid var(--sea2); color:var(--sea1); font-weight:700; padding:10px 20px; border-radius:14px; cursor:pointer; font-size:13.5px; text-decoration:none; display:inline-block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a href="DaiHaiTrinhManten.dc.html?island=4" class="back-link">← Quay về đảo</a>
+    <div class="brand">N1 聴解 · <b>MONDAI 1</b> · Đảo Tiếng Vọng</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="plank"><div class="plank-inner">
+    <span class="isle-tag">🏝 ĐẢO TIẾNG VỌNG</span>
+    <div class="page-title baloo">Cách Làm Mondai 1</div>
+    <div class="page-sub">課題理解 — Hiểu nhiệm vụ</div>
+    <img class="infographic" src="assets/mondai1-method-infographic.png" alt="Sơ đồ phương pháp Mondai 1">
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">🎯 Mục tiêu</h2>
+    <p style="font-size:14px; color:var(--ink);">Xác định người nói cần làm gì và <b>trình tự hành động</b> — khác Mondai 2 (nắm ý chính), Mondai 1 cần bắt đúng <b>hành động cụ thể</b> và làm trước/làm sau.</p>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">① Cách làm bài — 3 bước</h2>
+    <ol class="steps">
+      <li><b>Xác định người làm</b> — Nam hay Nữ. Đề luôn chỉ định rõ ai là người CẦN LÀM hành động tiếp theo; gợi ý/đề xuất của người còn lại không tính nếu không được người làm xác nhận.</li>
+      <li><b>Xác định dạng bài</b> — まず / 後 / Kì hạn / Review (xem 4 dạng bên dưới). Dạng bài quyết định luôn cách lọc đáp án đúng/sai.</li>
+      <li><b>Lướt đáp án, gạch chân từ khóa trước khi nghe</b> — nắm trước 4 đáp án để khi nghe chỉ cần đối chiếu từ khóa, không phải vừa nghe vừa dịch.</li>
+    </ol>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">② 4 dạng bài thường gặp</h2>
+
+    <h3 class="subsec">🌱 Dạng まず (trước tiên) — ĐÚNG = việc phải làm ngay đầu tiên</h3>
+    <ul class="method-list">
+      <li>Từ khóa đáp án <b>ĐÚNG</b>: まず / 最初に / とりあえず / ~ておいて / ~といて</li>
+      <li>Đáp án <b>SAI</b> nếu là: việc đã làm rồi (~た / ~てある / ~ておいた / もう~); việc chỉ xảy ra SAU hành động khác (たら / てから / それから / 後 / その時 / 手が空いたら); việc người khác làm (~てもらう / 私が~ / Aさんが~ / Aさんに頼む); hoặc việc không cần làm (まだ~から / あ、それは大丈夫 / いいよ).</li>
+    </ul>
+
+    <h3 class="subsec">⏩ Dạng 後 (sau đó) — ĐÚNG = bước tiếp theo</h3>
+    <ul class="method-list">
+      <li>Từ khóa đáp án <b>ĐÚNG</b>: これから / このあと / 次は / ~してから</li>
+      <li>Đáp án <b>SAI</b>: việc đã làm / việc sẽ làm sau nữa / việc người khác làm.</li>
+      <li>⚠️ Nghe thấy 「させていただきます」→ thường KHÔNG phải đáp án.</li>
+    </ul>
+
+    <h3 class="subsec">⏳ Dạng Kì hạn (Deadline)</h3>
+    <ul class="method-list">
+      <li>Câu hỏi mẫu: 〜いつまでに・しなければなりませんか</li>
+      <li>Đoạn nghe thường DÀI, nhiều bước → phải hiểu đúng QUY TRÌNH công việc rồi suy luận trình tự hợp lý, không chỉ bắt 1 từ khóa đơn lẻ.</li>
+    </ul>
+
+    <h3 class="subsec">📝 Dạng Review (góp ý / chỉnh sửa)</h3>
+    <p style="font-size:14px; color:var(--ink);">Tình huống: 1 người đưa sản phẩm/bài làm → nhờ người khác nhận xét, góp ý, sửa. Đây là dạng dễ chọn nhầm nhất vì đáp án đúng thường nằm ở phần GIỮA đoạn nghe, không phải đầu hay cuối — xem cấu trúc 3 phần ngay bên dưới.</p>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">📝 Chi tiết dạng Review — cấu trúc đoạn nghe (3 phần)</h2>
+    <div class="flow-strip">
+      <span>😊 Bắt đầu → Khen</span><span class="arrow">→</span>
+      <span>🤔 Sau đó → Góp ý</span><span class="arrow">→</span>
+      <span>👍 Cuối → Xác nhận</span>
+    </div>
+    <ol class="steps">
+      <li><b>Bắt đầu → Khen</b> (giọng nhanh, sáng, vui): よくできている / いい / わかりやすい / ~やすい → <b>CHƯA phải đáp án.</b></li>
+      <li><b>Sau đó → Góp ý</b> (giọng chậm, trầm, ngập ngừng; từ chuyển ý でも / ただ / ちょっと / 少し気になるのは; câu gợi ý ~してみたら? / ~いいかも) → <b>ĐÂY THƯỜNG LÀ ĐÁP ÁN.</b></li>
+      <li><b>Cuối → Xác nhận</b> (それは大丈夫 / 問題ない) → <b>KHÔNG quan trọng.</b></li>
+    </ol>
+    <div class="callout">
+      <div class="ct">⭐ Quy tắc quan trọng</div>
+      <div class="cb">Nghe thấy 「でも」(nhưng) → bỏ qua hết lời khen trước đó, phần SAU mới là ý chính/đáp án thật.</div>
+    </div>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">❌ Dấu hiệu nhận biết đáp án SAI</h2>
+    <ul class="method-list">
+      <li>Đáp án "cầm đèn chạy trước ô tô" — vội kết luận một hành động chưa được xác nhận là sẽ làm.</li>
+      <li>Đáp án có が / けど.</li>
+      <li>それは — thường chỉ người ĐẾN SAU trong câu, hay là đáp án SAI (bài đang hỏi người ĐƯỢC HỎI phải làm gì, không phải người khác).</li>
+      <li>Đáp án có た / ている / てある — diễn tả việc ĐÃ làm / ĐANG làm rồi, không phải việc CẦN làm.</li>
+      <li>Dạng Review: cái nào đã tốt/ngon/ổn rồi → thường SAI (đó là phần KHEN, chưa phải góp ý).</li>
+    </ul>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">🎯 Bẫy tráo tân ngữ</h2>
+    <ul class="method-list">
+      <li>Đề dễ cho ĐÚNG động từ nhưng gắn SAI tân ngữ (đối tượng) — phải nghe rõ TÂN NGỮ, không chỉ nghe động từ.</li>
+      <li>Ví dụ: ✗ コピーをとる (sai tân ngữ) vs ✓ 書類をコピーする (đúng tân ngữ) — cùng động từ コピーする nhưng tân ngữ khác nhau quyết định đáp án đúng/sai.</li>
+    </ul>
+
+    <h3 class="subsec">⚓ Phân biệt ておく / ておいて</h3>
+    <table class="cmp">
+      <tr><th></th><th>ておく (rút gọn: とく/といた)</th><th>ておいて (= ておいてください, nhờ vả)</th></tr>
+      <tr><td>Ý nghĩa</td><td>Người NÓI tự làm trước để chuẩn bị, sau này khỏi mất thời gian</td><td>Nhờ NGƯỜI KHÁC làm trước, chuẩn bị giúp</td></tr>
+      <tr><td>Ví dụ</td><td>飲み物を買っておいた。(đã mua sẵn đồ uống)</td><td>荷物を玄関に置いておいてください。(nhờ để sẵn hành lý ở giường giúp)</td></tr>
+      <tr><td>Thường là</td><td>✗ Đáp án SAI (việc đã làm rồi)</td><td>✓ Đáp án ĐÚNG</td></tr>
+    </table>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">💡 Mẹo lụi khi không nghe rõ</h2>
+    <p style="font-size:14px; color:var(--ink);">Khoanh trong đáp án <b>2 – 3</b> (vì đáp án 1 thường bị loại ngay, đáp án 4 thường chỉ là mở rộng/bổ sung chứ không phải hành động chính).</p>
+
+    <div class="callout">
+      <div class="ct">⭐ Ghi nhớ</div>
+      <div class="cb">Mondai 1 = hành động &amp; trình tự → nghe theo dòng thời gian! Bình tĩnh — nghe hết — chọn chính xác.</div>
+    </div>
+  </div></div>
+
+  <div class="redirect-box">
+    Muốn luyện tập ngay? Mỗi đề trong <b>Đảo Tiếng Vọng</b> đều áp dụng đúng phương pháp này khi giải thích đáp án — nghe xong bấm "Xem đáp án &amp; giải thích" để đối chiếu từng bước.
+  </div>
+
+  <div class="center">
+    <a class="gold-btn" href="DaiHaiTrinhManten.dc.html?island=4">🏝 Quay Về Đảo Tiếng Vọng</a>
+  </div>
+
+</div>
+
+</body>
+</html>
