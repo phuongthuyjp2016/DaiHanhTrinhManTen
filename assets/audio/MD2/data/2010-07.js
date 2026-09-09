@@ -1,7 +1,7 @@
 window.MONDAI2_DATA = window.MONDAI2_DATA || {};
 window.MONDAI2_DATA['2010-07'] = {
   examLabel: '2010-07',
-  audioSrc: 'assets/audio/MD2/N1_2010-07.mp3',
+  audioSrc: 'assets/audio/MD2/N1_7-2010.mp3',
   summaryHtml: "<ul><li><b>Khác loại + lạ mắt cùng lúc củng cố một dự đoán \"ngược trực giác\"</b> (1番): kỹ năng tưởng là lợi thế sẵn có (ngoại ngữ giỏi) hóa ra chính là điều khó khăn nhất — khi 1 đáp án vừa khác loại vừa \"lạ mắt\" so với 3 đáp án còn lại, đừng ngại dự đoán nó dù nghe có vẻ đi ngược kỳ vọng thông thường.</li><li><b>Cụm 「大丈夫」「十分」gần như luôn là tín hiệu LOẠI đáp án, không phải xác nhận</b> (3番): trong dạng câu hỏi ghép cặp 2 yếu tố từ 4 yếu tố liệt kê, hãy nghe theo hướng \"cái nào ĐÃ ổn (bị loại)\" thay vì cố dự đoán trước khi nghe.</li><li><b>Điều kiện tiên quyết của bí kíp tiền-tinh thần phải kiểm tra ở CẢ BÀI, không chỉ 4 đáp án</b> (4番 vs 6番): 4番 toàn bài không hề nhắc tới giá/tiền → được ưu tiên đáp án tinh thần ngay từ đầu; nhưng 6番 cả 4 đáp án lẫn nội dung bài đều xoay quanh tiền/chi phí kinh doanh → bí kíp tiền-tinh thần vô hiệu, phải nghe và loại trừ tuần tự (3 lần quay xe liên tiếp).</li><li><b>Thì hoàn thành (のびた) vs cụm dở dang (ある/望まれる) là chìa khóa phân biệt \"đã cải thiện\" và \"còn tồn tại\"</b> (5番): khi câu hỏi hỏi rõ điểm ĐÃ cải thiện, chỉ đáp án đi kèm động từ hoàn thành mới đúng — các đáp án khác dù nghe hợp lý vẫn bị loại vì còn ở thì \"sắp/đang cần\".</li><li><b>Chủ đề mở đầu do người phỏng vấn/dẫn dắt đưa ra không phải câu trả lời của người được hỏi</b> (7番): A chỉ là câu dẫn nhập của phóng viên, câu trả lời thật của thầy nằm ở phần bị bác bằng ただ và câu chốt cuối cùng — luôn ưu tiên đúng lời của người ĐƯỢC HỎI, đặc biệt câu chốt ở cuối bài.</li></ul>",
   questions: [
   {
