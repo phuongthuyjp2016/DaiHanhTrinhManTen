@@ -12,7 +12,7 @@
     --surface2: #f4e8d0;
     --border: #c9a769;
     --text: #3a2a18;
-    --muted: #7a5a3a;
+    --muted: #3a2a18;
     --green: #16a34a;
     --green-bg: #dcfce7;
     --green-border: #86efac;
@@ -44,6 +44,8 @@
   .modes { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .mode-label { font-size: 12px; color: var(--muted); margin-right: 2px; }
   .mbtn { background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 5px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; font-family: inherit; transition: all .15s; white-space: nowrap; font-weight: 500; }
+  .search-wrap { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 24px; display: flex; align-items: center; gap: 8px; }
+  .search-wrap input { flex: 1; max-width: 340px; padding: 7px 14px; border: 1px solid var(--border); border-radius: 18px; font-size: 13px; font-family: inherit; background: #fff; }
   .mbtn:hover { border-color: var(--accent); color: var(--text); }
   .mbtn.active { background: linear-gradient(180deg,#ffd25a,#f5a623); border-color: #f5a623; color: #5a3b22; font-weight:700; }
   .mbtn.active-orange { background: var(--orange); border-color: var(--orange); color: #fff; }
@@ -203,6 +205,11 @@
   <button class="mbtn" id="m-wrong" onclick="setMode('wrong',this)">Ôn sai <span id="onsai-count">(0)</span></button>
 </div>
 
+<div class="search-wrap">
+  <span style="font-size:13px;color:var(--muted)">🔍</span>
+  <input type="text" id="vocabSearch" placeholder="Tìm theo kanji, cách đọc hoặc nghĩa..." oninput="onSearchInput()">
+</div>
+
 <div class="stats">
   <div class="stat"><div class="stat-label">Câu hiện tại</div><div class="stat-val" id="s-cur">1</div></div>
   <div class="stat"><div class="stat-label">Đúng</div><div class="stat-val green" id="s-ok">0</div></div>
@@ -219,6 +226,7 @@
 <div class="footer-icons">
   <div class="footer-left">
     <button class="back-btn" id="back-btn" onclick="goBack()" disabled>← Câu trước</button>
+    <button class="back-btn" id="skip-btn" onclick="skipQuestion()">Bỏ qua →</button>
     <span class="progress-label" id="progress-label"></span>
   </div>
   <div class="footer-right">
@@ -602,6 +610,7 @@ function vocabByKey(key) {
 
 // ─── State ───────────────────────────────────────────────────────────────
 let currentMode = 'all';
+let searchQuery = '';
 let deck = [];
 let idx = 0, okCount = 0, ngCount = 0, streak = 0;
 let answered = false, wrongList = [];
@@ -610,14 +619,25 @@ let history = []; // [{idx, opts, correctAns, picked, isOk}] for back navigation
 let pendingResume = null; // holds loaded save data while modal is shown
 
 function getFilteredVocab() {
-  if (currentMode === 'all') return [...KANJI_VOCAB, ...SET_VOCAB];
-  if (currentMode === 'verb') return KANJI_VOCAB.filter(v => v[3] === 'v');
-  if (currentMode === 'adj') return KANJI_VOCAB.filter(v => v[3] === 'a');
-  if (currentMode === 'noun') return KANJI_VOCAB.filter(v => v[3] === 'n');
-  if (currentMode === 'adv') return KANJI_VOCAB.filter(v => v[3] === 'd');
-  if (currentMode === 'set') return SET_VOCAB;
-  if (currentMode === 'wrong') return wrongList.length ? wrongList : [...KANJI_VOCAB, ...SET_VOCAB];
-  return [...KANJI_VOCAB, ...SET_VOCAB];
+  let list;
+  if (currentMode === 'all') list = [...KANJI_VOCAB, ...SET_VOCAB];
+  else if (currentMode === 'verb') list = KANJI_VOCAB.filter(v => v[3] === 'v');
+  else if (currentMode === 'adj') list = KANJI_VOCAB.filter(v => v[3] === 'a');
+  else if (currentMode === 'noun') list = KANJI_VOCAB.filter(v => v[3] === 'n');
+  else if (currentMode === 'adv') list = KANJI_VOCAB.filter(v => v[3] === 'd');
+  else if (currentMode === 'set') list = SET_VOCAB;
+  else if (currentMode === 'wrong') list = wrongList.length ? wrongList : [...KANJI_VOCAB, ...SET_VOCAB];
+  else list = [...KANJI_VOCAB, ...SET_VOCAB];
+  if (searchQuery) list = list.filter(v => v[0].includes(searchQuery) || v[1].toLowerCase().includes(searchQuery) || v[2].toLowerCase().includes(searchQuery));
+  return list;
+}
+
+function onSearchInput() {
+  searchQuery = document.getElementById('vocabSearch').value.trim().toLowerCase();
+  idx = 0; answered = false; history = [];
+  deck = shuffle(getFilteredVocab());
+  updateStats();
+  renderQuestion();
 }
 
 function shuffle(arr) {
@@ -866,6 +886,8 @@ function updateStats() {
   // back button
   const backBtn = document.getElementById('back-btn');
   if (backBtn) backBtn.disabled = (history.length === 0);
+  const skipBtn = document.getElementById('skip-btn');
+  if (skipBtn) skipBtn.style.display = (idx >= deck.length) ? 'none' : '';
   // progress label
   const pl = document.getElementById('progress-label');
   if (pl) pl.textContent = idx > 0 ? '📍 ' + modeLabel(currentMode) + ' · câu ' + (idx+1) : '';
@@ -966,6 +988,14 @@ function pick(i) {
 }
 
 function nextQ() { window.speechSynthesis.cancel(); idx++; updateStats(); renderQuestion(); }
+
+function skipQuestion() {
+  if (!answered) {
+    answered = true;
+    opts.forEach((o,j) => { const btn=document.getElementById('opt'+j); if(btn) btn.disabled = true; });
+  }
+  nextQ();
+}
 
 function renderDone(el) {
   const t = okCount+ngCount;

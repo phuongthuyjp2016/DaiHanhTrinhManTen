@@ -20,18 +20,18 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
 .menu-btn { background: #fdf6e8; border: 1px solid #c9a769; border-radius: 10px; padding: 14px 18px; font-size: 15px; font-family: inherit; cursor: pointer; text-align: left; transition: background 0.15s; }
 .menu-btn:hover { background: #f0f0ea; }
 .menu-btn .round-title { font-weight: 600; font-size: 15px; }
-.menu-btn .word-list { font-size: 12px; color: #888; margin-top: 3px; }
+.menu-btn .word-list { font-size: 12px; color: #333; margin-top: 3px; }
 .menu-btn.done { border-color: #2e7d4f; }
 .menu-btn.done .round-title { color: #2e7d4f; }
 .score-chip { float: right; font-size: 12px; background: #e8f5ec; color: #2e7d4f; border-radius: 6px; padding: 2px 8px; margin-top: 2px; }
-.section-label { font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; margin: 1.2rem 0 0.4rem; padding-bottom: 4px; border-bottom: 1px solid #eee; }
+.section-label { font-size: 11px; font-weight: 600; color: #333; text-transform: uppercase; letter-spacing: 1px; margin: 1.2rem 0 0.4rem; padding-bottom: 4px; border-bottom: 1px solid #eee; }
 .progress-bar { height: 5px; background: #ddd; border-radius: 3px; margin-bottom: 0.5rem; }
 .progress-fill { height: 100%; background: #1f4e79; border-radius: 3px; transition: width 0.4s; }
 .counter { font-size: 13px; color: #0f2e42; font-weight: 600; margin-bottom: 1rem; }
 .word-card { background: #fdf6e8; border-radius: 12px; border: 1px solid #c9a769; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
-.round-badge { font-size: 12px; color: #888; background: #f0f0ea; border-radius: 6px; padding: 2px 8px; display: inline-block; margin-bottom: 6px; }
+.round-badge { font-size: 12px; color: #333; background: #f0f0ea; border-radius: 6px; padding: 2px 8px; display: inline-block; margin-bottom: 6px; }
 .kanji { font-size: 26px; font-weight: 600; }
-.reading { font-size: 13px; color: #888; margin-top: 2px; }
+.reading { font-size: 13px; color: #333; margin-top: 2px; }
 .meaning { font-size: 13px; color: #1f4e79; margin-top: 4px; font-weight: 500; }
 .q-label { font-size: 13px; color: #0f2e42; font-weight: 600; margin: 0.8rem 0 0.5rem; }
 .options { display: flex; flex-direction: column; gap: 8px; }
@@ -54,7 +54,7 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
 .score-card { background: #fdf6e8; border-radius: 12px; border: 1px solid #c9a769; padding: 2rem 1.5rem; text-align: center; display: none; }
 .score-card.show { display: block; }
 .score-num { font-size: 42px; font-weight: 600; }
-.score-lbl { font-size: 15px; color: #555; margin-top: 8px; }
+.score-lbl { font-size: 15px; color: #333; margin-top: 8px; }
 .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
 .btn-retry { padding: 10px 22px; border-radius: 8px; border: 1px solid #ccc; background: #fff; font-size: 14px; cursor: pointer; font-family: inherit; }
 .btn-retry:hover { background: #f5f5f0; }
@@ -65,7 +65,7 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
 .set-badge { display: inline-block; background: #1f4e79; color: #fff; border-radius: 5px; padding: 1px 7px; font-size: 12px; font-weight: 600; margin-right: 4px; }
 .set-line { color: #1f4e79; font-weight: 600; }
 .wrong-line { color: #b3402f; }
-.opt-tl { font-size: 12px; color: #888; margin-top: 3px; display: none; font-style: italic; }
+.opt-tl { font-size: 12px; color: #333; margin-top: 3px; display: none; font-style: italic; }
 .opt.correct .opt-tl, .opt.wrong .opt-tl, .opt.reveal .opt-tl { display: block; }
 
 .kanji { font-size: 30px; }
@@ -99,7 +99,9 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
 <div class="wrap">
   <h1>JLPT N1 — 問題4 用法クイズ</h1>
   <p class="sub">第83〜92回 ＋ 復習問題 全10セット</p>
-  <div id="menu-area"><div class="menu" id="menu"></div></div>
+  <div id="menu-area"><div id="m4-resume-banner" style="display:none"></div>
+    <div style="margin-bottom:12px"><input type="text" id="m4Search" placeholder="🔍 Tìm theo từ vựng hoặc số vòng..." oninput="onM4SearchInput()" style="width:100%;padding:9px 14px;border-radius:8px;border:1px solid #c9a769;background:#fdf6e8;font-family:inherit;font-size:14px;box-sizing:border-box"></div>
+    <div class="menu" id="menu"></div></div>
   <div id="quiz-area" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;">
       <button id="prev-btn-top" onclick="prevQ()" disabled style="flex:1;padding:9px;border-radius:8px;border:1px solid #c9a769;background:#e6d9b8;color:#7a5a3a;font-size:14px;cursor:pointer;font-family:inherit;">← 前へ</button>
@@ -122,6 +124,7 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
     <div class="btn-row">
       <button class="back-btn" onclick="goMenu()">← メニューへ</button>
       <button id="prev-btn" onclick="prevQ()" disabled style="padding:10px 16px;border-radius:8px;border:1px solid #c9a769;background:#e6d9b8;color:#7a5a3a;font-size:14px;cursor:pointer;font-family:inherit;">← 前へ</button>
+      <button id="skip-btn" onclick="skipQ()" style="padding:10px 16px;border-radius:8px;border:1px solid #c9a769;background:#e6d9b8;color:#5a3b22;font-size:14px;cursor:pointer;font-family:inherit;">Bỏ qua →</button>
       <button class="next-btn" id="next-btn">次へ →</button>
     </div>
   </div>
@@ -312,9 +315,9 @@ function toggleWL(){
   for(var i=0;i<wrongItems.length;i++){
     var wq=wrongItems[i];
     h+='<div style="padding:8px 0;border-bottom:1px solid #f0f0ea;">';
-    h+='<strong>'+wq.k+'</strong> <span style="color:#888;font-size:12px;">'+wq.r+'</span>';
+    h+='<strong>'+wq.k+'</strong> <span style="color:#333;font-size:12px;">'+wq.r+'</span>';
     h+='<div style="color:#1f4e79;font-size:12px;">'+wq.m+'</div>';
-    h+='<div style="color:#666;font-size:12px;margin-top:2px;">正解: '+(wq.c+1)+'　'+wq.o[wq.c]+'</div>';
+    h+='<div style="color:#333;font-size:12px;margin-top:2px;">正解: '+(wq.c+1)+'　'+wq.o[wq.c]+'</div>';
     h+='</div>';
   }
   h+='<button onclick="retryWrongInline()" style="margin-top:10px;width:100%;padding:9px;border-radius:8px;border:1px solid #1f4e79;background:#e8f5ec;color:#2e7d4f;font-size:13px;cursor:pointer;font-family:inherit;">間違えた問題だけやり直す</button>';
@@ -369,7 +372,7 @@ function buildFeedback(q, chosen){
 
   h+='<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:2px;">';
   h+='<span style="font-size:23px;font-weight:700;color:#1a1a1a;">'+q.k+'</span>';
-  h+='<span style="font-size:15px;color:#7a6a52;">（'+q.r+'）：</span>';
+  h+='<span style="font-size:15px;color:#333;">（'+q.r+'）：</span>';
   h+='<button onclick="speakJapanese(\''+esc(q.k)+'\')" style="background:none;border:none;font-size:19px;cursor:pointer;opacity:0.8;padding:0;">🔊</button>';
   h+='</div>';
   h+='<div style="font-size:15px;color:#1a1a1a;font-weight:600;margin-bottom:10px;">'+q.m+'</div>';
@@ -434,11 +437,19 @@ function buildFeedback(q, chosen){
   return h;
 }
 
+function allAllQs(){
+  var out=[];
+  sections.forEach(function(sec){ sec[1].forEach(function(r){ out=out.concat(allData[r].qs); }); });
+  return out;
+}
+
 function resumeProgress(){
   var prog=loadProgress();
-  if(!prog||!allData[prog.round]) return;
+  if(!prog) return;
+  var qs = prog.round==='__ALL__' ? allAllQs() : (allData[prog.round] && allData[prog.round].qs);
+  if(!qs) return;
   currentRound=prog.round;
-  shuffled=allData[prog.round].qs.slice();
+  shuffled=qs.slice();
   cur=Math.min(prog.cur, shuffled.length-1);
   score=0; answered=false; wrongItems=[];
   document.getElementById('menu-area').style.display='none';
@@ -447,15 +458,46 @@ function resumeProgress(){
   showQ();
 }
 
+function renderM4ResumeBanner(){
+  var el=document.getElementById('m4-resume-banner');
+  var prog=loadProgress();
+  var qs = prog && (prog.round==='__ALL__' ? allAllQs() : (allData[prog.round] && allData[prog.round].qs));
+  if(!prog || !qs || prog.cur<1 || prog.cur>=qs.length){ el.style.display='none'; return; }
+  var roundLabel = prog.round==='__ALL__' ? 'Tất cả' : prog.round;
+  el.style.display='';
+  el.innerHTML='<div style="background:#fff8e6;border:2px solid #f5a623;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px">'
+    +'<span>📍 Lần trước bạn đang làm dở <b style="color:#b9761a">'+roundLabel+'</b>, dừng ở câu <b style="color:#b9761a">'+(prog.cur+1)+'/'+qs.length+'</b></span>'
+    +'<div style="display:flex;gap:8px"><button onclick="resumeProgress()" style="background:#f5a623;color:#5a3b22;border:none;border-radius:7px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer">Tiếp tục →</button>'
+    +'<button onclick="localStorage.removeItem(\'mondai4_progress\');renderM4ResumeBanner();" style="background:#eee;color:#333;border:none;border-radius:7px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer">Xóa</button></div></div>';
+}
+
+let m4SearchQuery = '';
+function onM4SearchInput(){
+  m4SearchQuery = document.getElementById('m4Search').value.trim().toLowerCase();
+  buildMenu();
+}
 function buildMenu(){
   const menu = document.getElementById('menu');
   menu.innerHTML = '';
+  const q4s = m4SearchQuery;
+  let anyMatch = false;
+  if(!q4s){
+    const allBtn = document.createElement('button');
+    allBtn.className = 'menu-btn' + (scores['__ALL__']!==undefined?' done':'');
+    const allChip = scores['__ALL__']!==undefined?`<span class="score-chip">${scores['__ALL__']}/${TOTAL_Q4}</span>`:'';
+    allBtn.innerHTML = `<div class="round-title">🔀 Tất cả (toàn bộ ${TOTAL_Q4} câu) ${allChip}</div>`;
+    allBtn.onclick = ()=>startRound('__ALL__');
+    menu.appendChild(allBtn);
+  }
   sections.forEach(sec => {
+    const matchedRounds = sec[1].filter(r => !q4s || r.toLowerCase().includes(q4s) || (allData[r].words||'').toLowerCase().includes(q4s));
+    if(matchedRounds.length===0) return;
+    anyMatch = true;
     const lbl = document.createElement('div');
     lbl.className = 'section-label';
     lbl.textContent = sec[0];
     menu.appendChild(lbl);
-    sec[1].forEach(r => {
+    matchedRounds.forEach(r => {
       const q = allData[r];
       const btn = document.createElement('button');
       btn.className = 'menu-btn' + (scores[r]!==undefined?' done':'');
@@ -465,6 +507,12 @@ function buildMenu(){
       menu.appendChild(btn);
     });
   });
+  if(q4s && !anyMatch){
+    const empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center;color:#333;padding:24px;';
+    empty.textContent = 'Không tìm thấy vòng nào chứa từ khóa này.';
+    menu.appendChild(empty);
+  }
 }
 
 function saveProgress(round, idx){
@@ -476,7 +524,7 @@ function loadProgress(){
 
 function startRound(r){
   currentRound = r;
-  shuffled = allData[r].qs.slice();
+  shuffled = (r==='__ALL__' ? allAllQs() : allData[r].qs).slice();
   cur = 0; score = 0; answered = false; wrongItems = [];
   document.getElementById('menu-area').style.display='none';
   document.getElementById('score-card').classList.remove('show');
@@ -546,6 +594,7 @@ function pick(chosen){
   }
   localStorage.setItem('dao2_mondai4_correct',JSON.stringify(allCorrect4));
   reportToolProgress(allCorrect4.length,TOTAL_Q4);
+  saveProgress(currentRound, cur);
   var nb=document.getElementById('next-btn');
   nb.textContent=cur<shuffled.length-1?'次へ →':'結果を見る →';
   nb.classList.add('show');
@@ -566,11 +615,23 @@ function prevQ(){
   document.getElementById('feedback').style.display='none';
   document.getElementById('next-btn').classList.remove('show');
   var nbt=document.getElementById('next-btn-top'); if(nbt) nbt.style.display='none';
+  saveProgress(currentRound, cur);
   showQ();
+}
+
+function skipQ(){
+  if(!answered){
+    answered=true;
+    document.querySelectorAll('.opt').forEach(function(b){b.disabled=true;});
+  }
+  cur++;
+  if(cur>=shuffled.length) showScore();
+  else { saveProgress(currentRound, cur); showQ(); }
 }
 
 function showScore(){
   scores[currentRound]=score;
+  try{ localStorage.removeItem('mondai4_progress'); }catch(e){}
   document.getElementById('quiz-area').style.display='none';
   document.getElementById('prog').style.width='100%';
   const sc=document.getElementById('score-card');
@@ -594,21 +655,24 @@ function goMenu(){
   document.getElementById('quiz-area').style.display='none';
   document.getElementById('score-card').classList.remove('show');
   document.getElementById('menu-area').style.display='';
+  buildMenu();
+  renderM4ResumeBanner();
 }
 
 function nextQ(){
   cur++;
   if(cur>=shuffled.length) showScore();
-  else showQ();
+  else { saveProgress(currentRound, cur); showQ(); }
 }
 
 document.getElementById('next-btn').onclick=function(){
   cur++;
   if(cur>=shuffled.length) showScore();
-  else showQ();
+  else { saveProgress(currentRound, cur); showQ(); }
 };
 
 buildMenu();
+renderM4ResumeBanner();
 </script>
 </body>
 </html>

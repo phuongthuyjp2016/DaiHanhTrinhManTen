@@ -9,7 +9,7 @@
 :root{
   --red:#e53935;--blue:#1565c0;--green:#2e7d32;--purple:#6a1b9a;
   --indigo:#283593;--teal:#00695c;--orange:#e65100;
-  --ink:#1a1a2e;--bg:#f3ecd8;--card:#fdf6e8;--muted:#546e7a;--border:#c9a769;
+  --ink:#1a1a2e;--bg:#f3ecd8;--card:#fdf6e8;--muted:#1a1a2e;--border:#c9a769;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background-color:var(--bg);background-image:url('assets/art-001.webp');background-size:cover;background-position:center;background-attachment:fixed;color:var(--ink);font-family:'Be Vietnam Pro','Noto Sans JP',sans-serif;min-height:100vh;}@media(max-width:643px){body{background-image:url('assets/art-002.webp');}}
@@ -38,7 +38,7 @@ header h1{font-family:'Baloo 2','Noto Serif JP',serif;font-weight:800;color:#ffe
 .fbtn{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:3px 11px;font-size:.74rem;cursor:pointer;color:var(--ink);font-family:'Be Vietnam Pro',sans-serif;font-weight:500;transition:all .15s;}
 .fbtn:hover{border-color:#f5a623;}
 .fbtn.active{background:linear-gradient(180deg,#ffd25a,#f5a623);color:#5a3b22;border-color:#f5a623;font-weight:700;}
-.result-count{font-size:.76rem;color:var(--muted);margin-left:auto;}
+.result-count{font-size:.76rem;color:var(--ink);font-weight:600;margin-left:auto;}
 
 /* GRID */
 .container{max-width:1100px;margin:0 auto;padding:6px 16px 60px;}
@@ -120,7 +120,7 @@ body.nb-embed .container{padding-top:10px;}
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&amp;family=Noto+Serif+JP:wght@400;700&amp;family=Noto+Sans+JP:wght@400;500;700&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap');
 :root{
   --ink:#1a1a2e;--paper:#f3ecd8;--card:#fdf6e8;--red:#e53935;--green:#2e7d32;
-  --muted:#546e7a;--border:#c9a769;--gold:#f57f17;--shadow:0 3px 16px rgba(0,0,0,.09);
+  --muted:#1a1a2e;--border:#c9a769;--gold:#f57f17;--shadow:0 3px 16px rgba(0,0,0,.09);
   --blue:#1565c0;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -157,7 +157,7 @@ header span{font-size:.8rem;color:#b0a898;}
 
 /* QUIZ — đề thi style */
 #screen-quiz{display:none;}
-.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}.btn-skip{background:none;border:1px solid #cbb98a;color:#7a5a3a;font-size:.72rem;padding:4px 10px;border-radius:12px;cursor:pointer;font-family:inherit;}.btn-skip:hover{background:#f3ecd8;}
 .quiz-round{font-family:'Noto Serif JP',serif;font-size:.9rem;font-weight:700;color:#283593;}
 .quiz-score{font-size:.82rem;color:var(--muted);}
 .progress-wrap{height:4px;background:var(--border);border-radius:2px;margin-bottom:20px;overflow:hidden;}
@@ -330,6 +330,7 @@ header span{font-size:.8rem;color:#b0a898;}
 <div id=&quot;screen-quiz&quot;>
   <div class=&quot;quiz-header&quot;>
     <span class=&quot;quiz-round&quot; id=&quot;q-round-label&quot;></span>
+    <button class=&quot;btn-skip&quot; onclick=&quot;skipQuestion()&quot;>Bỏ qua →</button>
     <span class=&quot;quiz-score&quot; id=&quot;q-score&quot;>✓ 0　✗ 0</span>
   </div>
   <div class=&quot;progress-wrap&quot;><div class=&quot;progress-fill&quot; id=&quot;progress-fill&quot; style=&quot;width:0%&quot;></div></div>
@@ -515,7 +516,7 @@ function onCorrectAnswer(){
   let big=false;
   let sub=pickHype();
   if(comboCount>=2)showComboToast(comboCount);
-  if(comboCount>0 && comboCount%COMBO_TARGET===0){
+  if(comboCount>0 &amp;&amp; comboCount%COMBO_TARGET===0){
     gained+=COMBO_BONUS;
     big=true;
     sub='Chuỗi '+comboCount+' câu đúng — Bùng nổ!';
@@ -764,6 +765,8 @@ function nextQuestion(){
   if(session.idx>=session.queue.length){localStorage.removeItem('jlpt_session');showResult();}
   else{localStorage.setItem('jlpt_session',JSON.stringify(session));renderQuestion();}
 }
+
+function skipQuestion(){ nextQuestion(); }
 
 // ── Result ──
 function showResult(){

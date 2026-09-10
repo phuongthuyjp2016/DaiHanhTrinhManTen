@@ -5,7 +5,7 @@
 <title>Quiz N1 - 100 câu điền sao (Mondai 6)</title>
 <style>
   :root{
-    --bg:#f7f5f0; --card:#ffffff; --ink:#2b2b2b; --muted:#7a7a7a;
+    --bg:#f7f5f0; --card:#ffffff; --ink:#2b2b2b; --muted:#2b2b2b;
     --accent:#1f4e79; --accent2:#1f4e79; --line:#9dc0da; --wrong:#b3402f; --right:#2e7d4f;
   }
   *{box-sizing:border-box;}
@@ -20,7 +20,7 @@
   .wrap{max-width:720px; margin:0 auto;}
   header{text-align:center; margin-bottom:20px;}
   header h1{font-size:1.4rem; margin:0 0 4px;}
-  header p{color:var(--muted); margin:0; font-size:0.9rem;}
+  header p{color:var(--ink); margin:0; font-size:0.9rem;}
 
   /* SET SELECTOR */
   .set-grid{
@@ -151,6 +151,7 @@
     <p>Bộ 100 câu điền sao — Đầy đủ 100/100 câu, chia 16 set x 20 câu</p>
   </header>
 
+  <input type="text" id="quizSearchInput" placeholder="🔍 Tìm câu hỏi theo nội dung, đáp án hoặc ngữ pháp..." style="width:100%;padding:9px 14px;border-radius:10px;border:1.5px solid var(--line);font-family:inherit;font-size:14px;margin-bottom:12px;box-sizing:border-box;">
   <div id="setSelectArea"></div>
   <div id="quizWrapArea" style="display:none;">
     <span class="back-link" id="backToSets">← Quay về danh sách set</span>
@@ -828,20 +829,55 @@ function onWrongAnswer() {
   comboCount = 0;
 }
 
+let quizSearchQuery = '';
+function jumpToQuestionBySearch(n){
+  const setIndex = Math.floor((n-1)/SET_SIZE);
+  const idxInSet = (n-1)%SET_SIZE;
+  startSet(setIndex, idxInSet, 0);
+}
 function renderSetSelector(){
+  if(quizSearchQuery){
+    const q = quizSearchQuery;
+    const matches = window.QUIZ_DATA.filter(item => item.full.toLowerCase().includes(q) || item.grammar.toLowerCase().includes(q) || item.choices.some(c=>c.toLowerCase().includes(q)));
+    let sh = `<div style="margin-bottom:10px;color:var(--muted);font-size:.85rem;">Tìm thấy ${matches.length} câu</div>`;
+    if(matches.length===0){
+      sh += `<div class="remember-box" style="text-align:center;color:#333;">Không tìm thấy câu nào khớp.</div>`;
+    } else {
+      sh += '<div class="set-grid">';
+      matches.forEach(item=>{
+        sh += `<div class="set-btn" data-jump="${item.n}" style="text-align:left;grid-column:1/-1;">
+          <span class="set-num">Câu ${item.n}</span>
+          <span class="set-range">${item.full}</span>
+        </div>`;
+      });
+      sh += '</div>';
+    }
+    document.getElementById('setSelectArea').innerHTML = sh;
+    document.querySelectorAll('[data-jump]').forEach(btn=>{
+      btn.addEventListener('click', ()=> jumpToQuestionBySearch(parseInt(btn.dataset.jump)));
+    });
+    return;
+  }
   let html = '';
   const saved = loadProgress();
-  if(saved && saved.set>=0 && saved.set<NUM_SETS){
-    const sStart = saved.set*SET_SIZE+1;
-    const sQuestionNum = sStart + saved.idx;
+  const savedIsAll = saved && saved.set==='all';
+  const savedIsValidSet = saved && saved.set>=0 && saved.set<NUM_SETS;
+  if(savedIsAll || savedIsValidSet){
+    const sQuestionNum = savedIsAll ? (saved.idx+1) : (saved.set*SET_SIZE+1+saved.idx);
+    const setLbl = savedIsAll ? 'Tất cả' : ('Set '+(saved.set+1));
     html += `<div class="remember-box" style="background:#fdf1ea; border-color:var(--accent);">
-      📍 Lần trước bạn đang làm <b>Set ${saved.set+1}</b>, dừng ở <b>câu ${sQuestionNum}</b>.
+      📍 Lần trước bạn đang làm <b>${setLbl}</b>, dừng ở <b>câu ${sQuestionNum}</b>.
       <div style="margin-top:10px;">
         <button class="navbtn" id="resumeBtn">Tiếp tục câu ${sQuestionNum} →</button>
         <button class="navbtn secondary" id="clearProgressBtn" style="margin-left:8px;">Xóa tiến độ</button>
       </div>
     </div>`;
   }
+  html += `<div class="set-btn" data-set="all" style="${savedIsAll?'border-color:var(--accent);':''}margin-bottom:12px;">
+      <span class="set-num">🔀 Tất cả</span>
+      <span class="set-range">Toàn bộ ${TOTAL} câu, liên tục</span>
+      ${savedIsAll?'<span style="display:block;font-size:0.72rem;color:var(--accent);margin-top:2px;">● đang dừng đây</span>':''}
+    </div>`;
   html += '<div class="set-grid">';
   for(let s=0; s<NUM_SETS; s++){
     const start = s*SET_SIZE+1;
@@ -857,7 +893,7 @@ function renderSetSelector(){
   html += `<div class="remember-box">💡 Tiến độ được <b>tự động lưu</b> trong trình duyệt này — lần sau mở lại file sẽ thấy nút "Tiếp tục" ở câu bạn vừa dừng.</div>`;
   document.getElementById('setSelectArea').innerHTML = html;
   document.querySelectorAll('.set-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=> startSet(parseInt(btn.dataset.set), 0));
+    btn.addEventListener('click', ()=> startSet(btn.dataset.set==='all'?'all':parseInt(btn.dataset.set), 0));
   });
   if(saved){
     document.getElementById('resumeBtn').addEventListener('click', ()=> startSet(saved.set, saved.idx, saved.score||0));
@@ -870,16 +906,20 @@ function renderSetSelector(){
 
 function startSet(setIndex, resumeIdx, resumeScore){
   currentSet = setIndex;
-  setData = getSetData(setIndex);
+  setData = setIndex==='all' ? window.QUIZ_DATA.slice() : getSetData(setIndex);
   idxInSet = resumeIdx || 0;
   score = resumeScore || 0;
   document.getElementById('setSelectArea').style.display = 'none';
   document.getElementById('quizWrapArea').style.display = 'block';
   document.getElementById('resultArea').style.display = 'none';
   document.getElementById('quizArea').style.display = 'block';
-  const start = currentSet*SET_SIZE+1;
-  const end = Math.min((currentSet+1)*SET_SIZE, TOTAL);
-  document.getElementById('setLabel').textContent = `Set ${currentSet+1} (câu ${start}–${end})`;
+  if(setIndex==='all'){
+    document.getElementById('setLabel').textContent = `Tất cả (câu 1–${TOTAL})`;
+  } else {
+    const start = currentSet*SET_SIZE+1;
+    const end = Math.min((currentSet+1)*SET_SIZE, TOTAL);
+    document.getElementById('setLabel').textContent = `Set ${currentSet+1} (câu ${start}–${end})`;
+  }
   document.getElementById('totalNum').textContent = setData.length;
   document.getElementById('scoreNum').textContent = score;
   render();
@@ -908,6 +948,7 @@ function render(){
 
   document.getElementById('topNavRow').innerHTML = `
     <button class="navbtn secondary" id="prevBtnTop" ${isFirst?'disabled':''}>← Câu trước</button>
+    <button class="navbtn secondary" id="skipBtnTop">Bỏ qua →</button>
     <button class="navbtn hidden" id="nextBtnTop">Câu tiếp theo →</button>
   `;
 
@@ -928,6 +969,7 @@ function render(){
       </div>
       <div class="navrow">
         <button class="navbtn secondary" id="prevBtn" ${isFirst?'disabled':''}>← Câu trước</button>
+        <button class="navbtn secondary" id="skipBtn">Bỏ qua →</button>
         <button class="navbtn hidden" id="nextBtn">Câu tiếp theo →</button>
       </div>
     </div>
@@ -941,6 +983,8 @@ function render(){
   document.getElementById('prevBtn').addEventListener('click', prev);
   document.getElementById('nextBtnTop').addEventListener('click', next);
   document.getElementById('prevBtnTop').addEventListener('click', prev);
+  document.getElementById('skipBtn').addEventListener('click', skip);
+  document.getElementById('skipBtnTop').addEventListener('click', skip);
 }
 
 function onAnswer(btn, q){
@@ -956,7 +1000,7 @@ function onAnswer(btn, q){
   });
   if(picked===correctChoiceNum) {
     score++;
-    const globalIdx = currentSet*SET_SIZE+idxInSet;
+    const globalIdx = currentSet==='all' ? idxInSet : currentSet*SET_SIZE+idxInSet;
     if(!everCorrect.has(globalIdx)){
       everCorrect.add(globalIdx);
       try{ localStorage.setItem(EVER_CORRECT_KEY, JSON.stringify([...everCorrect])); }catch(e){}
@@ -971,6 +1015,15 @@ function onAnswer(btn, q){
   document.getElementById('explainBox').classList.add('show');
   document.getElementById('nextBtn').classList.remove('hidden');
   document.getElementById('nextBtnTop').classList.remove('hidden');
+  document.getElementById('skipBtn').classList.add('hidden');
+  document.getElementById('skipBtnTop').classList.add('hidden');
+}
+
+function skip(){
+  if(answered){ next(); return; }
+  idxInSet++;
+  if(idxInSet>=setData.length){ showResult(); return; }
+  render();
 }
 
 function next(){
@@ -995,6 +1048,8 @@ function prev(){
   document.getElementById('explainBox').classList.add('show');
   document.getElementById('nextBtn').classList.remove('hidden');
   document.getElementById('nextBtnTop').classList.remove('hidden');
+  document.getElementById('skipBtn').classList.add('hidden');
+  document.getElementById('skipBtnTop').classList.add('hidden');
   answered = true;
 }
 
@@ -1005,20 +1060,26 @@ function showResult(){
   clearProgress();
   const pct = Math.round(score/setData.length*100);
   document.getElementById('resultArea').style.display='block';
-  const start = currentSet*SET_SIZE+1;
-  const end = Math.min((currentSet+1)*SET_SIZE, TOTAL);
+  const isAll = currentSet==='all';
+  const start = isAll ? 1 : currentSet*SET_SIZE+1;
+  const end = isAll ? TOTAL : Math.min((currentSet+1)*SET_SIZE, TOTAL);
+  const startArg = isAll ? "'all'" : currentSet;
   document.getElementById('resultArea').innerHTML = `
     <div class="result">
-      <h2>🎉 Hoàn thành Set ${currentSet+1}!</h2>
+      <h2>🎉 Hoàn thành ${isAll?'Tất cả':'Set '+(currentSet+1)}!</h2>
       <p style="font-size:1.4rem;">Điểm: <b>${score}</b> / ${setData.length} (${pct}%)</p>
       <p style="color:var(--muted);">Bạn đã hoàn thành câu ${start}–${end}.</p>
-      <button class="restart" onclick="startSet(${currentSet})">Làm lại Set này</button>
+      <button class="restart" onclick="startSet(${startArg})">Làm lại ${isAll?'Tất cả':'Set này'}</button>
       <button class="restart" style="background:var(--accent2); margin-left:8px;" onclick="backToSets()">Chọn Set khác</button>
     </div>
   `;
 }
 
 document.getElementById('backToSets').addEventListener('click', backToSets);
+document.getElementById('quizSearchInput').addEventListener('input', (e)=>{
+  quizSearchQuery = e.target.value.trim().toLowerCase();
+  renderSetSelector();
+});
 renderSetSelector();
 </script>
 <footer>JLPT N1 — Mondai 6 (文の文法②) · Bộ 100 câu — ĐẦY ĐỦ 100/100 câu · 5 set</footer>
