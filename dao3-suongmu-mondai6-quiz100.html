@@ -5,7 +5,7 @@
 <title>Quiz N1 - 100 câu điền sao (Mondai 6)</title>
 <style>
   :root{
-    --bg:#f7f5f0; --card:#ffffff; --ink:#2b2b2b; --muted:#7a7a7a;
+    --bg:#f7f5f0; --card:#ffffff; --ink:#2b2b2b; --muted:#2b2b2b;
     --accent:#7c84d1; --accent2:#4c509f; --line:#e4ddd2; --wrong:#c0392b; --right:#1e7d4f;
   }
   *{box-sizing:border-box;}
@@ -841,7 +841,7 @@ function renderSetSelector(){
     const matches = window.QUIZ_DATA.filter(item => item.full.toLowerCase().includes(q) || item.grammar.toLowerCase().includes(q) || item.choices.some(c=>c.toLowerCase().includes(q)));
     let sh = `<div style="margin-bottom:10px;color:var(--muted);font-size:.85rem;">Tìm thấy ${matches.length} câu</div>`;
     if(matches.length===0){
-      sh += `<div class="remember-box" style="text-align:center;color:#888;">Không tìm thấy câu nào khớp.</div>`;
+      sh += `<div class="remember-box" style="text-align:center;color:#333;">Không tìm thấy câu nào khớp.</div>`;
     } else {
       sh += '<div class="set-grid">';
       matches.forEach(item=>{
