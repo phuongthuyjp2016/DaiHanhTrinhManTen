@@ -1,0 +1,64 @@
+window.MONDAI2_DATA = window.MONDAI2_DATA || {};
+window.MONDAI2_DATA['2010-12'] = {
+  examLabel: '2010-12',
+  audioSrc: 'assets/audio/MD2/N1_12-2010.mp3',
+  summaryHtml: "<ul><li>Nhiều câu trong đề này áp dụng <b>\"ai nói mới tính\"</b>: đáp án sai thường là suy đoán/gợi ý của người KHÔNG được hỏi, hoặc của người thứ ba — luôn kiểm tra chủ thể phát biểu trước khi chọn.</li><li><b>Bẫy nhân quả</b> (7番): một chi tiết có thật trong bài vẫn có thể sai nếu nó là HỆ QUẢ chứ không phải NGUYÊN NHÂN được hỏi.</li><li><b>Bí kíp tiền-tinh thần xét trên 4 đáp án, không phải script</b> (6番): B là đáp án tiền duy nhất (không có tinh thần đối trọng) → đúng quy trình là dự đoán B trước, nhưng script phủ định trực tiếp nên phải quay xe sang D — dự đoán từ bí kíp vẫn có thể sai, quan trọng là biết quay xe khi nghe.</li></ul>",
+  questions: [
+  {
+    number: 1,
+    question: "会社で男の人と女の人が話しています。女の人はどうして試験を受けると言っていますか。",
+    choices: ["海外支社に勤務するため", "人事評価を上げるため", "留学用のしょうがくきんを得るため", "国際部に異動するため"],
+    correctAnswer: 1,
+    script: [ { speaker:"", spk:"m", text:"M：あれ？山田さん、昼休みに勉強？F：あ、課長、来月英語の試験があるので、その準備をちょっと。M：ああ、そうなんだ。がんばるね。もしかして海外勤務とか考えてるの？去年から海外支社が増えたからね。F：はあ、将来的には海外勤務が出来たらいいなとは思っていますが、今はまだ。何か資格があると人事評価がプラスになると聞いたので挑戦して見ようと思って。M：なるほど。高い語学力は武器になるからね。ああ、そうだ、山田さん、うちに海外派遣制度があることは知ってる？F：いいえ。M：会社に利益になると判断されると海外の大学院で勉強するための奨学金がもらえるんだよ。F：そうなんですか。M：いやあ、英語が上手になったら国際部からほしいって言われるかもしれないね。F：いえ、そんなつもりはありませんから。" } ],
+    explanationHtml: "<ul><li><i>Bước 0:</i> câu hỏi hỏi lý do cô gái TỰ nói ra là lý do cô đi thi — không phải suy đoán/gợi ý của 課長.</li><li><i>Bước 1 (khác loại) — thuần từ câu hỏi + 4 đáp án:</i> A, C, D đều là \"thay đổi vị trí/nơi làm việc\" (đi nước ngoài, đi du học, chuyển bộ phận); B (nâng đánh giá nhân sự) là chuyện nội bộ, không phải chuyển chỗ — khác loại hẳn.</li><li><b>Dự đoán trước khi nghe:</b> B, nhờ bước 1 (khác loại) — đúng ngay không cần quay xe.</li><li><b>Khi nghe — ai nói mới tính xác nhận đúng dự đoán:</b> toàn bộ A, C, D đều là <b>câu hỏi/gợi ý của 男 (課長)</b>, không phải lời cô gái tự nói. A: 男 hỏi \"もしかして海外勤務とか考えてるの?\" → cô chỉ đáp \"将来的には...いいなとは思っています<b>が、今はまだ</b>\" (chỉ là ước mong tương lai, hiện tại CHƯA phải lý do). C: 男 tự giới thiệu chế độ 奨学金, cô chỉ đáp \"そうなんですか\" (không xác nhận). D: 男 đoán \"国際部からほしいって言われるかも\" → cô <b>phủ định thẳng</b>: \"いえ、そんなつもりはありませんから\". Lý do cô tự nói ra duy nhất là \"何か資格があると<b>人事評価がプラスになる</b>と聞いたので挑戦して見ようと思って\" → khớp B.</li></ul>"
+  },
+  {
+    number: 2,
+    question: "会社で男の人と女の人が商品の企画について話しています。男の人は何が問題だったと言っていますか。男の人です。",
+    choices: ["予算が不十分だったから", "人員が足りなかったから", "時間が短かったから", "調査の方法が悪かったから"],
+    correctAnswer: 2,
+    script: [ { speaker:"", spk:"m", text:"M：今回うちの課が提案した企画、結局商品化されないことになったらしいよ。F：ええ、何が悪かったんだろう。予算に余裕がなかったじゃない。やっぱりあれ、いたかったよね。M：ううん、ま、予算は仕方ないよ。F：そう、しかもメンバーが三人っていうのもあまりにも少なかったし。M：まあ、少なかったけど、かえってやりやすかったよ。それより二ヶ月で企画をまとめなきゃならなかったのがきつかったなあ。せめてあと一ヶ月あればねえ。F：確かにそれもそうだね。M：あ、そういえば、課長はこれを機に市場調査の方法を見直すんだって。僕はそういう問題じゃないんだと思うんだけどね。" } ],
+    explanationHtml: "<ul><li><i>Bước 0:</i> câu hỏi chỉ hỏi ý <b>男の人</b> về vấn đề của dự án — không tính suy đoán của người khác.</li><li><i>Thử 5 bước + bí kíp thuần từ 4 đáp án:</i> A (予算), B (人員), C (時間), D (調査の方法) đều là các nguồn lực/yếu tố dự án ngang cấp nhau — không có tín hiệu khác loại/bao quát/tiền-tinh thần nào đủ mạnh để ưu tiên 1 đáp án chỉ từ answer text (cả 4 đều có thể coi là \"constraint\" kiểu bước 3).</li><li><b>Dự đoán trước khi nghe:</b> không chốt được 1 đáp án cụ thể chỉ từ câu hỏi + 4 đáp án — cần nghe để bắt đúng ý 男 tự nói.</li><li><b>Khi nghe — ai nói mới tính + quay xe liên tiếp:</b> A và B là suy đoán của <b>女の人</b>; D là kế hoạch của <b>課長</b> (người thứ ba) — cả 3 đều không phải lời khẳng định của 男. Cô nêu A (予算) → 男 gạt nhẹ \"ううん、ま、<b>予算は仕方ないよ</b>\" (không sao cả, không phải vấn đề). Cô nêu B (人員 3 người) → 男 còn phủ định ngược lại: \"<b>かえってやりやすかったよ</b>\" (ít người lại dễ làm hơn) — B không chỉ bị loại mà còn bị đảo chiều thành tích cực. Sau đó dùng <b>「それより」</b> chuyển sang ý thật của chính mình: \"二ヶ月で企画をまとめなきゃならなかったのが<b>きつかった</b>\" → C. D bị 男 bác thẳng ở cuối: \"僕はそういう問題じゃないんだと思うんだけどね\".</li><li><b>Ghi nhớ:</b> đáp án đúng luôn là ý <b>男 tự phát biểu bằng それより</b>, không phải ý được gợi ý từ người khác rồi bị bác bỏ.</li></ul>"
+  },
+  {
+    number: 3,
+    question: "男の人と女の人が映画について話しています。この映画はどうして人気がでましたか？",
+    choices: ["テレビで映画が宣伝されたから", "有名な俳優がでているから", "インターネットで評判になったから", "映画情報誌で高く評価されたから"],
+    correctAnswer: 2,
+    script: [ { speaker:"", spk:"m", text:"M：これ、昨日見た映画のプログラム。F：あ、この映画、すごい人気なんだって。そのうちテレビでも放送するかな。M：うん、絶対やるよ。この映画、無名の監督の作品でね、有名な俳優も出てないから、配給会社も宣伝に力を入れてなかったんだって。だから、最初に公開されたときは、全然話題にもならなかったらしいんだ。F：へえ。M：でも、映画を見て、感動した人たちが感想をインターネットにどんどん書き込んでね。で、それを見た人たちが、家族や友だちに話したり。F：噂が噂を呼んだってわけね。で、実際映画はどうだったの？M：おもしろかったよ。映画情報誌に載っている評価はそれほどでもなかったけど、絶対見るべきだよ。" } ],
+    explanationHtml: "<ul><li><i>Bước 0:</i> câu hỏi hỏi tại sao phim NÀY ĐÃ nổi tiếng (quá khứ) — không phải chuyện tương lai sẽ phát sóng.</li><li><i>Bước 1 (khác loại) — thuần từ câu hỏi + 4 đáp án:</i> A, B, D đều là kênh quảng bá/đánh giá <b>chính thức có chủ đích</b> (TV, diễn viên nổi tiếng, tạp chí phê bình); C là hiện tượng <b>lan truyền tự phát</b> từ chính khán giả — khác loại.</li><li><b>Dự đoán trước khi nghe:</b> C, nhờ bước 1.</li><li><b>Khi nghe — loại trừ bằng phủ định trực tiếp rồi quay xe:</b> 男 phủ định luôn cả B và A trong 1 câu: \"<b>無名の監督</b>...<b>有名な俳優も出てない</b>から、<b>配給会社も宣伝に力を入れてなかった</b>んだって\" (không sao/không quảng cáo → ngược hẳn A, B). Sau đó <b>「でも」</b> chuyển hướng sang lý do thật: \"感想をインターネットにどんどん書き込んで…噂が噂を呼んだ\" → C. D bị loại cuối cùng: \"映画情報誌に載っている評価は<b>それほどでもなかった</b>\" (đánh giá tạp chí chỉ bình thường, không phải lý do nổi tiếng).</li><li><b>Bẫy:</b> câu mở đầu của cô \"そのうちテレビでも放送するかな\" dễ khiến liên tưởng tới A, nhưng đó là suy đoán về TƯƠNG LAI (sẽ phát sóng), không liên quan tới câu hỏi \"tại sao ĐÃ nổi tiếng\".</li></ul>"
+  },
+  {
+    number: 4,
+    question: "支店長が社員にあいさつをしています。支店長は何が一番うれしいと言っていますか。",
+    choices: ["支店が販売目標を達成したこと", "支店の販売実績を毎月更新できたこと", "支店の年間総売上げが伸びたこと", "支店の社員全員が目標を達成したこと"],
+    correctAnswer: 3,
+    script: [ { speaker:"", spk:"m", text:"F：みなさん、一年間お疲れ様でした。今年も無事支店の販売目標を達成できました。また、月間販売実績を毎月更新し続け、年間総売り上げも昨年を上回りました。大変喜ばしい結果となりました。ええ、ただ、私としては、支店の目標達成もさることながら、皆さん全員が各自の目標を達成したこと、これを何より誇りに思っております。皆さんそれぞれが目標を達成したからこそ、この成功があったのです。この調子で来年はさらに飛躍しましょう。" } ],
+    explanationHtml: "<ul><li><i>Bước 0:</i> câu hỏi hỏi điều chi nhánh trưởng thấy vui <b>NHẤT</b> (一番うれしい) — không phải mọi thành tích được liệt kê.</li><li><i>Phái sinh (bí kíp) — thuần từ câu hỏi + 4 đáp án:</i> A/B/C (chi nhánh đạt mục tiêu, cập nhật kỷ lục hàng tháng, tổng doanh thu tăng) đều là <b>kết quả phái sinh</b> từ việc D (từng cá nhân đạt mục tiêu) — D là \"mẹ\" (nguồn gốc), A/B/C là \"con\" (hệ quả cụ thể).</li><li><b>Dự đoán trước khi nghe:</b> D, nhờ bí kíp phái sinh.</li><li><b>Khi nghe — bí kíp đồng đẳng lộ ra khi nghe, rồi quay xe bằng 「ただ」+ từ khóa ưu tiên:</b> A, B, C được liệt kê liên tiếp ngang hàng ngay đầu bài (\"〜達成できました。また、〜更新し続け、〜上回りました\") — đúng mô hình liệt kê nhiều thành tích ngang cấp, không phải ý chính. \"<b>ただ</b>、私としては、支店の目標達成もさることながら、皆さん<b>全員</b>が各自の目標を達成したこと、これを<b>何より</b>誇りに思っております\" — cụm 「何より」(hơn hết thảy) khớp trực tiếp với từ khóa câu hỏi 「一番うれしい」→ D, đúng khớp dự đoán ban đầu.</li></ul>"
+  },
+  {
+    number: 5,
+    question: "女の人が男の人にインタビューしています。男の人はスキーのコーチとして何が大切だと言っていますか。",
+    choices: ["選手のスキー技術を向上させること", "選手の精神面を支えること", "コーチ自身のスキー技術をみがくこと", "コーチ自身の精神面をきたえること"],
+    correctAnswer: 1,
+    script: [ { speaker:"", spk:"m", text:"F：山本さんは、長年スキー選手として活躍され、その後引退してコーチになられたわけですが、コーチとしてどんなことが一番大切だと思っていらっしゃいますか。M：そうですね、選手は勝ちたいという思いがあると、黙っていても技術を向上させようとがんばるものなんです。しかし、ここぞというときに弱気になったりするとどんなに技術が高くても勝てないんですね。このことは選手本人が何度も試合の経験をして気づいてもらうしかないんです。F：そうなんですか。M：ええ。スキー技術は直接伝えることが出来るし、選手も目に見えてうまくなる。しかし、精神的なことはそうはいかない。選手は試合になるとどうしても弱気になりがちです。そんなときには選手を励まし、元気づける、そして自分の力を最大限に発揮させる、こういうことができてこそ、コーチとして一人前だと思うんです。" } ],
+    explanationHtml: "<ul><li><i>Bước 0:</i> câu hỏi hỏi coach cần làm gì cho <b>選手</b> (vận động viên) — không phải bản thân coach tự rèn luyện gì.</li><li><i>Sai chủ ngữ (loại nhanh) — thuần từ câu hỏi + 4 đáp án:</i> C và D nói về việc rèn luyện <b>コーチ自身</b> (bản thân coach), lạc chủ ngữ so với câu hỏi — loại ngay từ bước quét đáp án.</li><li><i>Bí kíp tiền-tinh thần:</i> bài hoàn toàn không nhắc tới tiền → điều kiện ưu tiên tinh thần thỏa mãn. A (技術 - kỹ thuật) là vật chất/kỹ năng cụ thể; B (精神面 - tinh thần) đúng nhóm tinh thần → ưu tiên B.</li><li><b>Dự đoán trước khi nghe:</b> B, nhờ loại C/D (sai chủ ngữ) + bí kíp tiền-tinh thần.</li><li><b>Khi nghe — xác nhận qua しかし:</b> \"選手は勝ちたいという思いがあると、<b>黙っていても技術を向上させようとがんばる</b>\" (kỹ thuật tự cải thiện được, không cần coach can thiệp nhiều) → làm yếu A. Câu chốt: \"スキー技術は直接伝えることが出来る…<b>しかし</b>、精神的なことはそうはいかない…選手を励まし、元気づける…<b>こういうことができてこそ、コーチとして一人前</b>\" → xác nhận B.</li></ul>"
+  },
+  {
+    number: 6,
+    question: "テレビのニュースでアナウンサーがある栽培方法について話しています。この栽培方法は最近どうして注目されていますか。",
+    choices: ["無農薬で野菜がさいばいできるため", "施設を維持するのにお金がかからないため", "短期間で野菜が収穫できるため", "野菜の安定供給ができるため"],
+    correctAnswer: 3,
+    script: [ { speaker:"", spk:"m", text:"M：野菜を栽培するとき、屋内で、人工的に環境を作って育てるという方法があります。外で栽培するのと違って、天候に左右されず、害虫の被害の心配もなく、効率的に無農薬で野菜を栽培することが可能です。ただし、光熱費などがかさみ、従来の野菜より高くなってしまうことが懸念されたため、ほとんどの農家は利用してきませんでした。しかし、季節に関係なく、また天候にも影響されず、いつでも野菜が収穫できるという点にここ数年、多くの人の期待が集まっています。このため、徐々にこの方法に変える農家も出てきたということです。" } ],
+    explanationHtml: "<ul><li><i>Bước 0:</i> câu hỏi hỏi lý do phương pháp này GẦN ĐÂY được chú ý — không phải đặc tính chung của phương pháp.</li><li><i>Bí kíp tiền-tinh thần (xét trên 4 đáp án):</i> B「お金がかからない」là đáp án duy nhất thuộc nhóm <b>tiền</b>; A, C, D đều không phải nhóm tinh thần (đều là đặc tính kỹ thuật/kết quả canh tác) — không có đáp án tinh thần cạnh tranh. Theo bí kíp, có tiền mà không có tinh thần đối trọng → <b>chú ý/ưu tiên dự đoán B trước</b>.</li><li><b>Dự đoán trước khi nghe:</b> B, theo đúng bí kíp — đây là ngọn hải đăng ban đầu, chưa phải đáp án chắc chắn.</li><li><b>Khi nghe — quay xe:</b> script phủ định trực tiếp dự đoán B: \"光熱費などがかさみ、従来の野菜より<b>高くなってしまう</b>ことが懸念された\" (chi phí điện nước tăng, đắt hơn rau thường — ngược hẳn với \"không tốn tiền\") → bỏ dự đoán B. Ngay sau đó <b>「しかし」</b> chuyển hướng sang lý do thật: \"季節に関係なく、天候にも影響されず、<b>いつでも野菜が収穫できる</b>という点にここ数年、多くの人の期待が集まっています\" → từ đồng nghĩa: \"いつでも収穫できる\" (thu hoạch bất cứ lúc nào, không phụ thuộc mùa/thời tiết) = D「安定供給」(cung cấp ổn định).</li><li>A (無農薬) là đặc tính chung của phương pháp được nêu ngay từ đầu bài (mô tả CÁCH LÀM), không phải điểm khiến gần đây được chú ý. C (短期間で収穫) là bẫy gần nghĩa — script nói về <b>tính ổn định/không phụ thuộc mùa</b> (いつでも), không phải về <b>tốc độ thu hoạch nhanh</b> (短期間) — hai khái niệm khác nhau dù dùng từ vựng gần giống.</li><li><b>Bài học:</b> đây là ví dụ tốt cho thấy dự đoán theo bí kíp (B) vẫn có thể sai khi nghe — dự đoán chỉ là ngọn hải đăng để định hướng nghe, không phải đáp án cuối cùng; quay xe ngay khi script phủ định trực tiếp.</li></ul>"
+  },
+  {
+    number: 7,
+    question: "電話で女の人と男の人が話しています。男の人はどうして会議を延期しますか。",
+    choices: ["データに不備があったから", "課長が出席できなくなったから", "会議の資料作成をやり直すから", "会議の場所が確保できなかったから"],
+    correctAnswer: 1,
+    script: [ { speaker:"", spk:"m", text:"F：はい、オフィス東京です。M：桜商事の山田です。いつもお世話になっております。F：あ、山田さん、こちらこそいつもお世話になっております。M：先日会議のデータをお送りいただきありがとうございました。お忙しい中無理を申しまして申し訳ありませんでした。F：いえいえ、とんでもないです。何か不備などございませんでしたか？M：はい、おかげさまでありがとうございます。あの、明日お出でいただくことになっている会議の件ですが、実は突然で大変恐縮ですが日程を変更させていただくことは可能でしょうか。急なことで大変申し訳ありません。F：え、なにか。M：はい、それが課長の木村が海外出張で、今日帰国予定だったんですが悪天候で飛行機が飛ばないという連絡が先ほど入りまして。F：あ、それは大変ですね。M：はい、それで、誠に申し訳ないんですが、会議は来週の月曜日とさせていただければと。F：まあ、そういう事情でしたら。わかりました。では、せっかくですから最新のデータをお送りしましょうか。M：恐れ入ります。では、その新しいデータを反映させて資料を作成しなおしておきます。会議の場所については改めてご連絡いたします。" } ],
+    explanationHtml: "<ul><li><i>Bước 0:</i> câu hỏi hỏi LÝ DO nam hoãn họp — không phải việc gì xảy ra SAU KHI hoãn.</li><li><i>Thử 5 bước + bí kíp thuần từ 4 đáp án:</i> A(データに不備), B(課長が出席できなくなった), D(場所が確保できなかった) đều được diễn đạt như một SỰ CỐ/vấn đề khách quan xảy ra; C「資料作成をやり直す」lại là một HÀNH ĐỘNG sẽ chủ động làm (やり直す — động từ chủ động), khác loại về mặt ngữ pháp — câu hỏi về LÝ DO hiếm khi có đáp án đúng là 1 hành động, nên C đáng ngờ nhất dù chưa loại hẳn được.</li><li><b>Dự đoán trước khi nghe:</b> cảnh giác C (khác loại — là hành động chứ không phải nguyên nhân/sự cố) — nhưng chưa chốt được cụ thể giữa A/B/D chỉ từ 4 đáp án, cần nghe để xác nhận.</li><li><b>Khi nghe — loại A bằng câu hỏi-đáp trực tiếp, rồi xác nhận lý do thật:</b> nữ hỏi \"何か<b>不備</b>などございませんでしたか?\" → nam đáp \"はい、おかげさまでありがとうございます\" (không sao) → A bị loại. D「場所が確保できなかった」không hề xuất hiện trong bài — hoàn toàn bịa (bẫy lạ mắt). C「資料作成をやり直す」CÓ xuất hiện thật nhưng là việc xảy ra <b>SAU KHI</b> đã quyết định hoãn họp (bẫy nhân quả — hệ quả bị nhầm thành nguyên nhân), đúng khớp nghi ngờ ban đầu từ bước khác loại. Lý do thật: \"それが<b>課長の木村が海外出張で</b>...<b>悪天候で飛行機が飛ばない</b>という連絡が先ほど入りまして\" → khớp B.</li></ul>"
+  }
+  ]
+};
