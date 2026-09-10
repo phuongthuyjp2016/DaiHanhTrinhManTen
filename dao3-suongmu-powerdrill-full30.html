@@ -9,7 +9,7 @@
   --washi:#f6f1e7;
   --washi-deep:#efe7d6;
   --ink:#222220;
-  --ink-soft:#5a5650;
+  --ink-soft:#222220;
   --hanko:#9c3b3b;
   --hanko-deep:#7c2c2c;
   --gold:#b08d3e;
@@ -182,7 +182,7 @@ section#quiz{display:none;}
 .resume-banner b{color:var(--hanko);}
 .resume-banner button{border:none;border-radius:5px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;margin-top:8px;}
 .resume-go{background:var(--gold);color:#fff;}
-.resume-clear{background:#eee;color:#666;margin-left:8px;}
+.resume-clear{background:#eee;color:#333;margin-left:8px;}
 .q-item:last-child{border-bottom:none;}
 .q-num{
   font-family:"Helvetica Neue",Arial,sans-serif;
@@ -545,7 +545,7 @@ function buildHome(){
     tg.appendChild(div);
   });
   if(q && filteredRounds.length===0 && filteredTrainings.length===0){
-    rg.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#888;padding:24px;">Không tìm thấy vòng/bài luyện nào chứa từ khóa này.</div>';
+    rg.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#333;padding:24px;">Không tìm thấy vòng/bài luyện nào chứa từ khóa này.</div>';
   }
 }
 
