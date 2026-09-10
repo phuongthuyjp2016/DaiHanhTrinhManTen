@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">N1 聴解 問題2 — Đảo Tiên Tri</title>
+<style>
+  :root{ --sea1:#5b3487; --sea2:#8f5fbf; --foam:#f2ecfa;
+    --ink:#2e1f47; --ink-soft:#6a5490; --gold1:#ffd25a; --gold2:#f5a623; --gold-ink:#5a3b22; --gold-shadow:#b9761a;
+    --good:#2f9e5c; --good-bg:#e1f5ea; --bad:#d64545; --bad-bg:#fdeaea; --line:#ded0f0; --card:#fffdf9; --parch:#fbf3dd; }
+  *{box-sizing:border-box;}
+  html{ background:url('assets/art-001.webp') center top / cover no-repeat fixed, #5b3487; }
+  @media (max-width:643px){ html{ background:url('assets/art-002.webp') center top / cover no-repeat fixed, #5b3487; } }
+  body{ margin:0; min-height:100dvh; background:transparent;
+    color:var(--ink); font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic","Segoe UI",sans-serif;
+    line-height:1.65; padding-bottom:40px; }
+  .baloo{ font-family:'Baloo 2',sans-serif; font-weight:800; }
+  .topbar{ background:linear-gradient(180deg,#7247a8,#5b3487); padding:12px 18px; position:sticky; top:0; z-index:20; box-shadow:0 2px 10px rgba(0,0,0,.3); border-bottom:2px solid rgba(255,233,176,.35); }
+  .topbar-inner{ max-width:840px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .back-link{ color:#fff; font-weight:700; font-size:13px; text-decoration:none; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.5); border-radius:14px; padding:6px 14px; white-space:nowrap; }
+  .brand{ font-size:13px; letter-spacing:0.04em; color:#f2ecfa; font-weight:700; }
+  .brand b{ color:#ffe9b0; }
+  .wrap{ max-width:840px; margin:0 auto; padding:22px 16px; }
+
+  /* ---------- game-style card shell ---------- */
+  .plank{ background:linear-gradient(180deg,#ffe9b0,#f5a623); border-radius:22px; padding:4px; box-shadow:0 10px 30px rgba(0,0,0,.35); }
+  .plank-inner{ background:var(--card); border-radius:19px; padding:24px; border:2px dashed #e3c67a; }
+  .gold-btn{ background:linear-gradient(180deg,var(--gold1),var(--gold2)); border:none; border-radius:16px; padding:15px 34px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:16px; color:var(--gold-ink); cursor:pointer; box-shadow:0 6px 0 var(--gold-shadow); }
+  .gold-btn:hover{ filter:brightness(1.04); }
+  .gold-btn:disabled{ opacity:.45; cursor:not-allowed; box-shadow:0 6px 0 rgba(0,0,0,.15); }
+  .ghost-btn{ background:#fff; border:1.5px solid var(--sea2); color:var(--sea1); font-weight:700; padding:11px 22px; border-radius:14px; cursor:pointer; font-size:14px; }
+  .ghost-btn:hover{ background:var(--foam); }
+  .center{ text-align:center; }
+
+  /* ---------- intro screen ---------- */
+  .isle-tag{ display:inline-block; background:var(--sea2); color:#fff; font-size:11.5px; font-weight:700; padding:4px 12px; border-radius:10px; margin-bottom:10px; }
+  .mascot-row{ display:flex; align-items:center; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
+  .mascot-img{ width:110px; height:110px; object-fit:contain; filter:drop-shadow(0 8px 14px rgba(0,0,0,.3)); flex:0 0 auto; }
+  .mascot-bubble{ flex:1; min-width:200px; background:var(--foam); border:1.5px solid var(--line); border-radius:16px 16px 16px 4px; padding:12px 16px; font-size:14.5px; font-weight:700; color:var(--sea1); }
+  .mondai-title{ font-size:27px; color:var(--sea1); margin:2px 0 4px; }
+  .mondai-sub{ font-size:13px; color:var(--ink-soft); font-weight:700; margin-bottom:16px; }
+  .info-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .info-box{ background:var(--foam); border:1px solid var(--line); border-radius:12px; padding:10px 14px; }
+  .info-box .k{ font-size:11.5px; color:var(--ink-soft); font-weight:700; }
+  .info-box .v{ font-size:14.5px; font-weight:700; color:var(--sea1); }
+  .point-box{ background:#fff8e6; border:1.5px dashed var(--gold2); border-radius:12px; padding:14px 16px; margin-bottom:22px; }
+  .point-box .pt-title{ font-weight:800; color:var(--gold-shadow); font-size:13.5px; margin-bottom:8px; }
+  .point-box ul{ margin:0; padding-left:18px; font-size:13.5px; color:var(--ink-soft); }
+  .point-box li{ margin-bottom:5px; }
+
+  /* ---------- quiz screen ---------- */
+  .player-plank{ background:linear-gradient(180deg,#ffe9b0,#f5a623); border-radius:16px; padding:2px; margin-bottom:14px; }
+  .player-plank.player-sticky{ position:sticky; top:62px; z-index:15; box-shadow:0 8px 16px rgba(0,0,0,.35); margin-bottom:16px; }
+  .player-card{ background:linear-gradient(180deg,#6b3f9e,#5b3487); border-radius:14px; padding:10px 12px; }
+  .player-label{ color:#ffe9b0; font-size:11px; font-weight:800; letter-spacing:.05em; margin-bottom:6px; }
+  .player-row-main{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .player-icon-btn{ background:#fff; border:none; border-radius:10px; width:34px; height:30px; font-size:13px; color:var(--sea1); cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+  .player-icon-btn:hover{ filter:brightness(1.05); }
+  .player-icon-btn.play-pause{ width:40px; background:linear-gradient(180deg,var(--gold1),var(--gold2)); font-size:15px; }
+  .player-time{ color:#f2ecfa; font-size:11.5px; font-weight:700; font-variant-numeric:tabular-nums; margin-left:auto; white-space:nowrap; }
+  .seek-bar{ width:100%; height:14px; accent-color:#ffd25a; margin-top:6px; cursor:pointer; }
+  .player-row-sub{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:6px; }
+  .speed-group{ display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+  .speed-label{ color:#dcc8f0; font-size:10px; font-weight:700; margin-right:1px; }
+  .speed-btn{ background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.25); color:#f2ecfa; font-size:10px; font-weight:700; padding:3px 7px; border-radius:8px; cursor:pointer; }
+  .speed-btn.active{ background:#ffd25a; border-color:#ffd25a; color:var(--gold-ink); }
+  .volume-group{ display:flex; align-items:center; gap:6px; }
+  .vol-bar{ width:70px; accent-color:#ffd25a; cursor:pointer; }
+  .player-note{ width:100%; color:#dcc8f0; font-size:10.5px; margin-top:6px; }
+  @media (max-width:480px){ .player-time{ margin-left:0; width:100%; text-align:right; } }
+
+  .qcard{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 4px 14px rgba(0,0,0,.15); margin-bottom:14px; scroll-margin-top:90px; }
+  .qcard-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .qnum-badge{ display:flex; align-items:center; gap:8px; }
+  .anchor-num{ width:36px; height:36px; border-radius:50%; background:linear-gradient(180deg,var(--gold1),var(--gold2)); color:var(--gold-ink); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; flex:0 0 auto; box-shadow:0 3px 0 var(--gold-shadow); }
+  .qtitle{ font-weight:800; color:var(--sea1); font-size:14.5px; }
+  .reselect-btn{ background:none; border:1.5px solid var(--line); color:var(--ink-soft); font-size:11.5px; font-weight:700; padding:5px 10px; border-radius:10px; cursor:pointer; }
+  .reselect-btn:hover{ border-color:var(--sea2); color:var(--sea1); }
+  .q-question{ font-size:13.5px; color:var(--ink-soft); margin-bottom:12px; }
+  .choice-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  @media (max-width:520px){ .choice-grid{ grid-template-columns:1fr; } }
+  .choice{ display:flex; gap:9px; align-items:flex-start; text-align:left; background:var(--foam); border:1.5px solid var(--line); border-radius:10px; padding:11px 13px; cursor:pointer; font-size:14px; color:var(--ink); }
+  .choice:hover{ border-color:var(--sea2); }
+  .choice.selected{ border-color:var(--sea2); background:#e4d6f7; }
+  .choice .letter{ font-weight:800; color:var(--sea1); min-width:16px; }
+
+  .status-strip{ position:sticky; bottom:0; margin-top:6px; padding:14px 0 4px; }
+  .status-inner{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:14px 16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; box-shadow:0 -2px 18px rgba(0,0,0,.25); }
+  .status-title{ font-size:12px; font-weight:800; color:var(--ink-soft); }
+  .status-warn{ font-size:11px; color:var(--bad); font-weight:700; margin-top:2px; }
+  .anchor-dots{ display:flex; gap:7px; flex-wrap:wrap; }
+  .anchor-dot{ width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; border:1.5px solid var(--line); color:var(--ink-soft); background:#fff; cursor:pointer; }
+  .anchor-dot.done{ background:var(--good-bg); border-color:var(--good); color:var(--good); }
+  .status-spacer{ flex:1; }
+
+  /* ---------- results screen ---------- */
+  .parchment{ background:linear-gradient(180deg,var(--parch),#f3e2b8); border:2.5px solid var(--gold2); border-radius:22px; padding:28px 20px; text-align:center; margin-bottom:20px; box-shadow:0 10px 30px rgba(0,0,0,.35); }
+  .parchment-mascot{ width:76px; height:76px; object-fit:contain; margin-bottom:6px; filter:drop-shadow(0 6px 10px rgba(0,0,0,.25)); }
+  .parchment-title{ font-size:12.5px; font-weight:800; color:var(--gold-shadow); letter-spacing:.06em; margin-bottom:10px; }
+  .score-grid{ display:flex; justify-content:center; gap:26px; flex-wrap:wrap; margin-bottom:14px; }
+  .score-item .num{ font-size:34px; font-weight:800; color:var(--sea1); font-family:'Baloo 2',sans-serif; }
+  .score-item .lbl{ font-size:11.5px; color:var(--ink-soft); font-weight:700; }
+  .score-msg{ font-size:13.5px; color:var(--ink-soft); margin-bottom:16px; }
+  .result-dots{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .result-dot{ width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; cursor:pointer; border:none; }
+  .result-dot.correct{ background:var(--good); color:#fff; }
+  .result-dot.wrong{ background:var(--bad); color:#fff; }
+  .result-actions{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+
+  /* ---------- review screen (continuous scroll) ---------- */
+  .review-summary{ text-align:center; color:#f2ecfa; font-weight:700; font-size:14px; margin-bottom:16px; }
+  .review-block{ background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  .review-block-head{ display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .review-qtitle{ font-weight:800; color:var(--sea1); font-size:16px; }
+  .verdict-badge{ margin-left:auto; font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px; }
+  .verdict-badge.ok{ background:var(--good-bg); color:#1f5c3a; }
+  .verdict-badge.no{ background:var(--bad-bg); color:#7a2424; }
+  .review-question{ font-size:14px; color:var(--ink-soft); margin-bottom:14px; }
+  .your-answer-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .ans-chip{ flex:1; min-width:180px; border-radius:10px; padding:10px 14px; font-size:13.5px; font-weight:700; }
+  .ans-chip .lbl{ display:block; font-size:11px; font-weight:800; opacity:.75; margin-bottom:2px; }
+  .ans-chip.you.ok{ background:var(--good-bg); color:#1f5c3a; border:1px solid var(--good); }
+  .ans-chip.you.no{ background:var(--bad-bg); color:#7a2424; border:1px solid var(--bad); }
+  .ans-chip.correct{ background:var(--good-bg); color:#1f5c3a; border:1px solid var(--good); }
+  .script-panel{ background:#2e1f47; border-radius:12px; padding:14px 16px; margin-bottom:14px; }
+  .script-panel-title{ color:#dcc8f0; font-size:12px; font-weight:800; letter-spacing:.04em; margin-bottom:10px; }
+  .script-line{ display:flex; gap:8px; margin-bottom:7px; font-size:13.5px; }
+  .script-line .spk{ flex:0 0 auto; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#fff; }
+  .script-line.spk-f .spk{ background:#e0729f; }
+  .script-line.spk-m .spk{ background:#8f6fd1; }
+  .script-line .txt{ color:#f2ecfa; }
+  .explain-box{ background:var(--foam); border-left:3px solid var(--sea2); border-radius:8px; padding:12px 14px; font-size:13.5px; margin-bottom:12px; }
+  .explain-box b{ display:block; margin-bottom:6px; color:var(--sea1); }
+  .explain-box ul{ margin:0; padding-left:18px; }
+  .explain-box li{ margin-bottom:8px; }
+  .explain-box li b{ display:inline; color:var(--sea1); }
+  .no-audio-note{ background:var(--bad-bg); color:#7a2424; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; margin-bottom:12px; }
+  .review-divider{ text-align:center; color:#dcc8f0; letter-spacing:.3em; font-size:11px; margin:18px 0; opacity:.6; }
+  .summary-box{ background:#fff8e6; border:1.5px dashed var(--gold2); border-radius:14px; padding:16px 18px; margin-top:6px; margin-bottom:16px; }
+  .summary-box .st-title{ font-weight:800; color:var(--gold-shadow); font-size:13.5px; margin-bottom:8px; }
+  .summary-box ul{ margin:0; padding-left:18px; font-size:13.5px; color:var(--ink-soft); }
+  .summary-box li{ margin-bottom:6px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a href="DaiHaiTrinhManten.dc.html?island=5" class="back-link">← Quay về đảo</a>
+    <div class="brand" id="brandLabel">N1 聴解 · <b>MONDAI 2</b> · Đảo Tiên Tri</div>
+  </div>
+</div>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const ISLAND_URL = 'DaiHaiTrinhManten.dc.html?island=5';
+const MASCOT_ART = 'assets/art-027.webp';
+const SET_ID = new URLSearchParams(location.search).get('set') || '2010-07';
+const TOOL_KEY = location.pathname.split('/').pop() + '?set=' + SET_ID;
+
+let AUDIO_SRC = '';
+let NO_AUDIO = false;
+let EXAM_LABEL = SET_ID;
+let QUESTIONS = [];
+let SUMMARY_HTML = '';
+
+function bootSet() {
+  const data = window.MONDAI2_DATA && window.MONDAI2_DATA[SET_ID];
+  if (!data) {
+    document.getElementById('app').innerHTML = '<div class="plank"><div class="plank-inner"><p>Không tìm thấy bộ đề "' + SET_ID + '". Vui lòng quay lại đảo và chọn lại bộ đề.</p></div></div>';
+    return;
+  }
+  AUDIO_SRC = data.audioSrc || '';
+  NO_AUDIO = !!data.noAudio;
+  EXAM_LABEL = data.examLabel;
+  QUESTIONS = data.questions;
+  SUMMARY_HTML = data.summaryHtml || '';
+  if (AUDIO_SRC) { player.src = AUDIO_SRC; player.load(); }
+  document.getElementById('pageTitle').textContent = `N1 聴解 問題2 (${EXAM_LABEL}) — Đảo Tiên Tri`;
+  document.getElementById('brandLabel').innerHTML = `N1 聴解 · <b>MONDAI 2 · ${EXAM_LABEL}</b> · Đảo Tiên Tri`;
+  selected = new Array(QUESTIONS.length).fill(null);
+  render();
+}
+
+let screen = 'intro'; // intro | quiz | results | review
+let selected = new Array(QUESTIONS.length).fill(null);
+let isSeeking = false;
+
+const player = new Audio();
+player.preload = 'metadata';
+
+function fmtTime(sec) {
+  if (!isFinite(sec) || sec < 0) sec = 0;
+  const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+let PLAYER_ERROR_MSG = '';
+
+function togglePlayPause() {
+  if (NO_AUDIO) return;
+  if (player.paused || player.ended) {
+    player.play().catch(err => {
+      PLAYER_ERROR_MSG = 'Không phát được audio (' + (err && err.message ? err.message : err) + '). Thử bấm lại hoặc tải lại trang.';
+      showPlayerError();
+    });
+  }
+  else player.pause();
+}
+
+function showPlayerError() {
+  const el = document.getElementById('playerErrorNote');
+  if (el) el.textContent = '⚠ ' + PLAYER_ERROR_MSG;
+}
+function seekBy(delta) {
+  if (NO_AUDIO) return;
+  player.currentTime = clamp(player.currentTime + delta, 0, player.duration || 0);
+}
+function replayAudio() {
+  if (NO_AUDIO) return;
+  player.currentTime = 0;
+  player.play().catch(() => {});
+}
+function setRate(r) {
+  player.playbackRate = r;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.toggle('active', parseFloat(b.dataset.rate) === r));
+}
+function onSeekInput(val) {
+  isSeeking = true;
+  const t = document.getElementById('playerTime');
+  if (t) t.textContent = `${fmtTime((val/100) * (player.duration||0))} / ${fmtTime(player.duration)}`;
+}
+function onSeekChange(val) {
+  if (NO_AUDIO) return;
+  player.currentTime = (val/100) * (player.duration || 0);
+  isSeeking = false;
+}
+function onVolumeInput(val) {
+  player.volume = val;
+  player.muted = false;
+  const icon = document.getElementById('volIcon');
+  if (icon) icon.textContent = val == 0 ? '🔇' : val < 0.5 ? '🔈' : '🔊';
+}
+
+player.addEventListener('play', () => syncPlayerUI());
+player.addEventListener('pause', () => syncPlayerUI());
+player.addEventListener('ended', () => syncPlayerUI());
+player.addEventListener('loadedmetadata', () => syncPlayerUI());
+player.addEventListener('timeupdate', () => syncPlayerUI());
+player.addEventListener('error', () => {
+  const codes = { 1:'bị hủy', 2:'lỗi mạng', 3:'lỗi giải mã file', 4:'định dạng không hỗ trợ' };
+  const code = player.error ? player.error.code : 0;
+  PLAYER_ERROR_MSG = 'Không tải được audio (' + (codes[code] || 'không rõ lý do') + '). Thử tải lại trang hoặc đổi mạng.';
+  showPlayerError();
+});
+
+function syncPlayerUI() {
+  const btn = document.getElementById('playPauseBtn');
+  const timeEl = document.getElementById('playerTime');
+  const seekEl = document.getElementById('seekBar');
+  if (!btn) return;
+  btn.textContent = (!player.paused && !player.ended) ? '⏸️' : '▶️';
+  if (timeEl) timeEl.textContent = `${fmtTime(player.currentTime)} / ${fmtTime(player.duration)}`;
+  if (seekEl && !isSeeking) {
+    const pct = player.duration ? (player.currentTime / player.duration) * 100 : 0;
+    seekEl.value = pct;
+  }
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (screen === 'intro') app.innerHTML = renderIntro();
+  else if (screen === 'quiz') app.innerHTML = renderQuiz();
+  else if (screen === 'results') app.innerHTML = renderResults();
+  else if (screen === 'review') app.innerHTML = renderReview();
+}
+
+function renderIntro() {
+  return `
+  <div class="plank"><div class="plank-inner">
+    <span class="isle-tag">🔮 ĐẢO TIÊN TRI</span>
+    <div class="mascot-row">
+      <img class="mascot-img" src="${MASCOT_ART}" alt="Cá Mập Tiên Tri">
+      <div class="mascot-bubble">Đọc trước 4 đáp án, dự đoán trước khi nghe, rồi giữ hoặc quay xe theo script nhé!</div>
+    </div>
+    <div class="mondai-title baloo">MONDAI 2 · ポイント理解</div>
+    <div class="mondai-sub">Nghe rồi nắm Ý CHÍNH — không phải hành động cụ thể như Mondai 1</div>
+
+    <div class="info-grid">
+      <div class="info-box"><div class="k">Số câu hỏi</div><div class="v">${QUESTIONS.length || 7} câu</div></div>
+      <div class="info-box"><div class="k">Hình thức</div><div class="v">Nghe rồi chọn 1/4</div></div>
+    </div>
+
+    <div class="point-box">
+      <div class="pt-title">🔮 Quy trình làm bài (Mondai 2 · ポイント理解)</div>
+      <ul>
+        <li><b>Bước 0:</b> đọc kỹ câu hỏi trước — xác định ai được hỏi (男/女) và hỏi khía cạnh gì.</li>
+        <li><b>Quét 4 đáp án</b> theo 5 bước + bí kíp → <b>dự đoán</b> trước khi nghe (dùng làm ngọn hải đăng).</li>
+        <li><b>Khi nghe:</b> giữ nguyên nếu khớp dự đoán, hoặc <b>quay xe</b> khi gặp từ chuyển hướng (でも/しかし/ただ/それより/やっぱり...).</li>
+        <li>Sau khi nộp bài mới được xem đáp án đúng, script và giải thích chi tiết.</li>
+      </ul>
+      <div style="margin-top:10px; font-size:12.5px; color:var(--ink-soft);">Xem đầy đủ Bước 0, 5 bước quét và bí kíp ở nút "📖 Xem cách làm đầy đủ" bên dưới.</div>
+    </div>
+
+    <div class="center" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <button class="gold-btn" onclick="goToQuiz()">🔮 Bắt Đầu Nghe</button>
+      <button class="ghost-btn" onclick="window.location.href='dao6-tientri-phuongphap.html'">📖 Xem cách làm đầy đủ</button>
+    </div>
+  </div></div>`;
+}
+
+function goToQuiz() {
+  screen = 'quiz';
+  render();
+  syncPlayerUI();
+}
+
+function renderPlayerBar(note, sticky) {
+  return `
+  <div class="player-plank${sticky ? ' player-sticky' : ''}"><div class="player-card">
+    <div class="player-label">🔮 MONDAI 2 · ${EXAM_LABEL}</div>
+    ${NO_AUDIO ? '<div class="no-audio-note">⚠ Chưa có file âm thanh cho đề này — chỉ xem được script và giải thích.</div>' : `
+    <div class="player-row-main">
+      <button class="player-icon-btn play-pause" id="playPauseBtn" onclick="togglePlayPause()">▶️</button>
+      <button class="player-icon-btn" onclick="seekBy(-5)" title="Lùi 5 giây">⏪</button>
+      <button class="player-icon-btn" onclick="seekBy(5)" title="Tiến 5 giây">⏩</button>
+      <button class="player-icon-btn" onclick="replayAudio()" title="Nghe lại từ đầu">🔁</button>
+      <div class="player-time" id="playerTime">00:00 / 00:00</div>
+    </div>
+    <input type="range" class="seek-bar" id="seekBar" min="0" max="100" step="0.1" value="0"
+      oninput="onSeekInput(this.value)" onchange="onSeekChange(this.value)">
+    <div class="player-row-sub">
+      <div class="speed-group">
+        <span class="speed-label">Tốc độ</span>
+        <button class="speed-btn" data-rate="0.75" onclick="setRate(0.75)">0.75x</button>
+        <button class="speed-btn active" data-rate="1" onclick="setRate(1)">1.0x</button>
+        <button class="speed-btn" data-rate="1.25" onclick="setRate(1.25)">1.25x</button>
+        <button class="speed-btn" data-rate="1.5" onclick="setRate(1.5)">1.5x</button>
+      </div>
+      <div class="volume-group">
+        <span id="volIcon">🔊</span>
+        <input type="range" class="vol-bar" min="0" max="1" step="0.01" value="1" oninput="onVolumeInput(this.value)">
+      </div>
+    </div>
+    <div class="player-note" id="playerErrorNote" style="color:#ffb3b3;">${PLAYER_ERROR_MSG ? '⚠ ' + PLAYER_ERROR_MSG : ''}</div>
+    `}
+    ${note ? `<div class="player-note">${note}</div>` : ''}
+  </div></div>`;
+}
+
+function renderQuiz() {
+  const answeredCount = selected.filter(s => s !== null).length;
+  return `
+  ${renderPlayerBar('💡 Nghe rồi chọn đáp án cho các câu bên dưới, có thể tua/nghe lại thoải mái.', false)}
+
+  <div id="qlist">
+    ${QUESTIONS.map((q, qi) => `
+      <div class="qcard" id="qcard-${qi}">
+        <div class="qcard-head">
+          <div class="qnum-badge"><div class="anchor-num">${q.number}</div><div class="qtitle">${q.number} 番</div></div>
+          <button class="reselect-btn" onclick="clearChoice(${qi})">↺ Chọn lại</button>
+        </div>
+        <div class="choice-grid">
+          ${q.choices.map((opt, oi) => `
+            <div class="choice" id="choice-${qi}-${oi}" onclick="selectChoice(${qi},${oi})">
+              <span class="letter">${String.fromCharCode(65+oi)}</span><span>${opt}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="status-strip"><div class="status-inner">
+    <div>
+      <div class="status-title">回答状況 · Đã chọn ${answeredCount}/${QUESTIONS.length}</div>
+      <div class="anchor-dots" style="margin-top:6px;">
+        ${QUESTIONS.map((q, qi) => `<div class="anchor-dot ${selected[qi] !== null ? 'done' : ''}" onclick="scrollToQ(${qi})">${selected[qi] !== null ? '✓' : q.number}</div>`).join('')}
+      </div>
+    </div>
+    <div class="status-spacer"></div>
+    <div>
+      <button class="gold-btn" onclick="submitQuiz()">📮 Nộp Bài</button>
+      <div class="status-warn">※Không thể đổi đáp án sau khi nộp bài</div>
+    </div>
+  </div></div>
+  `;
+}
+
+function selectChoice(qi, oi) {
+  selected[qi] = oi;
+  refreshChoiceUI();
+  refreshStatusStrip();
+}
+function clearChoice(qi) {
+  selected[qi] = null;
+  refreshChoiceUI();
+  refreshStatusStrip();
+}
+function refreshChoiceUI() {
+  QUESTIONS.forEach((q, qi) => {
+    q.choices.forEach((_, oi) => {
+      const el = document.getElementById(`choice-${qi}-${oi}`);
+      if (el) el.classList.toggle('selected', selected[qi] === oi);
+    });
+  });
+}
+function refreshStatusStrip() {
+  const answeredCount = selected.filter(s => s !== null).length;
+  const titleEl = document.querySelector('.status-title');
+  if (titleEl) titleEl.textContent = `回答状況 · Đã chọn ${answeredCount}/${QUESTIONS.length}`;
+  document.querySelectorAll('.anchor-dot').forEach((el, qi) => {
+    const done = selected[qi] !== null;
+    el.classList.toggle('done', done);
+    el.textContent = done ? '✓' : QUESTIONS[qi].number;
+  });
+}
+function scrollToQ(qi) {
+  const el = document.getElementById(`qcard-${qi}`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function submitQuiz() {
+  const unanswered = selected.findIndex(s => s === null);
+  if (unanswered !== -1) {
+    if (!confirm(`Bạn chưa chọn đáp án cho câu ${QUESTIONS[unanswered].number}. Vẫn muốn nộp bài?`)) return;
+  }
+  player.pause();
+  saveProgress();
+  screen = 'results';
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function correctCount() {
+  return QUESTIONS.reduce((acc, q, qi) => acc + (selected[qi] === q.correctAnswer ? 1 : 0), 0);
+}
+
+function saveProgress() {
+  const correct = correctCount();
+  const total = QUESTIONS.length;
+  try {
+    const bkey = 'dao6_mondai2_' + SET_ID + '_best';
+    const prevBest = parseInt(localStorage.getItem(bkey) || '0', 10);
+    if (correct > prevBest) localStorage.setItem(bkey, String(correct));
+    const key = 'dc_tool_progress';
+    const all = JSON.parse(localStorage.getItem(key) || '{}');
+    const best = Math.max(correct, (all[TOOL_KEY] && all[TOOL_KEY].correct) || 0);
+    all[TOOL_KEY] = { correct: best, total };
+    localStorage.setItem(key, JSON.stringify(all));
+  } catch (e) {}
+}
+
+function renderResults() {
+  const correct = correctCount();
+  const total = QUESTIONS.length;
+  const pct = Math.round(correct / total * 100);
+  const score = Math.round(correct * (100 / total));
+  const msg = correct === total ? '🔮 Xuất sắc! Bạn đã tiên đoán và bắt trọn ý chính cả bài.'
+    : correct >= total * 0.7 ? 'Khá tốt! Xem lại vài câu sai để tinh chỉnh dự đoán nhé.'
+    : 'Hãy xem đáp án & giải thích để rút kinh nghiệm cho lần sau.';
+  return `
+  <div class="parchment">
+    <img class="parchment-mascot" src="${MASCOT_ART}" alt="Cá Mập Tiên Tri">
+    <div class="parchment-title">🔮 MONDAI 2 · ${EXAM_LABEL} · 結果発表</div>
+    <div class="score-grid">
+      <div class="score-item"><div class="num baloo">${correct}/${total}</div><div class="lbl">正解数</div></div>
+      <div class="score-item"><div class="num baloo">${pct}%</div><div class="lbl">正答率</div></div>
+      <div class="score-item"><div class="num baloo">${score}</div><div class="lbl">SCORE</div></div>
+    </div>
+    <div class="score-msg">${msg}</div>
+    <div class="result-dots">
+      ${QUESTIONS.map((q, qi) => {
+        const ok = selected[qi] === q.correctAnswer;
+        return `<button class="result-dot ${ok ? 'correct' : 'wrong'}" onclick="openReview()">${q.number}</button>`;
+      }).join('')}
+    </div>
+    <div class="result-actions">
+      <button class="ghost-btn" onclick="restartQuiz()">🔄 Làm lại</button>
+      <button class="gold-btn" onclick="openReview()">📖 Xem đáp án & giải thích</button>
+    </div>
+  </div>
+  <div class="center">
+    <button class="ghost-btn" onclick="window.location.href=ISLAND_URL">🏝 Về Đảo Tiên Tri</button>
+  </div>
+  `;
+}
+
+function openReview() {
+  screen = 'review';
+  render();
+  syncPlayerUI();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  selected = new Array(QUESTIONS.length).fill(null);
+  player.pause();
+  screen = 'intro';
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderReview() {
+  const correct = correctCount();
+  return `
+  ${renderPlayerBar('', true)}
+  <div class="review-summary">MONDAI 2 · ${EXAM_LABEL} · 答えと解説 — ${correct}/${QUESTIONS.length} 正解</div>
+  ${QUESTIONS.map((q, qi) => {
+    const yourIdx = selected[qi];
+    const isCorrect = yourIdx === q.correctAnswer;
+    return `
+    <div class="review-block">
+      <div class="review-block-head">
+        <div class="review-qtitle">${q.number} 番</div>
+        <div class="verdict-badge ${isCorrect ? 'ok' : 'no'}">${isCorrect ? '🟢 正解' : '🔴 不正解'}</div>
+      </div>
+      <div class="review-question">${q.question}</div>
+
+      <div class="your-answer-row">
+        <div class="ans-chip you ${isCorrect ? 'ok' : 'no'}">
+          <span class="lbl">あなたの答え</span>${yourIdx !== null ? String.fromCharCode(65+yourIdx) + ' — ' + q.choices[yourIdx] : '(chưa chọn)'}
+        </div>
+        ${!isCorrect ? `<div class="ans-chip correct"><span class="lbl">正解</span>${String.fromCharCode(65+q.correctAnswer)} — ${q.choices[q.correctAnswer]}</div>` : ''}
+      </div>
+
+      <div class="script-panel">
+        <div class="script-panel-title">📜 SCRIPT — 会話の内容</div>
+        ${q.script.map(line => `
+          <div class="script-line ${line.spk === 'f' ? 'spk-f' : 'spk-m'}">
+            ${line.speaker ? `<div class="spk">${line.speaker}</div>` : ''}
+            <div class="txt">${line.text}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="explain-box"><b>🔮 解説 (theo phương pháp 5 bước + dự đoán/quay xe)</b>${q.explanationHtml}</div>
+    </div>
+    ${qi < QUESTIONS.length - 1 ? '<div class="review-divider">━━━━━━━━━━━━━━━━</div>' : ''}
+    `;
+  }).join('')}
+
+  ${SUMMARY_HTML ? `
+  <div class="summary-box">
+    <div class="st-title">⭐ Tóm tắt bài học rút ra từ đề này</div>
+    ${SUMMARY_HTML}
+  </div>` : ''}
+
+  <div class="center" style="margin-top:22px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+    <button class="ghost-btn" onclick="restartQuiz()">🔄 Làm lại</button>
+    <button class="ghost-btn" onclick="window.location.href=ISLAND_URL">🏝 Về Đảo Tiên Tri</button>
+  </div>
+  `;
+}
+
+(function loadSetData() {
+  const s = document.createElement('script');
+  s.src = `assets/audio/MD2/data/${SET_ID}.js`;
+  s.onload = bootSet;
+  s.onerror = () => {
+    document.getElementById('app').innerHTML = '<div class="plank"><div class="plank-inner"><p>Không tải được dữ liệu bộ đề "' + SET_ID + '".</p></div></div>';
+  };
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>

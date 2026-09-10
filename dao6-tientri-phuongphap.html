@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cách Làm Mondai 2 — Đảo Tiên Tri</title>
+<style>
+  :root{ --sea1:#5b3487; --sea2:#8f5fbf; --foam:#f2ecfa;
+    --ink:#2e1f47; --ink-soft:#6a5490; --gold1:#ffd25a; --gold2:#f5a623; --gold-ink:#5a3b22; --gold-shadow:#b9761a;
+    --line:#ded0f0; --card:#fffdf9; }
+  *{box-sizing:border-box;}
+  html{ background:url('assets/art-001.webp') center top / cover no-repeat fixed, #5b3487; }
+  @media (max-width:643px){ html{ background:url('assets/art-002.webp') center top / cover no-repeat fixed, #5b3487; } }
+  body{ margin:0; min-height:100dvh; background:transparent;
+    color:var(--ink); font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic","Segoe UI",sans-serif;
+    line-height:1.7; padding-bottom:40px; }
+  .baloo{ font-family:'Baloo 2',sans-serif; font-weight:800; }
+  .topbar{ background:linear-gradient(180deg,#7247a8,#5b3487); padding:12px 18px; position:sticky; top:0; z-index:20; box-shadow:0 2px 10px rgba(0,0,0,.3); border-bottom:2px solid rgba(255,233,176,.35); }
+  .topbar-inner{ max-width:840px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .back-link{ color:#fff; font-weight:700; font-size:13px; text-decoration:none; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.5); border-radius:14px; padding:6px 14px; white-space:nowrap; }
+  .brand{ font-size:13px; letter-spacing:0.04em; color:#f2ecfa; font-weight:700; }
+  .brand b{ color:#ffe9b0; }
+  .wrap{ max-width:780px; margin:0 auto; padding:22px 16px; }
+
+  .plank{ background:linear-gradient(180deg,#ffe9b0,#f5a623); border-radius:22px; padding:4px; box-shadow:0 10px 30px rgba(0,0,0,.35); margin-bottom:18px; }
+  .plank-inner{ background:var(--card); border-radius:19px; padding:24px; border:2px dashed #e3c67a; }
+
+  .isle-tag{ display:inline-block; background:var(--sea2); color:#fff; font-size:11.5px; font-weight:700; padding:4px 12px; border-radius:10px; margin-bottom:10px; }
+  .page-title{ font-size:26px; color:var(--sea1); margin:2px 0 4px; }
+  .page-sub{ font-size:13.5px; color:var(--ink-soft); font-weight:700; margin-bottom:6px; }
+
+  .infographic{ width:100%; border-radius:14px; border:1.5px solid var(--line); margin:16px 0; display:block; }
+
+  h2.sec{ font-size:16.5px; color:var(--sea1); margin:0 0 10px; padding-bottom:8px; border-bottom:2px dashed var(--line); }
+  h3.subsec{ font-size:14px; color:var(--gold-shadow); margin:16px 0 8px; }
+
+  table.cmp{ width:100%; border-collapse:collapse; font-size:13px; margin-bottom:6px; }
+  table.cmp th, table.cmp td{ border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  table.cmp th{ background:var(--foam); color:var(--sea1); font-weight:800; }
+  table.cmp td{ color:var(--ink-soft); }
+
+  ul.method-list{ margin:0 0 4px; padding-left:20px; font-size:14px; color:var(--ink); }
+  ul.method-list li{ margin-bottom:10px; }
+  ul.method-list b{ color:var(--sea1); }
+
+  ol.steps{ margin:0 0 4px; padding-left:22px; font-size:14px; color:var(--ink); }
+  ol.steps li{ margin-bottom:10px; }
+  ol.steps b{ color:var(--sea1); }
+
+  .flow-strip{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; justify-content:center; background:var(--foam); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:6px; font-weight:800; color:var(--sea1); font-size:13px; }
+  .flow-strip .arrow{ color:var(--gold-shadow); font-weight:900; }
+
+  .callout{ background:#fff8e6; border:1.5px dashed var(--gold2); border-radius:12px; padding:14px 16px; margin:14px 0; }
+  .callout .ct{ font-weight:800; color:var(--gold-shadow); font-size:13.5px; margin-bottom:6px; }
+  .callout .cb{ font-size:13.5px; color:var(--ink-soft); }
+  .callout b{ color:var(--sea1); }
+
+  .redirect-box{ background:var(--foam); border:1px solid var(--line); border-radius:12px; padding:14px 16px; font-size:13.5px; color:var(--ink-soft); }
+  .redirect-box b{ color:var(--sea1); }
+
+  .center{ text-align:center; margin-top:18px; }
+  .gold-btn{ background:linear-gradient(180deg,var(--gold1),var(--gold2)); border:none; border-radius:16px; padding:14px 30px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; color:var(--gold-ink); cursor:pointer; box-shadow:0 6px 0 var(--gold-shadow); text-decoration:none; display:inline-block; }
+  .ghost-btn{ background:#fff; border:1.5px solid var(--sea2); color:var(--sea1); font-weight:700; padding:10px 20px; border-radius:14px; cursor:pointer; font-size:13.5px; text-decoration:none; display:inline-block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a href="DaiHaiTrinhManten.dc.html?island=5" class="back-link">← Quay về đảo</a>
+    <div class="brand">N1 聴解 · <b>MONDAI 2</b> · Đảo Tiên Tri</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="plank"><div class="plank-inner">
+    <span class="isle-tag">🔮 ĐẢO TIÊN TRI</span>
+    <div class="page-title baloo">Cách Làm Mondai 2</div>
+    <div class="page-sub">要点理解 — Nắm ý chính</div>
+    <img class="infographic" src="assets/mondai2-method-infographic.png" alt="Sơ đồ phương pháp Mondai 2">
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">🎯 Mục tiêu</h2>
+    <p style="font-size:14px; color:var(--ink);">Không phải "ai làm gì" như Mondai 1 — mà là <b>cuối cùng người nói muốn nói gì</b> (ý chính, mục đích, kết luận thật sự).</p>
+
+    <h3 class="subsec">So sánh Mondai 1 vs Mondai 2 (để không áp nhầm phương pháp)</h3>
+    <table class="cmp">
+      <tr><th>Tiêu chí</th><th>Mondai 1</th><th>Mondai 2</th></tr>
+      <tr><td>Mục tiêu</td><td>Nắm hành động / thông tin</td><td>Nắm ý chính</td></tr>
+      <tr><td>Đáp án</td><td>Thường theo trình tự</td><td>Không nhất thiết theo trình tự</td></tr>
+      <tr><td>Từ vựng</td><td>Hay xuất hiện từ gần giống bài</td><td>Hay đổi sang từ đồng nghĩa</td></tr>
+      <tr><td>Bẫy</td><td>Nhầm hành động (chi tiết)</td><td>Nhầm ý phụ thành ý chính</td></tr>
+      <tr><td>Cách nghe</td><td>Ai làm gì? (hành động, thông tin cụ thể)</td><td>Cuối cùng người nói muốn nói gì?</td></tr>
+    </table>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">0️⃣ Bước 0 — Đọc/nghe kỹ CÂU HỎI trước tiên</h2>
+    <p style="font-size:13.5px; color:var(--ink-soft);">Câu hỏi (đề bài) quyết định toàn bộ hướng phân tích — đọc lướt qua sẽ dễ chọn nhầm dù nghe đúng nội dung. Khi đọc/nghe câu hỏi, xác định rõ:</p>
+    <ul class="method-list">
+      <li><b>Hỏi ý kiến của AI</b> — 男の人 hay 女の人? Nếu câu hỏi chỉ định rõ 1 người, mọi suy đoán/gợi ý của người còn lại (hoặc người thứ ba) đều KHÔNG tính, dù có vẻ hợp lý.</li>
+      <li><b>Hỏi về khía cạnh CỤ THỂ nào</b> — nguyên nhân hay kết quả? Đã cải thiện hay còn tồn tại? Ưu tiên/quyết định chọn hay chỉ là một lựa chọn được nêu ra? Nhầm khía cạnh là nhầm luôn cả câu dù nghe đúng nội dung.</li>
+      <li><b>Từ khóa trong câu hỏi</b> cần giữ lại trong đầu khi nghe (vd 「一番」「もっとも」「今」「これから」) — đối chiếu trực tiếp với từ khóa tương ứng xuất hiện trong script lúc quay xe/chốt đáp án.</li>
+    </ul>
+    <div class="callout">
+      <div class="ct">Thứ tự đúng</div>
+      <div class="cb">Câu hỏi → dùng ngay thông tin đó để quét/suy luận 4 đáp án (5 bước bên dưới) → rồi mới nghe script. Không phải đọc xong câu hỏi là vội chuyển sang nghe luôn.</div>
+    </div>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">🔎 5 bước quét 4 đáp án (trước khi nghe)</h2>
+    <ol class="steps">
+      <li><b>Có đáp án nào khác loại không?</b> — vd 3 đáp án là hành động cụ thể + 1 đáp án là tư duy/bản chất → đánh dấu cái khác loại.</li>
+      <li><b>Có đáp án nào bao quát hơn không?</b> — 3 cái cụ thể + 1 cái khái quát/bản chất → đáp án bao quát hay đúng hơn, vì Mondai 2 hỏi ý chính.</li>
+      <li><b>Có đáp án nào nói về constraint không?</b> — tiền / thời gian / nhân lực / khả năng thực hiện.</li>
+      <li><b>Có đáp án nào mang tính ưu tiên không?</b> — trong nhiều việc, việc nào được ưu tiên/quyết định chọn. Thử bước này TRƯỚC bước 2/3 nếu nghi ngờ: hỏi "trong 4 đáp án, cái nào MẶC NHIÊN quan trọng/nặng ký hơn hẳn về bản chất, không cần ngữ cảnh?"</li>
+      <li><b>Có đáp án nào "lạ mắt" không?</b> — đừng chọn ngay, nhưng ưu tiên nghe kỹ để kiểm chứng.</li>
+    </ol>
+    <div class="callout">
+      <div class="ct">Khi 5 bước không ra kết quả</div>
+      <div class="cb">Không phải câu nào cũng có bước rõ ràng (vd 4 đáp án ghép cặp ngang hàng). Khi đó vẫn thử đoán 1 đáp án theo <b>cảm giác/trực giác đời thường</b> thay vì bỏ trắng — vẫn luôn nghe và loại trừ để xác nhận, không lấy cảm giác làm kết luận cuối.</div>
+    </div>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">🔮 Prediction — dùng dự đoán làm "ngọn hải đăng"</h2>
+    <ol class="steps">
+      <li><b>Dự đoán:</b> trước khi nghe, chọn 1 đáp án khả năng cao nhất dựa trên 5 bước trên (không phải đoán bừa).</li>
+      <li><b>Nghe & đối chiếu:</b> dùng dự đoán để định hướng khi nghe.</li>
+      <li><b>Giữ / quay xe:</b> nội dung khớp dự đoán → <b>GIỮ</b>, bắt trúng đáp án cực nhanh. Xuất hiện từ chuyển hướng → <b>QUAY XE</b>: でも / しかし / ただ / それより / 一方で / やっぱり / むしろ...</li>
+    </ol>
+
+    <h3 class="subsec">Quy trình 6 bước chinh phục Mondai 2</h3>
+    <div class="flow-strip">
+      <span>Quét 4 đáp án</span><span class="arrow">→</span>
+      <span>Prediction</span><span class="arrow">→</span>
+      <span>Nghe có mục tiêu</span><span class="arrow">→</span>
+      <span>Giữ / quay xe</span><span class="arrow">→</span>
+      <span>Chọn đáp án</span><span class="arrow">→</span>
+      <span>Xác nhận ý chính</span>
+    </div>
+  </div></div>
+
+  <div class="plank"><div class="plank-inner">
+    <h2 class="sec">⭐ Bí kíp nhớ nhanh</h2>
+    <ul class="method-list">
+      <li><b>Đáp án khác biệt nhất</b> (khác loại so với 3 cái còn lại) → ưu tiên xét trước.</li>
+      <li><b>Phái sinh</b> (mẹ tạo ra con = mẹ là đáp án) — đáp án tổng quát/nguồn gốc hay đúng hơn đáp án phái sinh cụ thể.</li>
+      <li><b>Đồng đẳng</b> (ことがある、し、とか、や dắt nhau ra chuỗi liệt kê ngang hàng) — liệt kê nhiều thứ cùng cấp thường KHÔNG phải ý chính, ý chính thường nằm ở câu tổng kết sau đó.</li>
+      <li><b>Tiền là nhất, tinh thần là nhì</b> — xét trên chính 4 ĐÁP ÁN, không phải nội dung script. (1) phân loại 4 đáp án xem có đáp án nào thuộc nhóm <b>tiền</b> (giá/chi phí/tiết kiệm tiền) và có đáp án nào thuộc nhóm <b>tinh thần</b> (nguồn gốc, xuất xứ, di sản, câu chuyện thương hiệu, giá trị/thái độ con người) không; (2) nếu chỉ có tinh thần (không có tiền cạnh tranh) → ưu tiên tinh thần; (3) nếu chỉ có tiền (không có tinh thần cạnh tranh) → ưu tiên tiền; (4) nếu <b>cả 2 loại cùng có mặt</b> → ưu tiên <b>tiền trước</b>. Đây vẫn chỉ là ngọn hải đăng — có thể bị quay xe khi nghe nếu script phủ định trực tiếp.</li>
+      <li><b>Ưu tiên về khách hàng</b> — khi phân vân, đáp án hướng tới lợi ích/góc nhìn khách hàng thường đúng hơn.</li>
+      <li><b>Ai nói mới tính</b> — câu hỏi thường chỉ định rõ 男/女; loại ngay đề xuất/suy đoán của người còn lại nếu không được người được hỏi xác nhận.</li>
+      <li><b>Bẫy nhân quả</b> — một chi tiết có thật trong script vẫn có thể sai nếu nó là HỆ QUẢ của đáp án đúng chứ không phải NGUYÊN NHÂN được hỏi (vd "làm lại tài liệu" là hệ quả của việc hoãn họp, không phải lý do hoãn).</li>
+    </ul>
+
+    <div class="callout">
+      <div class="ct">⭐ Quy tắc quan trọng</div>
+      <div class="cb">Nghe thấy từ chuyển hướng (でも/しかし/ただ/それより/一方で/やっぱり/むしろ) → bỏ ngay dự đoán cũ, phần SAU từ chuyển hướng mới là ý chính thật.</div>
+    </div>
+  </div></div>
+
+  <div class="redirect-box">
+    Muốn luyện tập ngay? Mỗi đề trong <b>Đảo Tiên Tri</b> đều áp dụng đúng phương pháp này khi giải thích đáp án — nghe xong bấm "Xem đáp án &amp; giải thích" để đối chiếu từng bước.
+  </div>
+
+  <div class="center">
+    <a class="gold-btn" href="DaiHaiTrinhManten.dc.html?island=5">🏝 Quay Về Đảo Tiên Tri</a>
+  </div>
+
+</div>
+
+</body>
+</html>
