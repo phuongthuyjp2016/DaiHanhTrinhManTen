@@ -1383,15 +1383,19 @@ function computeToolProgress(toolUrls) {
   if (!toolUrls || !toolUrls.length) return { has: false, pct: 0, correct: 0, total: 0 };
   let stored = {};
   try { stored = JSON.parse(localStorage.getItem('dc_tool_progress') || '{}'); } catch (e) {}
-  let correct = 0, total = 0, doneCount = 0;
+  let correct = 0, total = 0, has = false, sumFrac = 0;
   toolUrls.forEach(url => {
     const st = stored[url];
-    if (st && typeof st.total === 'number') { correct += st.correct || 0; total += st.total; doneCount++; }
+    if (st && typeof st.total === 'number' && st.total > 0) {
+      correct += st.correct || 0; total += st.total; has = true;
+      // Mỗi tool đóng góp tỉ lệ hoàn thành riêng của nó (0..1) vào trung bình chung,
+      // thay vì đếm nhị phân "đã/chưa làm" — vì có đảo chỉ có 1 tool lớn (hàng nghìn câu)
+      // và có đảo có hàng chục đề nhỏ, không thể dùng chung một cách đếm.
+      sumFrac += Math.min(1, (st.correct || 0) / st.total);
+    }
   });
-  // pct = % số đề đã làm / tổng số đề của đảo (KHÔNG dùng tỉ lệ đúng/tổng câu,
-  // vì mỗi đề chỉ có vài câu nên làm tốt 1 đề đầu dễ đạt 80-100% một cách sai lệch).
-  const pct = Math.round((doneCount / toolUrls.length) * 100);
-  return { has: doneCount > 0, pct, correct, total };
+  const pct = Math.round((sumFrac / toolUrls.length) * 100);
+  return { has, pct, correct, total };
 }
 
 const ARC = {
