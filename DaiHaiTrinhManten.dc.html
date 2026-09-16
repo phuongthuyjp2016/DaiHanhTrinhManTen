@@ -1383,13 +1383,15 @@ function computeToolProgress(toolUrls) {
   if (!toolUrls || !toolUrls.length) return { has: false, pct: 0, correct: 0, total: 0 };
   let stored = {};
   try { stored = JSON.parse(localStorage.getItem('dc_tool_progress') || '{}'); } catch (e) {}
-  let correct = 0, total = 0;
+  let correct = 0, total = 0, doneCount = 0;
   toolUrls.forEach(url => {
     const st = stored[url];
-    if (st && typeof st.total === 'number') { correct += st.correct || 0; total += st.total; }
+    if (st && typeof st.total === 'number') { correct += st.correct || 0; total += st.total; doneCount++; }
   });
-  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
-  return { has: true, pct, correct, total };
+  // pct = % số đề đã làm / tổng số đề của đảo (KHÔNG dùng tỉ lệ đúng/tổng câu,
+  // vì mỗi đề chỉ có vài câu nên làm tốt 1 đề đầu dễ đạt 80-100% một cách sai lệch).
+  const pct = Math.round((doneCount / toolUrls.length) * 100);
+  return { has: doneCount > 0, pct, correct, total };
 }
 
 const ARC = {
