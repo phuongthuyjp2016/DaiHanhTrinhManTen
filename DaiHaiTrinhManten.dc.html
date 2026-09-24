@@ -1383,13 +1383,19 @@ function computeToolProgress(toolUrls) {
   if (!toolUrls || !toolUrls.length) return { has: false, pct: 0, correct: 0, total: 0 };
   let stored = {};
   try { stored = JSON.parse(localStorage.getItem('dc_tool_progress') || '{}'); } catch (e) {}
-  let correct = 0, total = 0;
+  let correct = 0, total = 0, has = false, sumFrac = 0;
   toolUrls.forEach(url => {
     const st = stored[url];
-    if (st && typeof st.total === 'number') { correct += st.correct || 0; total += st.total; }
+    if (st && typeof st.total === 'number' && st.total > 0) {
+      correct += st.correct || 0; total += st.total; has = true;
+      // Mỗi tool đóng góp tỉ lệ hoàn thành riêng của nó (0..1) vào trung bình chung,
+      // thay vì đếm nhị phân "đã/chưa làm" — vì có đảo chỉ có 1 tool lớn (hàng nghìn câu)
+      // và có đảo có hàng chục đề nhỏ, không thể dùng chung một cách đếm.
+      sumFrac += Math.min(1, (st.correct || 0) / st.total);
+    }
   });
-  const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
-  return { has: true, pct, correct, total };
+  const pct = Math.round((sumFrac / toolUrls.length) * 100);
+  return { has, pct, correct, total };
 }
 
 const ARC = {
@@ -1623,7 +1629,7 @@ const TREASURE_POWER = [
 ];
 const SUBMAP_W = 1200, SUBMAP_H = 760;
 const HAILUU_ISLETS = [
-  { id:'song-ngam', name:'Đảo Sóng Ngầm', emoji:'🌊', skill:'Từ Vựng Theo Văn Cảnh', art:'assets/art-052.webp', boss:'Thủ Hộ Sóng Ngầm', treasure:'Ngọc Sóng Ngầm', treasureEmoji:'🔹', treasureArt:'assets/art-053.png', color:'#2f8fd1', tools:[{label:'Mondai 2 · Văn Cảnh Quy Định', url:'dao2-hailuu-mondai2-vancanh.html'},{label:'Phân Biệt Từ Dễ Nhầm (Mondai 2)', url:'dao2-hailuu-mondai2-phanbiet.html'}], progressTools:['dao2-hailuu-mondai2-vancanh.html'], x:235, y:440,
+  { id:'song-ngam', name:'Đảo Sóng Ngầm', emoji:'🌊', skill:'Từ Vựng Theo Văn Cảnh', art:'assets/art-052.webp', boss:'Thủ Hộ Sóng Ngầm', treasure:'Ngọc Sóng Ngầm', treasureEmoji:'🔹', treasureArt:'assets/art-053.png', color:'#2f8fd1', tools:[{label:'Mondai 2 · Văn Cảnh Quy Định', url:'dao2-hailuu-mondai2-vancanh.html'},{label:'Phân Biệt Từ Dễ Nhầm (Mondai 2)', url:'dao2-hailuu-mondai2-phanbiet.html'},{label:'Mon2 - Bí Mật Ngữ Cảnh (20 đề)', url:'dao2-hailuu-mondai2-bimatngucanh.html'}], progressTools:['dao2-hailuu-mondai2-vancanh.html','dao2-hailuu-mondai2-bimatngucanh.html'], x:235, y:440,
     story:'Những con sóng ngầm mang theo các từ vựng ẩn dưới lớp văn cảnh — chỉ ai đọc được dòng chảy mới chọn đúng nghĩa.' },
   { id:'gio', name:'Đảo Gió Nam', emoji:'🌬', skill:'Từ Đồng Nghĩa, Từ Thay Thế', art:'assets/art-054.webp', boss:'Thủ Hộ Gió Nam', treasure:'Lá Cờ Gió Nam', treasureEmoji:'🎐', treasureArt:'assets/art-055.png', color:'#4fbfa8', tools:[{label:'Mondai 3 · Đồng Nghĩa Thay Thế', url:'dao2-hailuu-mondai3-dongnghia.html'}], progressTools:['dao2-hailuu-mondai3-dongnghia.html'], x:600, y:200,
     story:'Gió Nam thổi qua đảo mang theo hàng trăm cặp từ đồng nghĩa — nghe sai một hơi gió là chọn sai đáp án.' },
