@@ -139,6 +139,7 @@ const SAMPLE_QUESTIONS = [
   { text: 'この資料を＿＿、来週までに企画書を仕上げてください。', choices: ['踏まえて', '踏んで', '踏み込んで', '踏み出して'], correct: 0 }
 ];
 const QUESTION_DURATION_SEC = 20;
+const KANJI_DURATION_SEC = 10; // kanji (đọc chữ Hán): 10s mỗi câu
 const NGUPAP_DURATION_SEC = 30; // ngữ pháp: 30s mỗi câu (từ vựng/kanji vẫn dùng mặc định 20s)
 const DOKKAI_DURATION_SEC = 180; // đọc hiểu (đoản/trung/trường văn): 3 phút mỗi câu hỏi
 const QUESTIONS_PER_EVENT = 20;
@@ -291,7 +292,7 @@ function normalizeKanji(VOCAB) {
   return (VOCAB || []).filter(x => x && x.k && x.r && Array.isArray(x.wrong) && x.wrong.length === 3)
     .map(x => {
       const choices = shuffleArr([x.r].concat(x.wrong));
-      return { text: '「' + x.k + '」の読み方として正しいものはどれか。', choices, correct: choices.indexOf(x.r), explain: [x.m, x.ex ? stripTags(x.ex) : ''].filter(Boolean).join(' — ') };
+      return { text: '「' + x.k + '」の読み方として正しいものはどれか。', choices, correct: choices.indexOf(x.r), durationSec: KANJI_DURATION_SEC, explain: [x.m, x.ex ? stripTags(x.ex) : ''].filter(Boolean).join(' — ') };
     });
 }
 function normalizeDoanVan(data) {
@@ -360,6 +361,21 @@ function normalizeDaiChienTuVung(Q) {
 // của ngữ pháp thường — cùng lý do bị loại (không chọn nhanh 1/4 trong 30s được) nên KHÔNG đưa
 // mon6 vào sự kiện. Hàm nhận thêm `monKeys` để mỗi chủ đề (kanji/tuvung/ngupap) chỉ lấy đúng
 // phần mon tương ứng của mình từ CÙNG 1 file nguồn này (xem 3 hàm mỏng bên dưới).
+// Mondai 1: trường `kanji` ở dạng nguyên mẫu (練る) nhưng đề gốc gạch chân dạng đã chia trong câu
+// (練って) và 4 đáp án cũng ở dạng chia đó. Dựng lại dạng trong câu = chữ Hán gốc (bỏ okurigana)
+// + phần kana đứng sau nó trong câu, khớp với đuôi của đáp án đúng. Không dựng được thì dùng `kanji`.
+function mon1SurfaceForm(item, correctIdx) {
+  const k = item.kanji, sent = item.question || '', ans = item.options[correctIdx];
+  if (!k || sent.includes(k)) return k;
+  const stem = k.replace(/[ぁ-ん]+$/, '');
+  const at = stem ? sent.indexOf(stem) : -1;
+  if (at < 0 || typeof ans !== 'string') return k;
+  const run = (sent.slice(at + stem.length).match(/^[ぁ-ん]+/) || [''])[0];
+  for (let n = Math.min(run.length, ans.length); n > 0; n--) {
+    if (ans.endsWith(run.slice(0, n))) return stem + run.slice(0, n);
+  }
+  return k;
+}
 function normalizeDaiChienDeThiByMon(FULL_DATA, monKeys) {
   const out = [];
   Object.keys(FULL_DATA || {}).forEach(examKey => {
@@ -381,7 +397,7 @@ function normalizeDaiChienDeThiByMon(FULL_DATA, monKeys) {
           const isPlainOptions = typeof item.options[0] === 'string';
           choices = isPlainOptions ? item.options : item.options.map(o => o.word || '');
           if (monKey === 'mon1') {
-            text = item.kanji ? ('「' + item.kanji + '」の読み方として正しいものはどれか。') : (item.question || '');
+            text = item.kanji ? ('「' + mon1SurfaceForm(item, correct) + '」の読み方として正しいものはどれか。') : (item.question || '');
             explain = [item.meaning_vn, item.set1].filter(Boolean).join(' — ');
           } else {
             text = item.question || '';
@@ -390,7 +406,7 @@ function normalizeDaiChienDeThiByMon(FULL_DATA, monKeys) {
           }
         }
         if (!text || !Array.isArray(choices) || choices.length < 2 || typeof correct !== 'number' || correct < 0 || correct >= choices.length) return;
-        out.push({ text, choices, correct, explain: stripTags(explain || '') });
+        out.push({ text, choices, correct, ...(monKey === 'mon1' ? { durationSec: KANJI_DURATION_SEC } : {}), explain: stripTags(explain || '') });
       });
     });
   });
