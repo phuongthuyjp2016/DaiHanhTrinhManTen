@@ -53,7 +53,7 @@
   <div id="homeScore"></div>
   <div id="landing" class="block" style="display:none">
     <h2>Chọn phần muốn làm</h2>
-    <p class="sub">Hai phần tính giờ độc lập — làm phần nào trước cũng được. Vào phần Nghe sẽ thấy file âm thanh ngay đầu trang.</p>
+    <p class="sub">Hai phần tính giờ độc lập — làm phần nào trước cũng được. Vào phần Nghe sẽ thấy file âm thanh ngay đầu trang. <b>Phải nộp xong cả 2 phần mới hiện điểm và đáp án đúng/sai.</b></p>
     <button class="btn primary card" id="docCard" onclick="chooseMode('doc')">📖 Đọc &amp; Ngữ pháp (Mon1–13) · 110 phút</button>
     <button class="btn card" id="listenCard" onclick="chooseMode('nghe')">🎧 Nghe (Mon1–5) · 60 phút</button>
   </div>
@@ -77,6 +77,7 @@ Object.keys(EXAMS).forEach(k => { answers[k] = {}; });
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&lt;u&gt;/g,"<u>").replace(/&lt;\/u&gt;/g,"</u>");
 
 function curExam(){ return EXAMS[curExamKey].exam; }
+function allSubmitted(examKey){ return ["doc","nghe"].every(p => STATE[examKey][p] === null || STATE[examKey][p].submitted); }
 function allItems(examKey){ const out = []; EXAMS[examKey].exam.blocks.forEach(b => { if(b.items) out.push(...b.items); if(b.groups) b.groups.forEach(g => out.push(...g.items)); }); return out; }
 function docItems(examKey){ return allItems(examKey).filter(it => it.sec !== "nghe"); }
 function listenItems(examKey){ return allItems(examKey).filter(it => it.sec === "nghe"); }
@@ -86,14 +87,17 @@ function qHtml(it, examKey){
   const listen = it.sec === "nghe";
   const st = STATE[examKey][listen ? "nghe" : "doc"];
   const subm = st.submitted;
-  const hideText = it.blind && !subm;
+  const reveal = allSubmitted(examKey);
+  const hideText = it.blind && !reveal;
   const opts = it.options.map((o, i) => {
     const n = i + 1, checked = answers[examKey][it.no] === n ? " checked" : "";
     const label = hideText ? String(n) : (n + ". " + esc(o));
     return '<label class="opt"><input type="radio" name="q' + examKey + '_' + it.no + '" value="' + n + '"' + checked + (subm ? " disabled" : "") + ' onchange="pick(\'' + examKey + '\',' + it.no + ',' + n + ')">' + label + '</label>';
   }).join("");
   let res = "";
-  if (subm) {
+  if (subm && !reveal) {
+    res = '<div class="res sub">Đã nộp — điểm sẽ hiện sau khi nộp xong cả 2 phần</div>';
+  } else if (reveal) {
     const ok = answers[examKey][it.no] === it.ans;
     res = '<div class="res ' + (ok ? "ok" : "ng") + '">' + (ok ? "✓ Đúng" : "✗ Sai") + " — đáp án: " + it.ans + "</div>";
   }
@@ -146,12 +150,16 @@ function renderExamLanding(){
   const hasDoc = STATE[curExamKey].doc !== null;
   const hasNghe = STATE[curExamKey].nghe !== null;
   const dSt = STATE[curExamKey].doc, lSt = STATE[curExamKey].nghe;
-  const dSc = (hasDoc && dSt.submitted) ? scoreOf(docItems(curExamKey), curExamKey) : null;
-  const lSc = (hasNghe && lSt.submitted) ? scoreOf(listenItems(curExamKey), curExamKey) : null;
+  const reveal = allSubmitted(curExamKey);
+  const dSc = (hasDoc && dSt.submitted && reveal) ? scoreOf(docItems(curExamKey), curExamKey) : null;
+  const lSc = (hasNghe && lSt.submitted && reveal) ? scoreOf(listenItems(curExamKey), curExamKey) : null;
   const docCardEl = document.getElementById("docCard");
   if (hasDoc) {
     docCardEl.disabled = false;
-    docCardEl.innerHTML = "📖 Đọc &amp; Ngữ pháp (Mon1–13) · " + exam.minutes + " phút" + (dSc ? '<span class="sub">Đã nộp — ' + dSc.total + '/' + dSc.max + ' câu đúng</span>' : dSt.started ? '<span class="sub">Đang làm dở — còn ' + fmt(dSt.remain) + '</span>' : "");
+    const dSub = dSc ? '<span class="sub">Đã nộp — ' + dSc.total + '/' + dSc.max + ' câu đúng</span>'
+      : dSt.submitted ? '<span class="sub">Đã nộp — chờ nộp xong phần còn lại để xem điểm</span>'
+      : dSt.started ? '<span class="sub">Đang làm dở — còn ' + fmt(dSt.remain) + '</span>' : "";
+    docCardEl.innerHTML = "📖 Đọc &amp; Ngữ pháp (Mon1–13) · " + exam.minutes + " phút" + dSub;
   } else {
     docCardEl.disabled = true;
     docCardEl.innerHTML = "📖 Đọc &amp; Ngữ pháp<span class=\"sub\">Chưa có — chỉ mới làm phần Nghe cho kỳ này</span>";
@@ -159,15 +167,19 @@ function renderExamLanding(){
   const listenCardEl = document.getElementById("listenCard");
   if (hasNghe) {
     listenCardEl.disabled = false;
-    listenCardEl.innerHTML = "🎧 Nghe (Mon1–5) · " + exam.listenMinutes + " phút" + (lSc ? '<span class="sub">Đã nộp — ' + lSc.total + '/' + lSc.max + ' câu đúng</span>' : lSt.started ? '<span class="sub">Đang làm dở — còn ' + fmt(lSt.remain) + '</span>' : "");
+    const lSub = lSc ? '<span class="sub">Đã nộp — ' + lSc.total + '/' + lSc.max + ' câu đúng</span>'
+      : lSt.submitted ? '<span class="sub">Đã nộp — chờ nộp xong phần còn lại để xem điểm</span>'
+      : lSt.started ? '<span class="sub">Đang làm dở — còn ' + fmt(lSt.remain) + '</span>' : "";
+    listenCardEl.innerHTML = "🎧 Nghe (Mon1–5) · " + exam.listenMinutes + " phút" + lSub;
   } else {
     listenCardEl.disabled = true;
     listenCardEl.innerHTML = "🎧 Nghe (Mon1–5)<span class=\"sub\">Sắp có — đang chờ bổ sung đáp án</span>";
   }
   let homeHtml = "";
-  if (dSc && lSc) {
-    const total = dSc.total + lSc.total, max = dSc.max + lSc.max;
-    homeHtml = '<div class="block"><div class="score">🎉 Tổng kết cả bài: ' + total + '/' + max + ' câu đúng</div><div class="sub">' + esc(dSc.lines) + ' · ' + esc(lSc.lines) + '</div></div>';
+  if (reveal && (dSc || lSc)) {
+    const total = (dSc ? dSc.total : 0) + (lSc ? lSc.total : 0), max = (dSc ? dSc.max : 0) + (lSc ? lSc.max : 0);
+    const lines = [dSc, lSc].filter(Boolean).map(s => s.lines).join(" · ");
+    homeHtml = '<div class="block"><div class="score">🎉 Tổng kết cả bài: ' + total + '/' + max + ' câu đúng</div><div class="sub">' + esc(lines) + '</div></div>';
   }
   document.getElementById("homeScore").innerHTML = homeHtml;
 }
@@ -175,8 +187,10 @@ function renderExamPicker(){
   document.getElementById("examCards").innerHTML = Object.keys(EXAMS).map(k => {
     const st = STATE[k];
     const parts = [];
-    if (st.doc && st.doc.submitted) parts.push("Đọc: " + scoreOf(docItems(k), k).total + "/" + docItems(k).length);
-    if (st.nghe && st.nghe.submitted) parts.push("Nghe: " + scoreOf(listenItems(k), k).total + "/" + listenItems(k).length);
+    const reveal = allSubmitted(k);
+    if (reveal && st.doc && st.doc.submitted) parts.push("Đọc: " + scoreOf(docItems(k), k).total + "/" + docItems(k).length);
+    if (reveal && st.nghe && st.nghe.submitted) parts.push("Nghe: " + scoreOf(listenItems(k), k).total + "/" + listenItems(k).length);
+    if (!reveal && ((st.doc && st.doc.submitted) || (st.nghe && st.nghe.submitted))) parts.push("Đang chờ nộp xong phần còn lại");
     return '<button class="btn card" onclick="chooseExam(\'' + k + '\')">' + esc(EXAMS[k].label) + (parts.length ? '<span class="sub">' + parts.join(" · ") + '</span>' : '') + '</button>';
   }).join("");
 }
