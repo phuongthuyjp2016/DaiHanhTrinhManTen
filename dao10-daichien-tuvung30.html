@@ -40,6 +40,21 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);min
 .wide-opt{grid-column:1/-1}
 .expl{display:none;margin-top:.8rem;border-top:1px solid var(--bdr);padding-top:.8rem}
 .expl.show{display:block}
+.cd{margin-bottom:.6rem;padding:.6rem .7rem;border-radius:10px;font-size:.82rem;line-height:1.65;border:1px solid var(--bdr);background:#fff}
+.cd-ok-b{background:var(--ok-bg);border-left:3px solid var(--ok)}
+.cd-ng-b{background:var(--ng-bg);border-color:#edb9b0}
+.cd-h{font-weight:700;font-size:.92rem;margin-bottom:.2rem}
+.cd-g{color:var(--ok)}.cd-r{color:var(--ng)}
+.cd-ok{font-weight:700;color:var(--ok);margin-bottom:.2rem}
+.cd-v{margin:.1rem 0}
+.cd-fix{margin:.15rem 0;color:#7a3b00}
+.cd-sec{margin-top:.35rem}.cd-lb{font-weight:700;font-size:.75rem;color:var(--lav)}
+.cd-li{padding-left:.4rem}.cd-gh{font-weight:700;margin-top:.25rem}
+.cd-x{margin-top:.35rem;color:var(--ng);font-weight:600}
+.cd-trap .cd-li{color:var(--ng)}
+.cd-tb{border-collapse:collapse;width:100%;font-size:.78rem;margin:.2rem 0}
+.cd-tb th,.cd-tb td{border:1px solid var(--bdr);padding:.2rem .4rem;text-align:left}
+.cd-tb th{background:var(--lav-soft)}
 .es{margin-bottom:.6rem;padding:.6rem;border-radius:10px;font-size:.82rem;border:1px solid var(--bdr)}
 .es-m{background:#fff}.es-s{background:#fff}.es-t{background:#fff}.es-w{background:var(--ng-bg);border-color:#edb9b0}
 .el{font-weight:700;margin-bottom:.35rem;font-size:.75rem;color:var(--lav)}
@@ -179,6 +194,7 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);min
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
+<script src="dao10-tuvung30-cards.js?v=20261019a"></script>
 <script>
 const Q = [
 { kai:1, m:"m1", sub:"k2k",
@@ -3474,6 +3490,7 @@ const Q = [
 {kai:30,m:"m4",q:"【<hl>うっとり</hl>】次の１〜４の中で正しい使い方はどれですか？",label:"下線の言葉の使い方として最もよいものを選んでください",ans:"その俳優が舞台に現れると女性たちはうっとり見つめた。",opts:["しまった！妻の誕生日をうっとり忘れていた。","もう少し時間をかけてうっとり考えてから、お返事します。","その俳優が舞台に現れると女性たちはうっとり見つめた。","こちらのシャンプーで洗うと、髪がうっとりしますよ。"],ex:{why:["<b>うっかり</b>忘れていた — 'lơ đãng quên mất' là うっかり","<b>じっくり</b>考えてから — 'kỹ càng' là じっくり","うっとり見つめる = say đắm ngắm nhìn → đúng","髪が<b>しっとり／さらさら</b>します"],mean:"<strong>うっとり</strong>＝ <span class='vn'>Mê mẩn, ngây ngất, đắm chìm</span>",syn:[{jp:"見とれる（みとれる）",vn:"Ngây ra nhìn mê mẩn"},{jp:"うっとりする",vn:"Ngây ngất mê mẩn"}],set:[{jp:"うっとり眺める",vn:"Ngây ngất nhìn ngắm"},{jp:"美しさにうっとりする",vn:"Mê mẩn trước vẻ đẹp"}]}},
 {kai:30,m:"m4",q:"【<hl>根深い</hl>】次の１〜４の中で正しい使い方はどれですか？",label:"下線の言葉の使い方として最もよいものを選んでください",ans:"この問題は根深いので、簡単には解決できない。",opts:["木を植えるために根深い穴を掘った。","この問題は根深いので、簡単には解決できない。","では、ここに座って、根深く息を吸ってください。","話が難しすぎて、あまり根深くは理解できなかった。"],ex:{why:["<b>深い</b>穴を掘った — 根深い chỉ dùng nghĩa bóng","根深い問題 = vấn đề có gốc rễ sâu xa, khó giải quyết → đúng","<b>深く</b>息を吸って","あまり<b>深く</b>は理解できなかった"],mean:"<strong>根深い（ねぶかい）</strong>＝ <span class='vn'>Ăn sâu, có nền tảng sâu xa</span>",syn:[{jp:"根本的な（こんぽんてきな）",vn:"Căn bản ăn sâu"},{jp:"深く根付いた（ねついた）",vn:"Ăn sâu bén rễ"}],set:[{jp:"根深い問題",vn:"Vấn đề ăn sâu khó giải quyết"},{jp:"根深い偏見（へんけん）",vn:"Định kiến ăn sâu"}]}}
 ];
+Q.forEach((q,i)=>{ if(typeof CARDS!=="undefined" && CARDS[i]) q.card=CARDS[i]; });
 
 
 // ── Bảng Kanji → Âm Hán Việt ──────────────────────────
@@ -3866,7 +3883,74 @@ function hQ(s){return s.replace(/<hl>(.*?)<\/hl>/g,'<span class="hl">$1</span>')
 function esc(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
+// ═══ Thẻ MANTEN (Mon1–4): dựng từ dữ liệu CARDS[chỉ số câu] — định dạng dòng ═══
+function cdEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
+function cdWord(f){ // word|reading|HV
+  const p=f.split('|'); let w=p[0]; if(p[1]&&p[1]!==p[0]) w+='（'+p[1]+'）'; if(p[2]) w+='　'+p[2]; return w;
+}
+function cdLetter(q,key){
+  let i=q.opts.indexOf(key);
+  if(i<0) i=q.opts.findIndex(o=>o.slice(0,8)===key.slice(0,8));
+  return i<0?'?':'ABCD'[i];
+}
+function bCard(q){
+  const lines=q.card.split('\n').map(s=>s.replace(/\s+$/,'')).filter(s=>s.length);
+  const blocks=[]; let cur=null;
+  lines.forEach(l=>{
+    const m=l.match(/^(W|OK|O|SK|S|H) (.*)$/);
+    if(m){cur={t:m[1],head:m[2],ls:[]};blocks.push(cur);}
+    else{const k=l.match(/^([a-zA-Z]) ?(.*)$/); if(cur&&k) cur.ls.push([k[1],k[2]]);}
+  });
+  const order={H:0,W:1,OK:2,SK:2,O:3,S:3};
+  const key=(b,i)=>order[b.t]*100+((b.t==='O'||b.t==='S')?'ABCD?'.indexOf(cdLetter(q,b.head.split('|')[0])):0)*10+i/1000;
+  const sorted=blocks.map((b,i)=>({b,k:key(b,i)})).sort((x,y)=>x.k-y.k).map(x=>x.b);
+  let h='<div class="expl" id="expl">';
+  sorted.forEach(b=>{
+    const t=b.t;
+    let cls='cd',head='';
+    if(t==='H'){
+      const f=b.head.split('|');
+      head=`<div class="cd-ok">✅ 正解：<b>${cdEsc(q.ans)}</b></div><div class="cd-h">${cdEsc(f[0])}${f[1]?'　Hán Việt: '+cdEsc(f[1]):''}</div>`;
+      cls='cd cd-main';
+    }else if(t==='W'){
+      const f=b.head.split('|'); head=`<div class="cd-h">Từ gốc：${cdEsc(cdWord(b.head))}</div>`; cls='cd cd-main';
+    }else if(t==='OK'){
+      head=`<div class="cd-h cd-g">正解 ✅ ${cdLetter(q,b.head.split('|')[0])}. ${cdEsc(cdWord(b.head))}</div>`; cls='cd cd-ok-b';
+    }else if(t==='O'){
+      head=`<div class="cd-h cd-r">${cdLetter(q,b.head.split('|')[0])}. ${cdEsc(cdWord(b.head))} ❌</div>`; cls='cd cd-ng-b';
+    }else if(t==='SK'){
+      const f=b.head.split('|'); head=`<div class="cd-h cd-g">${cdLetter(q,f[0])}.　正解 ✅</div><div>${cdEsc(f[0])}</div>${f[1]?`<div class="cd-v">🇻🇳 ${cdEsc(f[1])}</div>`:''}`; cls='cd cd-ok-b';
+    }else if(t==='S'){
+      const f=b.head.split('|'); head=`<div class="cd-h cd-r">${cdLetter(q,f[0])}. ❌</div><div>${cdEsc(f[0])}</div>${f[2]?`<div class="cd-fix">✏️ Sửa: ${cdEsc(f[2])}</div>`:''}${f[1]?`<div class="cd-v">🇻🇳 ${cdEsc(f[1])}</div>`:''}`;
+      cls='cd cd-ng-b';
+    }
+    let body='',run='',open=false;
+    const close=()=>{ if(open){body+='</div>';open=false;} };
+    const sec=(r,label,cl)=>{ if(run!==r){close(); body+=`<div class="cd-sec ${cl||''}"><div class="cd-lb">${label}</div>`; open=true; run=r;} };
+    let tbl=false;
+    b.ls.forEach(([k,v])=>{
+      if(k!=='K' && tbl){body+='</table>';tbl=false;}
+      if(k==='v'){close();run='';body+=`<div class="cd-v">${t==='H'?'📖 Nghĩa: ':'🇻🇳 '}${cdEsc(v)}</div>`;}
+      else if(k==='d'){close();run='';body+=`<div class="cd-v">📖 Dịch: ${cdEsc(v)}</div>`;}
+      else if(k==='e'){close();run='';const p=v.split('|');body+=`<div class="cd-v">📝 ${cdEsc(p[0])}</div>${p[1]?`<div class="cd-v">🇻🇳 ${cdEsc(p[1])}</div>`:''}`;}
+      else if(k==='s'){sec('s','🔗 Cụm fix:');body+=`<div class="cd-li">${cdEsc(v)}</div>`;}
+      else if(k==='y'){sec('y','≒ Từ đồng nghĩa:');body+=`<div class="cd-li">• ${cdEsc(v)}</div>`;}
+      else if(k==='u'){sec('u','🔗 Cụm hay dùng');body+=`<div class="cd-li">• ${cdEsc(v)}</div>`;}
+      else if(k==='G'){sec('G','🔍 Từ liên quan theo từng chữ');body+=`<div class="cd-gh">${cdEsc(v)}</div>`;}
+      else if(k==='r'){sec('G','🔍 Từ liên quan theo từng chữ');body+=`<div class="cd-li">• ${cdEsc(v)}</div>`;}
+      else if(k==='K'){ if(!tbl){close();run='';body+='<div class="cd-lb" style="margin-top:.4rem">📊 Phân tích chữ Hán</div><table class="cd-tb"><tr><th>漢字</th><th>Hán Việt</th><th>音読み</th><th>訓読み</th><th>Nghĩa</th></tr>';tbl=true;}
+        const p=v.split('|'); body+=`<tr><td>${cdEsc(p[0]||'')}</td><td>${cdEsc(p[1]||'')}</td><td><b>${cdEsc(p[2]||'')}</b></td><td>${cdEsc(p[3]||'—')}</td><td>${cdEsc(p[4]||'')}</td></tr>`; }
+      else if(k==='t'){sec('t','❌ Bẫy đáp án','cd-trap');body+=`<div class="cd-li">${cdEsc(v)}</div>`;}
+      else if(k==='x'){close();run='';body+=`<div class="cd-x">→ ${cdEsc(v)}</div>`;}
+    });
+    if(tbl) body+='</table>'; close();
+    h+=`<div class="${cls}">${head}${body}</div>`;
+  });
+  return h+'</div>';
+}
+
 function bExpl(ex, q){
+  if(q && q.card) return bCard(q);
   if(!ex) return '';
   let h = '<div class="expl" id="expl">';
 
