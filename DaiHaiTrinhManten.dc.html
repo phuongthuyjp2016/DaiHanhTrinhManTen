@@ -138,6 +138,16 @@
     pushNotebook: async (uid, notebook) => {
       try { await setDoc(doc(db, 'players', uid), { notebook }, { merge: true }); } catch (e) { console.error('[dcSync] pushNotebook failed', e); }
     },
+    // Tiến trình các trang tool (localStorage 'dc_tool_progress') lưu dạng chuỗi JSON: key là tên file
+    // kèm '.' và '?set=...', để nguyên làm tên field Firestore dễ lỗi.
+    fetchToolProgress: async (uid) => {
+      const snap = await getDoc(doc(db, 'players', uid));
+      if (!snap.exists() || !snap.data().toolProgressJson) return null;
+      try { return JSON.parse(snap.data().toolProgressJson); } catch (e) { return null; }
+    },
+    pushToolProgress: async (uid, toolProgress) => {
+      try { await setDoc(doc(db, 'players', uid), { toolProgressJson: JSON.stringify(toolProgress) }, { merge: true }); } catch (e) { console.error('[dcSync] pushToolProgress failed', e); }
+    },
     onAuthChanged: (cb) => onAuthStateChanged(auth, (user) => {
       currentUid = user ? user.uid : null;
       cb(user ? toPlainUser(user) : null);
@@ -1391,10 +1401,32 @@ function toolProgressKey(url) {
   return url.slice(0, q) + (params.length ? '?' + params.join('&') : '');
 }
 
+const TOOL_PROGRESS_KEY = 'dc_tool_progress';
+function loadToolProgress() { try { return JSON.parse(localStorage.getItem(TOOL_PROGRESS_KEY) || '{}') || {}; } catch (e) { return {}; } }
+function saveToolProgress(tp) { try { localStorage.setItem(TOOL_PROGRESS_KEY, JSON.stringify(tp)); } catch (e) {} }
+// Gộp tiến trình tool giữa máy này và tài khoản: mỗi tool lấy số câu đúng lớn hơn,
+// tổng số câu ưu tiên bản trên máy (trang tool vừa ghi, khớp dữ liệu hiện tại).
+function mergeToolProgress(remote, local) {
+  const out = Object.assign({}, remote || {});
+  Object.keys(local || {}).forEach(k => {
+    const l = local[k], r = out[k];
+    if (!l) return;
+    out[k] = r ? { correct: Math.max(l.correct || 0, r.correct || 0), total: l.total || r.total } : l;
+  });
+  return out;
+}
+function toolProgressDiffers(a, b) {
+  const keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);
+  for (const k of keys) {
+    const x = (a || {})[k], y = (b || {})[k];
+    if (!x || !y || x.correct !== y.correct || x.total !== y.total) return true;
+  }
+  return false;
+}
+
 function computeToolProgress(toolUrls) {
-  if (!toolUrls || !toolUrls.length) return { has: false, pct: 0, pctLabel: '0', barWidth: '0%', correct: 0, total: 0 };
-  let stored = {};
-  try { stored = JSON.parse(localStorage.getItem('dc_tool_progress') || '{}'); } catch (e) {}
+  if (!toolUrls || !toolUrls.length) return { has: false, pct: 0, correct: 0, total: 0 };
+  const stored = loadToolProgress();
   let correct = 0, total = 0, has = false, sumFrac = 0;
   toolUrls.forEach(url => {
     const st = stored[url] || stored[toolProgressKey(url)];
@@ -1406,13 +1438,8 @@ function computeToolProgress(toolUrls) {
       sumFrac += Math.min(1, (st.correct || 0) / st.total);
     }
   });
-  const exact = (sumFrac / toolUrls.length) * 100;
-  const pct = Math.round(exact);
-  // Đảo có hàng trăm/nghìn câu: vài câu đúng chỉ được <0.5% nên làm tròn sẽ ra 0% — nhãn hiện 1 chữ số lẻ
-  // và thanh luôn nhích ít nhất 1 chút khi đã có câu đúng.
-  const pctLabel = exact > 0 && exact < 10 ? exact.toFixed(1) : String(pct);
-  const barWidth = correct > 0 ? `max(6px, ${exact.toFixed(2)}%)` : '0%';
-  return { has, pct, pctLabel, barWidth, correct, total };
+  const pct = Math.round((sumFrac / toolUrls.length) * 100);
+  return { has, pct, correct, total };
 }
 
 const ARC = {
@@ -2168,6 +2195,11 @@ class Component extends DCLogic {
         } else if (!localIsUsable) {
           patch.progress = loadProgress();
         }
+        const remoteToolProgress = await window.dcSync.fetchToolProgress(fbUser.uid);
+        const localToolProgress = localIsUsable ? loadToolProgress() : {};
+        const mergedToolProgress = mergeToolProgress(remoteToolProgress, localToolProgress);
+        saveToolProgress(mergedToolProgress);
+        if (toolProgressDiffers(mergedToolProgress, remoteToolProgress)) window.dcSync.pushToolProgress(fbUser.uid, mergedToolProgress);
         const remoteNotebook = await window.dcSync.fetchNotebook(fbUser.uid);
         const localNotebook = localIsUsable ? loadNotebook() : [];
         const mergedNotebook = mergeNotebooks(remoteNotebook, localNotebook);
@@ -2176,7 +2208,7 @@ class Component extends DCLogic {
         patch.notebook = mergedNotebook;
         saveOwnerUid(fbUser.uid);
         window.dcSync.touchOnline(fbUser.uid);
-        this.setState(patch, () => this.syncIncomingRequests());
+        this.setState(patch, () => { this.syncIncomingRequests(); this.syncProgressBarRewards(); });
       });
     };
     trySubscribe();
@@ -2935,8 +2967,8 @@ class Component extends DCLogic {
       tools: (isletData.tools || []).map(t => ({ label: t.label, url: t.url })),
       hasToolProgress: isletToolProgress.has,
       toolProgressPct: isletToolProgress.pct,
-      toolProgressLabel: `${isletToolProgress.pctLabel}% hoàn thành · ${isletToolProgress.correct}/${isletToolProgress.total} câu đúng`,
-      toolProgressBarStyle: { height:'100%', width: isletToolProgress.barWidth, background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' } };
+      toolProgressLabel: `${isletToolProgress.pct}% hoàn thành · ${isletToolProgress.correct}/${isletToolProgress.total} câu đúng`,
+      toolProgressBarStyle: { height:'100%', width: isletToolProgress.pct + '%', background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' } };
 
     const currentZoneData = ANHSANG_ZONES.find(z => z.id === s.currentZoneId) || ANHSANG_ZONES[0];
     const currentZoneCompleted = anhSangDone.includes(currentZoneData.id);
@@ -2954,8 +2986,8 @@ class Component extends DCLogic {
       tools: (currentZoneData.tools || []).map(t => ({ label: t.label, url: t.url })),
       hasToolProgress: zoneToolProgress.has,
       toolProgressPct: zoneToolProgress.pct,
-      toolProgressLabel: `${zoneToolProgress.pctLabel}% hoàn thành · ${zoneToolProgress.correct}/${zoneToolProgress.total} câu đúng`,
-      toolProgressBarStyle: { height:'100%', width: zoneToolProgress.barWidth, background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
+      toolProgressLabel: `${zoneToolProgress.pct}% hoàn thành · ${zoneToolProgress.correct}/${zoneToolProgress.total} câu đúng`,
+      toolProgressBarStyle: { height:'100%', width: zoneToolProgress.pct + '%', background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
     };
     const goToZoneSets = this.goToSetSelect('zone', currentZoneData.id);
 
@@ -3230,8 +3262,8 @@ class Component extends DCLogic {
         guardianBadge: { width:'108px', height:'108px', borderRadius:'50%', background:'rgba(255,255,255,.12)', border:'3px solid #ffe9b0', display:'flex', alignItems:'center', justifyContent:'center', padding:'10px' },
         hasToolProgress: toolProgress.has,
         toolProgressPct: toolProgress.pct,
-        toolProgressLabel: `${toolProgress.pctLabel}% hoàn thành · ${toolProgress.correct}/${toolProgress.total} câu đúng`,
-        toolProgressBarStyle: { height:'100%', width: toolProgress.barWidth, background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
+        toolProgressLabel: `${toolProgress.pct}% hoàn thành · ${toolProgress.correct}/${toolProgress.total} câu đúng`,
+        toolProgressBarStyle: { height:'100%', width: toolProgress.pct + '%', background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
       },
       currentQuestion, quizProgressLabel, quizBarStyle, answered: s.answered, feedbackTitle, explainBoxStyle, nextLabel, scoreLabel,
       avatarArt: (profile && profile.avatar && profile.avatar.art) || '',
