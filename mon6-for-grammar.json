@@ -1,0 +1,2453 @@
+[
+  {
+    "exam": "7/2010",
+    "q": 1,
+    "star_word": "だけあって",
+    "gram": [],
+    "full_sentence": "このレストランは、（主人が）（魚屋も経営している）（*だけあって）（魚料理がおいしい）と評判だ。",
+    "options": [
+      "だけあって",
+      "主人が",
+      "魚屋も経営している",
+      "魚料理がおいしい"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Nhà hàng này được đánh giá là món cá ngon, cũng đúng thôi vì chủ quán cũng đồng thời điều hành cửa hàng hải sản."
+  },
+  {
+    "exam": "7/2010",
+    "q": 2,
+    "star_word": "君にまで",
+    "gram": [
+      "〜ばかりに"
+    ],
+    "full_sentence": "A「申し訳ない。僕が（ミスをした）（ばかりに）（*君にまで）（残業してもらう）ことになってしまって。」B「あ、いいえ、気にしないでください。」",
+    "options": [
+      "残業してもらう",
+      "君にまで",
+      "ミスをした",
+      "ばかりに"
+    ],
+    "order": "3-4-2-1",
+    "translate": "B: À, không, đừng bận tâm đâu ạ."
+  },
+  {
+    "exam": "7/2010",
+    "q": 3,
+    "star_word": "からして",
+    "gram": [],
+    "full_sentence": "そもそもこの情報が、責任者である彼に（伝わっていない）（こと）（*からして）（おかしい）と思う。",
+    "options": [
+      "伝わっていない",
+      "おかしい",
+      "こと",
+      "からして"
+    ],
+    "order": "1-3-4-2",
+    "translate": "Ngay từ đầu, tôi đã nghĩ rằng việc thông tin này không được truyền đến anh ấy, người chịu trách nhiệm, cũng là điều bất thường."
+  },
+  {
+    "exam": "7/2010",
+    "q": 4,
+    "star_word": "同世代",
+    "gram": [
+      "〜ならではの"
+    ],
+    "full_sentence": "アルバイト先の仲間は、みんな（年が近い）（こともあって）（*同世代）（ならではの）話でいつも盛り上がっています。",
+    "options": [
+      "こともあって",
+      "ならではの",
+      "同世代",
+      "年が近い"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Các đồng nghiệp làm thêm của tôi, cũng vì tuổi gần nhau, luôn sôi nổi với những câu chuyện đặc trưng chỉ có ở cùng thế hệ."
+  },
+  {
+    "exam": "7/2010",
+    "q": 5,
+    "star_word": "ような",
+    "gram": [],
+    "full_sentence": "ジョン「この 『りかい』という言葉はどういう意味ですか。」アリ「ああ、確か『わかる 』（という）（*ような）（意味だった）（と思う）んですけど。」",
+    "options": [
+      "ような",
+      "と思う",
+      "という",
+      "意味だった"
+    ],
+    "order": "3-1-4-2",
+    "translate": "Ari: À, chắc là ý nghĩa kiểu ‘hiểu’ thì đúng, tôi nghĩ vậy."
+  },
+  {
+    "exam": "12/2010",
+    "q": 1,
+    "star_word": "監督",
+    "gram": [],
+    "full_sentence": "山田監督は私の恩人です。今の（私が）（あるのも）（*監督）（あっての）ことです。",
+    "options": [
+      "あっての",
+      "あるのも",
+      "私が",
+      "監督"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Huấn luyện viên Yamada là ân nhân của tôi. Việc tôi có được như ngày hôm nay cũng là nhờ có huấn luyện viên."
+  },
+  {
+    "exam": "12/2010",
+    "q": 2,
+    "star_word": "彼の性格",
+    "gram": [
+      "〜以上(は)・〜からには"
+    ],
+    "full_sentence": "いったん仕事を引き受けた（からには）（責任感の強い）（*彼の性格）（からして）最後までやり通すに違いない。",
+    "options": [
+      "彼の性格",
+      "からして",
+      "からには",
+      "責任感の強い"
+    ],
+    "order": "3-4-1-2",
+    "translate": "Một khi đã làm thì hãy làm đến cùng."
+  },
+  {
+    "exam": "12/2010",
+    "q": 3,
+    "star_word": "わかるだろう",
+    "gram": [
+      "〜くらい／ぐらい (đến mức・くらいなら)"
+    ],
+    "full_sentence": "ちょっと考えれば、さっきの話が冗談（ことぐらい）（だって）（*わかるだろう）（に）、単純な彼は簡単に信じてしまった。",
+    "options": [
+      "わかるだろう",
+      "だって",
+      "に",
+      "ことぐらい"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Mẫu câu này mang sắc thái tình cảm và thường được sử dụng để thể hiện sự tiếc nuối về một tình huống trong quá khứ hoặc một dự đoán tốt hơn so với thực tế xảy ra."
+  },
+  {
+    "exam": "12/2010",
+    "q": 4,
+    "star_word": "よる",
+    "gram": [],
+    "full_sentence": "かつて映画スターであった山田氏が初挑戦で知事選に勝利したのは、能力という（より）（人気と知名度に）（*よる）（ところが）大きい。",
+    "options": [
+      "ところが",
+      "より",
+      "よる",
+      "人気と知名度に"
+    ],
+    "order": "2-4-3-1",
+    "translate": "Việc ông Yamada, từng là ngôi sao điện ảnh, thắng trong lần đầu tiên tranh cử chức thống đốc, phần lớn dựa không phải vào năng lực mà là vào sự nổi tiếng và mức độ được yêu mến."
+  },
+  {
+    "exam": "12/2010",
+    "q": 5,
+    "star_word": "さえ",
+    "gram": [],
+    "full_sentence": "この植物はとても強いので、（水やりを）（忘れ）（*さえ）（しなければ）ちゃんと育ちますよ",
+    "options": [
+      "水やりを",
+      "さえ",
+      "しなければ",
+      "忘れ"
+    ],
+    "order": "1-4-2-3",
+    "translate": "Loài cây này rất khỏe, nên chỉ cần không quên tưới nước, nó sẽ phát triển tốt."
+  },
+  {
+    "exam": "7/2011",
+    "q": 1,
+    "star_word": "ない",
+    "gram": [],
+    "full_sentence": "大学入試では、試験当日初めてその大学に行き、迷ってしまった（という）（ことの）（*ない）（ように）事前に見学しておくとよい。",
+    "options": [
+      "ない",
+      "という",
+      "ように",
+      "ことの"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Trong kỳ thi đại học, để tránh việc lần đầu đến trường vào ngày thi mà bị lạc, nên đi tham quan trước."
+  },
+  {
+    "exam": "7/2011",
+    "q": 2,
+    "star_word": "となる",
+    "gram": [],
+    "full_sentence": "趣味を持つのは良いことだと思いますが、家庭を犠牲（にして）（まで）（*となる）（と）、それはちょっと問題です。",
+    "options": [
+      "となる",
+      "まで",
+      "と",
+      "にして"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Có sở thích là điều tốt, nhưng nếu đến mức phải hy sinh cả gia đình thì đó là vấn đề."
+  },
+  {
+    "exam": "7/2011",
+    "q": 3,
+    "star_word": "自分の責任",
+    "gram": [],
+    "full_sentence": "管理職になったら、たとえ（自分には責任）（がなくても）（*自分の責任）（だとして）部下の失敗も引き受けるというくらいの覚悟がなくてはならない。",
+    "options": [
+      "だとして",
+      "がなくても",
+      "自分には責任",
+      "自分の責任"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Khi trở thành quản lý, ngay cả khi bản thân không có trách nhiệm, cũng phải có tinh thần chấp nhận rằng đó là trách nhiệm của mình và gánh vác cả những thất bại của cấp dưới."
+  },
+  {
+    "exam": "7/2011",
+    "q": 4,
+    "star_word": "我が社だが",
+    "gram": [],
+    "full_sentence": "（今でこそ）（一流企業と言われる）（*我が社だが）（もともとは）小さな町工場だった。",
+    "options": [
+      "もともとは",
+      "我が社だが",
+      "今でこそ",
+      "一流企業と言われる"
+    ],
+    "order": "3-4-2-1",
+    "translate": "Hiện nay công ty chúng tôi được gọi là một doanh nghiệp hàng đầu, nhưng ban đầu chỉ là một xưởng nhỏ ở thị trấn."
+  },
+  {
+    "exam": "7/2011",
+    "q": 5,
+    "star_word": "思いきや",
+    "gram": [],
+    "full_sentence": "新番組でこれまでにない役柄を演じる俳優の上田秋さん。役作りに悩んでいる（のか）（と）（*思いきや）（そうでもない）という。",
+    "options": [
+      "と",
+      "そうでもない",
+      "思いきや",
+      "のか"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Diễn viên Ueda Aki sẽ đảm nhận một vai diễn chưa từng có trong chương trình mới. Người ta nói rằng dường như cậu ấy đang băn khoăn trong việc xây dựng vai diễn, nhưng cũng không hẳn là như vậy."
+  },
+  {
+    "exam": "12/2011",
+    "q": 1,
+    "star_word": "おいしい",
+    "gram": [],
+    "full_sentence": "雑誌で紹介された（からといって）（必ずしも）（*おいしい）（レストラン）というわけではないだろう 。",
+    "options": [
+      "レストラン",
+      "おいしい",
+      "からといって",
+      "必ずしも"
+    ],
+    "order": "3-4-2-1",
+    "translate": "Chỉ vì được giới thiệu trên tạp chí thì chưa hẳn đã là nhà hàng ngon."
+  },
+  {
+    "exam": "12/2011",
+    "q": 2,
+    "star_word": "授業に取り組む",
+    "gram": [],
+    "full_sentence": "彼はとても優秀で成績が学年の上位に入っている（ことが多い）（のみならず）（*授業に取り組む）（姿勢そのものも）真面目で好感がもてる。",
+    "options": [
+      "授業に取り組む",
+      "のみならず",
+      "姿勢そのものも",
+      "ことが多い"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Cậu ấy rất xuất sắc, không chỉ thường xuyên đứng trong top đầu khối về thành tích, mà ngay cả thái độ học tập cũng nghiêm túc và dễ gây thiện cảm."
+  },
+  {
+    "exam": "12/2011",
+    "q": 3,
+    "star_word": "預けてくればいい",
+    "gram": [],
+    "full_sentence": "会社でA「X社に行くなら、電話で連絡してから行ったら。」B「いや、X社の担当者が（不在なら）（この書類を）（*預けてくればいい）（だけのこと）だから、しなくていいよ。」",
+    "options": [
+      "この書類を",
+      "だけのこと",
+      "不在なら",
+      "預けてくればいい"
+    ],
+    "order": "3-1-4-2",
+    "translate": "B: Không, chỉ cần gửi tờ tài liệu này nếu người phụ trách công ty X vắng mặt thôi, nên không cần gọi đâu."
+  },
+  {
+    "exam": "12/2011",
+    "q": 4,
+    "star_word": "のない",
+    "gram": [],
+    "full_sentence": "政府は（避けよう）（もの）（*のない）（増税は） として、手始め自動車税の引き上げを主張している。",
+    "options": [
+      "もの",
+      "増税は",
+      "のない",
+      "避けよう"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Chính phủ không muốn tránh được việc tăng thuế, nên trước tiên đang đề xuất tăng thuế ô tô."
+  },
+  {
+    "exam": "12/2011",
+    "q": 5,
+    "star_word": "が",
+    "gram": [],
+    "full_sentence": "「反省」とは、あたかも他人（を）（眺める）（*が）（ごとく）自らを客観的して精神活動である。",
+    "options": [
+      "が",
+      "を",
+      "ごとく",
+      "眺める"
+    ],
+    "order": "2-4-1-3",
+    "translate": "“Phản tỉnh” là một hoạt động tinh thần trong đó con người tự nhìn nhận bản thân một cách khách quan, như thể đang quan sát người khác."
+  },
+  {
+    "exam": "7/2012",
+    "q": 1,
+    "star_word": "悪人で",
+    "gram": [],
+    "full_sentence": "（どんな）（*悪人で）（あろうと）（どこかに）良心は残っているはずだ。",
+    "options": [
+      "どこかに",
+      "悪人で",
+      "あろうと",
+      "どんな"
+    ],
+    "order": "4-2-3-1",
+    "translate": "Cho dù có là kẻ xấu xa đến mức nào đi nữa, ắt hẳn ở đâu đó vẫn còn lương tâm."
+  },
+  {
+    "exam": "7/2012",
+    "q": 2,
+    "star_word": "次第で",
+    "gram": [],
+    "full_sentence": "インターネットの功罪といった議論があるが、インターネットはただの手段だ。その価値は（使う）（人の使い方）（*次第で）（決まる）ものだと思う。",
+    "options": [
+      "人の使い方",
+      "使う",
+      "決まる",
+      "次第で"
+    ],
+    "order": "2-1-4-3",
+    "translate": "Có những tranh luận về công và tội của Internet, nhưng Internet chỉ là một phương tiện. Giá trị của nó, tôi nghĩ rằng, được quyết định bởi cách sử dụng của con người."
+  },
+  {
+    "exam": "7/2012",
+    "q": 3,
+    "star_word": "わたしにとっては",
+    "gram": [],
+    "full_sentence": "たばこの値段が（上がろうと下がろうと）（たばこを吸わない）（*わたしにとっては）（どうでもいい）ことだ。",
+    "options": [
+      "わたしにとっては",
+      "上がろうと下がろうと",
+      "どうでもいい",
+      "たばこを吸わない"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Giá thuốc lá có tăng hay giảm đi chăng nữa, đối với tôi người không hút thuốc, thì đó là chuyện chẳng quan trọng gì cả."
+  },
+  {
+    "exam": "7/2012",
+    "q": 4,
+    "star_word": "いう",
+    "gram": [],
+    "full_sentence": "A 「見てみて。レストラン 『夢』の無料券もらっちゃった。」B「いいなあ。ちょっと見せて。なんだ。デザート（が）（ただって）（*いう）（だけ）じゃないか。」",
+    "options": [
+      "が",
+      "だけ",
+      "いう",
+      "ただって"
+    ],
+    "order": "1-4-3-2",
+    "translate": "B: Thích thế. Cho tớ xem với…… Hả? Chẳng phải chỉ mỗi món tráng miệng là miễn phí thôi sao."
+  },
+  {
+    "exam": "7/2012",
+    "q": 5,
+    "star_word": "今後は再発防止に努めて参りますので",
+    "gram": [],
+    "full_sentence": "１日午後４時ごろ、システムトラブルの影響により、一時メールサービスに障害が発生しました。お客様に（多大なご不便をおかけしましたことを）（深くおわび申し上げますとともに）（*今後は再発防止に努めて参りますので）（引き続き本サービスをご利用くださいますよう）願い申し上げます。",
+    "options": [
+      "今後は再発防止に努めて参りますので",
+      "深くおわび申し上げますとともに",
+      "多大なご不便をおかけしましたことを",
+      "引き続き本サービスをご利用くださいますよう"
+    ],
+    "order": "3-2-1-4",
+    "translate": "Vào khoảng 4 giờ chiều ngày 1, do ảnh hưởng của sự cố hệ thống, dịch vụ email đã tạm thời gặp trục trặc. Chúng tôi xin lỗi sâu sắc vì sự bất tiện, đồng thời sẽ nỗ lực ngăn ngừa tái phát, kính mong quý khách tiếp tục sử dụng dịch vụ."
+  },
+  {
+    "exam": "12/2012",
+    "q": 1,
+    "star_word": "やめるに",
+    "gram": [],
+    "full_sentence": "勉強に専念するためにアルバイトをすぐにでも（やめたいが）（スタッフ不足から）（*やめるに）（やめられず）困っている。",
+    "options": [
+      "やめられず",
+      "スタッフ不足から",
+      "やめるに",
+      "やめたいが"
+    ],
+    "order": "4-2-3-1",
+    "translate": "Vì muốn tập trung hoàn toàn vào việc học nên tôi muốn nghỉ làm thêm ngay lập tức, nhưng do thiếu nhân viên, muốn nghỉ cũng không nghỉ được, nên tôi đang rất khổ sở."
+  },
+  {
+    "exam": "12/2012",
+    "q": 2,
+    "star_word": "知っているつもりの",
+    "gram": [
+      "〜つもり (たつもり／つもりはなかった)"
+    ],
+    "full_sentence": "昨日、息子が近所の公園で捕まえてきた昆虫を見て驚いた。虫について（だったら）（人よりも詳しく）（*知っているつもりの）（私でも）。あんな虫は見たことがなかった。",
+    "options": [
+      "だったら",
+      "知っているつもりの",
+      "人よりも詳しく",
+      "私でも"
+    ],
+    "order": "1-3-2-4",
+    "translate": "Hôm qua, tôi đã rất ngạc nhiên khi nhìn thấy con côn trùng mà con trai tôi bắt được ở công viên gần nhà. Ngay cả tôi người vốn nghĩ rằng nếu nói về côn trùng thì mình biết rõ hơn người khác cũng chưa từng thấy loài nào như thế."
+  },
+  {
+    "exam": "12/2012",
+    "q": 3,
+    "star_word": "好きだという気持ちが",
+    "gram": [],
+    "full_sentence": "将棋は好きなら上達する。将棋が好きだということ（自体が）（すでに才能なのであって）（*好きだという気持ちが）（あればこそ）強くなれるのだ。",
+    "options": [
+      "すでに才能なのであって",
+      "あればこそ",
+      "自体が",
+      "好きだという気持ちが"
+    ],
+    "order": "3-1-4-2",
+    "translate": "Nếu thích cờ Shogi thì ắt sẽ tiến bộ. Việc bản thân yêu thích Shogi vốn dĩ đã là một loại tài năng rồi, chính vì có tình yêu đó nên mới có thể trở nên mạnh hơn."
+  },
+  {
+    "exam": "12/2012",
+    "q": 4,
+    "star_word": "でも",
+    "gram": [],
+    "full_sentence": "動物園のゴリラが、私のことをずっと見ていた。私を仲間（だ）（と）（*でも）（思っていたの）だろうか。",
+    "options": [
+      "と",
+      "だ",
+      "でも",
+      "思っていたの"
+    ],
+    "order": "2-1-3-4",
+    "translate": "Con khỉ đột ở sở thú cứ nhìn chằm chằm tôi mãi. Không biết nó có nghĩ tôi là đồng loại hay gì đó không nữa."
+  },
+  {
+    "exam": "12/2012",
+    "q": 5,
+    "star_word": "これまでの考え方にこだわらず",
+    "gram": [],
+    "full_sentence": "（情報技術や交通手段の発達などで）（異文化間の交流が活発化した現代にあっては）（*これまでの考え方にこだわらず）（異なる価値観を理解しようとする）姿勢を持つことが重要である。",
+    "options": [
+      "これまでの考え方にこだわらず",
+      "情報技術や交通手段の発達などで",
+      "異なる価値観を理解しようとする",
+      "異文化間の交流が活発化した現代にあっては"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Trong thời đại giao lưu đa văn hóa sôi động nhờ sự phát triển của công nghệ thông tin và giao thông, việc không bám chấp lối suy nghĩ cũ mà cố gắng thấu hiểu các giá trị khác biệt là điều quan trọng."
+  },
+  {
+    "exam": "7/2013",
+    "q": 1,
+    "star_word": "あの憎らしい",
+    "gram": [],
+    "full_sentence": "近所の猫は、私を見るとすぐに逃げるくせに、途中で立ち止まってこちらを振り返る。できるもんなら（捕まえてごらん）（というような）（*あの憎らしい）（表情が）すごくかわいい。",
+    "options": [
+      "表情が",
+      "あの憎らしい",
+      "というような",
+      "捕まえてごらん"
+    ],
+    "order": "4-3-2-1",
+    "translate": "Con mèo ở gần nhà cứ hễ thấy tôi là chạy trốn ngay, vậy mà lại còn đang chạy thì dừng lại giữa chừng và ngoái đầu nhìn tôi. Cái vẻ mặt như muốn nói “giỏi thì bắt được tôi xem nào” đầy đáng ghét đó lại dễ thương vô cùng."
+  },
+  {
+    "exam": "7/2013",
+    "q": 2,
+    "star_word": "毎日使っている",
+    "gram": [],
+    "full_sentence": "先月、父に手作りの箸をプレゼントした。長くて（なんだか使いにくい）（と言いながらも）（*毎日使っている）（ところを見ると）気に入ってくれているのかもしれない。",
+    "options": [
+      "と言いながらも",
+      "ところを見ると",
+      "なんだか使いにくい",
+      "毎日使っている"
+    ],
+    "order": "3-1-4-2",
+    "translate": "Tháng trước, tôi đã tặng cho bố một đôi đũa do chính tay mình làm. Tuy ông vừa nói rằng “dài quá, có chút khó dùng”, thế nhưng nhìn cảnh ngày nào ông cũng dùng nó, tôi cảm thấy có lẽ ông đã thích món quà này rồi."
+  },
+  {
+    "exam": "7/2013",
+    "q": 3,
+    "star_word": "よるところが",
+    "gram": [],
+    "full_sentence": "このドラマの人気は、ストーリーも（さることながら）（俳優の演技力に）（*よるところが）（大きいと）いえる。",
+    "options": [
+      "よるところが",
+      "さることながら",
+      "大きいと",
+      "俳優の演技力に"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Sự nổi tiếng của bộ phim này, ngoài cốt truyện ra, có thể nói phần lớn nhờ vào khả năng diễn xuất của các diễn viên."
+  },
+  {
+    "exam": "7/2013",
+    "q": 4,
+    "star_word": "職場まで歩いて",
+    "gram": [],
+    "full_sentence": "通勤に片道２時間かかる私みたいな（人間から）（すれば）（*職場まで歩いて）（数分なんて）人は本当にうらやましい。",
+    "options": [
+      "人間から",
+      "数分なんて",
+      "職場まで歩いて",
+      "すれば"
+    ],
+    "order": "1-4-3-2",
+    "translate": "Đối với một người như tôi phải mất hai tiếng cho một chiều đi làm, thì những người chỉ mất vài phút đi bộ là tới chỗ làm thật sự đáng ganh tị."
+  },
+  {
+    "exam": "7/2013",
+    "q": 5,
+    "star_word": "少なからぬ",
+    "gram": [],
+    "full_sentence": "近年の急速なインターネットの普及がマスメデアに（与えた）（影響は）（*少なからぬ）（ものがある）。",
+    "options": [
+      "少なからぬ",
+      "ものがある",
+      "与えた",
+      "影響は"
+    ],
+    "order": "3-4-1-2",
+    "translate": "Ảnh hưởng mà sự phổ biến nhanh chóng của Internet trong những năm gần đây gây ra cho truyền thông đại chúng là không hề nhỏ."
+  },
+  {
+    "exam": "12/2013",
+    "q": 1,
+    "star_word": "のみではなく",
+    "gram": [],
+    "full_sentence": "昨今、森林を単に木材の供給源（として）（*のみではなく）（水や空気を育む）（環境資源）と捉えることの重要性が広く認識されてきている。",
+    "options": [
+      "のみではなく",
+      "環境資源",
+      "として",
+      "水や空気を育む"
+    ],
+    "order": "3-1-4-2",
+    "translate": "Trong thời gian gần đây, tầm quan trọng của việc nhìn nhận rừng không chỉ là một nguồn cung cấp gỗ, mà còn là nguồn tài nguyên môi trường nuôi dưỡng nước và không khí đã ngày càng được nhận thức rộng rãi."
+  },
+  {
+    "exam": "12/2013",
+    "q": 2,
+    "star_word": "チームだろうと",
+    "gram": [
+      "〜ようと(も)・〜だろうと〜だろうと (dù có... đi nữa)"
+    ],
+    "full_sentence": "西川高校の森キャプテンは、次の対戦相手が優勝候補の北第一高校に決定したことについて、「たとえ（相手が）（どういう）（*チームだろうと）（精一杯）やるだけです。」と語った。",
+    "options": [
+      "相手が",
+      "精一杯",
+      "どういう",
+      "チームだろうと"
+    ],
+    "order": "1-3-4-2",
+    "translate": "Đội trưởng Mori của trường THPT Nishikawa, trước việc đối thủ tiếp theo được quyết định là trường Kita Daiichi ứng cử viên vô địch, đã nói: “Cho dù đối thủ có là đội bóng như thế nào đi chăng nữa, chúng tôi chỉ biết cố gắng hết sức mà thôi.”"
+  },
+  {
+    "exam": "12/2013",
+    "q": 3,
+    "star_word": "ものとは",
+    "gram": [],
+    "full_sentence": "この店のハンバーガは、値段は多少高めだが、手間が（かかっている分）（ほかの店の）（*ものとは）（くらべものにならない）おいしさだ。",
+    "options": [
+      "ほかの店の",
+      "ものとは",
+      "くらべものにならない",
+      "かかっている分"
+    ],
+    "order": "4-1-2-3",
+    "translate": "Bánh hamburger của cửa hàng này tuy giá có hơi cao một chút, nhưng vì được làm rất kỳ công nên độ ngon của nó không thể nào đem so sánh với các cửa hàng khác."
+  },
+  {
+    "exam": "12/2013",
+    "q": 4,
+    "star_word": "それっきりだから",
+    "gram": [],
+    "full_sentence": "田中「明日の食事会、森さんも来るんだよね。私、会うの５年ぶりだよ。」木村「わたしは仕事で（大阪に行ったついでに）（一度あって）（*それっきりだから）（１０年ぶりに） なるかな。」",
+    "options": [
+      "１０年ぶりに",
+      "大阪に行ったついでに",
+      "それっきりだから",
+      "一度あって"
+    ],
+    "order": "2-4-3-1",
+    "translate": "Kimura: Còn tôi, nhân tiện đi công tác ở Osaka, đã gặp một lần, nhưng sau đó không gặp nữa, nên chắc là 10 năm mới gặp lại."
+  },
+  {
+    "exam": "12/2013",
+    "q": 5,
+    "star_word": "気持ち",
+    "gram": [
+      "〜くらい／ぐらい (đến mức・くらいなら)"
+    ],
+    "full_sentence": "この本を買ったときは、話題の本だから読んでみようか（ぐらい）（の）（*気持ち）（で）しかなかったが、読み始めたら夢中になり、一晩で一気に読んでしまった。",
+    "options": [
+      "気持ち",
+      "ぐらい",
+      "の",
+      "で"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Khi mua cuốn sách này, tôi chỉ nghĩ thử đọc vì nó đang là sách được bàn tán, nhưng khi bắt đầu đọc thì bị cuốn hút, đọc một mạch hết trong một đêm."
+  },
+  {
+    "exam": "7/2014",
+    "q": 1,
+    "star_word": "起きません",
+    "gram": [],
+    "full_sentence": "A「おとといは大雨、昨日は車のパンク。旅行に来てからトラブル続きで嫌なるよね」B「本当だよ。最終日の（今日こそ）（何も）（*起きません）（ように）。」",
+    "options": [
+      "何も",
+      "今日こそ",
+      "ように",
+      "起きません"
+    ],
+    "order": "2-1-4-3",
+    "translate": "B: Đúng thật. Ngày cuối cùng hôm nay, hy vọng sẽ không có gì xảy ra."
+  },
+  {
+    "exam": "7/2014",
+    "q": 2,
+    "star_word": "４時間もかかる",
+    "gram": [],
+    "full_sentence": "うちの娘は、なぜあんなに買い物に時間がかかるのか。ブラウス（１枚選ぶ）（だけのことなのに）（*４時間もかかる）（とは）、全くあきれてしまった。",
+    "options": [
+      "４時間もかかる",
+      "だけのことなのに",
+      "１枚選ぶ",
+      "とは"
+    ],
+    "order": "3-2-1-4",
+    "translate": "Tuyết rơi vào lễ trưởng thành, thật là không may mắn."
+  },
+  {
+    "exam": "7/2014",
+    "q": 3,
+    "star_word": "新入社員の田中さん",
+    "gram": [],
+    "full_sentence": "この仕事をすべて（一人でやる）（のは）（*新入社員の田中さん）（には）無理だ。",
+    "options": [
+      "一人でやる",
+      "新入社員の田中さん",
+      "には",
+      "のは"
+    ],
+    "order": "1-4-2-3",
+    "translate": "Làm toàn bộ công việc này một mình thì với nhân viên mới Tanaka là không thể."
+  },
+  {
+    "exam": "7/2014",
+    "q": 4,
+    "star_word": "程度の",
+    "gram": [],
+    "full_sentence": "最近、運動不足だ。何しろ外出（といったら）（近所のスーパーに行く）（*程度の）（もので）、あとは朝から晩まで家にいるという生活なのだ。",
+    "options": [
+      "もので",
+      "近所のスーパーに行く",
+      "程度の",
+      "といったら"
+    ],
+    "order": "4-2-3-1",
+    "translate": "Gần đây, tôi thiếu vận động. Dù sao thì nếu nói đến ra ngoài, cũng chỉ đến siêu thị gần nhà thôi, còn lại thì cả ngày từ sáng đến tối đều ở trong nhà."
+  },
+  {
+    "exam": "7/2014",
+    "q": 5,
+    "star_word": "及び",
+    "gram": [],
+    "full_sentence": "交通のバス路線が一部廃止される問題で、会社側から地域住民に対し、路線を廃止する（に至った）（経緯）（*及び）（今後の対応）について、説明がなされた。",
+    "options": [
+      "及び",
+      "に至った",
+      "経緯",
+      "今後の対応"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Về vấn đề một phần tuyến xe buýt giao thông bị xóa bỏ, phía công ty đã giải thích với cư dân địa phương quá trình dẫn đến việc xóa bỏ tuyến, cũng như các biện pháp sẽ thực hiện trong tương lai."
+  },
+  {
+    "exam": "12/2014",
+    "q": 1,
+    "star_word": "表現力で",
+    "gram": [],
+    "full_sentence": "彼はこの映画で、純粋で不器用な（主人公を）（その確かな）（*表現力で）（見事な）までに演じきった。",
+    "options": [
+      "その確かな",
+      "主人公を",
+      "見事な",
+      "表現力で"
+    ],
+    "order": "2-1-4-3",
+    "translate": "Trong bộ phim này, anh ấy đã diễn trọn vẹn nhân vật chính ngây thơ và vụng về đến mức xuất sắc nhờ khả năng biểu cảm chắc chắn của mình."
+  },
+  {
+    "exam": "12/2014",
+    "q": 2,
+    "star_word": "など",
+    "gram": [],
+    "full_sentence": "社長は、「常に魅力ある新商品を開発し続けることが重要であり、それ（なくして）（会社の成長）（*など）（望みようも）ない」と語った。",
+    "options": [
+      "など",
+      "会社の成長",
+      "望みようも",
+      "なくして"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Giám đốc công ty nói: “Việc luôn phát triển những sản phẩm mới hấp dẫn là rất quan trọng, nếu thiếu điều đó, không thể nào mong đợi sự phát triển của công ty.”"
+  },
+  {
+    "exam": "12/2014",
+    "q": 3,
+    "star_word": "かというと",
+    "gram": [
+      "〜かというと、そうではない"
+    ],
+    "full_sentence": "たんぱく質は体の組織を作る重要な成分ですが、多くとった（からといって）（より丈夫になる）（*かというと）（そういう）ものでもなく、とりすぎは逆に健康に悪影響を及ぼすことがあります。",
+    "options": [
+      "より丈夫になる",
+      "かというと",
+      "からといって",
+      "そういう"
+    ],
+    "order": "3-1-2-4",
+    "translate": "Protein là thành phần quan trọng để tạo nên các mô cơ thể, nhưng không phải cứ ăn nhiều là sẽ khỏe hơn, và việc ăn quá nhiều thậm chí có thể gây ảnh hưởng xấu đến sức khỏe."
+  },
+  {
+    "exam": "12/2014",
+    "q": 4,
+    "star_word": "が",
+    "gram": [
+      "〜をもって・〜をもってすれば"
+    ],
+    "full_sentence": "来年２月のコンサート（をもって）（解散するバンド「Ｚ」）（*が）（６枚目にして最後）となるＣＤを発売した。",
+    "options": [
+      "をもって",
+      "６枚目にして最後",
+      "が",
+      "解散するバンド「Ｚ」"
+    ],
+    "order": "1-4-3-2",
+    "translate": "Ban nhạc “Z”, sẽ giải tán sau buổi hòa nhạc vào tháng 2 năm sau, đã phát hành đĩa CD thứ sáu và cũng là cuối cùng."
+  },
+  {
+    "exam": "12/2014",
+    "q": 5,
+    "star_word": "Ｘ社が",
+    "gram": [],
+    "full_sentence": "新型ゲーム機について、来月あたりに何らかの発表を（するのではないかと）（見られていた）（*Ｘ社が）（来週にも情報を公開すると）ホームページ上で公表し、話題となっている。",
+    "options": [
+      "見られていた",
+      "Ｘ社が",
+      "来週にも情報を公開すると",
+      "するのではないかと"
+    ],
+    "order": "4-1-2-3",
+    "translate": "Về máy chơi game thế hệ mới, trước đó dự đoán rằng công ty X sẽ có một thông báo nào đó vào khoảng tháng tới, nhưng họ đã công bố trên trang chủ rằng có thể sẽ tiết lộ thông tin ngay tuần sau, gây chú ý dư luận."
+  },
+  {
+    "exam": "7/2015",
+    "q": 1,
+    "star_word": "ひとつに",
+    "gram": [],
+    "full_sentence": "新入社員には、一斉研修よりも現場で直接指導したほうがいい。例えば、（メールの書き方）（*ひとつに）（しても）（そうで）、現場だと場面に応じて指導できるので、成長も早い。",
+    "options": [
+      "しても",
+      "メールの書き方",
+      "ひとつに",
+      "そうで"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Với nhân viên mới, việc hướng dẫn trực tiếp tại hiện trường tốt hơn là đào tạo đồng loạt. Ví dụ, chỉ riêng cách viết email thôi, tại hiện trường có thể hướng dẫn tùy theo từng tình huống, nên sự tiến bộ cũng nhanh hơn."
+  },
+  {
+    "exam": "7/2015",
+    "q": 2,
+    "star_word": "言っても",
+    "gram": [],
+    "full_sentence": "僕みたいに（働いたことがない）（学生が）（*言っても）（説得力がない）かもしれないが、僕は、お金よりもやりがいを重視して仕事を選んだほうが、幸せになれると思う。",
+    "options": [
+      "学生が",
+      "言っても",
+      "説得力がない",
+      "働いたことがない"
+    ],
+    "order": "4-1-2-3",
+    "translate": "Có thể một sinh viên như tôi, chưa từng đi làm, nói ra sẽ không thuyết phục lắm, nhưng tôi nghĩ rằng nên chọn công việc coi trọng sự hứng thú hơn tiền bạc thì mới có thể hạnh phúc."
+  },
+  {
+    "exam": "7/2015",
+    "q": 3,
+    "star_word": "著者として",
+    "gram": [],
+    "full_sentence": "本のあとがきで皆さんが国際経済を理解するために、この本が（少しでも）（お役に立てば）（*著者として）（これ以上の）喜びはありません。",
+    "options": [
+      "お役に立てば",
+      "これ以上の",
+      "少しでも",
+      "著者として"
+    ],
+    "order": "3-1-4-2",
+    "translate": "\"Với tư cách là tác giả, tôi sẽ không có niềm vui nào hơn nếu cuốn sách này có thể giúp ích, dù chỉ một chút, cho các bạn hiểu về kinh tế quốc tế.\""
+  },
+  {
+    "exam": "7/2015",
+    "q": 4,
+    "star_word": "反論したくなっても",
+    "gram": [],
+    "full_sentence": "先生「今からディスカッションを始めますが、一つ注意点があります。（相手が）（言っていることに）（*反論したくなっても）（まずは相手の話を）聞くようにしてください。」",
+    "options": [
+      "反論したくなっても",
+      "言っていることに",
+      "相手が",
+      "まずは相手の話を"
+    ],
+    "order": "3-2-1-4",
+    "translate": "Giáo viên: “Bây giờ chúng ta sẽ bắt đầu thảo luận, nhưng có một điểm cần lưu ý. Dù bạn có muốn phản bác những gì đối phương nói, trước hết hãy lắng nghe câu chuyện của họ.”"
+  },
+  {
+    "exam": "7/2015",
+    "q": 5,
+    "star_word": "に",
+    "gram": [],
+    "full_sentence": "出張の帰りに空港の売店で、家族（への）（おみやげ）（*に）（と） 、人気の紅茶クッキーを買った。",
+    "options": [
+      "への",
+      "と",
+      "おみやげ",
+      "に"
+    ],
+    "order": "1-3-4-2",
+    "translate": "Trên đường về từ chuyến công tác, tôi đã mua bánh quy trà được ưa chuộng làm quà cho gia đình."
+  },
+  {
+    "exam": "12/2015",
+    "q": 1,
+    "star_word": "必要がある",
+    "gram": [],
+    "full_sentence": "社内で発生したシステムトラブルに関し、担当者から、原因を特定する （には）（詳細な調査をする、）（*必要がある）（との）報告があった。",
+    "options": [
+      "必要がある",
+      "との",
+      "詳細な調査をする、",
+      "には"
+    ],
+    "order": "4-3-1-2",
+    "translate": "Về sự cố hệ thống xảy ra trong công ty, người phụ trách đã báo cáo rằng cần phải tiến hành điều tra chi tiết để xác định nguyên nhân."
+  },
+  {
+    "exam": "12/2015",
+    "q": 2,
+    "star_word": "信頼できる",
+    "gram": [],
+    "full_sentence": "私はどんな困難に遭っても（それに負けることなく）（サッカーを続けてこられたのは）（*信頼できる）（仲間がいたから）にほかならない。",
+    "options": [
+      "サッカーを続けてこられたのは",
+      "それに負けることなく",
+      "仲間がいたから",
+      "信頼できる"
+    ],
+    "order": "2-1-4-3",
+    "translate": "Dù gặp bất cứ khó khăn nào, việc tôi tiếp tục chơi bóng đá mà không chịu thua chính là nhờ có những đồng đội đáng tin cậy."
+  },
+  {
+    "exam": "12/2015",
+    "q": 3,
+    "star_word": "どこか知らない",
+    "gram": [],
+    "full_sentence": "１０年ぶりに故郷に帰ったら、大規模な再開発が行われていて驚いた。昔の（町の様子しか知らない）（私にとっては）（*どこか知らない）（町に来たかのような）不思議な感覚だった。",
+    "options": [
+      "私にとっては",
+      "どこか知らない",
+      "町の様子しか知らない",
+      "町に来たかのような"
+    ],
+    "order": "3-1-2-4",
+    "translate": "Khi trở về quê hương sau 10 năm, tôi đã ngạc nhiên khi thấy khu vực được tái phát triển quy mô lớn. Với tôi, người chỉ biết về cảnh phố xưa, đó là một cảm giác kỳ lạ như thể đến một thị trấn nào đó mà mình chưa từng biết đến."
+  },
+  {
+    "exam": "12/2015",
+    "q": 4,
+    "star_word": "もんか",
+    "gram": [],
+    "full_sentence": "親友とけんかしたその日は、謝ってきても（許して）（やる）（*もんか）（なんて）気持ちもあったけど、次の日には仲直りした。",
+    "options": [
+      "なんて",
+      "やる",
+      "許して",
+      "もんか"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Ngày hôm đó, sau khi cãi nhau với người bạn thân, dù có cảm giác kiểu “chẳng đời nào tha cho cậu ấy đâu” khi họ xin lỗi, nhưng ngày hôm sau chúng tôi đã làm lành."
+  },
+  {
+    "exam": "12/2015",
+    "q": 5,
+    "star_word": "と考えて",
+    "gram": [],
+    "full_sentence": "映画「プレゼント」について、監督は、大人の（鑑賞にたえるような）（アニメ映画を）（*と考えて）（作った作品だ）と語った。",
+    "options": [
+      "アニメ映画を",
+      "作った作品だ",
+      "と考えて",
+      "鑑賞にたえるような"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Về bộ phim hoạt hình “Present”, đạo diễn nói rằng ông đã nghĩ tới việc tạo ra một tác phẩm xứng đáng để người lớn thưởng thức."
+  },
+  {
+    "exam": "7/2016",
+    "q": 1,
+    "star_word": "誰かしら",
+    "gram": [],
+    "full_sentence": "町の夏祭りに行くときはいつも一人だ。一人で（行っても）（*誰かしら）（友達に会うので）（誰かと）約束して一緒に行く必要もないからだ。",
+    "options": [
+      "誰かと",
+      "誰かしら",
+      "行っても",
+      "友達に会うので"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Khi đi đến lễ hội mùa hè của thị trấn thì tôi luôn đi một mình. Vì dù có đi một mình thì kiểu gì cũng sẽ gặp một ai đó là bạn bè, nên cũng không cần phải hẹn trước để đi cùng với ai cả."
+  },
+  {
+    "exam": "7/2016",
+    "q": 2,
+    "star_word": "かまわない",
+    "gram": [],
+    "full_sentence": "先月初めて出版した自分の小説の売れ行きが気になっているが、友人の前では、そんなこと（どうだって）（*かまわない）（とか）（本心とは違うことを）言いってしまう。",
+    "options": [
+      "とか",
+      "どうだって",
+      "かまわない",
+      "本心とは違うことを"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Tôi đang rất để tâm đến tình hình bán ra của cuốn tiểu thuyết đầu tiên mình xuất bản tháng trước, thế nhưng trước mặt bạn bè lại nói những câu trái ngược với lòng mình, kiểu như “chuyện đó thế nào cũng được”."
+  },
+  {
+    "exam": "7/2016",
+    "q": 3,
+    "star_word": "いつのデータかを",
+    "gram": [],
+    "full_sentence": "授業のレポートなどでインターネット上のデータを使肘るときは、情報が正しい（か否か）（だけでなく）（*いつのデータかを）（確認すること）も重要である。",
+    "options": [
+      "か否か",
+      "確認すること",
+      "いつのデータかを",
+      "だけでなく"
+    ],
+    "order": "1-4-3-2",
+    "translate": "Khi sử dụng dữ liệu trên Internet cho các bài báo cáo trên lớp, không chỉ cần biết thông tin đó đúng hay sai, mà việc kiểm tra xem dữ liệu đó là của thời điểm nào cũng rất quan trọng."
+  },
+  {
+    "exam": "7/2016",
+    "q": 4,
+    "star_word": "きれいにしようがないくらい",
+    "gram": [
+      "〜つもり (たつもり／つもりはなかった)",
+      "〜くらい／ぐらい (đến mức・くらいなら)"
+    ],
+    "full_sentence": "部屋が汚いことを（親に注意されて）（これ以上）（*きれいにしようがないくらい）（きれいにしたつもりだったが）、まだ汚いと言われた。",
+    "options": [
+      "これ以上",
+      "親に注意されて",
+      "きれいにしたつもりだったが",
+      "きれいにしようがないくらい"
+    ],
+    "order": "2-1-4-3",
+    "translate": "Bị bố mẹ nhắc nhở rằng phòng bẩn, tôi đã cố dọn sạch đến mức không thể làm sạch hơn được nữa rồi, vậy mà vẫn bị nói là còn bẩn."
+  },
+  {
+    "exam": "7/2016",
+    "q": 5,
+    "star_word": "企業もまだ多い",
+    "gram": [],
+    "full_sentence": "政府は景気回復のための政策を進めてはいるが、景気が回徨してきている（と実感できる）（までに至らない）（*企業もまだ多い）（というのが）現状である。",
+    "options": [
+      "企業もまだ多い",
+      "までに至らない",
+      "と実感できる",
+      "というのが"
+    ],
+    "order": "3-2-1-4",
+    "translate": "Chính phủ đang thúc đẩy các chính sách nhằm phục hồi kinh tế, tuy nhiên thực tế vẫn còn nhiều doanh nghiệp vẫn chưa thể cảm nhận được rằng nền kinh tế đang hồi phục."
+  },
+  {
+    "exam": "12/2016",
+    "q": 1,
+    "star_word": "有毒成分があり",
+    "gram": [],
+    "full_sentence": "「アセビ」という、白い花を咲かせる樹木を漢字で「馬酔木」と書くのは、アセビには（*有毒成分があり）（馬が食べると酔ったような）（状態になることに）（由来する）そうです。",
+    "options": [
+      "由来する",
+      "有毒成分があり",
+      "状態になることに",
+      "馬が食べると酔ったような"
+    ],
+    "order": "2-4-3-1",
+    "translate": "Cây “asebi”, một loại cây nở hoa màu trắng, được viết bằng chữ Hán là “馬酔木” (Mã túy mộc) là do cây asebi có độc, và khi ngựa ăn phải thì sẽ ở trong trạng thái giống như bị say, nên cái tên đó được đặt theo nguồn gốc như vậy."
+  },
+  {
+    "exam": "12/2016",
+    "q": 2,
+    "star_word": "本当に大切なものは何なのか",
+    "gram": [],
+    "full_sentence": "家族の時間を大切にする夫は、つい（仕事に夢中になりすぎる）（私に）（*本当に大切なものは何なのか）（気づかせてくれる）ありがたい存在です。",
+    "options": [
+      "本当に大切なものは何なのか",
+      "私に",
+      "仕事に夢中になりすぎる",
+      "気づかせてくれる"
+    ],
+    "order": "3-2-1-4",
+    "translate": "Người chồng trân trọng thời gian bên gia đình ấy là một người đáng quý, luôn giúp tôi – người hay quá mải mê với công việc – nhận ra điều gì mới thực sự quan trọng."
+  },
+  {
+    "exam": "12/2016",
+    "q": 3,
+    "star_word": "ことに対し",
+    "gram": [],
+    "full_sentence": "Ｚ県知事の林和夫氏は、週刊誌で、脱税を行った（疑いがあるなどと）（報じられた）（*ことに対し）（事実とは全く）異なり、名誉を傷つけられたとして、発行元のＸ社を相手取り訴訟を起こした。",
+    "options": [
+      "事実とは全く",
+      "疑いがあるなどと",
+      "報じられた",
+      "ことに対し"
+    ],
+    "order": "2-3-4-1",
+    "translate": "Ông Hayashi Kazuo, thống đốc tỉnh Z, đã khởi kiện công ty xuất bản X, với lý do danh dự của ông bị tổn hại vì tuần san đã đưa tin rằng ông có nghi vấn trốn thuế, nhưng điều đó hoàn toàn không đúng sự thật."
+  },
+  {
+    "exam": "12/2016",
+    "q": 4,
+    "star_word": "ことだ",
+    "gram": [],
+    "full_sentence": "Ｑ鉄道が１０年ぶりに運賃値上げに踏み切った。安全対策や原油の高騰で支出が増え、経営努力だけでは対応しきれないと判断（して）（の）（*ことだ）（という）。",
+    "options": [
+      "という",
+      "の",
+      "ことだ",
+      "して"
+    ],
+    "order": "4-2-3-1",
+    "translate": "Đường sắt Q đã quyết định tăng giá vé lần đầu tiên sau 10 năm. Người ta nói rằng họ đã phán đoán rằng chi phí tăng lên do các biện pháp an toàn và giá dầu thô leo thang, và chỉ dựa vào nỗ lực quản lý thôi thì không thể ứng phó được."
+  },
+  {
+    "exam": "12/2016",
+    "q": 5,
+    "star_word": "ほど",
+    "gram": [],
+    "full_sentence": "世の中にはさまざまな資格があふれているが、資格を取った（だけ）（で）（希望の職につける）（*ほど）世間は甘くないらしい。",
+    "options": [
+      "だけ",
+      "ほど",
+      "で",
+      "希望の職につける"
+    ],
+    "order": "1-3-4-2",
+    "translate": "Trên đời có vô số loại chứng chỉ, nhưng hình như xã hội không dễ dàng đến mức chỉ cần lấy được chứng chỉ thôi là có thể làm công việc mình mong muốn."
+  },
+  {
+    "exam": "7/2017",
+    "q": 1,
+    "star_word": "という",
+    "gram": [],
+    "full_sentence": "みなみ水族館はふだんから来館者が多いが、先日ペンギンの赤ちゃんが生まれた（こともあって）（赤ちゃんを一目見よう）（*という）（多くの人で）いつも以上ににぎわっている。",
+    "options": [
+      "多くの人で",
+      "こともあって",
+      "という",
+      "赤ちゃんを一目見よう"
+    ],
+    "order": "2-4-3-1",
+    "translate": "Thủy cung Minami vốn đã có nhiều khách tham quan, nhưng do mới đây có một chú chim cánh cụt con chào đời nên có nhiều người đến để được nhìn thấy chú một lần, khiến nơi đây còn nhộn nhịp hơn thường lệ."
+  },
+  {
+    "exam": "7/2017",
+    "q": 2,
+    "star_word": "なくして",
+    "gram": [],
+    "full_sentence": "新社長は労働条件に問題はないと考えているようだが、実態をわかっていない。労働条件（の）（改善）（*なくして）（何）が業績向上だ。",
+    "options": [
+      "の",
+      "なくして",
+      "何",
+      "改善"
+    ],
+    "order": "1-4-2-3",
+    "translate": "Tân giám đốc hình như cho rằng điều kiện lao động không có vấn đề gì, nhưng thực tế ông ấy không hiểu rõ. Không cải thiện điều kiện lao động thì làm gì có chuyện nâng cao thành tích chứ."
+  },
+  {
+    "exam": "7/2017",
+    "q": 3,
+    "star_word": "彼女以上に優れている",
+    "gram": [],
+    "full_sentence": "現代の映画音楽界で、作品の世界観に合わせて（音楽を作る）（才能にかけては）（*彼女以上に優れている）（作曲家はまずいない）だろう。",
+    "options": [
+      "彼女以上に優れている",
+      "才能にかけては",
+      "作曲家はまずいない",
+      "音楽を作る"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Trong giới âm nhạc phim hiện đại, nếu nói về tài năng sáng tác nhạc phù hợp với thế giới quan của tác phẩm thì chắc hẳn không có nhà soạn nhạc nào vượt qua được cô ấy."
+  },
+  {
+    "exam": "7/2017",
+    "q": 4,
+    "star_word": "遠く及ばないにしろ",
+    "gram": [],
+    "full_sentence": "ゼミの教え子たちが新しい技術を使ったソーラーカーの開発に成功した。実用化が近いとされている（A社が開発した）（ものには）（*遠く及ばないにしろ）（それなりに）効率よく走れることができたと思う。",
+    "options": [
+      "それなりに",
+      "ものには",
+      "A社が開発した",
+      "遠く及ばないにしろ"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Những học trò seminar của tôi đã thành công trong việc phát triển xe chạy bằng năng lượng mặt trời sử dụng công nghệ mới. Dù cho còn kém xa sản phẩm do tập đoàn A phát triển và sắp được ứng dụng thực tế, nhưng tôi nghĩ chiếc xe đã có thể chạy khá hiệu quả."
+  },
+  {
+    "exam": "7/2017",
+    "q": 5,
+    "star_word": "繰り返すこと",
+    "gram": [],
+    "full_sentence": "これまでにないウェディングドレスを作ろうと思い、デザイン画を描いては（直す）（を）（*繰り返すこと）（数十回）、やっと納得のいくものができた。",
+    "options": [
+      "を",
+      "数十回",
+      "直す",
+      "繰り返すこと"
+    ],
+    "order": "3-1-4-2",
+    "translate": "Muốn tạo ra một chiếc váy cưới chưa từng có, tôi đã vẽ bản thiết kế rồi chỉnh sửa đi chỉnh sửa lại vài chục lần và cuối cùng cũng làm ra được một sản phẩm ưng ý."
+  },
+  {
+    "exam": "12/2017",
+    "q": 1,
+    "star_word": "以上",
+    "gram": [
+      "〜以上(は)・〜からには"
+    ],
+    "full_sentence": "「乗りかかった船」ということわざは、乗った船が岸を離れれば途中で降りることができない（物事を始めてしまった）（ことから）（*以上）（途中でやめるわけにはいかない）ことのたとえである。",
+    "options": [
+      "物事を始めてしまった",
+      "ことから",
+      "途中でやめるわけにはいかない",
+      "以上"
+    ],
+    "order": "1-2-4-3",
+    "translate": "Câu tục ngữ \"乗りかかった船\" là cách ví von: một khi đã bắt đầu việc gì rồi thì không thể bỏ giữa chừng được."
+  },
+  {
+    "exam": "12/2017",
+    "q": 2,
+    "star_word": "後悔するような",
+    "gram": [],
+    "full_sentence": "年をとって人生を振り返った時に（あの時ああしていたら）（もっと素晴らしい人生を送れていたはずと）（*後悔するような）（生き方は）したくない。",
+    "options": [
+      "生き方は",
+      "あの時ああしていたら",
+      "後悔するような",
+      "もっと素晴らしい人生を送れていたはずと"
+    ],
+    "order": "2-4-3-1",
+    "translate": "Khi về già nhìn lại cuộc đời, tôi không muốn có lối sống mà khi hối hận rằng \"giá như hồi đó mình đã làm như vậy thì đã có cuộc sống tuyệt vời hơn\"."
+  },
+  {
+    "exam": "12/2017",
+    "q": 3,
+    "star_word": "目的に",
+    "gram": [],
+    "full_sentence": "NPO法人「音楽の夢」では、音楽を通じたさまざまな教育プロジェクトを展開していくことに（豊かな社会の実現に寄与する）（ことを）（*目的に）（よって）活動をしています。",
+    "options": [
+      "目的に",
+      "豊かな社会の実現に寄与する",
+      "ことを",
+      "よって"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Tổ chức NPO \"Giấc mơ Âm nhạc\" đang hoạt động với mục đích đóng góp vào việc xây dựng xã hội phong phú thông qua việc triển khai các dự án giáo dục âm nhạc."
+  },
+  {
+    "exam": "12/2017",
+    "q": 4,
+    "star_word": "のでは",
+    "gram": [],
+    "full_sentence": "今は、一学年5クラスもある北森川小学校だが、（かつては少子化で）（存続は難しい）（*のでは）（という）危機感があった。",
+    "options": [
+      "存続は難しい",
+      "のでは",
+      "という",
+      "かつては少子化で"
+    ],
+    "order": "4-1-2-3",
+    "translate": "Hiện tại trường tiểu học Kitamorigawa có đến 5 lớp mỗi khối, nhưng trước đây đã từng có lo ngại rằng do tỷ lệ sinh giảm, trường khó có thể tiếp tục tồn tại."
+  },
+  {
+    "exam": "12/2017",
+    "q": 5,
+    "star_word": "あるまじき",
+    "gram": [],
+    "full_sentence": "県立高校の校長が、成績証明書を偽造したことが明らかになり、教育関係者からは（教育現場の長）（として）（*あるまじき）（行為）と怒りの声が上がった。",
+    "options": [
+      "教育現場の長",
+      "行為",
+      "あるまじき",
+      "として"
+    ],
+    "order": "1-4-3-2",
+    "translate": "Khi hiệu trưởng một trường THPT công lập bị phát hiện làm giả giấy chứng nhận học bạ, tiếng phẫn nộ từ giới giáo dục đã nổi lên rằng đó là hành vi không thể có của người đứng đầu môi trường giáo dục."
+  },
+  {
+    "exam": "7/2018",
+    "q": 1,
+    "star_word": "買えずにいた",
+    "gram": [
+      "〜を機に"
+    ],
+    "full_sentence": "妹は、来月初に（引っ越しするのを機に）（今まで欲しいと思いつつ）（*買えずにいた）（ソファを買うことにした）そうだ。",
+    "options": [
+      "買えずにいた",
+      "ソファを買うことにした",
+      "引っ越しするのを機に",
+      "今まで欲しいと思いつつ"
+    ],
+    "order": "3-4-1-2",
+    "translate": "～買えずにいた＝ vẫn chưa thể mua được (mẫu 「Vずにいる」 = không làm được điều gì suốt một thời gian)"
+  },
+  {
+    "exam": "7/2018",
+    "q": 2,
+    "star_word": "聞こえはいいが",
+    "gram": [],
+    "full_sentence": "私の故郷は、自然に囲まれたのどかな所（である）（と言えば）（*聞こえはいいが）（要するに）周りに田んぼしかない、ただの田舎町だ。",
+    "options": [
+      "と言えば",
+      "要するに",
+      "聞こえはいいが",
+      "である"
+    ],
+    "order": "4-1-3-2",
+    "translate": "要するに＝ nói tóm lại, nói thẳng ra là…"
+  },
+  {
+    "exam": "7/2018",
+    "q": 3,
+    "star_word": "新人に務まるのかと",
+    "gram": [],
+    "full_sentence": "入社2年目でプロジェクトのリーダーに指名されたときは（こんな大役が）（私ごとき）（*新人に務まるのかと）（不安でいっぱいでしたが）先輩方の厳しくも温かいサポートのおかげで、無事に務めることができました。",
+    "options": [
+      "こんな大役が",
+      "新人に務まるのかと",
+      "不安でいっぱいでしたが",
+      "私ごとき"
+    ],
+    "order": "1-4-2-3",
+    "translate": "～おかげで＝ nhờ vào, nhờ có (nguyên nhân tích cực)"
+  },
+  {
+    "exam": "7/2018",
+    "q": 4,
+    "star_word": "進めた",
+    "gram": [],
+    "full_sentence": "都市開発事業を、地域住民の同意を得る（こと）（なしに）（*進めた）（として）、北市の住民が市長を訴えた。",
+    "options": [
+      "なしに",
+      "こと",
+      "として",
+      "進めた"
+    ],
+    "order": "2-1-4-3",
+    "translate": "～として＝ với lý do…, với danh nghĩa…"
+  },
+  {
+    "exam": "7/2018",
+    "q": 5,
+    "star_word": "における",
+    "gram": [],
+    "full_sentence": "政府が発表した数字によると、昨年4月1日（現在）（*における）（15 歳未満の人口）（は）一昨年と比べて15万人少なく、過去最低となった。",
+    "options": [
+      "は",
+      "現在",
+      "における",
+      "15 歳未満の人口"
+    ],
+    "order": "2-3-4-1",
+    "translate": "～となる＝ trở thành, đạt tới (dùng trong văn viết trang trọng)"
+  },
+  {
+    "exam": "12/2018",
+    "q": 1,
+    "star_word": "鶴が",
+    "gram": [],
+    "full_sentence": "民話「鶴の恩返し」は、わなにかかって苦しんでいる（ところを）（助けられた）（*鶴が）（助けてくれた）おじいさんに美しい布を織って恩返しをするというお話です。",
+    "options": [
+      "鶴が",
+      "ところを",
+      "助けられた",
+      "助けてくれた"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Truyện dân gian “Sự báo ân của chim hạc” kể về một con hạc bị mắc bẫy và được cứu, sau đó dệt vải tặng ông lão để báo đáp ân tình."
+  },
+  {
+    "exam": "12/2018",
+    "q": 2,
+    "star_word": "わけにもいかず",
+    "gram": [],
+    "full_sentence": "新人が仕事中に居眠りしているのを発見。上司として、見なかった（ことにして）（ほうっておく）（*わけにもいかず）（起こして）注意することにした。",
+    "options": [
+      "起こして",
+      "ほうっておく",
+      "ことにして",
+      "わけにもいかず"
+    ],
+    "order": "3-2-4-1",
+    "translate": "～わけにもいかない：không thể (vì lý do đạo đức/xã hội)"
+  },
+  {
+    "exam": "12/2018",
+    "q": 3,
+    "star_word": "日本の将来を見据えながら",
+    "gram": [],
+    "full_sentence": "株式会社トモカワ。短期的な成果が重視されがちな（時代にあって）（目先の利益だけでなく）（*日本の将来を見据えながら）（着実に成長を続けている）工作機械メーカーである。",
+    "options": [
+      "時代にあって",
+      "目先の利益だけでなく",
+      "着実に成長を続けている",
+      "日本の将来を見据えながら"
+    ],
+    "order": "1-2-4-3",
+    "translate": "～を続けている＝ tiếp tục làm…, vẫn đang duy trì…｜"
+  },
+  {
+    "exam": "12/2018",
+    "q": 4,
+    "star_word": "初めて",
+    "gram": [],
+    "full_sentence": "犯罪心理学者でもある小説家大石竜也が描く巧みな心理描写は、犯罪心理学に精通した（専門家）（にして）（*初めて）（書ける）ものである。",
+    "options": [
+      "専門家",
+      "初めて",
+      "にして",
+      "書ける"
+    ],
+    "order": "1-3-2-4",
+    "translate": "～ものだ①　・　Đương nhiên là..., tất nhiên là..."
+  },
+  {
+    "exam": "12/2018",
+    "q": 5,
+    "star_word": "それは",
+    "gram": [],
+    "full_sentence": "自分の人生に関わる選択は自分でしたい。たとえその結果失敗したとしても、自分が（決めたことなら）（*それは）（それで）（ひとつの）経験として受け入れられると思う。",
+    "options": [
+      "ひとつの",
+      "決めたことなら",
+      "それで",
+      "それは"
+    ],
+    "order": "2-4-3-1",
+    "translate": "Tôi muốn tự mình đưa ra các lựa chọn liên quan đến cuộc đời mình. Cho dù kết quả có thất bại, nếu là điều mình đã quyết định thì tôi nghĩ có thể chấp nhận nó như một trải nghiệm."
+  },
+  {
+    "exam": "7/2019",
+    "q": 1,
+    "star_word": "診察できる",
+    "gram": [],
+    "full_sentence": "X 医院は、患者を（待たせる）（ことなく）（*診察できる）（ように）近々予約制を導入するらしい。",
+    "options": [
+      "待たせる",
+      "診察できる",
+      "ように",
+      "ことなく"
+    ],
+    "order": "1-4-2-3",
+    "translate": "例：診察できるように予約制を導入する。＝ Áp dụng hệ thống đặt lịch để có thể khám cho bệnh nhân.｜"
+  },
+  {
+    "exam": "7/2019",
+    "q": 2,
+    "star_word": "がちな",
+    "gram": [
+      "〜だけに・〜が〜だけに"
+    ],
+    "full_sentence": "昨日、友人から野菜ジュースをたくさんもらった。一人暮らしだとインスタント食品ばかり食べてしまって（野菜不足）（になり）（*がちな）（だけに）ありがたい。",
+    "options": [
+      "だけに",
+      "になり",
+      "がちな",
+      "野菜不足"
+    ],
+    "order": "4-2-3-1",
+    "translate": "例：野菜不足になりがちなだけにありがたい。＝ Chính vì dễ bị thiếu rau, nên càng thấy quý.｜"
+  },
+  {
+    "exam": "7/2019",
+    "q": 3,
+    "star_word": "そうではなく",
+    "gram": [],
+    "full_sentence": "ホームページでQ：洗剤をたくさん使ったほうが、洗濯物がきれいになりますか。A：洗濯物を（きれいに洗うには）（洗剤をたくさん入れればいいかといえば）（*そうではなく）（逆にすすぎ切れなかったりして）悪臭の原因にもなります。適量を守りましょう。",
+    "options": [
+      "洗剤をたくさん入れればいいかといえば",
+      "逆にすすぎ切れなかったりして",
+      "きれいに洗うには",
+      "そうではなく"
+    ],
+    "order": "3-1-4-2",
+    "translate": "～たりして＝ liệt kê ví dụ, nêu khả năng xảy ra (đôi khi mang nghĩa tiêu cực).｜"
+  },
+  {
+    "exam": "7/2019",
+    "q": 4,
+    "star_word": "私としては",
+    "gram": [
+      "〜以上(は)・〜からには"
+    ],
+    "full_sentence": "この町には、大正初期に建てられた洋館があるらしい。前々から（近代建築に興味がある）（*私としては）（それを知ったからには）（その洋館を見ずに）帰ることはできない。",
+    "options": [
+      "私としては",
+      "近代建築に興味がある",
+      "その洋館を見ずに",
+      "それを知ったからには"
+    ],
+    "order": "2-1-4-3",
+    "translate": "例：それを知ったからには見ずに帰ることはできない。＝ Một khi đã biết thì không thể không đi xem.｜"
+  },
+  {
+    "exam": "7/2019",
+    "q": 5,
+    "star_word": "食べるということが",
+    "gram": [],
+    "full_sentence": "私は、（育てた野菜を収穫して）（*食べるということが）（農業を身近なものとして）（考えるきっかけになれば）と思い、校内に畑を作って生徒たちに野菜を育てさせることを校長に提案した。",
+    "options": [
+      "農業を身近なものとして",
+      "食べるということが",
+      "考えるきっかけになれば",
+      "育てた野菜を収穫して"
+    ],
+    "order": "4-2-1-3",
+    "translate": "例：食べるということがきっかけになる。＝ Việc ăn những gì tự trồng trở thành cơ hội để…｜"
+  },
+  {
+    "exam": "12/2019",
+    "q": 1,
+    "star_word": "読んだ",
+    "gram": [],
+    "full_sentence": "先生に薦められた文献は難しくて、ひと通り読むことは（*読んだ）（が）（あまり）（理解できた）とは言えない。",
+    "options": [
+      "が",
+      "あまり",
+      "読んだ",
+      "理解できた"
+    ],
+    "order": "3-1-2-4",
+    "translate": "Tài liệu được thầy giới thiệu thì quá khó, tôi cũng đã đọc qua một lượt rồi, nhưng không thể nói là đã hiểu được nhiều."
+  },
+  {
+    "exam": "12/2019",
+    "q": 2,
+    "star_word": "時間が惜しい",
+    "gram": [
+      "〜くらい／ぐらい (đến mức・くらいなら)"
+    ],
+    "full_sentence": "今日は予定が詰まっていて、食事をする（のも）（*時間が惜しい）（くらい）（忙しい）一日だった。",
+    "options": [
+      "のも",
+      "くらい",
+      "忙しい",
+      "時間が惜しい"
+    ],
+    "order": "1-4-2-3",
+    "translate": "Hôm nay lịch trình kín mít, bận đến mức mà ngay cả thời gian để ăn cũng thấy tiếc."
+  },
+  {
+    "exam": "12/2019",
+    "q": 3,
+    "star_word": "ともかく",
+    "gram": [],
+    "full_sentence": "自分のこと（について）（なら）（*ともかく）（家族や友人を悪く言われる）のは我慢できない。",
+    "options": [
+      "について",
+      "ともかく",
+      "なら",
+      "家族や友人を悪く言われる"
+    ],
+    "order": "1-3-2-4",
+    "translate": "Nếu là chuyện liên quan đến bản thân tôi thì còn tạm được, chứ bị nói xấu về gia đình hay bạn bè thì tôi không thể chịu đựng được."
+  },
+  {
+    "exam": "12/2019",
+    "q": 4,
+    "star_word": "こだわりを",
+    "gram": [],
+    "full_sentence": "食に関しては、これだけは、（譲れないという）（何かしらの）（*こだわりを）（持つことは）誰にでもあると思う。",
+    "options": [
+      "こだわりを",
+      "持つことは",
+      "譲れないという",
+      "何かしらの"
+    ],
+    "order": "3-4-1-2",
+    "translate": "Về vấn đề ăn uống, tôi nghĩ ai cũng có một sở thích hay nguyên tắc nào đó mà mình cho là “điều này thì tuyệt đối không thể nhượng bộ được”."
+  },
+  {
+    "exam": "12/2019",
+    "q": 5,
+    "star_word": "残っていても",
+    "gram": [],
+    "full_sentence": "人気のランニングシューズが欲しくて、（スポーツショップを数軒回って探したが）（売り切れているか）（*残っていても）（サイズが合うのがなかったりで）結局買えなかった。",
+    "options": [
+      "残っていても",
+      "売り切れているか",
+      "サイズが合うのがなかったりで",
+      "スポーツショップを数軒回って探したが"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Vì muốn mua đôi giày chạy bộ đang rất được ưa chuộng, tôi đã đi tìm ở mấy cửa hàng thể thao, nhưng hoặc là đã bán hết, hoặc dù còn hàng thì cũng không có cỡ vừa, nên cuối cùng vẫn không mua được."
+  },
+  {
+    "exam": "12/2020",
+    "q": 1,
+    "star_word": "イベント",
+    "gram": [],
+    "full_sentence": "この花火大会は、日本の夏を語る（うえで）（欠かせない）（*イベント）（として）有名だ。",
+    "options": [
+      "うえで",
+      "として",
+      "欠かせない",
+      "イベント"
+    ],
+    "order": "1-3-4-2",
+    "translate": "Lễ hội pháo hoa này nổi tiếng là một sự kiện không thể thiếu khi nói về mùa hè ở Nhật Bản."
+  },
+  {
+    "exam": "12/2020",
+    "q": 2,
+    "star_word": "やらせる",
+    "gram": [],
+    "full_sentence": "子供にいろいろなことを習わせたいという親の気持ちはよくわかるが、子供の遊ぶ時間を奪って（まで）（無理に）（*やらせる）（必要は）ないと思う。",
+    "options": [
+      "必要は",
+      "やらせる",
+      "まで",
+      "無理に"
+    ],
+    "order": "3-4-2-1",
+    "translate": "Tâm trạng muốn cho con học đủ thứ của bố mẹ thì tôi rất hiểu, nhưng tôi nghĩ không cần phải ép buộc con đến mức lấy đi cả thời gian chơi của chúng."
+  },
+  {
+    "exam": "12/2020",
+    "q": 3,
+    "star_word": "起きません",
+    "gram": [],
+    "full_sentence": "A「おとといは大雨、昨日は車のパンク。旅行に来てからトラブル続きで嫌になるよね。」 \nB「本当だよ。最終日の（今日こそ）（何も）（*起きません）（ように）。」",
+    "options": [
+      "何も",
+      "今日こそ",
+      "ように",
+      "起きません"
+    ],
+    "order": "2-1-4-3",
+    "translate": "A: \"Hôm kia mưa to, hôm qua lại xẹp lốp xe. Từ khi đi du lịch toàn gặp rắc rối, chán thật.\" B: \"Đúng vậy. Ngày cuối cùng hôm nay thì mong sao đừng có chuyện gì xảy ra.\""
+  },
+  {
+    "exam": "12/2020",
+    "q": 4,
+    "star_word": "人材を確保することが",
+    "gram": [],
+    "full_sentence": "2025年には介護を必要とする高齢者が著しく増加することから、多くの専門家が「介護施設員の給与を引き上げる（などして）（介護に携わる）（*人材を確保することが）（緊急の課題）」と指摘する。",
+    "options": [
+      "などして",
+      "緊急の課題",
+      "人材を確保することが",
+      "介護に携わる"
+    ],
+    "order": "1-4-3-2",
+    "translate": "Do số lượng người cao tuổi cần được chăm sóc sẽ tăng mạnh vào năm 2025, nên nhiều chuyên gia chỉ ra rằng “việc thực hiện các biện pháp như tăng lương cho nhân viên cơ sở chăm sóc để đảm bảo nguồn nhân lực tham gia vào công tác điều dưỡng là một vấn đề cấp bách.”"
+  },
+  {
+    "exam": "12/2020",
+    "q": 5,
+    "star_word": "建設を進めていた",
+    "gram": [],
+    "full_sentence": "川北市出身の画家平一明の（業績を後世に伝えようと）（川北市が）（*建設を進めていた）（記念美術館が）、先週20日に完成した。",
+    "options": [
+      "建設を進めていた",
+      "川北市が",
+      "記念美術館が",
+      "業績を後世に伝えようと"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Bảo tàng mỹ thuật tưởng niệm do thành phố Kawakita xúc tiến xây dựng với mục đích truyền lại cho hậu thế những thành tựu của họa sĩ Hiraichi Akira, người xuất thân từ thành phố này đã được hoàn thành vào ngày 20 tuần trước."
+  },
+  {
+    "exam": "7/2021",
+    "q": 1,
+    "star_word": "までも",
+    "gram": [],
+    "full_sentence": "そんな簡単なこと、わざわざあなたに（説明して）（もらう）（*までも）（ない）。",
+    "options": [
+      "もらう",
+      "ない",
+      "説明して",
+      "までも"
+    ],
+    "order": "3-1-4-2",
+    "translate": "Chuyện đơn giản như thế thì chẳng cần phải phiền bạn giải thích cho tôi đâu."
+  },
+  {
+    "exam": "7/2021",
+    "q": 2,
+    "star_word": "わかるだろう",
+    "gram": [
+      "〜くらい／ぐらい (đến mức・くらいなら)"
+    ],
+    "full_sentence": "ちょっと考えれば、さっきの話が冗談（だって）（ことくらい）（*わかるだろう）（に）、単純な彼は簡単に信じてしまった。",
+    "options": [
+      "わかるだろう",
+      "だって",
+      "に",
+      "ことくらい"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Chỉ cần nghĩ một chút thôi thì cũng phải hiểu được rằng câu chuyện vừa rồi chỉ là một trò đùa, thế mà anh chàng ngây thơ ấy lại tin ngay lập tức."
+  },
+  {
+    "exam": "7/2021",
+    "q": 3,
+    "star_word": "授業に取り組む",
+    "gram": [],
+    "full_sentence": "彼はとても優秀で成績が学年の上位に入っている（ことが多い）（のみならず）（*授業に取り組む）（姿勢そのものも）真面目で好感が持てる。",
+    "options": [
+      "授業に取り組む",
+      "のみならず",
+      "姿勢そのものも",
+      "ことが多い"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Cậu ấy rất xuất sắc, không chỉ thường xuyên nằm trong top đầu của khối về thành tích học tập, mà ngay cả thái độ học tập của cậu ấy cũng nghiêm túc và dễ gây thiện cảm."
+  },
+  {
+    "exam": "7/2021",
+    "q": 4,
+    "star_word": "選手たちは",
+    "gram": [],
+    "full_sentence": "全国高校バスケットボール大会で、惜しくも（あと一歩というところで）（優勝を逃した）（*選手たちは）（控え室に戻っても）しばらくの間、ぼう然としていた。",
+    "options": [
+      "優勝を逃した",
+      "控え室に戻っても",
+      "選手たちは",
+      "あと一歩というところで"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Tại Giải vô địch bóng rổ trung học toàn quốc, các tuyển thủ dù đã chỉ còn cách chiến thắng một bước nữa thôi mà để vuột mất chức vô địch khi trở về phòng chờ cũng vẫn sững sờ, thẫn thờ trong một lúc lâu."
+  },
+  {
+    "exam": "7/2021",
+    "q": 5,
+    "star_word": "何であって",
+    "gram": [],
+    "full_sentence": "私が接客するにあたって（常に考えているのは）（お客様が求めていることは）（*何であって）（それに応えるために）自分は何をすべきかということだ。",
+    "options": [
+      "常に考えているのは",
+      "何であって",
+      "それに応えるために",
+      "お客様が求めていることは"
+    ],
+    "order": "1-4-2-3",
+    "translate": "Khi tôi phục vụ khách hàng, điều mà tôi luôn suy nghĩ là: Khách hàng đang mong muốn điều gì, và để đáp ứng được điều đó, bản thân mình cần phải làm gì."
+  },
+  {
+    "exam": "12/2021",
+    "q": 1,
+    "star_word": "なり",
+    "gram": [],
+    "full_sentence": "ステージに（歌手が）（登場する）（*なり）（歓声が）上がった。",
+    "options": [
+      "なり",
+      "登場する",
+      "歓声が",
+      "歌手が"
+    ],
+    "order": "4-2-1-3",
+    "translate": "Vừa khi ca sĩ xuất hiện trên sân khấu, tiếng reo hò đã vang lên."
+  },
+  {
+    "exam": "12/2021",
+    "q": 2,
+    "star_word": "表現力で",
+    "gram": [],
+    "full_sentence": "彼はこの映画で、純粋で不器用な（主人公）（その確かな）（*表現力で）（見事な）までに演じきった。",
+    "options": [
+      "その確かな",
+      "主人公",
+      "見事な",
+      "表現力で"
+    ],
+    "order": "2-1-4-3",
+    "translate": "Trong bộ phim này, anh ấy đã thể hiện trọn vẹn nhân vật chính thuần khiết nhưng vụng về, bằng năng lực biểu đạt chắc chắn và tuyệt vời của mình."
+  },
+  {
+    "exam": "12/2021",
+    "q": 3,
+    "star_word": "あきらめたりしないで",
+    "gram": [
+      "〜くらい／ぐらい (đến mức・くらいなら)"
+    ],
+    "full_sentence": "あの人のことが好きで（忘れられないんだったら）（一度断られたぐらいで）（*あきらめたりしないで）（何度でも気持ちを伝えたら）いいと思う。",
+    "options": [
+      "忘れられないんだったら",
+      "何度でも気持ちを伝えたら",
+      "一度断られたぐらいで",
+      "あきらめたりしないで"
+    ],
+    "order": "1-3-4-2",
+    "translate": "Nếu thật sự thích người đó và không thể quên được, thì đừng từ bỏ chỉ vì bị từ chối một lần, hãy bày tỏ tình cảm của mình bao nhiêu lần cũng được tôi nghĩ như vậy."
+  },
+  {
+    "exam": "12/2021",
+    "q": 4,
+    "star_word": "そう簡単にはいかず",
+    "gram": [],
+    "full_sentence": "他人のことは（冷静に見られるのに）（自分のこととなると）（*そう簡単にはいかず）（感情的になってしまうのが）人間というものだ。",
+    "options": [
+      "自分のこととなると",
+      "そう簡単にはいかず",
+      "感情的になってしまうのが",
+      "冷静に見られるのに"
+    ],
+    "order": "4-1-2-3",
+    "translate": "Chuyện của người khác thì có thể bình tĩnh mà nhìn nhận, nhưng hễ đụng đến chuyện của bản thân thì đâu có dễ như vậy, rồi lại trở nên cảm tính — đó chính là bản tính con người."
+  },
+  {
+    "exam": "12/2021",
+    "q": 5,
+    "star_word": "このまま",
+    "gram": [],
+    "full_sentence": "介護の現場における（人手不足が深刻している）（中で）（*このまま）（人の手のみに頼っていては）そのうち必ず限界が来る。介護ロボットの普及が期待される。",
+    "options": [
+      "このまま",
+      "人の手のみに頼っていては",
+      "人手不足が深刻している",
+      "中で"
+    ],
+    "order": "3-4-1-2",
+    "translate": "Trong bối cảnh tình trạng thiếu nhân lực tại các cơ sở chăm sóc người già ngày càng nghiêm trọng, nếu cứ tiếp tục chỉ dựa vào sức người như thế này thì chắc chắn sẽ đến lúc giới hạn. Sự phổ biến của robot chăm sóc là điều được kỳ vọng."
+  },
+  {
+    "exam": "7/2022",
+    "q": 1,
+    "star_word": "いる",
+    "gram": [
+      "〜限り"
+    ],
+    "full_sentence": "インタビューで私が30年間歌手を続けてこられたのは、ファンの方の支えがあったからです。（応援してくれる）（ファンの皆さんが）（*いる）（限り）歌い続けたいと思っています。",
+    "options": [
+      "限り",
+      "ファンの皆さんが",
+      "応援してくれる",
+      "いる"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Chừng nào vẫn còn những người hâm mộ ủng hộ tôi, tôi vẫn muốn tiếp tục ca hát."
+  },
+  {
+    "exam": "7/2022",
+    "q": 2,
+    "star_word": "意識調査を行ったところ、",
+    "gram": [],
+    "full_sentence": "S市が18歳以上の（市民を対象に）（運動に関する）（*意識調査を行ったところ、）（多くの人が）運動不足を感じていることがわかった。",
+    "options": [
+      "意識調査を行ったところ、",
+      "市民を対象に",
+      "多くの人が",
+      "運動に関する"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Thành phố S đã thực hiện một cuộc khảo sát ý thức liên quan đến việc tập luyện, đối tượng là công dân từ 18 tuổi trở lên, và kết quả cho thấy nhiều người cảm thấy mình thiếu vận động."
+  },
+  {
+    "exam": "7/2022",
+    "q": 3,
+    "star_word": "思えばこそだったのだと",
+    "gram": [],
+    "full_sentence": "子供のころ、母はしつけに厳しくて、私はそれが嫌だった。しかし、母が（厳しかったのは、）（私のことを）（*思えばこそだったのだと）（親になった）今ならわかる。",
+    "options": [
+      "親になった",
+      "私のことを",
+      "思えばこそだったのだと",
+      "厳しかったのは、"
+    ],
+    "order": "4-2-3-1",
+    "translate": "Tuy nhiên, bây giờ khi đã làm cha/mẹ, tôi mới hiểu rằng chính vì mẹ thật sự lo nghĩ cho tôi nên mới nghiêm khắc như vậy."
+  },
+  {
+    "exam": "7/2022",
+    "q": 4,
+    "star_word": "機能性もさることながら",
+    "gram": [],
+    "full_sentence": "昨年（M社から発売された）（レインコートは）（*機能性もさることながら）（そのかわいらしいデザインが話題となり）、若者の間で流行している。",
+    "options": [
+      "レインコートは",
+      "機能性もさることながら",
+      "M社から発売された",
+      "そのかわいらしいデザインが話題となり"
+    ],
+    "order": "3-1-2-4",
+    "translate": "Chiếc áo mưa được công ty M phát hành năm ngoái, không chỉ nổi bật về tính năng, mà thiết kế dễ thương của nó cũng trở thành đề tài bàn tán, và hiện đang thịnh hành trong giới trẻ."
+  },
+  {
+    "exam": "7/2022",
+    "q": 5,
+    "star_word": "ABC社が創立50周年を機に始めた",
+    "gram": [
+      "〜を機に"
+    ],
+    "full_sentence": "「未来のものづくりコンテスト」は、（子供たちに）（ものづくりの面白さを感じてもらおうと）（*ABC社が創立50周年を機に始めた）（コンサートで）、今年で20回目を迎える。",
+    "options": [
+      "子供たちに",
+      "コンサートで",
+      "ものづくりの面白さを感じてもらおうと",
+      "ABC社が創立50周年を機に始めた"
+    ],
+    "order": "1-3-4-2",
+    "translate": "Cuộc thi “Sáng tạo tương lai” là một cuộc thi mà công ty ABC đã khởi xướng nhân dịp kỷ niệm 50 năm thành lập, nhằm giúp trẻ em cảm nhận được sự thú vị của việc chế tạo, và năm nay đánh dấu lần tổ chức thứ 20."
+  },
+  {
+    "exam": "12/2022",
+    "q": 1,
+    "star_word": "日もあれば",
+    "gram": [],
+    "full_sentence": "秋の初めてのこの時期は、真夏の戻った（かのような）（*日もあれば）（ひんやりとした）（日もあり）、気温の差が大きくて体調を崩しやすいので、注意が必要だ。",
+    "options": [
+      "日もあり",
+      "日もあれば",
+      "ひんやりとした",
+      "かのような"
+    ],
+    "order": "4-2-3-1",
+    "translate": "Vào thời điểm đầu thu này, có những ngày như thể mùa hè đã quay trở lại, cũng có những ngày se lạnh, do sự chênh lệch nhiệt độ lớn nên dễ bị ảnh hưởng đến sức khỏe, cần phải chú ý."
+  },
+  {
+    "exam": "12/2022",
+    "q": 2,
+    "star_word": "思えないほどの",
+    "gram": [],
+    "full_sentence": "歴史的価値が高いとされる旧白本小学校の校舎を始めて見たが、とても（100年前に）（建てられたものとは）（*思えないほどの）（現代的なデザインに）驚いた。",
+    "options": [
+      "100年前に",
+      "現代的なデザインに",
+      "建てられたものとは",
+      "思えないほどの"
+    ],
+    "order": "1-3-4-2",
+    "translate": "Tôi lần đầu tiên nhìn thấy tòa nhà của trường tiểu học cũ Shiramoto, được cho là có giá trị lịch sử cao, và đã ngạc nhiên vì thiết kế hiện đại đến mức không thể tin rằng nó được xây dựng cách đây 100 năm."
+  },
+  {
+    "exam": "12/2022",
+    "q": 3,
+    "star_word": "自分は花粉症だという",
+    "gram": [],
+    "full_sentence": "くしゃみや鼻水といった症状が現れる花粉症は、風邪と（症状が似ている）（こともあって）（*自分は花粉症だという）（自覚がない）ケースもあるそうだ。",
+    "options": [
+      "自覚がない",
+      "自分は花粉症だという",
+      "症状が似ている",
+      "こともあって"
+    ],
+    "order": "3-4-2-1",
+    "translate": "Bệnh dị ứng phấn hoa, với các triệu chứng như hắt hơi và chảy nước mũi, do có triệu chứng giống cảm lạnh nên có vẻ cũng có những trường hợp người bệnh không tự nhận ra mình bị dị ứng phấn hoa."
+  },
+  {
+    "exam": "12/2022",
+    "q": 4,
+    "star_word": "思える道を",
+    "gram": [
+      "〜ようと(も)・〜だろうと〜だろうと (dù có... đi nữa)"
+    ],
+    "full_sentence": "高校卒業後の進路について両親に反対されたが、誰に何と（言われようとも）（自分がこれだと）（*思える道を）（信じて進みたいと）思う。",
+    "options": [
+      "思える道を",
+      "信じて進みたいと",
+      "言われようとも",
+      "自分がこれだと"
+    ],
+    "order": "3-4-1-2",
+    "translate": "Tôi đã bị bố mẹ phản đối về con đường sau khi tốt nghiệp cấp ba, nhưng dù có bị ai nói gì đi nữa, tôi vẫn muốn tin tưởng và bước đi trên con đường mà mình cảm thấy đúng đắn."
+  },
+  {
+    "exam": "12/2022",
+    "q": 5,
+    "star_word": "か否か",
+    "gram": [],
+    "full_sentence": "企業の海外進出が成功するかどうかは、（その国の事情をよく知る）（優秀な人材を確保できる）（*か否か）（にかかっている）といってもいいだろう。",
+    "options": [
+      "優秀な人材を確保できる",
+      "にかかっている",
+      "か否か",
+      "その国の事情をよく知る"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Việc một doanh nghiệp có thành công trong việc mở rộng ra nước ngoài hay không có thể nói là phụ thuộc vào việc có thể đảm bảo được những nhân tài xuất sắc am hiểu tình hình của quốc gia đó hay không."
+  },
+  {
+    "exam": "7/2023",
+    "q": 1,
+    "star_word": "あまりに",
+    "gram": [],
+    "full_sentence": "スピーチプレゼンテーションにおいて、ジェスチャーを使いながら話すのは（効果的である反面）（*あまりに）（大きすぎるジェスチャーは）（かえって）印象を悪くすることもあるので注意が必要だ。",
+    "options": [
+      "あまりに",
+      "効果的である反面",
+      "かえって",
+      "大きすぎるジェスチャーは"
+    ],
+    "order": "2-1-4-3",
+    "translate": "～あまり（に） 　・　 Vì quá..., vì rất..."
+  },
+  {
+    "exam": "7/2023",
+    "q": 2,
+    "star_word": "環境があれば",
+    "gram": [],
+    "full_sentence": "今や、書籍や衣料品だけでなく生鮮食品も、インターネット（アクセスが可能な）（*環境があれば）（自宅にいながらにして）（手軽に購入できる）時代である。",
+    "options": [
+      "自宅にいながらにして",
+      "手軽に購入できる",
+      "環境があれば",
+      "アクセスが可能な"
+    ],
+    "order": "4-3-1-2",
+    "translate": "Ngày nay, không chỉ sách hay quần áo mà ngay cả thực phẩm tươi sống cũng có thể dễ dàng mua được tại nhà, chỉ cần có môi trường có thể truy cập Internet."
+  },
+  {
+    "exam": "7/2023",
+    "q": 3,
+    "star_word": "迷うほど",
+    "gram": [],
+    "full_sentence": "よく似た昆虫の判別は大変難しいという。中には、かなり（経験を積んだ）（昆虫学者でさえも）（*迷うほど）（判別が難しい）場合もあるそうだ。",
+    "options": [
+      "判別が難しい",
+      "昆虫学者でさえも",
+      "経験を積んだ",
+      "迷うほど"
+    ],
+    "order": "3-2-4-1",
+    "translate": "～ほど②　・ 　Đến mức..., đến độ..., như thế..., gần như..., hầu như..."
+  },
+  {
+    "exam": "7/2023",
+    "q": 4,
+    "star_word": "うそになるが",
+    "gram": [],
+    "full_sentence": "今年の（転職にあたり）（少しも不安がなかったといえば）（*うそになるが）（新たなことに挑戦できてうれしいという）気持ちのほうが大きかった。",
+    "options": [
+      "転職にあたり",
+      "うそになるが",
+      "少しも不安がなかったといえば",
+      "新たなことに挑戦できてうれしいという"
+    ],
+    "order": "1-2-3-4",
+    "translate": "～にあたり ／にあたって（は）・　 Khi, lúc, nhân dịp, nhân cơ hội."
+  },
+  {
+    "exam": "7/2023",
+    "q": 5,
+    "star_word": "30年前までは",
+    "gram": [],
+    "full_sentence": "北山市は（今でこそ）（人口10万人を超える都市となったが）（*30年前までは）（北山駅周辺以外にはほとんど何もない）のどかなところだった。",
+    "options": [
+      "人口10万人を超える都市となったが",
+      "北山駅周辺以外にはほとんど何もない",
+      "今でこそ",
+      "30年前までは"
+    ],
+    "order": "3-1-4-2",
+    "translate": "③ ～以外には：Ngoài ~ ra thì (không có gì / không ai / không làm gì)."
+  },
+  {
+    "exam": "12/2023",
+    "q": 1,
+    "star_word": "設定ができないとの",
+    "gram": [],
+    "full_sentence": "当社が先月発売したパソコンについて、印刷の（*設定ができないとの）（問い合わせが複数寄せられ）（調査したところ）（マニュアルに誤りがある）ことが判明しました。",
+    "options": [
+      "マニュアルに誤りがある",
+      "設定ができないとの",
+      "問い合わせが複数寄せられ",
+      "調査したところ"
+    ],
+    "order": "2-3-4-1",
+    "translate": "～たところ（が） 　・　 Khi... thì..., sau khi làm... thì..."
+  },
+  {
+    "exam": "12/2023",
+    "q": 2,
+    "star_word": "勧める",
+    "gram": [],
+    "full_sentence": "このフライパンは、さすが（料理が上手な）（森さんが）（*勧める）（だけあって）とても使いやすい。",
+    "options": [
+      "森さんが",
+      "だけあって",
+      "勧める",
+      "料理が上手な"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Chảo rán này quả thật rất dễ sử dụng, đúng như Mori-san, người nấu ăn giỏi, đã giới thiệu."
+  },
+  {
+    "exam": "12/2023",
+    "q": 3,
+    "star_word": "ほど",
+    "gram": [],
+    "full_sentence": "最後に見た映画が（何だったのかも）（思い出せない）（*ほど）（久しく）映画を見ていない。",
+    "options": [
+      "ほど",
+      "何だったのかも",
+      "思い出せない",
+      "久しく"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Tôi đã lâu đến mức không nhớ nổi bộ phim cuối cùng mình xem là gì."
+  },
+  {
+    "exam": "12/2023",
+    "q": 4,
+    "star_word": "分析している。",
+    "gram": [
+      "〜限り"
+    ],
+    "full_sentence": "学生から提出された論文の中に面白いものがあった。私が（知る限りでは）（このアプローチで）（*分析している。）（論文は）これまでにない。",
+    "options": [
+      "知る限りでは",
+      "論文は",
+      "分析している。",
+      "このアプローチで"
+    ],
+    "order": "1-4-3-2",
+    "translate": "Trong số các bài luận được sinh viên nộp, có một bài khá thú vị. Theo như tôi biết, bài luận này phân tích theo cách tiếp cận này là điều chưa từng có trước đây."
+  },
+  {
+    "exam": "12/2023",
+    "q": 5,
+    "star_word": "簡単に本格的な料理が作れると",
+    "gram": [],
+    "full_sentence": "このレシピ本は、ふだん料理をしない人でも（レシピに沿って）（調理するだけで）（*簡単に本格的な料理が作れると）（若い人の間で）評判になっているそうだ。",
+    "options": [
+      "若い人の間で",
+      "調理するだけで",
+      "レシピに沿って",
+      "簡単に本格的な料理が作れると"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Quyển sách công thức nấu ăn này, ngay cả những người bình thường không nấu ăn, chỉ cần làm theo công thức cũng có thể dễ dàng nấu được các món ăn chuẩn vị, và dường như nổi tiếng trong giới trẻ."
+  },
+  {
+    "exam": "7/2024",
+    "q": 1,
+    "star_word": "緊張するんだから",
+    "gram": [],
+    "full_sentence": "息子が通っているピアノ教室の発表会で、緊張して引けなくってしまった子がいた。大人だって（大勢の前で何かをするのは）（*緊張するんだから）（子供が）（そうなるのも）無理はないだろう。",
+    "options": [
+      "そうなるのも",
+      "緊張するんだから",
+      "大勢の前で何かをするのは",
+      "子供が"
+    ],
+    "order": "3-2-4-1",
+    "translate": "② ～のも無理はない：Cũng chẳng có gì lạ / Cũng dễ hiểu thôi (khi…)"
+  },
+  {
+    "exam": "7/2024",
+    "q": 2,
+    "star_word": "行動なのだ",
+    "gram": [],
+    "full_sentence": "（産卵を控えた）（雌に限っての）（行動なのだ）（*とか）（　　）専門家に詳しく聞いてみよう。",
+    "options": [
+      "雌に限っての",
+      "とか",
+      "行動なのだ",
+      "産卵を控えた"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Đây là hành vi chỉ xảy ra ở những con cái chuẩn bị đẻ trứng, vậy nên, hãy thử hỏi các chuyên gia để biết chi tiết."
+  },
+  {
+    "exam": "7/2024",
+    "q": 3,
+    "star_word": "評判も良くなった",
+    "gram": [],
+    "full_sentence": "昨年度までは社内研修後のアンケートを記述式で行っていたが、まとめるのに時間がかかる（うえに）（受講者からの）（*評判も良くなった）（ことを踏まえ）、今年度は選択式で行うことにした。",
+    "options": [
+      "うえに",
+      "評判も良くなった",
+      "ことを踏まえ",
+      "受講者からの"
+    ],
+    "order": "1-4-2-3",
+    "translate": "Hơn thế nữa, không chỉ... mà còn, không những... mà còn"
+  },
+  {
+    "exam": "7/2024",
+    "q": 4,
+    "star_word": "睡眠の質があるなんて",
+    "gram": [],
+    "full_sentence": "枕を変えたら、今までより良く眠れるようになった。自分に合った（枕に換えるだけで）（こんなにも）（*睡眠の質があるなんて）（思っていなかったから）驚いた。",
+    "options": [
+      "睡眠の質があるなんて",
+      "枕に換えるだけで",
+      "思っていなかったから",
+      "こんなにも"
+    ],
+    "order": "2-4-1-3",
+    "translate": "～なんて（thật là…, đến mức…, không ngờ rằng…）"
+  },
+  {
+    "exam": "7/2024",
+    "q": 5,
+    "star_word": "扱える人材の確保やコスト面での難しさから",
+    "gram": [],
+    "full_sentence": "人工知能をはじめとする（先端技術を取り入れる）（メリットは理解しつつも）（*扱える人材の確保やコスト面での難しさから）（導入に至っていない）企業が多い。",
+    "options": [
+      "メリットは理解しつつも",
+      "導入に至っていない",
+      "先端技術を取り入れる",
+      "扱える人材の確保やコスト面での難しさから"
+    ],
+    "order": "3-1-4-2",
+    "translate": "Mặc dù hiểu được lợi ích của việc ứng dụng các công nghệ tiên tiến, bao gồm cả trí tuệ nhân tạo, nhưng do khó khăn trong việc đảm bảo nguồn nhân lực có thể sử dụng được và chi phí, nhiều doanh nghiệp vẫn chưa tiến hành triển khai."
+  },
+  {
+    "exam": "12/2024",
+    "q": 1,
+    "star_word": "が",
+    "gram": [],
+    "full_sentence": "昨日はとても寒く、積もり（こそ）（しなかった）（*が）（午前中）ずっと雪が降っていた。",
+    "options": [
+      "が",
+      "こそ",
+      "しなかった",
+      "午前中"
+    ],
+    "order": "2-3-1-4",
+    "translate": "Hôm qua trời rất lạnh, và tuy không có tuyết tích tụ, nhưng cả buổi sáng tuyết vẫn rơi suốt."
+  },
+  {
+    "exam": "12/2024",
+    "q": 2,
+    "star_word": "男の日常を描いた",
+    "gram": [
+      "〜ゆえ(に)・〜がゆえの"
+    ],
+    "full_sentence": "この映画はあまりにも正直で（周りの人々とのトラブルが絶えない）（真面目すぎる）（*男の日常を描いた）（がゆえに）、コメディー作品だ。",
+    "options": [
+      "真面目すぎる",
+      "周りの人々とのトラブルが絶えない",
+      "がゆえに",
+      "男の日常を描いた"
+    ],
+    "order": "2-1-4-3",
+    "translate": "Bộ phim này là một tác phẩm hài vì nó mô tả cuộc sống hàng ngày của một người đàn ông quá nghiêm túc, luôn gặp rắc rối với những người xung quanh."
+  },
+  {
+    "exam": "12/2024",
+    "q": 3,
+    "star_word": "ビジネス書に",
+    "gram": [],
+    "full_sentence": "（一般的にビジネス書というと）（堅苦しいものと思われがちだが）（*ビジネス書に）（抵抗がある人にも）読みやすいように、最近は、ビジネス理論を漫画でわかりやすく解説したものが多い。",
+    "options": [
+      "堅苦しいものと思われがちだが",
+      "抵抗がある人にも",
+      "一般的にビジネス書というと",
+      "ビジネス書に"
+    ],
+    "order": "3-1-4-2",
+    "translate": "Nói chung, sách kinh doanh thường bị cho là cứng nhắc, nhưng gần đây có nhiều cuốn sách kinh doanh được giải thích dễ hiểu bằng truyện tranh, để ngay cả những người cảm thấy e ngại với sách kinh doanh cũng có thể đọc dễ dàng."
+  },
+  {
+    "exam": "12/2024",
+    "q": 4,
+    "star_word": "今度は",
+    "gram": [],
+    "full_sentence": "渋滞の中を（3時間運転して）（ようやくついたと思ったら）（*今度は）（駐車場が混雑していて）遊園地に入る前から疲れてしまった。",
+    "options": [
+      "今度は",
+      "3時間運転して",
+      "駐車場が混雑していて",
+      "ようやくついたと思ったら"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Sau khi lái xe 3 tiếng giữa dòng kẹt xe và nghĩ rằng cuối cùng cũng đã đến nơi, lần này thì bãi đậu xe đông đúc, khiến tôi mệt mỏi ngay cả trước khi vào công viên giải trí."
+  },
+  {
+    "exam": "12/2024",
+    "q": 5,
+    "star_word": "知られないことには",
+    "gram": [],
+    "full_sentence": "商品やサービスが（どんなに良い物でも）（その存在が）（*知られないことには）（売れるも売れないも）ない。",
+    "options": [
+      "売れるも売れないも",
+      "その存在が",
+      "知られないことには",
+      "どんなに良い物でも"
+    ],
+    "order": "4-2-3-1",
+    "translate": "Dù sản phẩm hay dịch vụ có tốt đến đâu, nếu không được biết đến, thì không thể bán được hay không bán được."
+  },
+  {
+    "exam": "7/2025",
+    "q": 1,
+    "star_word": "でも",
+    "gram": [
+      "〜限り"
+    ],
+    "full_sentence": "高級車には憧れるが、私の給料では宝くじに（当たり）（*でも）（しない）（かぎり）一生買えそうにない。",
+    "options": [
+      "しない",
+      "でも",
+      "当たり",
+      "限り"
+    ],
+    "order": "3-2-1-4",
+    "translate": "Tôi mơ ước có xe sang, nhưng với lương của tôi thì trừ khi trúng số, cả đời chắc không mua nổi."
+  },
+  {
+    "exam": "7/2025",
+    "q": 2,
+    "star_word": "近年の人手不足などにより",
+    "gram": [],
+    "full_sentence": "年中無休で営業していて、私たちの日常生活に欠かせない（存在である）（コンビニだが）（*近年の人手不足などにより）（定休日を設ける）店舗も出てきているらしい。",
+    "options": [
+      "コンビニだが",
+      "定休日を設ける",
+      "近年の人手不足などにより",
+      "存在である"
+    ],
+    "order": "4-1-3-2",
+    "translate": "Cửa hàng tiện lợi mở cửa quanh năm không nghỉ, không thể thiếu trong đời sống hằng ngày, nhưng gần đây nghe nói do thiếu nhân lực nên cũng có cửa hàng đặt ngày nghỉ cố định."
+  },
+  {
+    "exam": "7/2025",
+    "q": 3,
+    "star_word": "飽きそうなものなのに",
+    "gram": [],
+    "full_sentence": "3歳の娘は毎日同じアニメのDVDを楽しそうに見ている。いくら（好きだからといって）（毎日見ていたら）（*飽きそうなものなのに）（一向に）その様子がない。",
+    "options": [
+      "好きだからといって",
+      "飽きそうなものなのに",
+      "一向に",
+      "毎日見ていたら"
+    ],
+    "order": "1-4-2-3",
+    "translate": "Con gái 3 tuổi của tôi ngày nào cũng thích thú xem đĩa phim hoạt hình đó. Dù thích đến mấy, xem mỗi ngày thì lẽ ra phải chán rồi, vậy mà chẳng có dấu hiệu gì cả."
+  },
+  {
+    "exam": "7/2025",
+    "q": 4,
+    "star_word": "なんらかの病気の",
+    "gram": [],
+    "full_sentence": "（テレビ番組で）医者「よく寝ているはずなのに日中眠い、夜中に何度も目が覚める（といった）（睡眠に関する症状は）（*なんらかの病気の）（サインである）可能性があります。」",
+    "options": [
+      "何らかの病気の",
+      "といった",
+      "睡眠に関する症状は",
+      "サインである"
+    ],
+    "order": "2-3-1-4",
+    "translate": "(Trên chương trình TV) Bác sĩ: \"Những triệu chứng về giấc ngủ như đã ngủ đủ mà ban ngày vẫn buồn ngủ, đêm thức giấc nhiều lần, có thể là dấu hiệu của một bệnh nào đó.\""
+  },
+  {
+    "exam": "7/2025",
+    "q": 5,
+    "star_word": "限りある大切な資源が失われつつある",
+    "gram": [
+      "〜つつある"
+    ],
+    "full_sentence": "先日、環境問題をテーマにしたシンポジウムに参加し、専門家による（講演を聞いて）（便利で快適な暮らしと引きかえに）（*限りある大切な資源が失われつつある）（現状について）深く考えさせられた。",
+    "options": [
+      "現状について",
+      "便利で快適な暮らしと引きかえに",
+      "講演を聞いて",
+      "限りある大切な資源が失われつつある"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Hôm trước tôi tham dự một hội thảo về chủ đề môi trường, nghe bài giảng của chuyên gia khiến tôi phải suy nghĩ sâu sắc về thực trạng nguồn tài nguyên quý giá có hạn đang dần mất đi, để đổi lấy cuộc sống tiện nghi, thoải mái."
+  },
+  {
+    "exam": "12/2025",
+    "q": 1,
+    "star_word": "西山さん",
+    "gram": [],
+    "full_sentence": "（会社で） 高橋「さっき、また課長と西山さんがもめてたね」。自分の主張を譲らない西山さん（も）（*西山さん）（なら）（課長）も課長だ。",
+    "options": [
+      "なら",
+      "も",
+      "西山さん",
+      "課長"
+    ],
+    "order": "2-3-1-4",
+    "translate": "(Ở công ty) Takahashi: \"Lúc nãy trưởng phòng và Nishiyama-san lại cãi nhau rồi.\" — Nishiyama-san không chịu nhượng bộ ý kiến của mình đã vậy, thì trưởng phòng cũng chẳng khác gì (cả hai đều bảo thủ như nhau). [Mẫu ngữ pháp AもAならBもBだ: cả A và B đều như nhau theo nghĩa phê phán]"
+  },
+  {
+    "exam": "12/2025",
+    "q": 2,
+    "star_word": "どんなに気をつけていても",
+    "gram": [],
+    "full_sentence": "トラブルが（起きないように）（*どんなに気をつけていても）（起きる時に）（起きてしまう）トラブルだ。",
+    "options": [
+      "起きないように",
+      "起きる時に",
+      "起きてしまう",
+      "どんなに気をつけていても"
+    ],
+    "order": "1-4-2-3",
+    "translate": "Dù có cẩn thận đến mấy để tránh rắc rối, khi nó phải xảy ra thì vẫn cứ xảy ra — đó chính là rắc rối."
+  },
+  {
+    "exam": "12/2025",
+    "q": 3,
+    "star_word": "長年会社勤めをしてきた",
+    "gram": [
+      "〜ならではの"
+    ],
+    "full_sentence": "俳優の古川たかしが今回の作品で（見せた）（自然な演技は）（*長年会社勤めをしてきた）（彼ならでは）といえるだろう。",
+    "options": [
+      "自然な演技は",
+      "長年会社勤めをしてきた",
+      "彼ならでは",
+      "見せた"
+    ],
+    "order": "4-1-2-3",
+    "translate": "Diễn xuất tự nhiên mà diễn viên Furukawa Takashi thể hiện trong tác phẩm lần này có thể nói là chỉ có ở anh — người đã từng đi làm công sở nhiều năm."
+  },
+  {
+    "exam": "12/2025",
+    "q": 4,
+    "star_word": "のか",
+    "gram": [],
+    "full_sentence": "普段は無口な息子だが、昨日は校内のマラソン大会で入賞した（ことが）（よほどうれしかった）（*のか）（家に帰ってくる）なり、楽しそうに話してくれた。",
+    "options": [
+      "のか",
+      "ことが",
+      "家に帰ってくる",
+      "よほどうれしかった"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Con trai tôi thường ngày ít nói, nhưng hôm qua chắc vì quá vui vì đoạt giải trong cuộc thi marathon ở trường, nên vừa về đến nhà đã kể chuyện với vẻ rất hào hứng."
+  },
+  {
+    "exam": "12/2025",
+    "q": 5,
+    "star_word": "応援したいが",
+    "gram": [],
+    "full_sentence": "友人が突然大学を辞めると言い出した。将来のことを（よく考えたうえでの）（決断ならば）（*応援したいが）（そうは）思えないので、考え直すように説得している。",
+    "options": [
+      "応援したいが",
+      "決断ならば",
+      "よく考えたうえでの",
+      "そうは"
+    ],
+    "order": "3-2-1-4",
+    "translate": "Bạn tôi đột nhiên nói sẽ nghỉ học đại học. Nếu đó là quyết định sau khi đã suy nghĩ kỹ về tương lai thì tôi muốn ủng hộ, nhưng tôi không nghĩ vậy, nên đang thuyết phục bạn ấy suy nghĩ lại."
+  },
+  {
+    "exam": "7/2026",
+    "q": 1,
+    "star_word": "分には",
+    "gram": [],
+    "full_sentence": "私は犬が（苦手で）（離れて見ている）（*分には）（平気な）のだが、近寄れない。",
+    "options": [
+      "分には",
+      "苦手で",
+      "平気な",
+      "離れて見ている"
+    ],
+    "order": "2-4-1-3",
+    "translate": "Tôi sợ chó nên chỉ khi đứng xa nhìn thì không sao, nhưng không thể lại gần."
+  },
+  {
+    "exam": "7/2026",
+    "q": 2,
+    "star_word": "私が",
+    "gram": [],
+    "full_sentence": "（私としては）（辞めてほしくないが）（*私が）（引き止めたところで）も状況は変わらないだろう。",
+    "options": [
+      "引き止めたところで",
+      "辞めてほしくないが",
+      "私としては",
+      "私が"
+    ],
+    "order": "3-2-4-1",
+    "translate": "Đồng nghiệp nói sắp nghỉ việc, công việc mới cũng đã sẵn. Vì làm chung nhiều năm, về phần tôi thì không muốn anh ấy nghỉ, nhưng dù tôi có giữ lại thì tình hình cũng không đổi."
+  },
+  {
+    "exam": "7/2026",
+    "q": 3,
+    "star_word": "恥をかかないだけの",
+    "gram": [],
+    "full_sentence": "私が（しつけに厳しいのは）（社会に出て）（*恥をかかないだけの）（マナーを）子供のうちから身につけさせたいと思うからだ。",
+    "options": [
+      "しつけに厳しいのは",
+      "恥をかかないだけの",
+      "社会に出て",
+      "マナーを"
+    ],
+    "order": "1-3-2-4",
+    "translate": "Tôi nghiêm khắc chuyện dạy dỗ là vì muốn con học từ nhỏ những phép tắc đủ để khi ra xã hội không bị mất mặt."
+  },
+  {
+    "exam": "7/2026",
+    "q": 4,
+    "star_word": "安いのを使っていたが",
+    "gram": [],
+    "full_sentence": "ドライヤーなんて（髪を乾かせば）（どれでもいいと思って）（*安いのを使っていたが）（高性能のドライヤーを使ってみたら）髪がさらさらになって驚いた。",
+    "options": [
+      "どれでもいいと思って",
+      "髪を乾かせば",
+      "安いのを使っていたが",
+      "高性能のドライヤーを使ってみたら"
+    ],
+    "order": "2-1-3-4",
+    "translate": "Tôi cứ nghĩ máy sấy tóc loại nào cũng được nên dùng máy rẻ tiền, thế mà khi thử máy công suất cao, sau khi sấy tóc thì tóc mượt óng, làm tôi ngạc nhiên."
+  },
+  {
+    "exam": "7/2026",
+    "q": 5,
+    "star_word": "ことなく",
+    "gram": [],
+    "full_sentence": "最近買った新しい（食器は）（箱から出す）（*ことなく）（押し入れにしまい込んだ）ままになっている。",
+    "options": [
+      "箱から出す",
+      "ことなく",
+      "押し入れにしまい込んだ",
+      "食器は"
+    ],
+    "order": "4-1-2-3",
+    "translate": "Tôi thích sưu tầm bát đĩa, nhưng tủ đã hết chỗ, nên những món mới mua gần đây vẫn chưa lấy ra khỏi hộp mà đã cất vào tủ, để nguyên như thế."
+  }
+]
