@@ -1,0 +1,482 @@
+[
+  {
+    "exam": "7/2018",
+    "q": 1,
+    "gram_pattern": "～を機に",
+    "gram_explain": "～を機に = Nhân dịp..., lấy cơ hội... (để bắt đầu việc gì mới). Thường đi với: 結婚／引っ越し／転職＋を機に. VD: 引っ越しを機にソファを買うことにした（Nhân dịp chuyển nhà, tôi quyết định mua sofa）"
+  },
+  {
+    "exam": "7/2018",
+    "q": 2,
+    "gram_pattern": "～と言えば聞こえはいいが",
+    "gram_explain": "～と言えば聞こえはいいが = Nói thì nghe hay, nhưng thực ra... (phê phán nhẹ nhàng). Thường đi với: Nな/Aい＋と言えば聞こえはいいが, 要するに～. VD: のどかな所と言えば聞こえはいいが要するに田舎だ（Nói nơi yên bình nghe hay, chứ thực ra là nhà quê）"
+  },
+  {
+    "exam": "7/2018",
+    "q": 3,
+    "gram_pattern": "～ごとき",
+    "gram_explain": "～ごとき = Hạng như..., kẻ như... (khiêm tốn hoặc khinh thường). Thường đi với: 私ごとき＋N, ～ごとき者に. VD: 私ごとき新人にこんな大役が務まるのか（Tân binh hạng như tôi liệu có đảm đương nổi không）"
+  },
+  {
+    "exam": "7/2018",
+    "q": 4,
+    "gram_pattern": "～ことなしに",
+    "gram_explain": "～ことなしに = Không làm... mà (đã làm việc khác). Thường đi với: Vる＋ことなしに, 同意を得る＋ことなしに. VD: 住民の同意を得ることなしに開発を進めた（Tiến hành phát triển mà không lấy ý kiến đồng ý của dân）"
+  },
+  {
+    "exam": "7/2018",
+    "q": 5,
+    "gram_pattern": "～における",
+    "gram_explain": "～における = Tại..., trong... (văn viết trang trọng, chỉ thời điểm/nơi chốn). Thường đi với: N＋における＋N, ～時点における. VD: 4月1日現在における人口は減少した（Dân số tính đến ngày 1/4 đã giảm）"
+  },
+  {
+    "exam": "12/2018",
+    "q": 1,
+    "gram_pattern": "～ところを",
+    "gram_explain": "～ところを = Đang lúc... thì bị/được... (tình huống bất ngờ). Thường đi với: Vている＋ところを＋助けられた/見つけられた. VD: 苦しんでいるところを助けられた（Đang lúc đau khổ thì được cứu giúp）"
+  },
+  {
+    "exam": "12/2018",
+    "q": 2,
+    "gram_pattern": "～わけにはいかない",
+    "gram_explain": "～わけにはいかない = Không thể... được (vì lý do đạo đức/trách nhiệm). Thường đi với: Vる＋わけにはいかない, ほうっておく＋わけにはいかない. VD: 上司として見なかったことにするわけにはいかない（Là sếp thì không thể lờ đi được）"
+  },
+  {
+    "exam": "12/2018",
+    "q": 3,
+    "gram_pattern": "～にあって",
+    "gram_explain": "～にあって = Trong bối cảnh..., trong tình hình... (hoàn cảnh đặc biệt). Thường đi với: 時代/状況/中＋にあって. VD: 成果が重視される時代にあっても将来を見据えて成長を続けている（Trong thời đại coi trọng kết quả, vẫn hướng đến tương lai）"
+  },
+  {
+    "exam": "12/2018",
+    "q": 4,
+    "gram_pattern": "～にして初めて",
+    "gram_explain": "～にして初めて = Chỉ khi là... thì mới có thể... (điều kiện đặc biệt). Thường đi với: N＋にして初めて＋Vできる. VD: 犯罪心理学に精通した専門家にして初めて書ける（Chỉ chuyên gia am hiểu tâm lý tội phạm mới viết được）"
+  },
+  {
+    "exam": "12/2018",
+    "q": 5,
+    "gram_pattern": "～なら、それはそれで",
+    "gram_explain": "～なら、それはそれで = Nếu... thì cũng được, cũng chấp nhận (bình thản). Thường đi với: Vた＋ことなら、それはそれで. VD: 自分が決めたことならそれはそれで経験として受け入れられる（Mình quyết định thì cũng chấp nhận như một trải nghiệm）"
+  },
+  {
+    "exam": "7/2019",
+    "q": 1,
+    "gram_pattern": "～ことなく",
+    "gram_explain": "～ことなく = Không... mà... (= ～ないで, văn viết). Thường đi với: Vる＋ことなく, 待たせる/迷う＋ことなく. VD: 患者を待たせることなく診察できるようにした（Làm sao để khám mà không bắt bệnh nhân chờ）"
+  },
+  {
+    "exam": "7/2019",
+    "q": 2,
+    "gram_pattern": "～だけに",
+    "gram_explain": "～だけに = Chính vì..., đúng là vì... (nguyên nhân khiến kết quả hợp lý). Thường đi với: Vる/Aい/Nな＋だけに. VD: 野菜不足になりがちなだけにありがたい（Chính vì hay thiếu rau nên càng biết ơn）"
+  },
+  {
+    "exam": "7/2019",
+    "q": 3,
+    "gram_pattern": "～かといえばそうではない",
+    "gram_explain": "～かといえばそうではない = Nếu hỏi có phải... thì không phải vậy (phủ nhận kỳ vọng). Thường đi với: Vば＋いいかといえばそうではなく. VD: 洗剤をたくさん入れればいいかといえばそうではない（Cho nhiều bột giặt có tốt không thì không phải vậy）"
+  },
+  {
+    "exam": "7/2019",
+    "q": 4,
+    "gram_pattern": "～からには",
+    "gram_explain": "～からには = Một khi đã... thì phải... (quyết tâm, nghĩa vụ). Thường đi với: Vた＋からには, 知った/始めた＋からには. VD: それを知ったからには見ずに帰ることはできない（Một khi đã biết thì không thể không đi xem）"
+  },
+  {
+    "exam": "7/2019",
+    "q": 5,
+    "gram_pattern": "～ということが～きっかけになれば",
+    "gram_explain": "～ということが～きっかけになれば = Nếu việc... trở thành cơ hội để... (mong muốn tạo động lực). Thường đi với: Vる＋ということが＋きっかけになれば. VD: 食べるということが農業を考えるきっかけになれば（Mong việc ăn sẽ là cơ hội suy nghĩ về nông nghiệp）"
+  },
+  {
+    "exam": "12/2019",
+    "q": 1,
+    "gram_pattern": "～ことは～が",
+    "gram_explain": "～ことは～が = ...thì có... nhưng... (thừa nhận một phần, nêu hạn chế). Thường đi với: Vた＋ことは＋Vたが. VD: 読んだことは読んだがあまり理解できなかった（Đọc thì đã đọc nhưng không hiểu lắm）"
+  },
+  {
+    "exam": "12/2019",
+    "q": 2,
+    "gram_pattern": "～くらい",
+    "gram_explain": "～くらい = Đến mức... (nhấn mạnh mức độ). Thường đi với: Vる＋くらい＋Aい, ～のも惜しいくらい. VD: 食事をするのも時間が惜しいくらい忙しい（Bận đến mức ngay cả thời gian ăn cũng tiếc）"
+  },
+  {
+    "exam": "12/2019",
+    "q": 3,
+    "gram_pattern": "～はともかく",
+    "gram_explain": "～はともかく = ...thì tạm không bàn, nhưng... (gác một bên). Thường đi với: N＋はともかく, 自分のこと＋はともかく. VD: 自分のことはともかく家族を悪く言われるのは我慢できない（Chuyện mình thì được, chứ nói xấu gia đình không chịu nổi）"
+  },
+  {
+    "exam": "12/2019",
+    "q": 4,
+    "gram_pattern": "～という＋こだわり",
+    "gram_explain": "～という＋こだわり = Sở thích/nguyên tắc kiểu như... (nêu nội dung cụ thể). Thường đi với: ～は譲れないという＋こだわりを持つ. VD: これだけは譲れないというこだわりは誰にでもある（Ai cũng có nguyên tắc không nhượng bộ）"
+  },
+  {
+    "exam": "12/2019",
+    "q": 5,
+    "gram_pattern": "～か～ても",
+    "gram_explain": "～か～ても = Hoặc là... hoặc dù có... thì... (liệt kê trường hợp tiêu cực). Thường đi với: 売り切れているか/残っていても. VD: 売り切れているか残っていてもサイズが合わない（Hoặc hết hàng, hoặc còn thì không đúng size）"
+  },
+  {
+    "exam": "12/2020",
+    "q": 1,
+    "gram_pattern": "～うえで",
+    "gram_explain": "～うえで = Khi..., trong việc... (mục đích, bối cảnh). Thường đi với: Vる＋うえで, ～を語るうえで欠かせない. VD: 日本の夏を語るうえで欠かせないイベントだ（Sự kiện không thể thiếu khi nói về mùa hè Nhật Bản）"
+  },
+  {
+    "exam": "12/2020",
+    "q": 2,
+    "gram_pattern": "～てまで",
+    "gram_explain": "～てまで = Đến mức phải... mà... (hy sinh quá mức). Thường đi với: Vて＋まで＋Vる必要はない. VD: 遊ぶ時間を奪ってまで無理にやらせる必要はない（Không cần ép đến mức cướp thời gian chơi）"
+  },
+  {
+    "exam": "12/2020",
+    "q": 3,
+    "gram_pattern": "～ますように",
+    "gram_explain": "～ますように = Mong sao... (cầu nguyện, ước nguyện). Thường đi với: Vません＋ように, ～が起きませんように. VD: 今日こそ何も起きませんように（Hôm nay mong đừng có chuyện gì xảy ra）"
+  },
+  {
+    "exam": "12/2020",
+    "q": 4,
+    "gram_pattern": "～などして",
+    "gram_explain": "～などして = Bằng cách như là... (nêu ví dụ biện pháp). Thường đi với: Vる＋などして. VD: 給与を引き上げるなどして人材を確保する（Đảm bảo nhân lực bằng cách như tăng lương）"
+  },
+  {
+    "exam": "12/2020",
+    "q": 5,
+    "gram_pattern": "～(よ)うと",
+    "gram_explain": "～(よ)うと = Với ý định..., nhằm mục đích... (văn viết). Thường đi với: Vよう＋と, 伝えよう/守ろう＋と. VD: 業績を後世に伝えようと記念美術館を建設した（Nhằm truyền lại thành tựu mà xây bảo tàng）"
+  },
+  {
+    "exam": "7/2021",
+    "q": 1,
+    "gram_pattern": "～までもない",
+    "gram_explain": "～までもない = Không cần phải... (việc quá hiển nhiên). Thường đi với: Vて＋もらうまでもない, 言うまでもない. VD: そんな簡単なこと、説明してもらうまでもない（Chuyện đơn giản thế, chẳng cần giải thích）"
+  },
+  {
+    "exam": "7/2021",
+    "q": 2,
+    "gram_pattern": "～だろうに",
+    "gram_explain": "～だろうに = Đáng lẽ phải... mà lại... (tiếc nuối, trách nhẹ). Thường đi với: Vる＋だろうに, ～くらいわかるだろうに. VD: 冗談だってことくらいわかるだろうに信じてしまった（Đáng lẽ phải hiểu đó là đùa, vậy mà lại tin）"
+  },
+  {
+    "exam": "7/2021",
+    "q": 3,
+    "gram_pattern": "～のみならず",
+    "gram_explain": "～のみならず = Không chỉ... mà còn... (= だけでなく, văn viết). Thường đi với: N/Vる＋のみならず. VD: 成績が上位に入るのみならず授業態度も真面目だ（Không chỉ đứng top mà thái độ học cũng nghiêm túc）"
+  },
+  {
+    "exam": "7/2021",
+    "q": 4,
+    "gram_pattern": "～というところで",
+    "gram_explain": "～というところで = Ở thời điểm mà..., vào đúng lúc... (tình huống sát nút). Thường đi với: あと一歩＋というところで. VD: あと一歩というところで優勝を逃した（Chỉ còn một bước mà để vuột mất vô địch）"
+  },
+  {
+    "exam": "7/2021",
+    "q": 5,
+    "gram_pattern": "～にあたって",
+    "gram_explain": "～にあたって = Khi..., nhân dịp... (dịp quan trọng, văn viết). Thường đi với: Vる＋にあたって. VD: 接客するにあたって常に考えているのはお客様の要望だ（Khi phục vụ khách, luôn nghĩ đến mong muốn của khách）"
+  },
+  {
+    "exam": "12/2021",
+    "q": 1,
+    "gram_pattern": "～(する)なり",
+    "gram_explain": "～なり = Vừa... thì ngay lập tức... (hành động xảy ra tức thì). Thường đi với: Vる＋なり, 帰ってくる/見る＋なり. VD: 歌手が登場するなり歓声が上がった（Ca sĩ vừa xuất hiện, tiếng reo hò liền vang lên）"
+  },
+  {
+    "exam": "12/2021",
+    "q": 2,
+    "gram_pattern": "見事なまでに",
+    "gram_explain": "見事なまでに = Đến mức tuyệt vời, xuất sắc đến nỗi (nhấn mạnh mức độ cao). Thường đi với: 見事な/完璧な＋までに. VD: 確かな表現力で見事なまでに演じきった（Diễn trọn vẹn đến mức xuất sắc bằng năng lực biểu đạt）"
+  },
+  {
+    "exam": "12/2021",
+    "q": 3,
+    "gram_pattern": "～ぐらいで",
+    "gram_explain": "～ぐらいで = Chỉ vì... mà đã... (mức độ không đáng kể). Thường đi với: 一度＋Vた＋ぐらいで＋あきらめる. VD: 一度断られたぐらいであきらめたりしないで（Đừng bỏ cuộc chỉ vì bị từ chối một lần）"
+  },
+  {
+    "exam": "12/2021",
+    "q": 4,
+    "gram_pattern": "～となると",
+    "gram_explain": "～となると = Hễ đến lúc..., khi nói đến... (chuyển sang tình huống khác). Thường đi với: 自分のこと＋となると, いざ＋となると. VD: 自分のこととなると感情的になってしまう（Hễ đến chuyện mình thì lại xúc động）"
+  },
+  {
+    "exam": "12/2021",
+    "q": 5,
+    "gram_pattern": "～ていては",
+    "gram_explain": "～ていては = Nếu cứ tiếp tục... thì... (cảnh báo hậu quả xấu). Thường đi với: Vて＋いては, ～に頼っていては. VD: 人の手のみに頼っていてはそのうち限界が来る（Cứ chỉ dựa vào sức người thì rồi sẽ đến giới hạn）"
+  },
+  {
+    "exam": "7/2022",
+    "q": 1,
+    "gram_pattern": "～限り",
+    "gram_explain": "～限り = Chừng nào còn... thì... (điều kiện tiếp diễn). Thường đi với: Vている＋限り, いる/生きている＋限り. VD: ファンがいる限り歌い続けたい（Chừng nào còn fan thì tôi vẫn muốn hát）"
+  },
+  {
+    "exam": "7/2022",
+    "q": 2,
+    "gram_pattern": "～たところ",
+    "gram_explain": "～たところ = Khi thử làm... thì (phát hiện kết quả). Thường đi với: 調査した/聞いた＋ところ. VD: 意識調査を行ったところ多くの人が運動不足を感じていた（Khảo sát thì thấy nhiều người thiếu vận động）"
+  },
+  {
+    "exam": "7/2022",
+    "q": 3,
+    "gram_pattern": "～ばこそ",
+    "gram_explain": "～ばこそ = Chính vì... nên mới... (nhấn mạnh nguyên nhân tích cực). Thường đi với: Vば＋こそ, 思えばこそ. VD: 私のことを思えばこそ母は厳しかった（Chính vì nghĩ cho tôi nên mẹ mới nghiêm khắc）"
+  },
+  {
+    "exam": "7/2022",
+    "q": 4,
+    "gram_pattern": "～もさることながら",
+    "gram_explain": "～もさることながら = ...cũng đã tốt, nhưng... còn nổi bật hơn. Thường đi với: N＋もさることながら. VD: 機能性もさることながらデザインが話題となった（Tính năng cũng tốt, nhưng thiết kế còn gây chú ý hơn）"
+  },
+  {
+    "exam": "7/2022",
+    "q": 5,
+    "gram_pattern": "～を機に",
+    "gram_explain": "～を機に = Nhân dịp..., lấy cơ hội... (bắt đầu việc mới). Thường đi với: N＋を機に, 創立50周年/結婚＋を機に. VD: 創立50周年を機にコンテストを始めた（Nhân dịp kỷ niệm 50 năm đã bắt đầu cuộc thi）"
+  },
+  {
+    "exam": "12/2022",
+    "q": 1,
+    "gram_pattern": "～かのような",
+    "gram_explain": "～かのような = Như thể là... (so sánh ẩn dụ). Thường đi với: Vた＋かのような＋N, まるで/あたかも＋～かのような. VD: 真夏に戻ったかのような日もある（Có ngày như thể đã quay về giữa hè）"
+  },
+  {
+    "exam": "12/2022",
+    "q": 2,
+    "gram_pattern": "～とは思えないほど",
+    "gram_explain": "～とは思えないほど = Đến mức không thể tin rằng... (ngạc nhiên). Thường đi với: Vた＋ものとは思えないほど＋Aな. VD: 100年前に建てられたとは思えないほど現代的だ（Hiện đại đến mức không tin là xây 100 năm trước）"
+  },
+  {
+    "exam": "12/2022",
+    "q": 3,
+    "gram_pattern": "～こともあって",
+    "gram_explain": "～こともあって = Cũng vì..., một phần vì... (nguyên nhân phụ). Thường đi với: Vている＋こともあって. VD: 症状が似ていることもあって自覚がないケースもある（Cũng vì triệu chứng giống nhau nên có trường hợp không tự nhận ra）"
+  },
+  {
+    "exam": "12/2022",
+    "q": 4,
+    "gram_pattern": "～(よ)うと(も)",
+    "gram_explain": "～(よ)うと(も) = Dù có... đi nữa cũng... (nhượng bộ mạnh). Thường đi với: 誰に何と＋言われようとも. VD: 誰に何と言われようとも自分の道を進みたい（Dù ai nói gì cũng muốn đi con đường mình tin）"
+  },
+  {
+    "exam": "12/2022",
+    "q": 5,
+    "gram_pattern": "～か否かにかかっている",
+    "gram_explain": "～か否かにかかっている = Phụ thuộc vào việc có... hay không. Thường đi với: Vできる＋か否か＋にかかっている. VD: 人材を確保できるか否かにかかっている（Phụ thuộc vào có đảm bảo được nhân tài hay không）"
+  },
+  {
+    "exam": "7/2023",
+    "q": 1,
+    "gram_pattern": "～反面",
+    "gram_explain": "～反面 = Mặt khác..., ngược lại... (hai mặt đối lập). Thường đi với: Aい/Vる＋反面. VD: ジェスチャーは効果的である反面、大きすぎると印象を悪くする（Cử chỉ hiệu quả, nhưng quá lớn lại gây ấn tượng xấu）"
+  },
+  {
+    "exam": "7/2023",
+    "q": 2,
+    "gram_pattern": "～ながらにして",
+    "gram_explain": "～ながらにして = Ngay trong trạng thái... mà vẫn... (không cần thay đổi). Thường đi với: 自宅にいながらにして, 生まれながらにして. VD: 自宅にいながらにして手軽に購入できる（Ngay tại nhà cũng có thể mua hàng dễ dàng）"
+  },
+  {
+    "exam": "7/2023",
+    "q": 3,
+    "gram_pattern": "～でさえ(も)",
+    "gram_explain": "～でさえ(も) = Ngay cả... cũng... (nhấn mạnh cực đoan). Thường đi với: N＋でさえ(も), 専門家/先生＋でさえも. VD: 昆虫学者でさえも迷うほど判別が難しい（Khó đến mức ngay cả nhà côn trùng học cũng phân vân）"
+  },
+  {
+    "exam": "7/2023",
+    "q": 4,
+    "gram_pattern": "～にあたり",
+    "gram_explain": "～にあたり = Khi..., nhân dịp... (dịp quan trọng, văn viết). Thường đi với: Vる＋にあたり, 転職/開会＋にあたり. VD: 転職にあたり不安がなかったといえばうそになる（Nói không lo khi chuyển việc thì là nói dối）"
+  },
+  {
+    "exam": "7/2023",
+    "q": 5,
+    "gram_pattern": "～今でこそ～が",
+    "gram_explain": "～今でこそ～が = Bây giờ thì... nhưng trước đây thì khác. Thường đi với: 今でこそ＋N＋だが. VD: 今でこそ人口10万人を超えるが30年前はのどかだった（Giờ trên 10 vạn dân, nhưng 30 năm trước còn yên bình）"
+  },
+  {
+    "exam": "12/2023",
+    "q": 1,
+    "gram_pattern": "～たところ",
+    "gram_explain": "～たところ = Khi thử... thì phát hiện ra... (kết quả bất ngờ). Thường đi với: 調査した/確認した＋ところ. VD: 調査したところマニュアルに誤りがあると判明した（Khi điều tra thì phát hiện hướng dẫn có lỗi）"
+  },
+  {
+    "exam": "12/2023",
+    "q": 2,
+    "gram_pattern": "～だけあって",
+    "gram_explain": "～だけあって = Xứng đáng với..., đúng là vì... (kết quả phù hợp danh tiếng). Thường đi với: Vる/Nの＋だけあって. VD: 料理が上手な森さんが勧めるだけあって使いやすい（Đúng là do Mori-san giỏi nấu giới thiệu nên dễ dùng thật）"
+  },
+  {
+    "exam": "12/2023",
+    "q": 3,
+    "gram_pattern": "～ほど",
+    "gram_explain": "～ほど = Đến mức... (nhấn mạnh mức độ). Thường đi với: Vる＋ほど, 思い出せない＋ほど. VD: 最後の映画が思い出せないほど久しく見ていない（Lâu đến mức không nhớ nổi bộ phim cuối cùng）"
+  },
+  {
+    "exam": "12/2023",
+    "q": 4,
+    "gram_pattern": "～知る限りでは",
+    "gram_explain": "～知る限りでは = Theo như tôi biết thì... (giới hạn hiểu biết). Thường đi với: 私が＋知る限りでは. VD: 私が知る限りではこのアプローチの論文はない（Theo tôi biết thì chưa có luận văn nào theo cách này）"
+  },
+  {
+    "exam": "12/2023",
+    "q": 5,
+    "gram_pattern": "～だけで",
+    "gram_explain": "～だけで = Chỉ cần... là... (điều kiện tối thiểu đủ). Thường đi với: Vる＋だけで. VD: レシピに沿って調理するだけで本格的な料理が作れる（Chỉ cần nấu theo công thức là làm được món chuyên nghiệp）"
+  },
+  {
+    "exam": "7/2024",
+    "q": 1,
+    "gram_pattern": "～のも無理はない",
+    "gram_explain": "～のも無理はない = Cũng chẳng lạ, cũng dễ hiểu thôi. Thường đi với: ～だから＋Vるのも無理はない. VD: 大人だって緊張するんだから子供がそうなるのも無理はない（Người lớn còn run thì trẻ con thế cũng chẳng lạ）"
+  },
+  {
+    "exam": "7/2024",
+    "q": 2,
+    "gram_pattern": "～に限っての",
+    "gram_explain": "～に限っての = Chỉ riêng ở..., chỉ giới hạn trong... (hạn định phạm vi). Thường đi với: N＋に限っての＋N. VD: 産卵を控えた雌に限っての行動だ（Hành vi chỉ ở con cái sắp đẻ trứng）"
+  },
+  {
+    "exam": "7/2024",
+    "q": 3,
+    "gram_pattern": "～うえに",
+    "gram_explain": "～うえに = Hơn nữa, không chỉ... mà còn... (thêm lý do). Thường đi với: Vる/Aい＋うえに. VD: まとめるのに時間がかかるうえに評判も良くなかった（Mất thời gian tổng hợp, lại còn đánh giá không tốt）"
+  },
+  {
+    "exam": "7/2024",
+    "q": 4,
+    "gram_pattern": "～なんて",
+    "gram_explain": "～なんて = Không ngờ rằng..., thật bất ngờ là... (ngạc nhiên). Thường đi với: Vる＋なんて. VD: こんなにも睡眠の質が変わるなんて思っていなかった（Không ngờ chất lượng giấc ngủ thay đổi nhiều vậy）"
+  },
+  {
+    "exam": "7/2024",
+    "q": 5,
+    "gram_pattern": "～つつも",
+    "gram_explain": "～つつも = Tuy... nhưng vẫn... (nhượng bộ, nghịch lý). Thường đi với: Vます＋つつも, 理解し＋つつも. VD: メリットは理解しつつも導入に至っていない企業が多い（Tuy hiểu lợi ích nhưng nhiều doanh nghiệp chưa áp dụng）"
+  },
+  {
+    "exam": "12/2024",
+    "q": 1,
+    "gram_pattern": "～こそ～ないが",
+    "gram_explain": "～こそ～ないが = Tuy không đến mức... nhưng... (nhấn mạnh bằng こそ). Thường đi với: Vます＋こそしなかったが. VD: 積もりこそしなかったが午前中ずっと雪が降っていた（Tuy không tích tuyết nhưng cả sáng tuyết rơi suốt）"
+  },
+  {
+    "exam": "12/2024",
+    "q": 2,
+    "gram_pattern": "～がゆえに",
+    "gram_explain": "～がゆえに = Chính vì... nên... (nguyên nhân, văn viết cổ). Thường đi với: Aい/Nである＋がゆえに. VD: 真面目すぎるがゆえにトラブルが絶えない（Chính vì quá nghiêm túc nên liên tục gặp rắc rối）"
+  },
+  {
+    "exam": "12/2024",
+    "q": 3,
+    "gram_pattern": "～がち",
+    "gram_explain": "～がち = Hay bị..., có xu hướng... (thường tiêu cực). Thường đi với: Vます＋がち, 思われがち, 忘れがち. VD: ビジネス書は堅苦しいものと思われがちだ（Sách kinh doanh hay bị cho là cứng nhắc）"
+  },
+  {
+    "exam": "12/2024",
+    "q": 4,
+    "gram_pattern": "～と思ったら",
+    "gram_explain": "～と思ったら = Vừa tưởng... thì lại... (sự việc bất ngờ tiếp nối). Thường đi với: Vた＋と思ったら, ようやく～と思ったら. VD: ようやくついたと思ったら今度は駐車場が混雑（Vừa tưởng đã đến thì lần này bãi xe lại đông）"
+  },
+  {
+    "exam": "12/2024",
+    "q": 5,
+    "gram_pattern": "～ないことには",
+    "gram_explain": "～ないことには = Nếu không... thì không thể... (điều kiện tiên quyết). Thường đi với: Vない＋ことには＋～ない. VD: 存在が知られないことには売れるも売れないもない（Không được biết đến thì nói gì đến bán hay không）"
+  },
+  {
+    "exam": "7/2025",
+    "q": 1,
+    "gram_pattern": "～でもしない限り",
+    "gram_explain": "～でもしない限り = Trừ khi... (điều kiện cực đoan, gần như bất khả thi). Thường đi với: Vます＋でもしない限り. VD: 宝くじに当たりでもしない限り一生買えない（Trừ khi trúng số, cả đời không mua nổi）"
+  },
+  {
+    "exam": "7/2025",
+    "q": 2,
+    "gram_pattern": "～により",
+    "gram_explain": "～により = Do..., bởi vì... (nguyên nhân, văn viết). Thường đi với: N＋により, 人手不足/技術の発達＋により. VD: 人手不足などにより定休日を設ける店舗も出てきた（Do thiếu nhân lực nên có cửa hàng đặt ngày nghỉ）"
+  },
+  {
+    "exam": "7/2025",
+    "q": 3,
+    "gram_pattern": "～そうなものなのに",
+    "gram_explain": "～そうなものなのに = Lẽ ra phải... mà lại không (kỳ vọng bị phản bội). Thường đi với: Vます＋そうなものなのに. VD: 毎日見ていたら飽きそうなものなのに一向にその様子がない（Xem mỗi ngày lẽ ra phải chán mà chẳng thấy dấu hiệu）"
+  },
+  {
+    "exam": "7/2025",
+    "q": 4,
+    "gram_pattern": "～といった",
+    "gram_explain": "～といった = Những thứ như là... (liệt kê ví dụ). Thường đi với: N＋といった＋N, ～や～といった. VD: 日中眠いといった睡眠に関する症状（Triệu chứng về giấc ngủ như buồn ngủ ban ngày）"
+  },
+  {
+    "exam": "7/2025",
+    "q": 5,
+    "gram_pattern": "～と引きかえに",
+    "gram_explain": "～と引きかえに = Để đổi lấy..., đánh đổi bằng... (mất cái này được cái kia). Thường đi với: N＋と引きかえに. VD: 便利な暮らしと引きかえに大切な資源が失われつつある（Đổi lấy cuộc sống tiện nghi, tài nguyên dần mất đi）"
+  },
+  {
+    "exam": "12/2025",
+    "q": 1,
+    "gram_pattern": "～も～なら～も～だ",
+    "gram_explain": "～も～なら～も～だ = A đã vậy thì B cũng vậy (phê phán cả hai). Thường đi với: AもAならBもBだ. VD: 西山さんも西山さんなら課長も課長だ（Nishiyama đã thế thì trưởng phòng cũng chẳng khá hơn）"
+  },
+  {
+    "exam": "12/2025",
+    "q": 2,
+    "gram_pattern": "～ように＋Vても",
+    "gram_explain": "～ないように＋Vても = Dù có cố... để không xảy ra... thì vẫn... (bất lực). Thường đi với: 起きないように気をつけていても. VD: どんなに気をつけていても起きる時には起きてしまう（Cẩn thận mấy, khi phải xảy ra thì vẫn xảy ra）"
+  },
+  {
+    "exam": "12/2025",
+    "q": 3,
+    "gram_pattern": "～ならでは",
+    "gram_explain": "～ならでは = Chỉ có ở..., đặc trưng riêng của... (độc đáo, tích cực). Thường đi với: N＋ならでは(の). VD: 長年会社勤めをしてきた彼ならではの自然な演技だ（Diễn xuất tự nhiên chỉ có ở anh — người từng đi làm nhiều năm）"
+  },
+  {
+    "exam": "12/2025",
+    "q": 4,
+    "gram_pattern": "～(する)なり",
+    "gram_explain": "～なり = Vừa... thì ngay lập tức... (hành động xảy ra tức thì). Thường đi với: Vる＋なり. VD: 家に帰ってくるなり楽しそうに話してくれた（Vừa về nhà liền kể chuyện hào hứng）"
+  },
+  {
+    "exam": "12/2025",
+    "q": 5,
+    "gram_pattern": "～うえでの",
+    "gram_explain": "～うえでの = Sau khi đã... (dựa trên cơ sở đã cân nhắc). Thường đi với: よく考えた＋うえでの＋N. VD: よく考えたうえでの決断ならば応援したい（Nếu là quyết định sau khi cân nhắc kỹ thì muốn ủng hộ）"
+  },
+  {
+    "exam": "7/2026",
+    "q": 1,
+    "gram_pattern": "～分には",
+    "gram_explain": "～分には = Trong phạm vi..., nếu chỉ... thì... (giới hạn OK). Thường đi với: Vている＋分には＋平気/問題ない. VD: 離れて見ている分には平気だ（Nếu chỉ đứng xa nhìn thì không sao）"
+  },
+  {
+    "exam": "7/2026",
+    "q": 2,
+    "gram_pattern": "～たところで",
+    "gram_explain": "～たところで = Cho dù có... đi nữa cũng... (kết quả vô ích). Thường đi với: Vた＋ところで. VD: 私が引き止めたところで状況は変わらないだろう（Dù tôi giữ lại thì tình hình cũng không đổi）"
+  },
+  {
+    "exam": "7/2026",
+    "q": 3,
+    "gram_pattern": "～ないだけの",
+    "gram_explain": "～ないだけの＋N = N đủ để không bị... (mức tối thiểu cần thiết). Thường đi với: 恥をかかない＋だけの＋マナー. VD: 社会に出て恥をかかないだけのマナーを身につけさせたい（Muốn con học đủ phép tắc để không mất mặt）"
+  },
+  {
+    "exam": "7/2026",
+    "q": 4,
+    "gram_pattern": "～なんて～と思って",
+    "gram_explain": "～なんて＋どれでもいいと思って = Cái gì đó kiểu như... thì nghĩ sao cũng được (coi nhẹ). Thường đi với: Nなんて＋Vと思って. VD: ドライヤーなんてどれでもいいと思っていた（Máy sấy thì nghĩ loại nào cũng được）"
+  },
+  {
+    "exam": "7/2026",
+    "q": 5,
+    "gram_pattern": "～ことなく～ままになっている",
+    "gram_explain": "～ことなく＋～まま = Không làm gì mà cứ để nguyên trạng thái. Thường đi với: Vる＋ことなく＋Vた＋ままになっている. VD: 箱から出すことなく押し入れにしまい込んだままだ（Không lấy ra khỏi hộp mà cất trong tủ để nguyên vậy）"
+  }
+]
