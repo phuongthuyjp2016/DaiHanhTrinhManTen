@@ -218,7 +218,7 @@ body{font-family:'Segoe UI',sans-serif;background-color:var(--bg);background-ima
   <div class="drawer-body" id="drawer-body"></div>
 </div>
 
-<script src="dao10-tuvung30-cards.js?v=20261019a"></script>
+<script src="dao10-tuvung30-cards.js?v=20261020a"></script>
 <script>
 const Q = [
 { kai:1, m:"m1", sub:"k2k",
@@ -4055,6 +4055,7 @@ function bCard(q){
     if(m){cur={t:m[1],head:m[2],ls:[]};blocks.push(cur);}
     else{const k=l.match(/^([a-zA-Z]) ?(.*)$/); if(cur&&k) cur.ls.push([k[1],k[2]]);}
   });
+  blocks.forEach(b=>{if(b.t==='H'){const rk={v:0,K:1,u:2,y:3,G:4,r:4,t:5};b.ls=b.ls.map((x,i)=>[x,i]).sort((p,q)=>((rk[p[0][0]]??9)-(rk[q[0][0]]??9))||(p[1]-q[1])).map(x=>x[0]);}});
   const order={H:0,W:1,OK:2,SK:2,O:3,S:3};
   const key=(b,i)=>order[b.t]*100+((b.t==='O'||b.t==='S')?'ABCD?'.indexOf(cdLetter(q,b.head.split('|')[0])):0)*10+i/1000;
   const sorted=blocks.map((b,i)=>({b,k:key(b,i)})).sort((x,y)=>x.k-y.k).map(x=>x.b);
