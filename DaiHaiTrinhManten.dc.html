@@ -1382,13 +1382,22 @@ function subPos(id, mobilePosMap, x, y, mobile) {
   return { x, y };
 }
 
+// Tên tool trong progressTools có thể kèm ?v=... để phá cache (vd 'dao10-daichien-dethi.html?v=20261018a'),
+// còn trang tool chỉ ghi tên file — bỏ tham số v trước khi tra, giữ các tham số khác như ?set=.
+function toolProgressKey(url) {
+  const q = url.indexOf('?');
+  if (q < 0) return url;
+  const params = url.slice(q + 1).split('&').filter(kv => kv && kv.split('=')[0] !== 'v');
+  return url.slice(0, q) + (params.length ? '?' + params.join('&') : '');
+}
+
 function computeToolProgress(toolUrls) {
-  if (!toolUrls || !toolUrls.length) return { has: false, pct: 0, correct: 0, total: 0 };
+  if (!toolUrls || !toolUrls.length) return { has: false, pct: 0, pctLabel: '0', barWidth: '0%', correct: 0, total: 0 };
   let stored = {};
   try { stored = JSON.parse(localStorage.getItem('dc_tool_progress') || '{}'); } catch (e) {}
   let correct = 0, total = 0, has = false, sumFrac = 0;
   toolUrls.forEach(url => {
-    const st = stored[url];
+    const st = stored[url] || stored[toolProgressKey(url)];
     if (st && typeof st.total === 'number' && st.total > 0) {
       correct += st.correct || 0; total += st.total; has = true;
       // Mỗi tool đóng góp tỉ lệ hoàn thành riêng của nó (0..1) vào trung bình chung,
@@ -1397,8 +1406,13 @@ function computeToolProgress(toolUrls) {
       sumFrac += Math.min(1, (st.correct || 0) / st.total);
     }
   });
-  const pct = Math.round((sumFrac / toolUrls.length) * 100);
-  return { has, pct, correct, total };
+  const exact = (sumFrac / toolUrls.length) * 100;
+  const pct = Math.round(exact);
+  // Đảo có hàng trăm/nghìn câu: vài câu đúng chỉ được <0.5% nên làm tròn sẽ ra 0% — nhãn hiện 1 chữ số lẻ
+  // và thanh luôn nhích ít nhất 1 chút khi đã có câu đúng.
+  const pctLabel = exact > 0 && exact < 10 ? exact.toFixed(1) : String(pct);
+  const barWidth = correct > 0 ? `max(6px, ${exact.toFixed(2)}%)` : '0%';
+  return { has, pct, pctLabel, barWidth, correct, total };
 }
 
 const ARC = {
@@ -2114,6 +2128,9 @@ class Component extends DCLogic {
     this.updateScale();
     this._onResize = () => this.updateScale();
     window.addEventListener('resize', this._onResize);
+    // Quay lại bằng nút Back của trình duyệt: trang lấy từ bfcache, không mount lại — đọc lại tiến trình tool.
+    this._onPageShow = (e) => { if (e.persisted) { this.syncProgressBarRewards(); this.forceUpdate(); } };
+    window.addEventListener('pageshow', this._onPageShow);
     const trySubscribe = () => {
       if (!window.dcSync) { setTimeout(trySubscribe, 200); return; }
       this._unsubAuth = window.dcSync.onAuthChanged(async (fbUser) => {
@@ -2240,6 +2257,7 @@ class Component extends DCLogic {
   };
   componentWillUnmount() {
     window.removeEventListener('resize', this._onResize);
+    window.removeEventListener('pageshow', this._onPageShow);
     if (this._unsubAuth) this._unsubAuth();
   }
   updateScale = () => {
@@ -2917,8 +2935,8 @@ class Component extends DCLogic {
       tools: (isletData.tools || []).map(t => ({ label: t.label, url: t.url })),
       hasToolProgress: isletToolProgress.has,
       toolProgressPct: isletToolProgress.pct,
-      toolProgressLabel: `${isletToolProgress.pct}% hoàn thành · ${isletToolProgress.correct}/${isletToolProgress.total} câu đúng`,
-      toolProgressBarStyle: { height:'100%', width: isletToolProgress.pct + '%', background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' } };
+      toolProgressLabel: `${isletToolProgress.pctLabel}% hoàn thành · ${isletToolProgress.correct}/${isletToolProgress.total} câu đúng`,
+      toolProgressBarStyle: { height:'100%', width: isletToolProgress.barWidth, background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' } };
 
     const currentZoneData = ANHSANG_ZONES.find(z => z.id === s.currentZoneId) || ANHSANG_ZONES[0];
     const currentZoneCompleted = anhSangDone.includes(currentZoneData.id);
@@ -2936,8 +2954,8 @@ class Component extends DCLogic {
       tools: (currentZoneData.tools || []).map(t => ({ label: t.label, url: t.url })),
       hasToolProgress: zoneToolProgress.has,
       toolProgressPct: zoneToolProgress.pct,
-      toolProgressLabel: `${zoneToolProgress.pct}% hoàn thành · ${zoneToolProgress.correct}/${zoneToolProgress.total} câu đúng`,
-      toolProgressBarStyle: { height:'100%', width: zoneToolProgress.pct + '%', background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
+      toolProgressLabel: `${zoneToolProgress.pctLabel}% hoàn thành · ${zoneToolProgress.correct}/${zoneToolProgress.total} câu đúng`,
+      toolProgressBarStyle: { height:'100%', width: zoneToolProgress.barWidth, background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
     };
     const goToZoneSets = this.goToSetSelect('zone', currentZoneData.id);
 
@@ -3212,8 +3230,8 @@ class Component extends DCLogic {
         guardianBadge: { width:'108px', height:'108px', borderRadius:'50%', background:'rgba(255,255,255,.12)', border:'3px solid #ffe9b0', display:'flex', alignItems:'center', justifyContent:'center', padding:'10px' },
         hasToolProgress: toolProgress.has,
         toolProgressPct: toolProgress.pct,
-        toolProgressLabel: `${toolProgress.pct}% hoàn thành · ${toolProgress.correct}/${toolProgress.total} câu đúng`,
-        toolProgressBarStyle: { height:'100%', width: toolProgress.pct + '%', background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
+        toolProgressLabel: `${toolProgress.pctLabel}% hoàn thành · ${toolProgress.correct}/${toolProgress.total} câu đúng`,
+        toolProgressBarStyle: { height:'100%', width: toolProgress.barWidth, background:'linear-gradient(90deg,#ffd25a,#f5a623)', borderRadius:'8px', transition:'width .4s ease' }
       },
       currentQuestion, quizProgressLabel, quizBarStyle, answered: s.answered, feedbackTitle, explainBoxStyle, nextLabel, scoreLabel,
       avatarArt: (profile && profile.avatar && profile.avatar.art) || '',
