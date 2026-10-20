@@ -239,8 +239,8 @@
 
         <div>
           <div style="{{ obLabelStyle }}">CHỌN NHÓM NHÀ</div>
-          <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:8px;">
-            <sc-for list="{{ houseOptions }}" as="ho" hint-placeholder-count="10">
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:8px;">
+            <sc-for list="{{ houseOptions }}" as="ho" hint-placeholder-count="12">
               <div onClick="{{ ho.onClick }}" style="{{ ho.style }}">
                 <div style="{{ ho.bgStyle }}"></div>
                 <div style="{{ ho.labelStyle }}">{{ ho.label }}</div>
@@ -1823,7 +1823,9 @@ const HOUSES = [
   { id:'kitsune', label:'Kitsune', desc:'Hồ Ly', art:'assets/art-082.webp', color:'#9b5fd0' },
   { id:'raion', label:'Raion', desc:'Sư Vương', art:'assets/art-083.webp', color:'#d99a2b' },
   { id:'okami', label:'Okami', desc:'Bạch Lang', art:'assets/art-084.webp', color:'#c2453c' },
-  { id:'hyou', label:'Hyou', desc:'Báo Tuyết', art:'assets/art-085.webp', color:'#7fb9dd' }
+  { id:'hyou', label:'Hyou', desc:'Báo Tuyết', art:'assets/art-085.webp', color:'#7fb9dd' },
+  { id:'komori', label:'Komori', desc:'Dạ Bức', art:'assets/nhom_nha_komori.png', color:'#8a4fd0' },
+  { id:'wani', label:'Wani', desc:'Thủy Ngạc', art:'assets/nhom_nha_wani.png', color:'#2f7fe0' }
 ];
 const FLAG_COLORS = ['#e85f5f', '#ffd25a', '#3f8f6e', '#4f9dbf', '#8f5fbf', '#eaf6fb'];
 const SHIP_TYPES = [
