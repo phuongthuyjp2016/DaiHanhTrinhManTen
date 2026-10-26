@@ -36,7 +36,11 @@ header p{color:var(--ink-soft);font-size:.78rem;}
 .sheet-btn{padding:7px 2px;text-align:center;border-radius:7px;cursor:pointer;
   background:#fff;border:1px solid var(--border);font-size:.76rem;color:var(--ink-soft);}
 .sheet-btn.active{background:var(--terra-dark);color:#fff;}
-.sheet-btn.nodata{opacity:.35;}
+.sheet-btn.nodata{opacity:.8;}
+.year-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;}
+.year-chip{padding:5px 11px;border-radius:14px;border:1.5px solid #a3872a;background:#fff;color:#5a4118;font-weight:700;font-size:13px;cursor:pointer;line-height:1.3;}
+.year-chip small{font-weight:500;opacity:.75;margin-left:3px;}
+.year-chip.active{background:#a3872a;color:#fff;}
 .toolbar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:12px;}
 .hl-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:18px;
   border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:.77rem;font-weight:600;
@@ -127,14 +131,15 @@ header p{color:var(--ink-soft);font-size:.78rem;}
   <a href="DaiHaiTrinhManten.dc.html?island=8&zone=nui-dai-van" style="display:inline-block; color:#5a4118; font-weight:700; font-size:13px; text-decoration:none; background:#fff; border:1.5px solid #a3872a; border-radius:14px; padding:6px 14px; margin-bottom:14px;">← Quay về đảo</a>
   <header>
     <h1>📖 N1 Trường Văn — Anchor Method (Chi tiết)</h1>
-    <p>Mon10 (24 bài) + Mon12 (24 bài) · 5 mục giải thích · Ẩn đáp án cho tới khi chọn</p>
+    <p id="subHeader">Chọn năm bên dưới · Ẩn đáp án cho tới khi chọn</p>
   </header>
   <div class="note-banner" id="noteBanner"></div>
   <div class="tabs">
     <div class="tab-btn active" data-src="Mon10">Mon10</div>
+    <div class="tab-btn" data-src="Mon11">Mon11</div>
     <div class="tab-btn" data-src="Mon12">Mon12</div>
   </div>
-  <div style="margin:0 0 8px;"><select id="yearSelect" onchange="setYear(this.value)" style="padding:6px 10px;border-radius:10px;border:1.5px solid #a3872a;font-weight:700;background:#fff;"></select></div>
+  <div class="year-chips" id="yearChips"></div>
   <div class="sheet-nav" id="sheetNav"></div>
   <div class="toolbar">
     <button class="hl-btn hl-btn-anchor locked" id="btn-anchor" onclick="toggleHL('anchor')">
@@ -166,6 +171,8 @@ const CONNECTIVES = [
   'わけです','わけだ'
 ];
 let currentSrc="Mon10",currentBaiIndex=0,state={};
+const dateKey = d => { const m = String(d||'').match(/(\d{1,2})\/(\d{4})/); return m ? (+m[2])*100 + (+m[1]) : 0; };
+DATA.sort((a,b) => dateKey(a.date) - dateKey(b.date));
 const TOTAL_Q_MON1012 = DATA.reduce((s,d)=>s+d.questions.length,0);
 let allCorrectMon1012 = JSON.parse(localStorage.getItem('dao9_mondai10_12_correct')||'[]');
 function reportToolProgress(correct,total){
@@ -303,7 +310,7 @@ function buildSheetNav(){
   filtered().forEach((item,idx)=>{
     const btn=document.createElement("div");
     btn.className="sheet-btn"+(idx===currentBaiIndex?" active":"")+(hasDetail(item)?"":" nodata");
-    btn.textContent=item.bai;
+    btn.textContent=item.date;
     btn.onclick=()=>{currentBaiIndex=idx;resetState();render();};
     nav.appendChild(btn);
   });
@@ -371,10 +378,10 @@ function render(){
   buildSheetNav();
   const list=filtered();const item=list[currentBaiIndex];
   const content=document.getElementById("content");content.innerHTML="";
-  document.getElementById("progress").textContent=currentSrc+" — Bài "+item.bai+" / "+list.length+" ("+item.date+")";
+  document.getElementById("progress").textContent=currentSrc+" — Kỳ "+item.date+" ("+(currentBaiIndex+1)+"/"+list.length+")";
   document.getElementById("noteBanner").textContent=hasDetail(item)
     ?"✅ Bài này đã có giải thích chi tiết đầy đủ (5 mục + nhãn bẫy)."
-    :"⏳ Bài này chưa có giải thích chi tiết — đang dùng bản tóm tắt.";
+    :"📝 Bài này có đáp án và giải thích tóm tắt.";
   const passageWrap=document.createElement("div");passageWrap.className="passage-wrap";
   const passageDiv=document.createElement("div");passageDiv.className="passage";passageDiv.id="passage";
   passageWrap.appendChild(passageDiv);content.appendChild(passageWrap);
@@ -458,17 +465,21 @@ render();
 let yearFilter = 'all';
 const yearOfDate = d => { const m = String(d.date||'').match(/(\d{4})/); return m ? m[1] : ''; };
 function renderYearSelect(){
-  const sel = document.getElementById('yearSelect'); if(!sel) return;
-  const ys = [...new Set(DATA.filter(d => d.source === currentSrc).map(yearOfDate))].filter(Boolean).sort();
+  const box = document.getElementById('yearChips'); if(!box) return;
+  const list = DATA.filter(d => d.source === currentSrc);
+  const ys = [...new Set(list.map(yearOfDate))].filter(Boolean).sort();
   if(yearFilter !== 'all' && !ys.includes(yearFilter)) yearFilter = 'all';
-  sel.innerHTML = '<option value="all">Tất cả các năm</option>' + ys.map(y => '<option value="'+y+'">Năm '+y+'</option>').join('');
-  sel.value = yearFilter;
+  const chip = (v, label, n) => '<div class="year-chip'+(yearFilter===v?' active':'')+'" data-y="'+v+'">'+label+'<small>'+n+'</small></div>';
+  box.innerHTML = chip('all', 'Tất cả', list.length) + ys.map(y => chip(y, y, list.filter(d => yearOfDate(d) === y).length)).join('');
+  box.querySelectorAll('.year-chip').forEach(c => c.onclick = () => setYear(c.dataset.y));
+  const sub = document.getElementById('subHeader');
+  if(sub) sub.textContent = currentSrc + ' · ' + list.length + ' bài · ' + ys.length + ' năm (' + (ys[0]||'') + '–' + (ys[ys.length-1]||'') + ') · chọn năm bên dưới';
 }
 window.filtered = function(){
   return DATA.filter(d => d.source === currentSrc && (yearFilter === 'all' || yearOfDate(d) === yearFilter));
 };
 function setYear(v){
-  yearFilter = v; currentBaiIndex = 0; resetState(); buildSheetNav(); render();
+  yearFilter = v; currentBaiIndex = 0; resetState(); renderYearSelect(); buildSheetNav(); render();
 }
 document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
   setTimeout(() => { yearFilter = 'all'; renderYearSelect(); currentBaiIndex = 0; resetState(); buildSheetNav(); render(); }, 0);
