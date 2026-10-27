@@ -174,7 +174,8 @@ const CONNECTIVES = [
   'と思う','と考える','と言える','が必要だ','が大切だ','が重要だ','なければならない',
   'わけです','わけだ'
 ];
-let currentSrc="Mon10",currentBaiIndex=0,state={};
+const ONLY=(new URLSearchParams(location.search).get("only")||"").split(",").filter(Boolean);
+let currentSrc=ONLY.length?ONLY[0]:"Mon10",currentBaiIndex=0,state={};
 const dateKey = d => { const m = String(d||'').match(/(\d{1,2})\/(\d{4})/); return m ? (+m[2])*100 + (+m[1]) : 0; };
 DATA.sort((a,b) => dateKey(a.date) - dateKey(b.date));
 const TOTAL_Q_MON1012 = DATA.reduce((s,d)=>s+d.questions.length,0);
@@ -183,6 +184,12 @@ function reportToolProgress(correct,total){
   try{
     const key='dc_tool_progress';
     const all=JSON.parse(localStorage.getItem(key)||'{}');
+    if(ONLY.length){
+      const has=function(src){return ONLY.indexOf(src)>=0;};
+      correct=allCorrectMon1012.filter(function(k){return has(k.split('-')[0]);}).length;
+      total=DATA.filter(function(d){return has(d.source);}).reduce(function(x,d){return x+d.questions.length;},0);
+      all['dao9-anhsang-mondai10-12-truongvan.html?only='+ONLY.join(',')]={correct,total};
+    }else
     all['dao9-anhsang-mondai10-12-truongvan.html']={correct,total};
     localStorage.setItem(key,JSON.stringify(all));
   }catch(e){}
@@ -456,11 +463,13 @@ function render(){
 }
 function resetCurrent(){resetState();render();}
 document.querySelectorAll(".tab-btn").forEach(function(btn){
+  if(ONLY.length&&ONLY.indexOf(btn.dataset.src)<0){btn.style.display="none";return;}
   btn.onclick=function(){
     document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
     btn.classList.add("active");currentSrc=btn.dataset.src;currentBaiIndex=0;resetState();render();
   };
 });
+if(ONLY.length){document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.toggle("active",b.dataset.src===currentSrc);});}
 function toggleHL(type){
   const map={anchor:"hlAnchor",conn:"hlConn",syn:"hlSyn"};
   const btnId={anchor:"btn-anchor",conn:"btn-conn",syn:"btn-syn"}[type];
