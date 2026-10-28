@@ -35,6 +35,15 @@
   .year-chip{padding:5px 11px;border-radius:14px;border:1.5px solid #a3872a;background:#fff;color:#5a4118;font-weight:700;font-size:13px;cursor:pointer;line-height:1.3;}
   .year-chip small{font-weight:500;opacity:.75;margin-left:3px;}
   .year-chip.active{background:#a3872a;color:#fff;}
+  .year-list{margin:-4px 0 14px;border:1.5px solid #a3872a;border-radius:12px;background:#fffdf5;}
+  .year-list summary{cursor:pointer;padding:8px 12px;font-weight:700;font-size:13px;color:#5a4118;}
+  .year-list-body{display:flex;flex-direction:column;gap:4px;padding:0 8px 8px;}
+  .yl-item{display:flex;gap:8px;align-items:baseline;text-align:left;width:100%;padding:7px 10px;border:1px solid #e6dcb8;border-radius:8px;background:#fff;color:#3a2f12;font-family:inherit;font-size:13px;line-height:1.4;cursor:pointer;}
+  .yl-item:hover{background:#faf3d9;}
+  .yl-item.cur{border-color:#a3872a;background:#f6ecc4;font-weight:700;}
+  .yl-item .yl-k{flex:0 0 auto;font-weight:700;color:#a3872a;white-space:nowrap;}
+  .yl-item .yl-t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .yl-item .yl-s{flex:0 0 auto;}
   .sheet-select{ display:none !important; }
   .progress-track{ width:140px; height:6px; background:var(--accent-soft); border-radius:4px; overflow:hidden; }
   .progress-fill{ height:100%; background:var(--accent); width:0%; transition:width .3s ease; }
@@ -142,6 +151,7 @@
 <div class="wrap">
 <div class="note">📌 Sau khi chọn <b>bất kỳ</b> đáp án, các kanji thuộc <b>từ mỏ neo</b> của bài (gắn với ý chính + đáp án đúng) sẽ được tô vàng trong đoạn văn — cố định, không đổi theo đáp án bạn chọn.</div>
 <div class="year-chips" id="yearChips"></div>
+<details class="year-list" id="yearList" open></details>
 <div id="quizWrap"></div>
 </div>
 
@@ -296,7 +306,25 @@ function renderYearChips(){
   const box = document.getElementById('yearChips'); if(!box) return;
   const act = currentSheetIndex(current);
   box.innerHTML = sheetStarts.map((st,k)=>{ const yr=(data[st].date.match(/\d{4}/)||[''])[0]; const n=(k+1<sheetStarts.length?sheetStarts[k+1]:data.length)-st; return '<div class="year-chip'+(k===act?' active':'')+'" data-k="'+k+'">'+yr+'<small>'+n+'</small></div>'; }).join('');
-  box.querySelectorAll('.year-chip').forEach(c => c.onclick = () => jumpToSheet(sheetStarts[+c.dataset.k]));
+  box.querySelectorAll('.year-chip').forEach(c => c.onclick = () => { yearListOpen = true; jumpToSheet(sheetStarts[+c.dataset.k]); });
+  renderYearList(act);
+}
+let yearListOpen = true;
+function renderYearList(act){
+  const box = document.getElementById('yearList'); if(!box) return;
+  const st = sheetStarts[act], en = (act+1<sheetStarts.length?sheetStarts[act+1]:data.length);
+  const yr = (data[st].date.match(/\d{4}/)||[''])[0];
+  let h = '<summary>Năm '+yr+' · '+(en-st)+' bài — bấm để chọn bài</summary><div class="year-list-body">';
+  for(let i=st;i<en;i++){
+    const b = data[i];
+    const st2 = results[i]===null ? '•' : (results[i] ? '✅' : '❌');
+    const txt = String(b.passage||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim().slice(0,60);
+    h += '<button type="button" class="yl-item'+(i===current?' cur':'')+'" data-i="'+i+'"><span class="yl-k">'+b.date+' · '+b.bai+'</span><span class="yl-t">'+txt+'</span><span class="yl-s">'+st2+'</span></button>';
+  }
+  box.innerHTML = h + '</div>';
+  box.open = yearListOpen;
+  box.ontoggle = () => { yearListOpen = box.open; };
+  box.querySelectorAll('.yl-item').forEach(b => b.onclick = () => { current = +b.dataset.i; renderQuestion(current); });
 }
 function currentSheetIndex(i){
   for(let s = sheetStarts.length - 1; s >= 0; s--){ if(i >= sheetStarts[s]) return s; }
