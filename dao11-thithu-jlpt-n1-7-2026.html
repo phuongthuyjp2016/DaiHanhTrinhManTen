@@ -50,6 +50,7 @@
     <h2>Chọn kỳ thi</h2>
     <div id="examCards"></div>
   </div>
+  <div id="history" class="block"></div>
   <div id="homeScore"></div>
   <div id="landing" class="block" style="display:none">
     <h2>Chọn phần muốn làm</h2>
@@ -74,6 +75,37 @@ Object.keys(EXAMS).forEach(k => {
 });
 const answers = {};
 Object.keys(EXAMS).forEach(k => { answers[k] = {}; });
+
+// ── Lưu bài trong trình duyệt (localStorage) ──
+const LS_STATE = "dao11_state_v1", LS_HIST = "dao11_history_v1";
+function lsGet(key, def){ try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e){ return def; } }
+function lsSet(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){} }
+function saveState(){
+  const out = { answers, state: {} };
+  Object.keys(STATE).forEach(k => { out.state[k] = {}; ["doc","nghe"].forEach(p => { const st = STATE[k][p]; out.state[k][p] = st ? { remain: st.remain, started: st.started, submitted: st.submitted } : null; }); });
+  lsSet(LS_STATE, out);
+}
+function loadState(){
+  const saved = lsGet(LS_STATE, null);
+  if (!saved) return;
+  Object.keys(EXAMS).forEach(k => {
+    if (saved.answers && saved.answers[k]) answers[k] = saved.answers[k];
+    ["doc","nghe"].forEach(p => {
+      const st = STATE[k][p], sv = saved.state && saved.state[k] && saved.state[k][p];
+      if (st && sv) { st.remain = sv.remain; st.started = sv.started; st.submitted = sv.submitted; }
+    });
+  });
+}
+// Mỗi lần nộp đủ cả bài thì lưu 1 bản vào lịch sử (kèm đáp án đã chọn) để xem lại điểm sau.
+function archiveIfDone(k){
+  if (!allSubmitted(k)) return;
+  const hist = lsGet(LS_HIST, []);
+  const dSc = STATE[k].doc ? scoreOf(docItems(k), k) : null;
+  const lSc = STATE[k].nghe ? scoreOf(listenItems(k), k) : null;
+  hist.unshift({ id: Date.now(), exam: k, label: EXAMS[k].label, at: new Date().toISOString(), answers: JSON.parse(JSON.stringify(answers[k])),
+    doc: dSc && { total: dSc.total, max: dSc.max, lines: dSc.lines }, nghe: lSc && { total: lSc.total, max: lSc.max, lines: lSc.lines } });
+  lsSet(LS_HIST, hist);
+}
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&lt;u&gt;/g,"<u>").replace(/&lt;\/u&gt;/g,"</u>");
 
 function curExam(){ return EXAMS[curExamKey].exam; }
@@ -107,6 +139,7 @@ function pick(examKey, no, n){
   const listen = (allItems(examKey).find(x => x.no === no) || {}).sec === "nghe";
   if (STATE[examKey][listen ? "nghe" : "doc"].submitted) return;
   answers[examKey][no] = n;
+  saveState();
 }
 function renderBlocksFor(examKey, part){
   return EXAMS[examKey].exam.blocks.filter(b => (part === "nghe") === (b.sec === "nghe")).map(b => {
@@ -128,6 +161,31 @@ function scoreOf(items, examKey){
   const secName = { moji: "Chữ·Từ vựng", bunpo: "Ngữ pháp", dokkai: "Đọc hiểu", nghe: "Nghe" };
   const lines = Object.keys(bySec).map(k => secName[k] + ": " + bySec[k].c + "/" + bySec[k].n).join(" · ");
   return { total, max: items.length, lines };
+}
+// Quy đổi điểm N1 theo bảng Dungmori: mỗi Mondai có điểm/câu riêng, mỗi phần tối đa 60, tổng 180.
+const JW = { mon1:1, mon2:1.5, mon3:1, mon4:1.25, mon5:1, mon6:2, mon7:2.5, mon8:3, mon9:2.5, mon10_12:3, mon13:2, listen1:2, listen2:2.5, listen3:3, listen4:1, listen5:3 };
+const JSEC = ["Chữ Hán · Từ vựng · Ngữ pháp", "Đọc hiểu", "Nghe hiểu"];
+function jlptScore(k, ans){
+  ans = ans || answers[k];
+  const secs = JSEC.map(n => ({ name: n, score: 0, max: 0 }));
+  EXAMS[k].exam.blocks.forEach(b => {
+    const its = b.items || b.groups.reduce((a, g) => a.concat(g.items), []);
+    const w = JW[b.id] || 0, si = b.sec === "nghe" ? 2 : (b.sec === "dokkai" && b.id !== "mon7" ? 1 : 0);
+    its.forEach(it => { secs[si].max += w; if (ans[it.no] === it.ans) secs[si].score += w; });
+  });
+  const total = secs.reduce((a, x) => a + x.score, 0), max = secs.reduce((a, x) => a + x.max, 0);
+  const low = secs.filter(x => x.score < 19);
+  return { secs, total, max, low, pass: total >= 100 && low.length === 0 };
+}
+function jlptHtml(r){
+  const badge = r.pass ? '<span style="color:#1a7f37">✅ ĐẬU</span>' : '<span style="color:#c62828">❌ TRƯỢT</span>';
+  let why = "";
+  if (!r.pass) why = r.total < 100 ? "Tổng chưa đạt 100 điểm." : "";
+  if (r.low.length) why += (why ? " " : "") + "Dưới điểm liệt 19: " + r.low.map(x => x.name).join(", ") + ".";
+  return '<div class="block"><div class="score">🎯 Điểm quy đổi N1: ' + r.total + '/' + r.max + ' — ' + badge + '</div>' +
+    '<div class="sub">' + r.secs.map(x => esc(x.name) + ": " + x.score + "/" + x.max).join(" · ") + '</div>' +
+    (why ? '<div class="sub">' + why + '</div>' : '') +
+    '<div class="sub">Đậu = tổng ≥ 100 và mỗi phần ≥ 19. Quy đổi theo bảng Dungmori — điểm thi thật có thể lệch.</div></div>';
 }
 function updateTimerArea(){
   const el = document.getElementById("timerArea");
@@ -181,21 +239,62 @@ function renderExamLanding(){
     const lines = [dSc, lSc].filter(Boolean).map(s => s.lines).join(" · ");
     homeHtml = '<div class="block"><div class="score">🎉 Tổng kết cả bài: ' + total + '/' + max + ' câu đúng</div><div class="sub">' + esc(lines) + '</div></div>';
   }
+  if (hasAnyProgress(curExamKey)) homeHtml += '<button class="btn" onclick="retakeExam()">🔄 Làm lại kỳ này từ đầu</button>';
+  if (reveal && hasDoc && hasNghe) homeHtml = jlptHtml(jlptScore(curExamKey)) + homeHtml;
   document.getElementById("homeScore").innerHTML = homeHtml;
 }
+function fmtDate(iso){ const d = new Date(iso); return d.toLocaleDateString("vi-VN") + " " + d.toLocaleTimeString("vi-VN", {hour:"2-digit", minute:"2-digit"}); }
+function renderHistory(){
+  const hist = lsGet(LS_HIST, []);
+  const el = document.getElementById("history");
+  if (!hist.length) { el.innerHTML = ""; return; }
+  el.innerHTML = '<h2>📚 Bài đã làm (' + hist.length + ')</h2>' + hist.map(h => {
+    const parts = [];
+    if (h.doc) parts.push("Đọc: " + h.doc.total + "/" + h.doc.max);
+    if (h.nghe) parts.push("Nghe: " + h.nghe.total + "/" + h.nghe.max);
+    const tot = (h.doc ? h.doc.total : 0) + (h.nghe ? h.nghe.total : 0), mx = (h.doc ? h.doc.max : 0) + (h.nghe ? h.nghe.max : 0);
+    if (h.doc && h.nghe && EXAMS[h.exam]) { const r = jlptScore(h.exam, h.answers); parts.push(r.total + "/" + r.max + " điểm — " + (r.pass ? "ĐẬU" : "TRƯỢT")); }
+    return '<div class="q"><div class="qstem"><b>' + esc(h.label) + '</b> · ' + fmtDate(h.at) + '</div><div class="sub">Tổng ' + tot + '/' + mx + ' câu đúng (' + parts.join(" · ") + ')</div>' +
+      '<button class="btn" onclick="viewAttempt(' + h.id + ')">Xem lại bài</button> <button class="btn" onclick="delAttempt(' + h.id + ')">Xoá</button></div>';
+  }).join("");
+}
+function viewAttempt(id){
+  const h = lsGet(LS_HIST, []).find(x => x.id === id);
+  if (!h || !EXAMS[h.exam]) return;
+  const k = h.exam, cur = STATE[k];
+  const inProgress = ["doc","nghe"].some(p => cur[p] && cur[p].started && !cur[p].submitted);
+  if (inProgress && !confirm("Kỳ này đang có phần làm dở. Xem lại bài cũ sẽ thay thế phần làm dở. Tiếp tục?")) return;
+  ["doc","nghe"].forEach(p => { if (cur[p]) { clearInterval(cur[p].tick); cur[p].tick = null; cur[p].started = true; cur[p].submitted = true; } });
+  answers[k] = JSON.parse(JSON.stringify(h.answers));
+  saveState(); chooseExam(k);
+}
+function delAttempt(id){
+  if (!confirm("Xoá bài đã làm này khỏi lịch sử?")) return;
+  lsSet(LS_HIST, lsGet(LS_HIST, []).filter(x => x.id !== id)); renderAll();
+}
+function retakeExam(){
+  if (!confirm("Làm lại kỳ này từ đầu? (Điểm các lần đã nộp vẫn lưu trong mục Bài đã làm)")) return;
+  const k = curExamKey;
+  ["doc","nghe"].forEach(p => { const st = STATE[k][p]; if (st) { clearInterval(st.tick); st.tick = null; st.started = false; st.submitted = false; st.remain = (p === "doc" ? EXAMS[k].exam.minutes : EXAMS[k].exam.listenMinutes) * 60; } });
+  answers[k] = {}; saveState(); renderAll();
+}
+function hasAnyProgress(k){ return ["doc","nghe"].some(p => STATE[k][p] && (STATE[k][p].started || STATE[k][p].submitted)) || Object.keys(answers[k]).length > 0; }
 function renderExamPicker(){
+  renderHistory();
   document.getElementById("examCards").innerHTML = Object.keys(EXAMS).map(k => {
     const st = STATE[k];
     const parts = [];
     const reveal = allSubmitted(k);
     if (reveal && st.doc && st.doc.submitted) parts.push("Đọc: " + scoreOf(docItems(k), k).total + "/" + docItems(k).length);
     if (reveal && st.nghe && st.nghe.submitted) parts.push("Nghe: " + scoreOf(listenItems(k), k).total + "/" + listenItems(k).length);
+    if (reveal && st.doc && st.nghe) { const r = jlptScore(k); parts.push(r.total + "/" + r.max + " điểm — " + (r.pass ? "ĐẬU" : "TRƯỢT")); }
     if (!reveal && ((st.doc && st.doc.submitted) || (st.nghe && st.nghe.submitted))) parts.push("Đang chờ nộp xong phần còn lại");
     return '<button class="btn card" onclick="chooseExam(\'' + k + '\')">' + esc(EXAMS[k].label) + (parts.length ? '<span class="sub">' + parts.join(" · ") + '</span>' : '') + '</button>';
   }).join("");
 }
 function renderAll(){
   document.getElementById("examPicker").style.display = curExamKey === null ? "" : "none";
+  document.getElementById("history").style.display = curExamKey === null ? "" : "none";
   document.getElementById("landing").style.display = (curExamKey !== null && mode === null) ? "" : "none";
   document.getElementById("homeScore").innerHTML = "";
   document.getElementById("topSub").textContent = curExamKey === null ? "Chọn kỳ thi muốn luyện" : (mode === null ? (EXAMS[curExamKey].label + " · chọn phần muốn làm") : (mode === "doc" ? "Đọc & Ngữ pháp · " + curExam().minutes + " phút" : "Nghe · " + curExam().listenMinutes + " phút"));
@@ -209,22 +308,32 @@ function renderAll(){
 function chooseExam(k){ curExamKey = k; mode = null; renderAll(); window.scrollTo(0,0); }
 function chooseMode(m){
   if (STATE[curExamKey][m] === null) return;
-  mode = m; renderAll(); window.scrollTo(0,0);
+  mode = m;
+  const st = STATE[curExamKey][m];
+  if (st.started && !st.submitted && !st.tick) runTick(st);
+  renderAll(); window.scrollTo(0,0);
 }
-function goHome(){ curExamKey = null; mode = null; renderAll(); window.scrollTo(0,0); }
+function goHome(){ curExamKey = null; mode = null; saveState(); renderAll(); window.scrollTo(0,0); }
+window.addEventListener("beforeunload", saveState);
 
 function startTest(){
   const st = STATE[curExamKey][mode];
-  if (st.started) return; st.started = true;
-  st.tick = setInterval(() => { st.remain--; updateTimerArea(); if (st.remain <= 0) { clearInterval(st.tick); submitTest(); } }, 1000);
-  updateTimerArea(); updateBtnArea();
+  if (st.started && st.tick) return; st.started = true;
+  runTick(st);
+  saveState(); updateTimerArea(); updateBtnArea();
+}
+function runTick(st){
+  clearInterval(st.tick);
+  st.tick = setInterval(() => { st.remain--; if (st.remain % 5 === 0) saveState(); updateTimerArea(); if (st.remain <= 0) { clearInterval(st.tick); submitTest(); } }, 1000);
 }
 function confirmSubmit(){ const label = mode === "doc" ? "Đọc & Ngữ pháp" : "Nghe"; if (confirm("Nộp bài phần " + label + " bây giờ?")) submitTest(); }
 function submitTest(){
   const st = STATE[curExamKey][mode];
-  if (st.submitted) return; st.submitted = true; clearInterval(st.tick); renderAll(); window.scrollTo(0,0);
+  if (st.submitted) return; st.submitted = true; clearInterval(st.tick); st.tick = null;
+  saveState(); archiveIfDone(curExamKey); renderAll(); window.scrollTo(0,0);
 }
 
+loadState();
 renderAll();
 </script>
 </body>
