@@ -48,6 +48,7 @@
 <div class="wrap">
   <div id="examPicker" class="block">
     <h2>Chọn kỳ thi</h2>
+    <div id="whoami" class="sub"></div>
     <div id="examCards"></div>
   </div>
   <div id="history" class="block"></div>
@@ -96,6 +97,29 @@ function loadState(){
     });
   });
 }
+// ── Gửi kết quả về Google Sheet của giáo viên (Apps Script) ──
+// Dán URL web app vào đây sau khi triển khai script (xem hướng dẫn trong vault). Để trống = không gửi.
+const RESULT_ENDPOINT = "";
+const LS_NAME = "dao11_name_v1", LS_OUTBOX = "dao11_outbox_v1";
+function studentName(){ return (lsGet(LS_NAME, "") || "").trim(); }
+function askName(){
+  let n = studentName();
+  while (!n) { n = (prompt("Nhập họ tên của bạn để giáo viên xem được kết quả:") || "").trim(); if (!n) { if (!confirm("Chưa nhập tên — kết quả sẽ không biết của ai. Nhập lại?")) { n = "(chưa nhập tên)"; } } }
+  lsSet(LS_NAME, n); return n;
+}
+function sendResult(entry){
+  if (!RESULT_ENDPOINT) return;
+  const box = lsGet(LS_OUTBOX, []); box.push(entry); lsSet(LS_OUTBOX, box); flushOutbox();
+}
+function flushOutbox(){
+  if (!RESULT_ENDPOINT) return;
+  const box = lsGet(LS_OUTBOX, []);
+  box.forEach(entry => {
+    fetch(RESULT_ENDPOINT, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(entry) })
+      .then(() => lsSet(LS_OUTBOX, lsGet(LS_OUTBOX, []).filter(x => x.id !== entry.id)))
+      .catch(() => {});
+  });
+}
 // Mỗi lần nộp đủ cả bài thì lưu 1 bản vào lịch sử (kèm đáp án đã chọn) để xem lại điểm sau.
 function archiveIfDone(k){
   if (!allSubmitted(k)) return;
@@ -105,6 +129,11 @@ function archiveIfDone(k){
   hist.unshift({ id: Date.now(), exam: k, label: EXAMS[k].label, at: new Date().toISOString(), answers: JSON.parse(JSON.stringify(answers[k])),
     doc: dSc && { total: dSc.total, max: dSc.max, lines: dSc.lines }, nghe: lSc && { total: lSc.total, max: lSc.max, lines: lSc.lines } });
   lsSet(LS_HIST, hist);
+  if (STATE[k].doc && STATE[k].nghe) {
+    const r = jlptScore(k);
+    sendResult({ id: hist[0].id, name: studentName() || "(chưa nhập tên)", exam: EXAMS[k].label, at: hist[0].at, total: r.total, max: r.max, pass: r.pass,
+      secs: r.secs.map(x => ({ name: x.name, score: x.score, max: x.max })), byBlock: r.byBlock, answers: answers[k] });
+  }
 }
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&lt;u&gt;/g,"<u>").replace(/&lt;\/u&gt;/g,"</u>");
 
@@ -168,14 +197,17 @@ const JSEC = ["Chữ Hán · Từ vựng · Ngữ pháp", "Đọc hiểu", "Nghe
 function jlptScore(k, ans){
   ans = ans || answers[k];
   const secs = JSEC.map(n => ({ name: n, score: 0, max: 0 }));
+  const byBlock = [];
   EXAMS[k].exam.blocks.forEach(b => {
     const its = b.items || b.groups.reduce((a, g) => a.concat(g.items), []);
     const w = JW[b.id] || 0, si = b.sec === "nghe" ? 2 : (b.sec === "dokkai" && b.id !== "mon7" ? 1 : 0);
-    its.forEach(it => { secs[si].max += w; if (ans[it.no] === it.ans) secs[si].score += w; });
+    let c = 0;
+    its.forEach(it => { secs[si].max += w; if (ans[it.no] === it.ans) { secs[si].score += w; c++; } });
+    byBlock.push(b.id + ": " + c + "/" + its.length);
   });
   const total = secs.reduce((a, x) => a + x.score, 0), max = secs.reduce((a, x) => a + x.max, 0);
   const low = secs.filter(x => x.score < 19);
-  return { secs, total, max, low, pass: total >= 100 && low.length === 0 };
+  return { secs, total, max, low, byBlock, pass: total >= 100 && low.length === 0 };
 }
 function jlptHtml(r){
   const badge = r.pass ? '<span style="color:#1a7f37">✅ ĐẬU</span>' : '<span style="color:#c62828">❌ TRƯỢT</span>';
@@ -243,6 +275,7 @@ function renderExamLanding(){
   if (reveal && hasDoc && hasNghe) homeHtml = jlptHtml(jlptScore(curExamKey)) + homeHtml;
   document.getElementById("homeScore").innerHTML = homeHtml;
 }
+function changeName(){ const n = (prompt("Họ tên:", studentName()) || "").trim(); if (n) { lsSet(LS_NAME, n); renderAll(); } }
 function fmtDate(iso){ const d = new Date(iso); return d.toLocaleDateString("vi-VN") + " " + d.toLocaleTimeString("vi-VN", {hour:"2-digit", minute:"2-digit"}); }
 function renderHistory(){
   const hist = lsGet(LS_HIST, []);
@@ -281,6 +314,8 @@ function retakeExam(){
 function hasAnyProgress(k){ return ["doc","nghe"].some(p => STATE[k][p] && (STATE[k][p].started || STATE[k][p].submitted)) || Object.keys(answers[k]).length > 0; }
 function renderExamPicker(){
   renderHistory();
+  const nm = studentName();
+  document.getElementById("whoami").innerHTML = nm ? 'Học viên: <b>' + esc(nm) + '</b> <button class="btn" onclick="changeName()">Đổi tên</button>' : '';
   document.getElementById("examCards").innerHTML = Object.keys(EXAMS).map(k => {
     const st = STATE[k];
     const parts = [];
@@ -305,7 +340,7 @@ function renderAll(){
   const examEl = document.getElementById("exam");
   examEl.innerHTML = (curExamKey === null || mode === null) ? "" : renderBlocksFor(curExamKey, mode);
 }
-function chooseExam(k){ curExamKey = k; mode = null; renderAll(); window.scrollTo(0,0); }
+function chooseExam(k){ if (!studentName()) askName(); curExamKey = k; mode = null; renderAll(); window.scrollTo(0,0); }
 function chooseMode(m){
   if (STATE[curExamKey][m] === null) return;
   mode = m;
@@ -335,6 +370,7 @@ function submitTest(){
 
 loadState();
 renderAll();
+flushOutbox();
 </script>
 </body>
 </html>
