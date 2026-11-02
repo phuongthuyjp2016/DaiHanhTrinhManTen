@@ -123,6 +123,13 @@
   .ans-chip.you.ok{ background:var(--good-bg); color:#1f5c3a; border:1px solid var(--good); }
   .ans-chip.you.no{ background:var(--bad-bg); color:#7a2424; border:1px solid var(--bad); }
   .ans-chip.correct{ background:var(--good-bg); color:#1f5c3a; border:1px solid var(--good); }
+  .review-choices{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  @media (max-width:520px){ .review-choices{ grid-template-columns:1fr; } }
+  .rc{ display:flex; gap:9px; align-items:flex-start; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; font-size:13.5px; background:var(--foam); }
+  .rc .letter{ font-weight:800; color:var(--sea1); min-width:16px; }
+  .rc .tag{ margin-left:auto; flex:0 0 auto; font-size:11px; font-weight:800; white-space:nowrap; }
+  .rc.right{ background:var(--good-bg); border-color:var(--good); color:#1f5c3a; }
+  .rc.wrong{ background:var(--bad-bg); border-color:var(--bad); color:#7a2424; }
   .script-panel{ background:#0f3350; border-radius:12px; padding:14px 16px; margin-bottom:14px; }
   .script-panel-title{ color:#bfe0f0; font-size:12px; font-weight:800; letter-spacing:.04em; margin-bottom:10px; }
   .script-line{ display:flex; gap:8px; margin-bottom:7px; font-size:13.5px; }
@@ -276,6 +283,8 @@ function onWrongAnswer() {
 }
 
 
+const cleanChoice = s => String(s).replace(/s*❤️?s*$/u, "");
+
 function bootSet() {
   const data = window.MONDAI1_DATA && window.MONDAI1_DATA[SET_ID];
   if (!data) {
@@ -285,6 +294,7 @@ function bootSet() {
   AUDIO_SRC = data.audioSrc;
   EXAM_LABEL = data.examLabel;
   QUESTIONS = data.questions;
+  QUESTIONS.forEach(q => { q.choices = q.choices.map(cleanChoice); });
   player.src = AUDIO_SRC;
   document.getElementById('pageTitle').textContent = `N1 聴解 問題1 (${EXAM_LABEL}) — Đảo Tiếng Vọng`;
   document.getElementById('brandLabel').innerHTML = `N1 聴解 · <b>MONDAI 1 · ${EXAM_LABEL}</b> · Đảo Tiếng Vọng`;
@@ -624,6 +634,14 @@ function renderReview() {
           <span class="lbl">あなたの答え</span>${yourIdx !== null ? (yourIdx+1) + ' 番 — ' + q.choices[yourIdx] : '(chưa chọn)'}
         </div>
         ${!isCorrect ? `<div class="ans-chip correct"><span class="lbl">正解</span>${q.correctAnswer+1} 番 — ${q.choices[q.correctAnswer]}</div>` : ''}
+      </div>
+
+      <div class="review-choices">
+        ${q.choices.map((opt, oi) => `
+          <div class="rc ${oi === q.correctAnswer ? "right" : (oi === yourIdx ? "wrong" : "")}">
+            <span class="letter">${oi+1}</span><span>${cleanChoice(opt)}</span>
+            <span class="tag">${oi === q.correctAnswer ? "❤️ 正解" : ""}${oi === yourIdx ? (oi === q.correctAnswer ? " · bạn chọn" : "✗ bạn chọn") : ""}</span>
+          </div>`).join("")}
       </div>
 
       <div class="script-panel">

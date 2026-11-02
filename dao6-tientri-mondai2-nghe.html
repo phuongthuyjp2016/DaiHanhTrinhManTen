@@ -122,6 +122,13 @@
   .ans-chip.you.ok{ background:var(--good-bg); color:#1f5c3a; border:1px solid var(--good); }
   .ans-chip.you.no{ background:var(--bad-bg); color:#7a2424; border:1px solid var(--bad); }
   .ans-chip.correct{ background:var(--good-bg); color:#1f5c3a; border:1px solid var(--good); }
+  .review-choices{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  @media (max-width:520px){ .review-choices{ grid-template-columns:1fr; } }
+  .rc{ display:flex; gap:9px; align-items:flex-start; border:1.5px solid var(--line); border-radius:10px; padding:9px 12px; font-size:13.5px; background:var(--foam); }
+  .rc .letter{ font-weight:800; color:var(--sea1); min-width:16px; }
+  .rc .tag{ margin-left:auto; flex:0 0 auto; font-size:11px; font-weight:800; white-space:nowrap; }
+  .rc.right{ background:var(--good-bg); border-color:var(--good); color:#1f5c3a; }
+  .rc.wrong{ background:var(--bad-bg); border-color:var(--bad); color:#7a2424; }
   .script-panel{ background:#2e1f47; border-radius:12px; padding:14px 16px; margin-bottom:14px; }
   .script-panel-title{ color:#dcc8f0; font-size:12px; font-weight:800; letter-spacing:.04em; margin-bottom:10px; }
   .script-line{ display:flex; gap:8px; margin-bottom:7px; font-size:13.5px; }
@@ -283,6 +290,8 @@ function onWrongAnswer() {
 
 let SUMMARY_HTML = '';
 
+const cleanChoice = s => String(s).replace(/s*❤️?s*$/u, "");
+
 function bootSet() {
   const data = window.MONDAI2_DATA && window.MONDAI2_DATA[SET_ID];
   if (!data) {
@@ -293,6 +302,7 @@ function bootSet() {
   NO_AUDIO = !!data.noAudio;
   EXAM_LABEL = data.examLabel;
   QUESTIONS = data.questions;
+  QUESTIONS.forEach(q => { q.choices = q.choices.map(cleanChoice); });
   SUMMARY_HTML = data.summaryHtml || '';
   if (AUDIO_SRC) { player.src = AUDIO_SRC; player.load(); }
   document.getElementById('pageTitle').textContent = `N1 聴解 問題2 (${EXAM_LABEL}) — Đảo Tiên Tri`;
@@ -655,6 +665,14 @@ function renderReview() {
           <span class="lbl">あなたの答え</span>${yourIdx !== null ? String.fromCharCode(65+yourIdx) + ' — ' + q.choices[yourIdx] : '(chưa chọn)'}
         </div>
         ${!isCorrect ? `<div class="ans-chip correct"><span class="lbl">正解</span>${String.fromCharCode(65+q.correctAnswer)} — ${q.choices[q.correctAnswer]}</div>` : ''}
+      </div>
+
+      <div class="review-choices">
+        ${q.choices.map((opt, oi) => `
+          <div class="rc ${oi === q.correctAnswer ? "right" : (oi === yourIdx ? "wrong" : "")}">
+            <span class="letter">${String.fromCharCode(65+oi)}</span><span>${cleanChoice(opt)}</span>
+            <span class="tag">${oi === q.correctAnswer ? "❤️ 正解" : ""}${oi === yourIdx ? (oi === q.correctAnswer ? " · bạn chọn" : "✗ bạn chọn") : ""}</span>
+          </div>`).join("")}
       </div>
 
       <div class="script-panel">
