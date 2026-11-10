@@ -57,6 +57,7 @@ body{font-family:'Segoe UI',sans-serif;background-color:var(--bg);background-ima
 .cd-star b{color:inherit}
 .cd-synh{margin-top:.45rem;font-weight:700}
 .cd-z{padding-left:1.1rem}
+.cd-blue{color:#1565c0;font-weight:700}
 .cd-n{background:#fff4d6;border:1px solid var(--gold);border-radius:6px;padding:.3rem .5rem;margin-top:.5rem}
 .cd-trap .cd-li{color:var(--txt)}
 .cd-tb{border-collapse:collapse;width:100%;font-size:.78rem;margin:.2rem 0}
@@ -4109,7 +4110,7 @@ function bCard(q){
       else if(k==='r'){sec('G','🔍 Từ liên quan theo từng chữ');body+=`<div class="cd-li">• ${cdEsc(v)}</div>`;}
       else if(k==='K'){ if(!tbl){close();run='';body+='<div class="cd-lb" style="margin-top:.4rem">📊 Phân tích chữ Hán</div><table class="cd-tb"><tr><th>漢字</th><th>Hán Việt</th><th>音読み</th><th>訓読み</th><th>Nghĩa</th></tr>';tbl=true;}
         const p=v.split('|'); body+=`<tr><td>${cdEsc(p[0]||'')}</td><td>${cdEsc(p[1]||'')}</td><td><b>${cdEsc(p[2]||'')}</b></td><td>${cdEsc(p[3]||'—')}</td><td>${cdEsc(p[4]||'')}</td></tr>`; }
-      else if(k==='t'){sec('t','❌ Bẫy đáp án','cd-trap');body+=`<div class="cd-li">${cdEsc(v)}</div>`;}
+      else if(k==='t'){sec('t','❌ Bẫy đáp án','cd-trap');const ti=v.indexOf(' → ');body+=(v.includes('**')&&ti>0)?`<div class="cd-li"><span class="cd-blue">${cdEsc(v.slice(0,ti))}</span>${cdEsc(v.slice(ti))}</div>`:`<div class="cd-li">${cdEsc(v)}</div>`;}
       else if(k==='x'){close();run='';body+=`<div class="cd-x">→ ${cdEsc(v)}</div>`;}
     });
     if(tbl) body+='</table>'; close();
