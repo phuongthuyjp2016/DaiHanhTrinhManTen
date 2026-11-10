@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N1 聴解 問題3・4・5 — File nghe</title>
+<style>
+  :root{ --ink:#2e1f47; --soft:#6a5490; --gold1:#ffd25a; --gold2:#f5a623; --gold-ink:#5a3b22; --card:#fffdf9; --line:#e3c67a; }
+  *{box-sizing:border-box;}
+  body{ margin:0; min-height:100dvh; background:#3c2a63; color:var(--ink); font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic","Segoe UI",sans-serif; line-height:1.6; padding-bottom:40px; }
+  .top{ background:#5b3487; padding:12px 16px; position:sticky; top:0; z-index:10; box-shadow:0 2px 10px rgba(0,0,0,.3); }
+  .top-in{ max-width:760px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .back{ color:#fff; font-weight:700; font-size:13px; text-decoration:none; background:rgba(255,255,255,.15); border:1.5px solid rgba(255,255,255,.5); border-radius:14px; padding:6px 14px; }
+  .brand{ color:#ffe9b0; font-weight:700; font-size:14px; }
+  .wrap{ max-width:760px; margin:0 auto; padding:18px 16px; }
+  .tabs{ display:flex; gap:8px; margin-bottom:12px; }
+  .tab{ flex:1; text-align:center; padding:10px 6px; border-radius:14px; font-weight:700; font-size:14px; cursor:pointer; border:2px solid rgba(255,255,255,.35); color:#fff; background:rgba(255,255,255,.1); }
+  .tab.on{ background:linear-gradient(180deg,var(--gold1),var(--gold2)); color:var(--gold-ink); border-color:transparent; }
+  .note{ color:#f2ecfa; font-size:13px; margin:0 0 12px; }
+  .card{ background:var(--card); border:2px dashed var(--line); border-radius:16px; padding:12px 14px; margin-bottom:10px; }
+  .card h3{ margin:0 0 6px; font-size:15px; }
+  .card audio{ width:100%; }
+</style>
+</head>
+<body>
+<div class="top"><div class="top-in">
+  <a class="back" href="DaiHaiTrinhManten.dc.html">← Về bản đồ</a>
+  <span class="brand" id="brand">N1 聴解 — File nghe</span>
+</div></div>
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <p class="note" id="note"></p>
+  <div id="list"></div>
+</div>
+<script>
+const SETS = ['2025-12','2025-07','2024-12','2024-07','2023-12','2023-07','2022-12','2022-07','2021-12','2021-07','2020-12','2019-12','2019-07','2018-12','2018-07','2017-12','2017-07','2016-12','2016-07','2015-12','2015-07','2014-12','2014-07','2013-12','2013-07','2012-12','2012-07','2011-12','2011-07','2010-12','2010-07'];
+const INFO = {
+  3:'Mondai 3 · 概要理解 — nghe một đoạn dài, nắm ý chính (chưa có câu hỏi in sẵn).',
+  4:'Mondai 4 · 即時応答 — nghe một câu rồi chọn câu đáp lại phù hợp nhất.',
+  5:'Mondai 5 · 統合理解 — nghe đoạn dài/nhiều người nói rồi suy luận, trả lời câu hỏi.'
+};
+const m = [3,4,5].includes(+new URLSearchParams(location.search).get('m')) ? +new URLSearchParams(location.search).get('m') : 3;
+document.getElementById('tabs').innerHTML = [3,4,5].map(x => `<a class="tab ${x===m?'on':''}" href="?m=${x}">Mondai ${x}</a>`).join('');
+document.getElementById('note').textContent = INFO[m] + ' Đây là bản đăng tạm: mới có file nghe, chưa có script và đáp án.';
+document.getElementById('list').innerHTML = SETS.map(s => {
+  const [y,mo] = s.split('-');
+  return `<div class="card"><h3>Đề tháng ${+mo}/${y}</h3><audio controls preload="none" src="assets/audio/MD${m}/N1_${+mo}-${y}.mp3"></audio></div>`;
+}).join('');
+document.title = `N1 聴解 問題${m} — File nghe`;
+</script>
+<script src="but-ve.js" defer></script>
+</body>
+</html>
