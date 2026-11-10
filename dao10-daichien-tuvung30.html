@@ -53,6 +53,12 @@ body{font-family:'Segoe UI',sans-serif;background-color:var(--bg);background-ima
 .cd-sec{margin-top:.35rem}.cd-lb{font-weight:700;font-size:.75rem;color:var(--lav)}
 .cd-li{padding-left:.4rem}.cd-gh{font-weight:700;margin-top:.25rem}
 .cd-x{margin-top:.35rem;color:var(--ng);font-weight:600}
+.cd-sense{margin-top:.4rem;font-weight:700;color:var(--lav)}
+.cd-star{background:#fff4d6;border-left:3px solid var(--gold);padding:.1rem .4rem;margin:.1rem 0;border-radius:3px}
+.cd-star b{color:#1a1a1a}
+.cd-synh{margin-top:.45rem;font-weight:700}
+.cd-z{padding-left:1.1rem}
+.cd-n{background:#fff4d6;border:1px solid var(--gold);border-radius:6px;padding:.3rem .5rem;margin-top:.5rem}
 .cd-trap .cd-li{color:var(--txt)}
 .cd-tb{border-collapse:collapse;width:100%;font-size:.78rem;margin:.2rem 0}
 .cd-tb th,.cd-tb td{border:1px solid var(--bdr);padding:.2rem .4rem;text-align:left}
@@ -4039,6 +4045,12 @@ function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*
 
 // ═══ Thẻ MANTEN (Mon1–4): dựng từ dữ liệu CARDS[chỉ số câu] — định dạng dòng ═══
 function cdEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
+function cdPh(v,cl){ // dòng cụm: ★ = N1 hay ra → nền vàng + đậm phần tiếng Nhật
+  const st=/^★s*/.test(v); if(st) v=v.replace(/^★s*/,"");
+  const i=v.indexOf(" → "); let a=i<0?v:v.slice(0,i), b=i<0?"":v.slice(i);
+  const jp=st?"<b>"+cdEsc(a)+"</b>":cdEsc(a);
+  return `<div class="cd-li ${cl||""} ${st?"cd-star":""}">${st?"★ ":"• "}${jp}${cdEsc(b)}</div>`;
+}
 function cdWord(f){ // word|reading|HV
   const p=f.split('|'); let w=p[0]; if(p[1]&&p[1]!==p[0]) w+='（'+p[1]+'）'; if(p[2]) w+='　'+p[2]; return w;
 }
@@ -4055,7 +4067,7 @@ function bCard(q){
     if(m){cur={t:m[1],head:m[2],ls:[]};blocks.push(cur);}
     else{const k=l.match(/^([a-zA-Z]) ?(.*)$/); if(cur&&k) cur.ls.push([k[1],k[2]]);}
   });
-  blocks.forEach(b=>{if(b.t==='H'){const rk={v:0,K:1,u:2,y:3,G:4,r:4,t:5};b.ls=b.ls.map((x,i)=>[x,i]).sort((p,q)=>((rk[p[0][0]]??9)-(rk[q[0][0]]??9))||(p[1]-q[1])).map(x=>x[0]);}});
+  blocks.forEach(b=>{if(b.t==='H'){const rk={v:0,K:1,u:2,m:2,y:3,z:3,n:3.5,G:4,r:4,t:5};b.ls=b.ls.map((x,i)=>[x,i]).sort((p,q)=>((rk[p[0][0]]??9)-(rk[q[0][0]]??9))||(p[1]-q[1])).map(x=>x[0]);}});
   const order={H:0,W:1,OK:2,SK:2,O:3,S:3};
   const key=(b,i)=>order[b.t]*100+((b.t==='O'||b.t==='S')?'ABCD?'.indexOf(cdLetter(q,b.head.split('|')[0])):0)*10+i/1000;
   const sorted=blocks.map((b,i)=>({b,k:key(b,i)})).sort((x,y)=>x.k-y.k).map(x=>x.b);
@@ -4089,8 +4101,11 @@ function bCard(q){
       else if(k==='d'){close();run='';body+=`<div class="cd-v">📖 Dịch: ${cdEsc(v)}</div>`;}
       else if(k==='e'){close();run='';const p=v.split('|');body+=`<div class="cd-v">📝 ${cdEsc(p[0])}</div>${p[1]?`<div class="cd-v">🇻🇳 ${cdEsc(p[1])}</div>`:''}`;}
       else if(k==='s'){sec('s','🔗 Cụm fix:');body+=`<div class="cd-li">${cdEsc(v)}</div>`;}
-      else if(k==='y'){sec('y','≒ Từ đồng nghĩa:');body+=`<div class="cd-li">• ${cdEsc(v)}</div>`;}
-      else if(k==='u'){sec('u','🔗 Cụm hay dùng');body+=`<div class="cd-li">• ${cdEsc(v)}</div>`;}
+      else if(k==='y'){sec('y','≒ Từ đồng nghĩa:');body+=b.ls.some(x=>x[0]==='z')?`<div class="cd-li cd-synh">${cdEsc(v)}</div>`:`<div class="cd-li">• ${cdEsc(v)}</div>`;}
+      else if(k==='z'){sec('y','≒ Từ đồng nghĩa:');body+=cdPh(v,'cd-z');}
+      else if(k==='m'){sec('u','🔗 Cụm hay dùng');body+=`<div class="cd-sense">${cdEsc(v)}</div>`;}
+      else if(k==='n'){sec('n','💡 N1 nhớ nhất','cd-n');body+=cdPh(v);}
+      else if(k==='u'){sec('u','🔗 Cụm hay dùng');body+=cdPh(v);}
       else if(k==='G'){sec('G','🔍 Từ liên quan theo từng chữ');body+=`<div class="cd-gh">${cdEsc(v)}</div>`;}
       else if(k==='r'){sec('G','🔍 Từ liên quan theo từng chữ');body+=`<div class="cd-li">• ${cdEsc(v)}</div>`;}
       else if(k==='K'){ if(!tbl){close();run='';body+='<div class="cd-lb" style="margin-top:.4rem">📊 Phân tích chữ Hán</div><table class="cd-tb"><tr><th>漢字</th><th>Hán Việt</th><th>音読み</th><th>訓読み</th><th>Nghĩa</th></tr>';tbl=true;}
