@@ -4047,7 +4047,7 @@ function cdEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 function cdPh(v,cl){ // dòng cụm: ★ = N1 hay ra → nền vàng + đậm phần tiếng Nhật
   const st=/^★s*/.test(v); if(st) v=v.replace(/^★s*/,"");
   const i=v.indexOf(" → "); let a=i<0?v:v.slice(0,i), b=i<0?"":v.slice(i);
-  const jp=st?"<b>"+cdEsc(a)+"</b>":cdEsc(a);
+  const jp=cdEsc(a);
   return `<div class="cd-li ${cl||""} ${st?"cd-star":""}">${st?"★ ":"• "}${jp}${cdEsc(b)}</div>`;
 }
 function cdWord(f){ // word|reading|HV
