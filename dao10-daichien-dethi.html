@@ -151,4 +151,5 @@ document.getElementById("dcSearchClose")?.addEventListener("click",dcCloseSearch
 document.getElementById("dcSearchOverlay")?.addEventListener("click",e=>{if(e.target.id==="dcSearchOverlay")dcCloseSearch();});
 document.addEventListener("keydown",e=>{if("Escape"===e.key){const ov=document.getElementById("dcSearchOverlay");if(ov&&ov.style.display==="flex")dcCloseSearch();}});
 document.getElementById("dcSearchInput")?.addEventListener("input",e=>{dcRenderSearchResults(e.target.value);});
-</script></body></html>
+</script><script src="but-ve.js" defer></script>
+</body></html>
