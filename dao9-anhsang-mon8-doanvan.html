@@ -165,6 +165,7 @@ const sheetStarts = (()=>{const s=[];let y=null;data.forEach((b,i)=>{const yr=(b
 
 let current = 0;
 const results = new Array(data.length).fill(null);
+const selectedIdx = new Array(data.length).fill(null);
 const highlightOn = new Array(data.length).fill(true);
 const explainOn = new Array(data.length).fill(false);
 
@@ -396,6 +397,7 @@ function renderQuestion(i){
     if(answered){
       cls += " disabled";
       if(idx === q.correct) cls += " correct";
+      else if(idx === selectedIdx[i]) cls += " wrong";
       else cls += " fade";
     }
     choicesHtml += `<div class="${cls}" onclick="selectChoice(${idx})">
@@ -410,7 +412,7 @@ function renderQuestion(i){
     if(highlightOn[i]) passageHtml = applyAnchorHighlight(q.passage, q.anchorWords);
 
     const isCorrect = results[i];
-    const msg = isCorrect ? q.shortFeedback.correct : (q.shortFeedback.wrong[window._lastWrongIdx] || q.shortFeedback.correct);
+    const msg = isCorrect ? q.shortFeedback.correct : (q.shortFeedback.wrong[selectedIdx[i]] || q.shortFeedback.correct);
     feedbackHtml = `<div class="feedback show ${isCorrect ? "good":"bad"}">
         <div class="verdict">${isCorrect ? "✓ Chính xác!" : "✗ Chưa đúng"}</div>
         <div>${msg}</div>
@@ -498,7 +500,7 @@ function renderQuestion(i){
 function selectChoice(idx){
   const q = data[current];
   if(results[current] !== null) return;
-  window._lastWrongIdx = idx;
+  selectedIdx[current] = idx;
   const isCorrect = (idx === q.correct);
   results[current] = isCorrect;
   highlightOn[current] = true;
@@ -540,7 +542,7 @@ function renderSummary(){
 }
 function restart(){
   current = 0;
-  for(let i=0;i<results.length;i++){ results[i] = null; explainOn[i] = false; highlightOn[i] = true; }
+  for(let i=0;i<results.length;i++){ results[i] = null; selectedIdx[i] = null; explainOn[i] = false; highlightOn[i] = true; }
   renderQuestion(0);
 }
 
