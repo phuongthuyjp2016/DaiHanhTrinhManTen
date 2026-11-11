@@ -160,6 +160,7 @@ const data = [{"bai":"BÀI 1","date":"07/2010 (1)","passage":"「コミュニケ
 data.forEach((d,i)=>{ if(d._uid === undefined) d._uid = i; d.date = String(d.date).replace(/^(\d)\//, '0$1/'); });
 const kyKey8 = d => { const m = String(d.date).match(/(\d{1,2})\/(\d{4})/); const q = String(d.date).match(/\((\d)\)/); return (m ? (+m[2])*100 + (+m[1]) : 0) * 10 + (q ? +q[1] : 0); };
 data.sort((a,b) => kyKey8(a) - kyKey8(b) || a._uid - b._uid);
+data.forEach((d,i)=>{ d.bai = 'BÀI ' + (i+1); }); // đánh số lại liên tục theo thứ tự kỳ thi
 (function(){ const t = document.getElementById('totalBai'); if(t) t.textContent = data.length; const j = document.getElementById('jumpInput'); if(j){ j.max = data.length; j.placeholder = '1-' + data.length; } })();
 const sheetStarts = (()=>{const s=[];let y=null;data.forEach((b,i)=>{const yr=(b.date.match(/\d{4}/)||[''])[0];if(yr!==y){s.push(i);y=yr;}});return s;})(); const sheetLabels = sheetStarts.map((st,k)=>{const yr=(data[st].date.match(/\d{4}/)||[''])[0];const end=(k+1<sheetStarts.length?sheetStarts[k+1]:data.length);return 'Năm '+yr+' ('+(end-st)+' bài)';});
 

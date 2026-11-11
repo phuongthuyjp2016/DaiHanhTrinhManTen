@@ -441,6 +441,7 @@ let layerState = { anchor:false, synonym:false, connective:true };
 const kyOf = b => { const m = String(b.title||'').match(/(\d{1,2})\/(\d{4})/); return m ? { y: +m[2], m: +m[1] } : { y: 0, m: 0 }; };
 baiList.sort((a,b) => { const x = kyOf(a), y = kyOf(b); return (x.y*100+x.m) - (y.y*100+y.m); });
 (function(){ const seen = {}; baiList.forEach(b => { const k = kyOf(b); const key = k.y + '-' + k.m; seen[key] = (seen[key]||0) + 1; b._seq = seen[key]; b._ky = (k.m < 10 ? '0' : '') + k.m + '/' + k.y; }); })();
+baiList.forEach((b,i) => { b.title = String(b.title).replace(/^BÀI\s*\d+/i, 'BÀI ' + (i+1)); }); // đánh số lại liên tục theo thứ tự kỳ thi
 const baiLabel = b => b._ky + ' · ' + b._seq;
 const TOTAL_Q_MON9 = baiList.reduce((s,b)=>s+b.questions.length,0);
 let allCorrectMon9 = JSON.parse(localStorage.getItem('dao9_mon9_correct')||'[]');
