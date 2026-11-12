@@ -173,6 +173,7 @@ let AUDIO_SRC = '';
 let EXAM_LABEL = SET_ID;
 let QUESTIONS = [];
 let SCRIPT_PAGES = [];
+let TEXT_ITEMS = null;
 
 const EVER_CORRECT_KEY = 'dao5_mondai5_ever_correct';
 let everCorrect = new Set(JSON.parse(localStorage.getItem(EVER_CORRECT_KEY) || '[]'));
@@ -620,12 +621,32 @@ function restartQuiz() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function renderScriptText() {
+  const items = TEXT_ITEMS;
+  if (!items || !items.length) return '';
+  return `<div class="script-panel"><div class="script-panel-title">📜 SCRIPT (chữ do máy nhận dạng từ ảnh nên có thể còn sai sót nhỏ — đối chiếu ảnh gốc bên dưới)</div>` +
+  items.map((it, ii) => {
+    const qs = QUESTIONS.map((q, qi) => ({ q, qi })).filter(x => parseInt(x.q.label, 10) === ii + 1);
+    const ansMap = {};
+    qs.forEach(x => { const a = x.q.correctAnswer + 1; (ansMap[a] = ansMap[a] || []).push(qs.length > 1 ? x.q.label.replace(/^\d番\s*/, '') : '✅'); });
+    return `<div style="margin-bottom:16px"><div class="script-q" style="color:#ffe9b0">${ii + 1}番　${esc(it.head)}</div>` +
+      it.lines.map(l => {
+        if (l.k === 'spk') return `<div class="script-line ${l.s.startsWith('女') ? 'spk-f' : 'spk-m'}"><div class="spk">${esc(l.s)}</div><div class="txt">${esc(l.t)}</div></div>`;
+        if (l.k === 'q') return `<div class="script-q" style="margin:8px 0 4px;font-weight:800;color:#ffe9b0">${esc(l.t)}</div>`;
+        if (l.k === 'ch') { const n = parseInt(l.t, 10); const tag = ansMap[n] ? ` <b style="color:#9be5b0">← ${ansMap[n].join(' / ')} 正解</b>` : ''; return `<div class="script-line" style="margin-left:34px"><div class="txt">${esc(l.t)}${tag}</div></div>`; }
+        return `<div class="script-line"><div class="txt">${esc(l.t)}</div></div>`;
+      }).join('') + (qs.length > 1 && !it.lines.some(l => l.k === 'ch') ? qs.map(x => `<div class="script-line" style="margin-left:34px"><div class="txt"><b style="color:#9be5b0">${x.q.label}: 正解 ${x.q.correctAnswer + 1}</b></div></div>`).join('') : '') + `</div>`;
+  }).join('') + `</div>`;
+}
 function renderReview() {
   const correct = correctCount();
   return `
   ${renderPlayerBar('', true)}
   <div class="review-summary">MONDAI 5 · ${EXAM_LABEL} · 答えと解説 — ${correct}/${QUESTIONS.length} 正解</div>
-  <div class="script-panel"><div class="script-panel-title">📜 SCRIPT GỐC (chữ đỏ là đáp án đúng) — bấm vào ảnh để phóng to</div>${SCRIPT_PAGES.map(p => `<a href="${p}" target="_blank"><img class="script-img" src="${p}" alt="Script" loading="lazy"></a>`).join('')}</div>
+  ${renderScriptText()}
+  <div class="script-panel"><details><summary class="script-panel-title" style="cursor:pointer">🖼 Xem ảnh trang script gốc (chữ đỏ là đáp án) — dùng để đối chiếu</summary>${SCRIPT_PAGES.map(p => `<a href="${p}" target="_blank"><img class="script-img" src="${p}" alt="Script" loading="lazy"></a>`).join('')}</details></div>
+
   ${QUESTIONS.map((q, qi) => {
     const yourIdx = selected[qi];
     const isCorrect = yourIdx === q.correctAnswer;
@@ -656,7 +677,7 @@ function renderReview() {
 (function loadSetData() {
   const s = document.createElement('script');
   s.src = `assets/audio/MD5/data/mon5.js`;
-  s.onload = bootSet;
+  s.onload = () => { const t = document.createElement('script'); t.src = `assets/audio/MD5/data/text5.js`; const go = () => { TEXT_ITEMS = (window.TEXT5_DATA && window.TEXT5_DATA[SET_ID]) || null; bootSet(); }; t.onload = go; t.onerror = go; document.head.appendChild(t); };
   s.onerror = () => {
     document.getElementById('app').innerHTML = '<div class="plank"><div class="plank-inner"><p>Không tải được dữ liệu bộ đề "' + SET_ID + '".</p></div></div>';
   };
