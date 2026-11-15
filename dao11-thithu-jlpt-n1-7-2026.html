@@ -67,9 +67,9 @@
   <div id="homeScore"></div>
   <div id="landing" class="block" style="display:none">
     <h2>Chọn phần muốn làm</h2>
-    <p class="sub">Ba phần tính giờ độc lập — làm phần nào trước cũng được. Vào phần Nghe sẽ thấy file âm thanh ngay đầu trang. <b>Phải nộp xong cả 3 phần mới hiện điểm và đáp án đúng/sai.</b></p>
-    <button class="btn primary card" id="goiCard" onclick="chooseMode('goi')">📝 Goi — Chữ·Từ vựng·Ngữ pháp (Mon1–7) · 50 phút</button>
-    <button class="btn primary card" id="docCard" onclick="chooseMode('doc')">📖 Đọc hiểu (Mon8–13) · 60 phút</button>
+    <p class="sub">Ba phần tính giờ độc lập — làm phần nào trước cũng được. Vào phần Nghe sẽ thấy file âm thanh ngay đầu trang. Goi 35 phút + Đọc hiểu 75 phút = 110 phút: nộp Goi sớm thì thời gian còn lại được <b>cộng dồn sang Đọc hiểu</b>. <b>Phải nộp xong cả 3 phần mới hiện điểm và đáp án đúng/sai.</b></p>
+    <button class="btn primary card" id="goiCard" onclick="chooseMode('goi')">📝 Goi — Chữ·Từ vựng·Ngữ pháp (Mon1–7) · 35 phút</button>
+    <button class="btn primary card" id="docCard" onclick="chooseMode('doc')">📖 Đọc hiểu (Mon8–13) · 75 phút</button>
     <button class="btn card" id="listenCard" onclick="chooseMode('nghe')">🎧 Nghe (Mon1–5) · 60 phút</button>
   </div>
   <div id="exam"></div>
@@ -79,7 +79,7 @@ const EXAMS = {"7/2026":{"label":"Kỳ 7/2026","exam":{"total":96,"minutes":110,
 const PARTS = ["goi","doc","nghe"];
 const PART_LABEL = { goi: "Goi (Mon1–7)", doc: "Đọc hiểu (Mon8–13)", nghe: "Nghe" };
 const PART_ICON = { goi: "📝", doc: "📖", nghe: "🎧" };
-const PART_MIN = { goi: 50, doc: 60 };
+const PART_MIN = { goi: 35, doc: 75 }; // Goi + Đọc hiểu = 110 phút; nộp sớm phần này thì giờ thừa dồn sang phần kia
 function partOfBlock(b){ return b.sec === "nghe" ? "nghe" : (/^mon[1-7]$/.test(b.id) ? "goi" : "doc"); }
 function partMinutes(k, p){ return p === "nghe" ? EXAMS[k].exam.listenMinutes : PART_MIN[p]; }
 const PARTNO = {};
@@ -116,7 +116,7 @@ function loadState(){
       if (st && sv) {
         if (sv.submitted) { st.submitted = true; st.started = true; st.remain = sv.remain; }
         else if (sk && !sk.goi && p !== "nghe") { st.started = false; st.remain = partMinutes(k, p) * 60; } // đang dở ở bản cũ → tính giờ lại
-        else { st.remain = sv.remain; st.started = sv.started; }
+        else { st.started = sv.started; st.remain = sv.started ? sv.remain : partMinutes(k, p) * 60; }
       }
     });
   });
@@ -157,7 +157,7 @@ function archiveIfDone(k){
   if (STATE[k].goi && STATE[k].doc && STATE[k].nghe) {
     const r = jlptScore(k);
     sendResult({ id: hist[0].id, name: studentName() || "(chưa nhập tên)", exam: EXAMS[k].label, at: hist[0].at, total: r.total, max: r.max, pass: r.pass,
-      secs: r.secs.map(x => ({ name: x.name, score: x.score, max: x.max })), byBlock: r.byBlock, answers: answers[k] });
+      secs: r.secs.map(x => ({ name: x.name, score: x.score, max: x.max })), byBlock: r.byBlock, weak: analysisData(k).filter(c => c.acc < 0.6).map(c => c.label + " " + c.c + "/" + c.n), answers: answers[k] });
   }
 }
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&lt;u&gt;/g,"<u>").replace(/&lt;\/u&gt;/g,"</u>");
@@ -254,6 +254,163 @@ function jlptHtml(r){
     (why ? '<div class="sub">' + why + '</div>' : '') +
     '<div class="sub">Đậu = tổng ≥ 100 và mỗi phần ≥ 19. Quy đổi theo bảng Dungmori — điểm thi thật có thể lệch.</div></div>';
 }
+// ── Phân tích điểm mạnh / điểm yếu theo từng Mondai ──
+const CATS = {
+  mon1: ["問題1 Đọc chữ Hán", "Ôn Hán tự: âm On/Kun và Hán Việt (Đảo 1)."],
+  mon2: ["問題2 Điền từ theo ngữ cảnh", "Học từ theo cụm cố định và ngữ cảnh (Đảo 2 – Mondai 2)."],
+  mon3: ["問題3 Từ đồng nghĩa", "Ôn chuỗi từ đồng nghĩa, chú ý từ gốc và cụm fix (Đảo 2 – Mondai 3)."],
+  mon4: ["問題4 Cách dùng từ", "Học cách dùng đúng của từ qua câu mẫu, nhớ cụm đi kèm (Đảo 2 – Mondai 4)."],
+  mon5: ["問題5 Ngữ pháp chọn đáp án", "Ôn mẫu ngữ pháp N1: ý nghĩa, sắc thái và từ đi trước/sau."],
+  mon6: ["問題6 Sắp xếp câu (★)", "Luyện xác định cấu trúc ngữ pháp trước, rồi mới ghép cụm."],
+  mon7: ["問題7 Điền đoạn văn", "Chú ý từ nối và mạch ý của cả đoạn, không chỉ câu chứa chỗ trống."],
+  mon8: ["問題8 Đoản văn", "Đọc câu đầu–câu cuối, tìm từ mỏ neo trong câu hỏi (Đảo 9 – Mondai 8)."],
+  mon9: ["問題9 Trung văn", "Lần theo từ nối để tìm lý do/hệ quả (Đảo 9 – Mondai 9)."],
+  Mon10: ["問題10 Trường văn (nội dung)", "Nắm ý chính từng đoạn trước khi vào câu hỏi (Đảo 9 – Mondai 10)."],
+  Mon11: ["問題11 So sánh A・B", "Gạch quan điểm của A và B riêng, rồi tìm điểm chung/khác (Đảo 9 – Mondai 11)."],
+  Mon12: ["問題12 Trường văn (luận điểm)", "Tìm câu khẳng định của tác giả và lý do đi kèm (Đảo 9 – Mondai 12)."],
+  mon13: ["問題13 Tìm kiếm thông tin", "Gạch điều kiện từng câu hỏi rồi đối chiếu bảng; chú ý ngoại lệ (※)."],
+  listen1: ["聴解 問題1 Hiểu đề bài", "Nghe nhiệm vụ cuối cùng người nói phải làm."],
+  listen2: ["聴解 問題2 Hiểu điểm chính", "Đọc trước lựa chọn, nghe lý do chính (đừng chọn theo từ nghe thấy đầu tiên)."],
+  listen3: ["聴解 問題3 Hiểu bao quát", "Nghe ý chính của cả đoạn, không sa vào chi tiết."],
+  listen4: ["聴解 問題4 Phản hồi tức thời", "Luyện phản xạ với câu đáp tự nhiên, chú ý ngữ điệu."],
+  listen5: ["聴解 問題5 Hiểu tổng hợp", "Ghi chú thông tin từng người nói, rồi so sánh lựa chọn."]
+};
+function analysisData(k, ans){
+  ans = ans || answers[k];
+  const cats = [], idx = {};
+  const eq = EXAMS[k].exam.equalWeight, cnt = [0, 0, 0];
+  const secOf = (b => b.sec === "nghe" ? 2 : (b.sec === "dokkai" && b.id !== "mon7" ? 1 : 0));
+  if (eq) EXAMS[k].exam.blocks.forEach(b => { cnt[secOf(b)] += (b.items || b.groups.reduce((a, g) => a.concat(g.items), [])).length; });
+  EXAMS[k].exam.blocks.forEach(b => {
+    const w = eq ? 60 / cnt[secOf(b)] : (JW[b.id] || 0);
+    const groups = b.groups ? b.groups.map(g => ({ key: b.id === "mon10_12" ? g.label : b.id, items: g.items })) : [{ key: b.id, items: b.items }];
+    groups.forEach(g => {
+      if (!CATS[g.key]) return;
+      let c = idx[g.key];
+      if (!c) { c = idx[g.key] = { key: g.key, label: CATS[g.key][0], advice: CATS[g.key][1], n: 0, c: 0, lost: 0, max: 0 }; cats.push(c); }
+      g.items.forEach(it => { c.n++; c.max += w; if (ans[it.no] === it.ans) c.c++; else c.lost += w; });
+    });
+  });
+  cats.forEach(c => { c.acc = c.n ? c.c / c.n : 0; });
+  return cats;
+}
+function analysisHtml(k, ans){
+  const cats = analysisData(k, ans);
+  const strong = cats.filter(c => c.acc >= 0.75).sort((a, b) => b.acc - a.acc || b.n - a.n).slice(0, 4);
+  const weak = cats.filter(c => c.acc < 0.6).sort((a, b) => b.lost - a.lost).slice(0, 4);
+  const bar = c => '<div style="display:flex;align-items:center;gap:8px;margin:3px 0"><div style="flex:0 0 11.5em;font-size:.85rem">' + esc(c.label) + '</div><div style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:6px;height:12px;overflow:hidden"><div style="width:' + Math.round(c.acc * 100) + '%;height:100%;background:' + (c.acc >= 0.75 ? "var(--good)" : c.acc >= 0.6 ? "var(--accent)" : "var(--bad)") + '"></div></div><div style="flex:0 0 4.2em;text-align:right;font-size:.85rem">' + c.c + '/' + c.n + '</div></div>';
+  return '<div class="block"><h2>📊 Phân tích điểm mạnh – điểm yếu</h2>' + cats.map(bar).join("") +
+    '<div class="score" style="margin-top:12px">💪 Điểm mạnh</div>' + (strong.length ? '<ul style="margin:4px 0 4px 1.1em;padding:0">' + strong.map(c => '<li>' + esc(c.label) + ' — ' + c.c + '/' + c.n + ' câu đúng (' + Math.round(c.acc * 100) + '%)</li>').join("") + '</ul>' : '<div class="sub">Chưa có phần nào đạt từ 75% — cần củng cố đều các phần.</div>') +
+    '<div class="score">⚠️ Cần cải thiện (ưu tiên theo số điểm bị mất)</div>' + (weak.length ? '<ul style="margin:4px 0 4px 1.1em;padding:0">' + weak.map(c => '<li><b>' + esc(c.label) + '</b> — ' + c.c + '/' + c.n + ' (' + Math.round(c.acc * 100) + '%), mất ' + Number(c.lost.toFixed(1)) + ' điểm. ' + esc(c.advice) + '</li>').join("") + '</ul>' : '<div class="sub">Không có phần nào dưới 60% — giữ phong độ và ôn lại các câu sai.</div>') +
+    '<div class="sub">Phân tích tự động theo tỷ lệ đúng từng Mondai; điểm mất = số điểm quy đổi của các câu sai.</div></div>';
+}
+
+// ── Phiếu kết quả (ảnh PNG gửi học viên) ──
+function ratingOf(k, ans, keys){
+  const cats = analysisData(k, ans).filter(c => keys.indexOf(c.key) >= 0);
+  const n = cats.reduce((a, c) => a + c.n, 0), c = cats.reduce((a, c2) => a + c2.c, 0);
+  const r = n ? c / n : 0;
+  return r >= 0.67 ? "A" : r >= 0.34 ? "B" : "C";
+}
+function makeCertificate(k, ans, name, when){
+  const W = 1024, H = 1536, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const x = cv.getContext("2d");
+  const JP = '"Noto Sans JP","Yu Gothic","Meiryo","Hiragino Sans",sans-serif';
+  const NAVY = "#14295c", GOLD = "#d4a93c";
+  const r = jlptScore(k, ans);
+  const fmtN = v => String(Number(v.toFixed(1)));
+  const rr = (X, Y, w, h, rad) => { x.beginPath(); x.moveTo(X + rad, Y); x.arcTo(X + w, Y, X + w, Y + h, rad); x.arcTo(X + w, Y + h, X, Y + h, rad); x.arcTo(X, Y + h, X, Y, rad); x.arcTo(X, Y, X + w, Y, rad); x.closePath(); };
+  const txt = (t, X, Y, size, o) => { o = o || {}; x.font = (o.weight || "700") + " " + size + "px " + (o.font || JP); x.fillStyle = o.color || NAVY; x.textAlign = o.align || "left"; x.textBaseline = o.base || "alphabetic"; x.fillText(t, X, Y); };
+  // nền + viền
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#fffaf0"); g.addColorStop(1, "#f6ebca");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.strokeStyle = "rgba(212,169,60,.18)"; x.lineWidth = 2;
+  for (let cy = 40; cy < H; cy += 44) for (let cx = (cy / 44 % 2) * 40; cx < W + 40; cx += 80) { x.beginPath(); x.arc(cx, cy, 40, Math.PI, 2 * Math.PI); x.stroke(); }
+  x.strokeStyle = GOLD; x.lineWidth = 10; rr(16, 16, W - 32, H - 32, 40); x.stroke();
+  x.lineWidth = 2; rr(34, 34, W - 68, H - 68, 28); x.stroke();
+  // tiêu đề
+  txt("日本語能力試験 N1 模擬試験　結果通知書", W / 2, 105, 41, { align: "center" });
+  txt("Japanese-Language Proficiency Test — Practice Test Result", W / 2, 148, 28, { align: "center", weight: "500", font: "Georgia,serif" });
+  txt(EXAMS[k].label + "（模擬）", W / 2, 188, 26, { align: "center", weight: "500" });
+  x.strokeStyle = GOLD; x.lineWidth = 2; x.beginPath(); x.moveTo(58, 212); x.lineTo(W - 58, 212); x.stroke();
+  // thông tin
+  const d = when || new Date();
+  const ds = d.getFullYear() + "." + String(d.getMonth() + 1).padStart(2, "0") + "." + String(d.getDate()).padStart(2, "0");
+  txt("レベル", 72, 275, 40); txt("Level", 72, 303, 24, { weight: "500", font: "Georgia,serif" }); txt("： N1", 245, 275, 40);
+  txt("名前", 72, 350, 40); txt("Name", 72, 378, 24, { weight: "500", font: "Georgia,serif" });
+  let nm = name || "(chưa nhập tên)"; let ns = 40; x.font = "700 " + ns + "px " + JP; while (x.measureText("： " + nm).width > 700 && ns > 22) { ns -= 2; x.font = "700 " + ns + "px " + JP; }
+  txt("： " + nm, 245, 350, ns);
+  txt("Test： " + ds, 72, 430, 38, { font: "Georgia,serif" });
+  // bảng điểm
+  const TX = 68, TW = 888, cw = [368, 190, 172, 158];
+  const rows = [["文字・語彙・文法", "Vocabulary / Grammar"], ["読解", "Reading"], ["聴解", "Listening"]];
+  let Y = 468;
+  x.fillStyle = "#dbe6f7"; x.fillRect(TX, Y, TW, 80);
+  const heads = [["得点区分", "Section"], ["得点", "Score"], ["基準点", "Pass"], ["判定", "Result"]];
+  let cx0 = TX; heads.forEach((h, i) => { txt(h[0], cx0 + cw[i] / 2, Y + 36, 27, { align: "center" }); txt(h[1], cx0 + cw[i] / 2, Y + 66, 23, { align: "center", weight: "500", font: "Georgia,serif" }); cx0 += cw[i]; });
+  const mark = (X, Y2, ok) => { x.lineWidth = 5; if (ok) { x.strokeStyle = "#1f8a3b"; x.beginPath(); x.arc(X, Y2, 18, 0, 7); x.stroke(); } else { x.strokeStyle = "#c62828"; x.beginPath(); x.moveTo(X - 15, Y2 - 15); x.lineTo(X + 15, Y2 + 15); x.moveTo(X + 15, Y2 - 15); x.lineTo(X - 15, Y2 + 15); x.stroke(); } };
+  Y += 80;
+  rows.forEach((rw, i) => {
+    const sc = r.secs[i]; x.fillStyle = "#fffdf7"; x.fillRect(TX, Y, TW, 53);
+    txt(rw[0], TX + 18, Y + 37, 30);
+    txt(fmtN(sc.score) + " / 60", TX + cw[0] + cw[1] / 2, Y + 37, 32, { align: "center" });
+    txt("19", TX + cw[0] + cw[1] + cw[2] / 2, Y + 37, 32, { align: "center" });
+    mark(TX + cw[0] + cw[1] + cw[2] + cw[3] / 2, Y + 27, sc.score >= 19);
+    Y += 53;
+  });
+  x.fillStyle = "#dbe6f7"; x.fillRect(TX, Y, TW, 60);
+  txt("総合得点 / Total Score", TX + 18, Y + 41, 30);
+  txt(fmtN(r.total) + " / 180", TX + cw[0] + cw[1] / 2, Y + 41, 32, { align: "center" });
+  txt("—", TX + cw[0] + cw[1] + cw[2] / 2, Y + 41, 32, { align: "center" });
+  mark(TX + cw[0] + cw[1] + cw[2] + cw[3] / 2, Y + 30, r.pass);
+  const tableBottom = Y + 60;
+  x.strokeStyle = NAVY; x.lineWidth = 2.5; x.strokeRect(TX, 468, TW, tableBottom - 468);
+  x.lineWidth = 1.3; let lx = TX; cw.slice(0, 3).forEach(w => { lx += w; x.beginPath(); x.moveTo(lx, 468); x.lineTo(lx, tableBottom); x.stroke(); });
+  [548, 601, 654, 707].forEach(yy => { x.beginPath(); x.moveTo(TX, yy); x.lineTo(TX + TW, yy); x.stroke(); });
+  // tham khảo
+  const RY = tableBottom + 62;
+  x.fillStyle = NAVY; x.beginPath(); x.moveTo(228, tableBottom + 14); x.lineTo(268, tableBottom + 14); x.lineTo(248, tableBottom + 50); x.closePath(); x.fill();
+  const vo = ratingOf(k, ans, ["mon1", "mon2", "mon3", "mon4"]), gr = ratingOf(k, ans, ["mon5", "mon6", "mon7"]);
+  x.fillStyle = "#dbe6f7"; rr(58, RY, 380, 276, 18); x.fill(); x.strokeStyle = NAVY; x.lineWidth = 2.5; rr(58, RY, 380, 276, 18); x.stroke();
+  txt("参考情報", 248, RY + 50, 31, { align: "center" }); txt("Reference Information", 248, RY + 90, 30, { align: "center", weight: "500", font: "Georgia,serif" });
+  x.fillStyle = "#fffdf7"; x.fillRect(59, RY + 100, 378, 175);
+  x.lineWidth = 1.5; x.beginPath(); x.moveTo(58, RY + 100); x.lineTo(438, RY + 100); x.moveTo(58, RY + 192); x.lineTo(438, RY + 192); x.moveTo(248, RY + 100); x.lineTo(248, RY + 276); x.stroke();
+  txt("文字・語彙", 153, RY + 134, 28, { align: "center" }); txt("Vocabulary", 153, RY + 166, 26, { align: "center", weight: "500", font: "Georgia,serif" });
+  txt("文法", 343, RY + 134, 28, { align: "center" }); txt("Grammar", 343, RY + 166, 26, { align: "center", weight: "500", font: "Georgia,serif" });
+  txt(vo, 153, RY + 255, 66, { align: "center", font: "Georgia,serif" }); txt(gr, 343, RY + 255, 66, { align: "center", font: "Georgia,serif" });
+  // chú giải A/B/C
+  x.setLineDash([4, 5]); x.strokeStyle = NAVY; x.lineWidth = 1.5; rr(462, RY - 10, 494, 356, 6); x.stroke(); x.setLineDash([]);
+  const leg = [["A 正答率 67%以上", "The number of correct responses is", "67% or higher."], ["B 正答率 34%以上 67%未満", "The number of correct responses is", "between 34% and 66%."], ["C 正答率 34%未満", "The number of correct responses is", "less than 34%."]];
+  leg.forEach((l, i) => { const ly = RY + 38 + i * 112; txt(l[0], 484, ly, 29); txt(l[1], 484, ly + 32, 24, { weight: "400", font: "Georgia,serif" }); txt(l[2], 484, ly + 60, 24, { weight: "400", font: "Georgia,serif" }); });
+  // banner kết quả
+  const BY = RY + 370;
+  x.fillStyle = r.pass ? "#c0392b" : "#46557a"; x.fillRect(40, BY, 640, 106);
+  x.strokeStyle = "#f3d27a"; x.lineWidth = 3; x.strokeRect(48, BY + 8, 624, 90);
+  txt(r.pass ? "合格" : "不合格", 100, BY + 74, 68, { color: "#fff" });
+  txt(r.pass ? "Passed" : "Not Passed", r.pass ? 300 : 340, BY + 72, 52, { color: "#fff", weight: "700", font: "Georgia,serif" });
+  // ngày
+  const EN = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  txt(d.getFullYear() + " 年 " + (d.getMonth() + 1) + " 月 " + d.getDate() + " 日", 712, BY + 40, 30, { weight: "500" });
+  txt(EN[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear(), 712, BY + 82, 30, { weight: "500", font: "Georgia,serif" });
+  // logo chữ Same
+  x.save(); x.translate(640, H - 110); x.rotate(-0.06);
+  x.font = "italic 700 92px Georgia,serif"; x.fillStyle = "#1565c0"; x.textAlign = "left"; x.fillText("Same", 0, 0); x.restore();
+  x.strokeStyle = "#29b6f6"; x.lineWidth = 5; x.beginPath(); x.moveTo(630, H - 88); x.bezierCurveTo(700, H - 112, 760, H - 70, 840, H - 92); x.stroke();
+  txt("Practice Score Report", 800, H - 56, 29, { align: "center", color: "#1565c0", font: "Georgia,serif" });
+  return cv;
+}
+let certUrl = "";
+function showCert(){
+  const k = curExamKey, h = lsGet(LS_HIST, []).find(x => x.exam === k);
+  const cv = makeCertificate(k, answers[k], studentName(), h ? new Date(h.at) : new Date());
+  certUrl = cv.toDataURL("image/png");
+  const safe = (studentName() || "hocvien").replace(/[^\p{L}\p{N}]+/gu, "_");
+  document.getElementById("certBox").innerHTML = '<img src="' + certUrl + '" alt="Phiếu kết quả" style="max-width:100%;width:460px;border-radius:10px;border:1px solid var(--line);display:block;margin:10px 0">' +
+    '<a class="btn primary" style="display:inline-block;text-decoration:none" download="Phieu-ket-qua-N1_' + safe + '_' + EXAMS[k].label.replace(/[^0-9A-Za-z]+/g, "-") + '.png" href="' + certUrl + '">⬇️ Tải phiếu kết quả (PNG) để gửi học viên</a>';
+}
+function certBlockHtml(){
+  return '<div class="block"><h2>🎓 Phiếu kết quả</h2><div class="sub">Phiếu có tên học viên, ngày thi và điểm — tải về dạng ảnh để gửi cho học viên.</div><button class="btn" onclick="showCert()">Tạo phiếu kết quả</button><div id="certBox"></div></div>';
+}
 function updateTimerArea(){
   const el = document.getElementById("timerArea");
   if (!curExamKey || mode === null) { el.innerHTML = ""; return; }
@@ -292,7 +449,7 @@ function renderExamLanding(){
     homeHtml = '<div class="block"><div class="score">🎉 Tổng kết cả bài: ' + total + '/' + max + ' câu đúng</div><div class="sub">' + esc(scs.map(x => x.lines).join(" · ")) + '</div></div>';
   }
   if (hasAnyProgress(k)) homeHtml += '<button class="btn" onclick="retakeExam()">🔄 Làm lại kỳ này từ đầu</button>';
-  if (reveal && PARTS.every(p => STATE[k][p])) homeHtml = jlptHtml(jlptScore(k)) + homeHtml;
+  if (reveal && PARTS.every(p => STATE[k][p])) homeHtml = jlptHtml(jlptScore(k)) + analysisHtml(k) + certBlockHtml() + homeHtml;
   document.getElementById("homeScore").innerHTML = homeHtml;
 }
 function changeName(){ const n = (prompt("Họ tên:", studentName()) || "").trim(); if (n) { lsSet(LS_NAME, n); renderAll(); } }
@@ -385,7 +542,11 @@ function confirmSubmit(){ const label = PART_LABEL[mode]; if (confirm("Nộp bà
 function submitTest(){
   const st = STATE[curExamKey][mode];
   if (st.submitted) return; st.submitted = true; clearInterval(st.tick); st.tick = null;
+  const other = mode === "goi" ? "doc" : mode === "doc" ? "goi" : null; // dồn giờ thừa sang phần còn lại của khối 110 phút
+  let carried = 0;
+  if (other && STATE[curExamKey][other] && !STATE[curExamKey][other].submitted && st.remain > 0) { carried = st.remain; STATE[curExamKey][other].remain += carried; }
   saveState(); archiveIfDone(curExamKey); renderAll(); window.scrollTo(0,0);
+  if (carried) alert("Còn " + fmt(carried) + " — đã cộng dồn sang phần " + PART_LABEL[other] + ".");
 }
 
 loadState();
