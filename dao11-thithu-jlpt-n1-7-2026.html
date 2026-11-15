@@ -251,8 +251,7 @@ function jlptHtml(r){
   if (r.low.length) why += (why ? " " : "") + "Dưới điểm liệt 19: " + r.low.map(x => x.name).join(", ") + ".";
   return '<div class="block"><div class="score">🎯 Điểm quy đổi N1: ' + r.total + '/' + r.max + ' — ' + badge + '</div>' +
     '<div class="sub">' + r.secs.map(x => esc(x.name) + ": " + x.score + "/" + x.max).join(" · ") + '</div>' +
-    (why ? '<div class="sub">' + why + '</div>' : '') +
-    '<div class="sub">Đậu = tổng ≥ 100 và mỗi phần ≥ 19. Quy đổi theo bảng Dungmori — điểm thi thật có thể lệch.</div></div>';
+    (why ? '<div class="sub">' + why + '</div>' : '') + '</div>';
 }
 // ── Phân tích điểm mạnh / điểm yếu theo từng Mondai ──
 const CATS = {
