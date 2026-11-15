@@ -56,16 +56,19 @@
   .wrap.two #exam{ grid-column:1; grid-row:1; min-width:0; }
   .wrap.two #side{ grid-column:2; grid-row:1; }
   .wrap.two > #homeScore, .wrap.two > #history, .wrap.two > #examPicker, .wrap.two > #landing{ display:none !important; }
-  .wrap.two #side{ display:block; position:sticky; top:76px; max-height:calc(100vh - 92px); overflow:auto; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:14px; }
-  .side-count{ font-size:.85rem; color:var(--muted); margin-bottom:6px; font-weight:700; }
-  .pal-title{ font-size:.78rem; color:var(--muted); margin:12px 0 5px; font-weight:700; }
-  .pal{ display:flex; flex-wrap:wrap; gap:6px; }
-  .dot{ width:34px; height:34px; border-radius:50%; border:none; background:#eef0f4; color:#6b7280; font-weight:600; font-size:.82rem; cursor:pointer; padding:0; }
-  .dot:hover{ outline:2px solid var(--accent); }
-  .dot.done{ background:var(--accent); color:#fff; }
-  .dot.ok{ background:var(--good); color:#fff; }
-  .dot.ng{ background:var(--bad); color:#fff; }
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .dot{ background:#3a352d; color:#cfc6b6; } }
+  .wrap.two #side{ display:block; position:sticky; top:76px; max-height:calc(100vh - 92px); overflow:auto; background:linear-gradient(180deg,#e6f3ff 0%,#fbfdff 24%,#fff 68%,#e1f1ff 100%); border:3px solid #3a9bf0; border-radius:26px; padding:10px 14px 0; color:#0d2f6b; }
+  .side-logo{ display:block; width:80%; margin:0 0 2px auto; mix-blend-mode:multiply; }
+  .side-count{ font-size:.82rem; color:#2a64b0; margin:0 0 2px; font-weight:700; }
+  .pal-title{ display:flex; align-items:center; gap:8px; margin:14px 0 8px; }
+  .pal-title b{ background:linear-gradient(90deg,#0d3f94,#1565c0); color:#fff; border-radius:999px 999px 999px 999px; padding:5px 18px 5px 11px; font-size:.95rem; font-weight:800; letter-spacing:.02em; box-shadow:0 2px 4px rgba(13,63,148,.25); }
+  .pal-title::after{ content:""; flex:1; height:2px; background:linear-gradient(90deg,#8ec8fa,transparent); }
+  .pal{ display:flex; flex-wrap:wrap; gap:8px; }
+  .dot{ width:40px; height:40px; border-radius:50%; border:2px solid #9ccdf8; background:radial-gradient(circle at 35% 30%,#fff 0%,#e3f1ff 55%,#c2e0fb 100%); color:#0d3f94; font-weight:800; font-size:.95rem; cursor:pointer; padding:0; box-shadow:0 2px 4px rgba(40,110,200,.25); transition:transform .1s; }
+  .dot:hover{ transform:translateY(-1px); border-color:#1e88e5; }
+  .dot.done{ background:radial-gradient(circle at 35% 30%,#5db3ff,#1565c0 70%); border-color:#0d47a1; color:#fff; }
+  .dot.ok{ background:radial-gradient(circle at 35% 30%,#7be0a0,#1f9d55 70%); border-color:#157a40; color:#fff; }
+  .dot.ng{ background:radial-gradient(circle at 35% 30%,#ff9a9a,#d32f2f 70%); border-color:#a31f1f; color:#fff; }
+  .side-wave{ display:block; width:calc(100% + 28px); margin:10px -14px 0; }
   #goPal{ display:none; }
   @media (max-width:900px){
     .wrap.two{ display:block; }
@@ -539,7 +542,7 @@ function renderSide(){
     const groups = b.id === "mon10_12" ? b.groups.map(g => ({ label: g.label, items: g.items })) : [{ label: b.id, items: b.items || b.groups.reduce((acc, g) => acc.concat(g.items), []) }];
     groups.forEach(g => {
       const m = String(g.label).match(/\d+/);
-      html += '<div class="pal-title">M' + (m ? m[0] : "") + '</div><div class="pal">' + g.items.map(it => {
+      html += '<div class="pal-title"><b>☸ M' + (m ? m[0] : "") + '</b></div><div class="pal">' + g.items.map(it => {
         total++; const a = answers[curExamKey][it.no];
         if (a !== undefined) done++;
         const cls = reveal ? (a === it.ans ? "ok" : "ng") : (a !== undefined ? "done" : "");
@@ -547,7 +550,7 @@ function renderSide(){
       }).join("") + '</div>';
     });
   });
-  el.innerHTML = '<div class="side-count">Đã làm ' + done + '/' + total + ' câu' + (total - done > 0 && !reveal ? ' · còn sót ' + (total - done) : '') + '</div>' + html;
+  el.innerHTML = '<img class="side-logo" src="assets/same-logo.png" alt="Same"><div class="side-count">Đã làm ' + done + '/' + total + ' câu' + (total - done > 0 && !reveal ? ' · còn sót ' + (total - done) : '') + '</div>' + html + '<img class="side-wave" src="assets/same-wave.png" alt="">';
 }
 function renderAll(){
   document.getElementById("examPicker").style.display = curExamKey === null ? "" : "none";
