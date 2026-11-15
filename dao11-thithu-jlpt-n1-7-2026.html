@@ -177,7 +177,7 @@ function flushOutbox(){
 function archiveIfDone(k){
   if (!allSubmitted(k)) return;
   const hist = lsGet(LS_HIST, []);
-  const gSc = STATE[k].goi ? scoreOf(partItems(k, "goi"), k) : null;
+  const gSc = STATE[k].goi ? scoreOf(partItems(k, "goi"), k, "goi") : null;
   const dSc = STATE[k].doc ? scoreOf(partItems(k, "doc"), k) : null;
   const lSc = STATE[k].nghe ? scoreOf(partItems(k, "nghe"), k) : null;
   hist.unshift({ id: Date.now(), exam: k, label: EXAMS[k].label, at: new Date().toISOString(), answers: JSON.parse(JSON.stringify(answers[k])),
@@ -245,10 +245,10 @@ function renderBlocksFor(examKey, part){
     return head + body + '</div>';
   }).join("");
 }
-function scoreOf(items, examKey){
+function scoreOf(items, examKey, part){
   const bySec = {}; let total = 0;
   items.forEach(it => { const ok = answers[examKey][it.no] === it.ans; total += ok ? 1 : 0; bySec[it.sec] = bySec[it.sec] || {c:0,n:0}; bySec[it.sec].n++; if(ok) bySec[it.sec].c++; });
-  const secName = { moji: "Chữ·Từ vựng", bunpo: "Ngữ pháp", dokkai: "Đọc hiểu", nghe: "Nghe" };
+  const secName = { moji: "Chữ·Từ vựng", bunpo: "Ngữ pháp", dokkai: part === "goi" ? "Đọc hiểu ngắn (Mon7)" : "Đọc hiểu", nghe: "Nghe" };
   const lines = Object.keys(bySec).map(k => secName[k] + ": " + bySec[k].c + "/" + bySec[k].n).join(" · ");
   return { total, max: items.length, lines };
 }
@@ -464,7 +464,7 @@ function renderExamLanding(){
     const title = PART_ICON[p] + " " + (p === "goi" ? "Goi — Chữ·Từ vựng·Ngữ pháp (Mon1–7)" : p === "doc" ? "Đọc hiểu (Mon8–13)" : "Nghe (Mon1–5)") + " · " + partMinutes(k, p) + " phút";
     if (!st) { el.disabled = true; el.innerHTML = PART_ICON[p] + " " + PART_LABEL[p] + '<span class="sub">' + (p === "nghe" ? "Sắp có — đang chờ bổ sung đáp án" : "Chưa có cho kỳ này") + '</span>'; return; }
     el.disabled = false;
-    sc[p] = (st.submitted && reveal) ? scoreOf(partItems(k, p), k) : null;
+    sc[p] = (st.submitted && reveal) ? scoreOf(partItems(k, p), k, p) : null;
     const sub = sc[p] ? '<span class="sub">Đã nộp — ' + sc[p].total + '/' + sc[p].max + ' câu đúng</span>'
       : st.submitted ? '<span class="sub">Đã nộp — chờ nộp xong các phần còn lại để xem điểm</span>'
       : st.started ? '<span class="sub">Đang làm dở — còn ' + fmt(st.remain) + '</span>' : "";
@@ -474,10 +474,10 @@ function renderExamLanding(){
   const scs = PARTS.map(p => sc[p]).filter(Boolean);
   if (reveal && scs.length) {
     const total = scs.reduce((a, x) => a + x.total, 0), max = scs.reduce((a, x) => a + x.max, 0);
-    homeHtml = '<div class="block"><div class="score">🎉 Tổng kết cả bài: ' + total + '/' + max + ' câu đúng</div><div class="sub">' + esc(scs.map(x => x.lines).join(" · ")) + '</div></div>';
+    homeHtml = '<div class="block"><div class="score">🎉 Tổng kết cả bài: ' + total + '/' + max + ' câu đúng</div><div class="sub">' + scs.map(x => x.lines).join(" · ").split(" · ").map(esc).join("<br>") + '</div></div>';
   }
   if (hasAnyProgress(k)) homeHtml += '<button class="btn" onclick="retakeExam()">🔄 Làm lại kỳ này từ đầu</button>';
-  if (reveal && PARTS.every(p => STATE[k][p])) homeHtml = jlptHtml(jlptScore(k)) + analysisHtml(k) + certBlockHtml() + homeHtml;
+  if (reveal && PARTS.every(p => STATE[k][p])) { const m = homeHtml.match(/^<div class="block">.*?<\/div><\/div>/); const sum = m ? m[0] : ""; homeHtml = jlptHtml(jlptScore(k)) + sum + analysisHtml(k) + certBlockHtml() + homeHtml.slice(sum.length); }
   document.getElementById("homeScore").innerHTML = homeHtml;
 }
 function changeName(){ const n = (prompt("Họ tên:", studentName()) || "").trim(); if (n) { lsSet(LS_NAME, n); renderAll(); } }
