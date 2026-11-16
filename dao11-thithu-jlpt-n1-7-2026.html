@@ -198,6 +198,19 @@ function partItems(examKey, p){ return allItems(examKey).filter(it => PARTNO[exa
 function partOfNo(examKey, no){ return PARTNO[examKey][no]; }
 function fmt(s){ s = Math.max(0, s); const m = Math.floor(s/60), r = s%60; return String(m).padStart(2,"0") + ":" + String(r).padStart(2,"0"); }
 
+const STEM_TH = { "7/2025_65": ["団体・講座","期間・回数","場所","受講対象","定員"], "7/2023_65": ["氏名","年齢","住んでいる所","勤務地","健康度測定"], "12/2022_65": ["氏名","研究活動","渡航時期","助成の採択歴"] };
+function stemHtml(it, examKey){
+  const NL = String.fromCharCode(10);
+  const parts = it.stem.split(NL + NL);
+  const lines = parts.slice(1).join(NL + NL).split(NL).filter(Boolean);
+  if (parts.length < 2 || !lines.length || !lines.every(l => l.indexOf("／") > 0)) return esc(it.stem);
+  const rows = lines.map(l => { const m = l.match(/^(【[^】]+】)(.*)$/); const c = (m ? m[2] : l).split("／"); if (m) c.unshift(m[1]); return c; });
+  const n = rows[0].length;
+  if (rows.some(r => r.length !== n)) return esc(it.stem);
+  const th = (STEM_TH[examKey + "_" + it.no] || []).slice();
+  for (let j = 0; j < n; j++) { const ks = rows.map(r => (r[j].match(/^([^：（]{1,10})：/) || [])[1]); if (ks.every(k => k && k === ks[0])) { rows.forEach(r => r[j] = r[j].slice(ks[0].length + 1)); if (!th[j]) th[j] = ks[0]; } }
+  return esc(parts[0]) + '<div class="m13-tw" style="white-space:normal;font-weight:400"><table class="m13-t"><thead><tr>' + Array.from({length:n}, (_, j) => '<th>' + esc(th[j] || "") + '</th>').join("") + '</tr></thead><tbody>' + rows.map(r => '<tr>' + r.map(c => '<td>' + esc(c) + '</td>').join("") + '</tr>').join("") + '</tbody></table></div>';
+}
 function qHtml(it, examKey, blockId){
   const st = STATE[examKey][partOfNo(examKey, it.no)];
   const subm = st.submitted;
@@ -216,7 +229,7 @@ function qHtml(it, examKey, blockId){
     const ok = answers[examKey][it.no] === it.ans;
     res = '<div class="res ' + (ok ? "ok" : "ng") + '">' + (ok ? "✓ Đúng" : "✗ Sai") + " — đáp án: " + it.ans + "</div>";
   }
-  const stemText = hideStem ? "" : esc(it.stem);
+  const stemText = hideStem ? "" : stemHtml(it, examKey);
   return '<div class="q" id="q_' + examKey + '_' + it.no + '"><div class="qstem"><b>' + it.no + '.</b> ' + stemText + '</div>' + opts + res + '</div>';
 }
 function pick(examKey, no, n){
