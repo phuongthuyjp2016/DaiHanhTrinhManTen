@@ -261,13 +261,13 @@ function renderBlocksFor(examKey, part){
 function scoreOf(items, examKey, part){
   const bySec = {}; let total = 0;
   items.forEach(it => { const ok = answers[examKey][it.no] === it.ans; total += ok ? 1 : 0; bySec[it.sec] = bySec[it.sec] || {c:0,n:0}; bySec[it.sec].n++; if(ok) bySec[it.sec].c++; });
-  const secName = { moji: "Chữ·Từ vựng", bunpo: "Ngữ pháp", dokkai: part === "goi" ? "Đọc hiểu ngắn (Mon7)" : "Đọc hiểu", nghe: "Nghe" };
+  const secName = { moji: "Từ vựng", bunpo: "Ngữ pháp", dokkai: part === "goi" ? "Đọc hiểu ngắn (Mon7)" : "Đọc hiểu", nghe: "Nghe" };
   const lines = Object.keys(bySec).map(k => secName[k] + ": " + bySec[k].c + "/" + bySec[k].n).join(" · ");
   return { total, max: items.length, lines };
 }
 // Quy đổi điểm N1 theo bảng Dungmori: mỗi Mondai có điểm/câu riêng, mỗi phần tối đa 60, tổng 180.
 const JW = { mon1:1, mon2:1.5, mon3:1, mon4:1.25, mon5:1, mon6:2, mon7:2.5, mon8:3, mon9:2.5, mon10_12:3, mon13:2, listen1:2, listen2:2.5, listen3:3, listen4:1, listen5:3 };
-const JSEC = ["Chữ Hán · Từ vựng · Ngữ pháp", "Đọc hiểu", "Nghe hiểu"];
+const JSEC = ["Goi", "Đọc hiểu", "Nghe hiểu"];
 function jlptScore(k, ans){
   ans = ans || answers[k];
   const secs = JSEC.map(n => ({ name: n, score: 0, max: 0 }));
@@ -487,7 +487,7 @@ function renderExamLanding(){
   const scs = PARTS.map(p => sc[p]).filter(Boolean);
   if (reveal && scs.length) {
     const total = scs.reduce((a, x) => a + x.total, 0), max = scs.reduce((a, x) => a + x.max, 0);
-    homeHtml = '<div class="block"><div class="score">🎉 Tổng kết cả bài: ' + total + '/' + max + ' câu đúng</div><div class="sub">' + scs.map(x => x.lines).join(" · ").split(" · ").map(esc).join("<br>") + '</div></div>';
+    homeHtml = '<div class="block"><div class="score">🎉 Tổng kết cả bài: ' + total + '/' + max + ' câu đúng</div><div class="sub">' + PARTS.filter(p => sc[p]).map(p => { const L = sc[p].lines.split(" · "); return p === "goi" ? esc("Goi: " + sc[p].total + "/" + sc[p].max) + '<div style="margin-left:1.6em">' + L.map(esc).join("<br>") + '</div>' : L.map(esc).join("<br>"); }).join("<br>") + '</div></div>';
   }
   if (hasAnyProgress(k)) homeHtml += '<button class="btn" onclick="retakeExam()">🔄 Làm lại kỳ này từ đầu</button>';
   if (reveal && PARTS.every(p => STATE[k][p])) { const m = homeHtml.match(/^<div class="block">.*?<\/div><\/div>/); const sum = m ? m[0] : ""; homeHtml = jlptHtml(jlptScore(k)) + sum + analysisHtml(k) + certBlockHtml() + homeHtml.slice(sum.length); }
@@ -602,6 +602,29 @@ function runTick(st){
   st.tick = setInterval(() => { st.remain--; if (st.remain % 5 === 0) saveState(); updateTimerArea(); if (st.remain <= 0) { clearInterval(st.tick); submitTest(); } }, 1000);
 }
 function confirmSubmit(){ const label = PART_LABEL[mode]; if (confirm("Nộp bài phần " + label + " bây giờ?")) submitTest(); }
+function celebrate(){
+  if (document.getElementById("celebrate")) return;
+  const name = studentName();
+  const box = document.createElement("div"); box.id = "celebrate";
+  box.style.cssText = "position:fixed;inset:0;z-index:50;background:rgba(10,20,50,.78);display:flex;align-items:center;justify-content:center;padding:16px";
+  box.innerHTML = '<canvas style="position:absolute;inset:0;width:100%;height:100%"></canvas><div style="position:relative;max-width:480px;background:#fff;color:#1b2a4a;border-radius:20px;padding:26px 24px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.4)"><div style="font-size:2.4rem">🎆🎉🎆</div><h2 style="margin:.3em 0">Chúc mừng' + (name ? " " + esc(name) : "") + '!</h2><p style="line-height:1.7;margin:.4em 0 1em">Cảm ơn bạn đã cố gắng ngồi gần 3 tiếng để hoàn thành trọn bài thi.<br>Sự kiên trì này chính là nền tảng cho kết quả N1 của bạn. Tự hào về bạn lắm! 💙</p><button class="btn primary" id="celebrateClose">Xem kết quả</button></div>';
+  document.body.appendChild(box);
+  const cv = box.querySelector("canvas"), cx = cv.getContext("2d");
+  const fit = () => { cv.width = innerWidth; cv.height = innerHeight; }; fit();
+  const ps = []; let raf = 0, t0 = performance.now(), last = 0;
+  const burst = () => { const x = cv.width * (0.15 + Math.random() * 0.7), y = cv.height * (0.12 + Math.random() * 0.4), h = Math.random() * 360;
+    for (let i = 0; i < 70; i++) { const a = Math.PI * 2 * i / 70, v = 1.5 + Math.random() * 4.5; ps.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, h }); } };
+  const loop = now => {
+    if (now - last > 650 && now - t0 < 12000) { burst(); last = now; }
+    cx.globalCompositeOperation = "destination-out"; cx.fillStyle = "rgba(0,0,0,.18)"; cx.fillRect(0, 0, cv.width, cv.height);
+    cx.globalCompositeOperation = "lighter";
+    ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .05; p.vx *= .985; p.life -= .011; cx.fillStyle = "hsla(" + p.h + ",100%,60%," + Math.max(p.life, 0) + ")"; cx.beginPath(); cx.arc(p.x, p.y, 2.2, 0, 6.3); cx.fill(); });
+    for (let i = ps.length - 1; i >= 0; i--) if (ps[i].life <= 0) ps.splice(i, 1);
+    raf = requestAnimationFrame(loop);
+  };
+  raf = requestAnimationFrame(loop);
+  document.getElementById("celebrateClose").onclick = () => { cancelAnimationFrame(raf); box.remove(); window.scrollTo(0, 0); };
+}
 function submitTest(){
   const st = STATE[curExamKey][mode];
   if (st.submitted) return; st.submitted = true; clearInterval(st.tick); st.tick = null;
@@ -609,6 +632,7 @@ function submitTest(){
   let carried = 0;
   if (other && STATE[curExamKey][other] && !STATE[curExamKey][other].submitted && st.remain > 0) { carried = st.remain; STATE[curExamKey][other].remain += carried; }
   saveState(); archiveIfDone(curExamKey); renderAll(); window.scrollTo(0,0);
+  if (allSubmitted(curExamKey)) { celebrate(); return; }
   if (carried) alert("Còn " + fmt(carried) + " — đã cộng dồn sang phần " + PART_LABEL[other] + ".");
 }
 
