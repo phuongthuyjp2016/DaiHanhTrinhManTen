@@ -23,6 +23,8 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
 .menu-btn .word-list { font-size: 12px; color: #333; margin-top: 3px; }
 .menu-btn.done { border-color: #2e7d4f; }
 .menu-btn.done .round-title { color: #2e7d4f; }
+.menu-btn.active { border-color: #f5a623; background: linear-gradient(180deg,#ffd25a,#f5a623); }
+.menu-btn.active .round-title, .menu-btn.active .word-list { color: #5a3b22; }
 .score-chip { float: right; font-size: 12px; background: #e8f5ec; color: #2e7d4f; border-radius: 6px; padding: 2px 8px; margin-top: 2px; }
 .section-label { font-size: 11px; font-weight: 600; color: #333; text-transform: uppercase; letter-spacing: 1px; margin: 1.2rem 0 0.4rem; padding-bottom: 4px; border-bottom: 1px solid #eee; }
 .progress-bar { height: 5px; background: #ddd; border-radius: 3px; margin-bottom: 0.5rem; }
@@ -148,6 +150,7 @@ const sections = [["練習問題", ["第83回", "第84回", "第85回", "第86�
 const scores = {};
 var wrongItems = [];
 let currentRound = null, shuffled = [], cur = 0, score = 0, answered = false;
+let selRounds = new Set();
 
 var TOTAL_Q4 = Object.keys(allData).reduce(function(s,r){return s+allData[r].qs.length;},0);
 var allCorrect4 = JSON.parse(localStorage.getItem('dao2_mondai4_correct')||'[]');
@@ -476,19 +479,79 @@ function onM4SearchInput(){
   m4SearchQuery = document.getElementById('m4Search').value.trim().toLowerCase();
   buildMenu();
 }
+function searchQuestionMatches(q){
+  const out = [];
+  sections.forEach(sec => sec[1].forEach(r => {
+    allData[r].qs.forEach((item, qi) => {
+      const hay = (item.k+' '+(item.r||'')+' '+(item.syn||'')+' '+(item.o||[]).join(' ')).toLowerCase();
+      if(hay.includes(q)) out.push({r, qi, item});
+    });
+  }));
+  return out;
+}
+function renderM4SearchResults(matches){
+  const menu = document.getElementById('menu');
+  const lbl = document.createElement('div');
+  lbl.className = 'section-label';
+  lbl.textContent = `Kết quả (${matches.length} câu) — bấm để đi thẳng tới câu đó`;
+  menu.appendChild(lbl);
+  matches.slice(0,50).forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'menu-btn';
+    btn.innerHTML = `<div class="round-title">${m.item.k}（${m.item.r||''}）</div><div class="word-list">${m.r} · câu ${m.qi+1}</div>`;
+    btn.onclick = ()=>startRound(m.r, m.qi);
+    menu.appendChild(btn);
+  });
+  if(matches.length>50){
+    const more = document.createElement('div');
+    more.style.cssText = 'text-align:center;color:#333;padding:8px;font-size:12px;';
+    more.textContent = `… và ${matches.length-50} kết quả khác, hãy thu hẹp tìm kiếm`;
+    menu.appendChild(more);
+  }
+}
+function toggleRound(r, btn){
+  if(selRounds.has(r)){ selRounds.delete(r); btn.classList.remove('active'); }
+  else{ selRounds.add(r); btn.classList.add('active'); }
+  updateStartSelectedBtn();
+}
+function updateStartSelectedBtn(){
+  const b = document.getElementById('startSelectedBtn');
+  if(!b) return;
+  if(selRounds.size>0){ b.style.display=''; b.innerHTML = `<div class="round-title">▶ Bắt đầu (đã chọn ${selRounds.size} đề)</div>`; }
+  else{ b.style.display='none'; }
+}
+function startSelected(){
+  if(selRounds.size===0) return;
+  const rounds = [...selRounds];
+  currentRound = rounds.length>1 ? `Kết hợp ${rounds.length} đề` : rounds[0];
+  shuffled = rounds.flatMap(r => allData[r].qs).slice();
+  cur = 0; score = 0; answered = false; wrongItems = [];
+  document.getElementById('menu-area').style.display='none';
+  document.getElementById('score-card').classList.remove('show');
+  document.getElementById('quiz-area').style.display='';
+  showQ();
+}
 function buildMenu(){
   const menu = document.getElementById('menu');
   menu.innerHTML = '';
   const q4s = m4SearchQuery;
-  let anyMatch = false;
-  if(!q4s){
-    const allBtn = document.createElement('button');
-    allBtn.className = 'menu-btn' + (scores['__ALL__']!==undefined?' done':'');
-    const allChip = scores['__ALL__']!==undefined?`<span class="score-chip">${scores['__ALL__']}/${TOTAL_Q4}</span>`:'';
-    allBtn.innerHTML = `<div class="round-title">🔀 Tất cả (toàn bộ ${TOTAL_Q4} câu) ${allChip}</div>`;
-    allBtn.onclick = ()=>startRound('__ALL__');
-    menu.appendChild(allBtn);
+  if(q4s){
+    const qMatches = searchQuestionMatches(q4s);
+    if(qMatches.length>0){ renderM4SearchResults(qMatches); return; }
   }
+  const allBtn = document.createElement('button');
+  allBtn.className = 'menu-btn' + (scores['__ALL__']!==undefined?' done':'');
+  const allChip = scores['__ALL__']!==undefined?`<span class="score-chip">${scores['__ALL__']}/${TOTAL_Q4}</span>`:'';
+  allBtn.innerHTML = `<div class="round-title">🔀 Tất cả (toàn bộ ${TOTAL_Q4} câu) ${allChip}</div>`;
+  allBtn.onclick = ()=>startRound('__ALL__');
+  menu.appendChild(allBtn);
+  const startBtn = document.createElement('button');
+  startBtn.id = 'startSelectedBtn';
+  startBtn.className = 'menu-btn';
+  startBtn.style.cssText = 'display:none;background:#f5a623;border-color:#c9a769;';
+  startBtn.onclick = startSelected;
+  menu.appendChild(startBtn);
+  let anyMatch = false;
   sections.forEach(sec => {
     const matchedRounds = sec[1].filter(r => !q4s || r.toLowerCase().includes(q4s) || (allData[r].words||'').toLowerCase().includes(q4s));
     if(matchedRounds.length===0) return;
@@ -500,19 +563,20 @@ function buildMenu(){
     matchedRounds.forEach(r => {
       const q = allData[r];
       const btn = document.createElement('button');
-      btn.className = 'menu-btn' + (scores[r]!==undefined?' done':'');
+      btn.className = 'menu-btn' + (scores[r]!==undefined?' done':'') + (selRounds.has(r)?' active':'');
       const chip = scores[r]!==undefined?`<span class="score-chip">${scores[r]}/${q.qs.length}</span>`:'';
       btn.innerHTML = `<div class="round-title">${r} ${chip}</div><div class="word-list">${q.words}</div>`;
-      btn.onclick = ()=>startRound(r);
+      btn.onclick = ()=>toggleRound(r, btn);
       menu.appendChild(btn);
     });
   });
   if(q4s && !anyMatch){
     const empty = document.createElement('div');
     empty.style.cssText = 'text-align:center;color:#333;padding:24px;';
-    empty.textContent = 'Không tìm thấy vòng nào chứa từ khóa này.';
+    empty.textContent = 'Không tìm thấy vòng hoặc câu nào chứa từ khóa này.';
     menu.appendChild(empty);
   }
+  updateStartSelectedBtn();
 }
 
 function saveProgress(round, idx){
@@ -522,10 +586,11 @@ function loadProgress(){
   try{ var d=localStorage.getItem('mondai4_progress'); return d?JSON.parse(d):null; }catch(e){return null;}
 }
 
-function startRound(r){
+function startRound(r, jumpIdx){
   currentRound = r;
   shuffled = (r==='__ALL__' ? allAllQs() : allData[r].qs).slice();
-  cur = 0; score = 0; answered = false; wrongItems = [];
+  cur = (jumpIdx!=null) ? Math.max(0, Math.min(jumpIdx, shuffled.length-1)) : 0;
+  score = 0; answered = false; wrongItems = [];
   document.getElementById('menu-area').style.display='none';
   document.getElementById('score-card').classList.remove('show');
   document.getElementById('quiz-area').style.display='';
