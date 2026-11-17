@@ -66,6 +66,9 @@ button:focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
 .test-tab .tbadge{position:absolute;top:-8px;right:-6px;font-family:var(--mono);font-size:9.5px;font-weight:700;color:#fff;background:var(--green);border-radius:999px;padding:2px 6px;transform:rotate(4deg);}
 .test-tab .tring{position:absolute;inset:-3px;border-radius:6px;border:2px solid var(--green);opacity:0;pointer-events:none;}
 .test-tab.done .tring{opacity:.5;}
+.test-tab .twords{font-size:9.5px;color:var(--ink-faint);margin-top:4px;line-height:1.3;display:block;}
+.test-tab.active{border-color:#f5a623;background:linear-gradient(180deg,#ffd25a,#f5a623);}
+.test-tab.active .tnum,.test-tab.active .tcnt,.test-tab.active .twords{color:#5a3b22;}
 
 /* quiz */
 .quiz-meta{font-family:var(--mono);font-size:11px;color:var(--ink-soft);}
@@ -229,6 +232,9 @@ const DC_TOTAL_Q=QUIZ_DATA.reduce((s,t)=>s+t.questions.length,0);
 let everCorrect=new Set(JSON.parse(localStorage.getItem(EVER_CORRECT_KEY)||'[]'));
 
 const state={screen:'select',testIndex:0,qIndex:0,answers:[],bestScores:{},aiCache:Object.assign({},STATIC_VOCAB),searchQuery:''};
+const ORIGINAL_TEST_COUNT=QUIZ_DATA.length;
+const COMBO_INDEX=ORIGINAL_TEST_COUNT;
+let selRounds=new Set();
 
 function loadBestScores(){
   try{ state.bestScores=JSON.parse(localStorage.getItem(BEST_SCORES_KEY)||'{}'); }catch(e){}
@@ -453,11 +459,35 @@ function finishTest(){const t=QUIZ_DATA[state.testIndex];let c=0;state.answers.f
 function retryTest(){startTest(state.testIndex);}
 function toggleRev(el){el.classList.toggle('open');}
 
+function toggleTestSel(i){
+  if(selRounds.has(i))selRounds.delete(i);else selRounds.add(i);
+  render();
+}
+function startSelectedTests(){
+  if(selRounds.size===0)return;
+  const indices=Array.from(selRounds).sort((a,b)=>a-b);
+  const combinedQuestions=[];
+  indices.forEach(ti=>{
+    QUIZ_DATA[ti].questions.forEach((qq,qi)=>{
+      const clone=Object.assign({},qq);
+      clone._origKey=ti+':'+qi;
+      combinedQuestions.push(clone);
+    });
+  });
+  QUIZ_DATA[COMBO_INDEX]={name:'Kết hợp '+indices.length+' đề',questions:combinedQuestions,_combo:true};
+  selRounds.clear();
+  startTest(COMBO_INDEX);
+}
+function selectAllTests(){
+  selRounds=new Set(Array.from({length:ORIGINAL_TEST_COUNT},(_,i)=>i));
+  startSelectedTests();
+}
+
 function pickAnswer(qIdx,choice){
   if(state.answers[qIdx]!==null)return;
   state.answers[qIdx]=choice;
   const q=QUIZ_DATA[state.testIndex].questions[qIdx];
-  const key=state.testIndex+':'+qIdx;
+  const key=q._origKey||(state.testIndex+':'+qIdx);
   if(choice===q.c){
     if(!everCorrect.has(key)){
       everCorrect.add(key);
@@ -562,10 +592,20 @@ function goNextNav(){const tot=QUIZ_DATA[state.testIndex].questions.length;if(st
 
 function render(){document.getElementById('app').innerHTML=state.screen==='select'?selScreen():state.screen==='quiz'?quizScreen():resultScreen();}
 
+function deckPreviewWords(t){
+  const words=t.questions.map(q=>q.a[q.c]);
+  const shown=words.slice(0,8);
+  return esc(shown.join('・')+(words.length>8?'…':''));
+}
 function selScreen(){
-  const tabs=QUIZ_DATA.map((t,i)=>{const sc=state.bestScores['q5:'+i];return`<div class="test-tab ${sc?'done':''}" tabindex="0" role="button" onclick="startTest(${i})" onkeypress="if(event.key==='Enter')startTest(${i})"><div class="tring"></div>${sc?`<div class="tbadge">${sc.c}/${sc.t}</div>`:''}<span class="tnum">${String(i+1).padStart(2,'0')}</span><span class="tcnt">${t.questions.length} câu</span></div>`;}).join('');
+  const tabs=QUIZ_DATA.slice(0,ORIGINAL_TEST_COUNT).map((t,i)=>{const sc=state.bestScores['q5:'+i];const isSel=selRounds.has(i);return`<div class="test-tab ${sc?'done':''} ${isSel?'active':''}" tabindex="0" role="button" onclick="toggleTestSel(${i})" onkeypress="if(event.key==='Enter')toggleTestSel(${i})"><div class="tring"></div>${sc?`<div class="tbadge">${sc.c}/${sc.t}</div>`:''}<span class="tnum">${String(i+1).padStart(2,'0')}</span><span class="tcnt">${t.questions.length} câu</span><span class="twords">${deckPreviewWords(t)}</span></div>`;}).join('');
   const hasQuery=state.searchQuery.trim().length>0;
-  return`<div class="intro"><p class="eyebrow">Đề thi thử · JLPT MOGI</p><p>20 đề · ${QUIZ_DATA.reduce((s,t)=>s+t.questions.length,0)} câu · Chọn đáp án để xem phân tích đầy đủ.</p></div>
+  const selCount=selRounds.size;
+  const controlRow=`<div class="sel-controls" style="display:${hasQuery?'none':'flex'};gap:8px;margin:10px 0;flex-wrap:wrap;">
+    <button class="btn ghost" onclick="selectAllTests()">📚 Tất cả (${ORIGINAL_TEST_COUNT} đề)</button>
+    <button class="btn green" style="display:${selCount>0?'':'none'}" onclick="startSelectedTests()">▶ Bắt đầu (đã chọn ${selCount} đề)</button>
+  </div>`;
+  return`<div class="intro"><p class="eyebrow">Đề thi thử · JLPT MOGI</p><p>20 đề · ${QUIZ_DATA.slice(0,ORIGINAL_TEST_COUNT).reduce((s,t)=>s+t.questions.length,0)} câu · Chọn đáp án để xem phân tích đầy đủ.</p></div>
   ${resumeBannerHtml()}
   <div class="search-wrap">
     <input type="text" id="searchInput" class="search-input" placeholder="Tìm từ vựng, câu hỏi…" value="${esc(state.searchQuery)}" oninput="onSearchInput(this.value)">
@@ -573,6 +613,7 @@ function selScreen(){
     <button id="searchClearBtn" class="search-clear" style="display:${hasQuery?'block':'none'}" onclick="clearSearch()">✕</button>
   </div>
   <div id="searchResults">${hasQuery?renderSearchResults(state.searchQuery):''}</div>
+  ${controlRow}
   <div id="testGrid" class="test-grid" style="display:${hasQuery?'none':''}">${tabs}</div>`;
 }
 
@@ -583,7 +624,7 @@ function quizScreen(){
   const crt=state.answers.filter((a,i)=>a!==null&&a===t.questions[i].c).length;
   const wrn=state.answers.filter((a,i)=>a!==null&&a!==t.questions[i].c).length;
   const pct=Math.round(((state.qIndex+(answered?1:0))/t.questions.length)*100);
-  const cached=answered?(state.aiCache[state.testIndex+':'+state.qIndex]||null):null;
+  const cached=answered?(state.aiCache[q._origKey||(state.testIndex+':'+state.qIndex)]||null):null;
 
   const navNums=q_arr.map((qq,i)=>{
     let cls='nav-num';
