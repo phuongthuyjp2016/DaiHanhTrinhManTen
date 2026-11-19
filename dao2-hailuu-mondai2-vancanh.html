@@ -35,11 +35,12 @@ header h1{font-family:'Baloo 2','Noto Serif JP',serif;font-weight:800;color:#ffe
 .fb-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;}
 .qlimit{margin-left:auto;font-size:.8rem;color:var(--ink);font-weight:600;}
 .qlimit select{padding:4px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:#fff;}
-.fb-menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;max-height:340px;overflow-y:auto;padding:2px;}
-.fb-menu .fbtn{border-radius:10px;padding:7px 10px;text-align:left;font-size:.8rem;}
-.fb-menu .fbtn .fb-t{display:block;font-weight:700;}
-.fb-menu .fbtn .fb-w{display:block;font-size:.68rem;color:var(--muted);font-weight:500;margin-top:2px;line-height:1.45;font-family:'Noto Sans JP',sans-serif;}
-.fb-menu .fbtn.active .fb-w{color:#5a3b22;}
+.fb-menu{display:flex;flex-wrap:wrap;gap:6px;}
+.fx-box{max-width:900px;margin:12px auto;background:#fff;border:2px solid var(--border);border-radius:12px;padding:12px 16px;}
+.fx-title{font-weight:700;font-size:.9rem;color:var(--ink);}
+.fx-title small{font-weight:500;color:var(--muted);}
+.fx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:5px 16px;margin-top:8px;}
+.fx-item{font-family:'Noto Sans JP',sans-serif;font-size:.84rem;color:#000;font-weight:600;line-height:1.5;}
 .fbtn.active{background:linear-gradient(180deg,#ffd25a,#f5a623);color:#5a3b22;border-color:#f5a623;font-weight:700;}
 .main{max-width:900px;margin:0 auto;padding:8px 16px 60px;}
 
@@ -166,7 +167,7 @@ header h1{font-family:'Baloo 2','Noto Serif JP',serif;font-weight:800;color:#ffe
 <div class="filter-bar2">
   <div class="fb-top">
     <span class="flabel">Đề:</span>
-    <button class="fbtn" data-round="all" onclick="setRound('all',this)">🔀 Tất cả</button>
+    <button class="fbtn" data-round="all" onclick="toggleRound('all')">🔀 Tất cả</button>
     <label class="qlimit">Số câu: <select id="qLimit" onchange="applyLimit()"><option value="10">10 câu</option><option value="20">20 câu</option><option value="30">30 câu</option><option value="50">50 câu</option><option value="all" selected>Tất cả</option></select></label>
   </div>
   <div class="fb-menu" id="fbMenu"></div>
@@ -330,26 +331,56 @@ function allRoundKeysVC(){
 
 var curRound = 25;
 function qLimitVal(){ const v=(document.getElementById('qLimit')||{}).value; return (!v||v==='all') ? Infinity : parseInt(v,10); }
-function applyLimit(){ buildRound(curRound); }
+function applyLimit(){ buildSelected(); }
 function cumOf(w){ const s=((w.set||'').split('・')[0]||'').replace(/<\/?mark>/g,'').replace(/\([^)]*\)/g,'').replace(/（[^）]*）/g,'').trim(); return s||w.k; }
+var selRounds = [];
+function roundOrd(r){ return allRoundKeysVC().indexOf(String(r)); }
+function syncChips(){
+  const total = allRoundKeysVC().length;
+  document.querySelectorAll('.fbtn').forEach(function(b){
+    const r=b.dataset.round;
+    b.classList.toggle('active', r==='all' ? selRounds.length===total : selRounds.indexOf(r)>=0);
+  });
+}
+function toggleRound(r){
+  r = String(r);
+  if(r==='all'){ selRounds = selRounds.length===allRoundKeysVC().length ? [] : allRoundKeysVC().slice(); }
+  else{ const i=selRounds.indexOf(r); if(i>=0) selRounds.splice(i,1); else selRounds.push(r); selRounds.sort(function(a,b){return roundOrd(a)-roundOrd(b);}); }
+  syncChips(); buildSelected();
+}
+function buildSelected(){
+  if(selRounds.length===0){
+    document.getElementById('hdr-round').textContent='';
+    document.getElementById('main').innerHTML='<div class="pick-hint">👆 Chọn một hoặc nhiều đề ở trên để bắt đầu làm bài</div>';
+    return;
+  }
+  buildRound(selRounds.slice());
+}
 function buildRoundMenu(){
   const box=document.getElementById('fbMenu'); if(!box) return;
   box.innerHTML = allRoundKeysVC().map(function(r){
-    const words = DATA[r].map(function(q){ return cumOf(q.w[q.a-1]); });
-    const lab = r==='ontap' ? '📝 Ôn tập tổng hợp' : '第'+r+'回';
-    const oc = r==='ontap' ? "setRound('ontap',this)" : "setRound("+r+",this)";
-    return '<button class="fbtn" data-round="'+r+'" onclick="'+oc+'"><span class="fb-t">'+lab+' <small>('+words.length+' câu)</small></span><span class="fb-w">'+esc(words.join(' / '))+'</span></button>';
+    const lab = r==='ontap' ? '📝 Ôn tập tổng hợp ('+DATA[r].length+' câu)' : '第'+r+'回';
+    return '<button class="fbtn" data-round="'+r+'" onclick="toggleRound(&quot;'+r+'&quot;)">'+lab+'</button>';
   }).join('');
 }
 function buildRound(round){
   curRound = round;
   const lim = qLimitVal();
   let shown = 0;
+  const isList = Array.isArray(round);
   const isAll = round==='all';
-  const roundKeys = isAll ? allRoundKeysVC() : [String(round)];
-  document.getElementById('hdr-round').textContent = isAll ? '🔀 Tất cả ('+TOTAL_Q_VC+' câu)' : (round==='ontap' ? '📝 Ôn tập tổng hợp' : '第'+round+'回');
+  const roundKeys = isList ? round.map(String) : (isAll ? allRoundKeysVC() : [String(round)]);
+  const lab1 = function(r){ return r==='ontap' ? '📝 Ôn tập tổng hợp' : '第'+r+'回'; };
+  document.getElementById('hdr-round').textContent = roundKeys.length===1 ? lab1(roundKeys[0]) : '🔀 '+roundKeys.length+' đề';
   let anyQs = false;
   let html = '';
+  if(roundKeys.length<=4){
+    roundKeys.forEach(function(r){
+      const qs0 = DATA[r] || [];
+      if(!qs0.length) return;
+      html += '<div class="fx-box"><div class="fx-title">'+lab1(r)+' <small>('+qs0.length+' câu) — cụm fix đáp án đúng</small></div><div class="fx-grid">'+qs0.map(function(q){ return '<span class="fx-item">・'+esc(cumOf(q.w[q.a-1]))+'</span>'; }).join('')+'</div></div>';
+    });
+  }
   roundKeys.forEach(function(r){
   const qs = DATA[String(r)] || [];
   if(qs.length===0) return;
@@ -434,7 +465,6 @@ function buildRound(round){
     return;
   }
   document.getElementById('main').innerHTML = html;
-  window.scrollTo(0,0);
   try{ localStorage.setItem('dao2_mondai2_vancanh_lastround', String(round)); }catch(e){}
 }
 function pick(qid, chosen, ansIdx, round, qi){
@@ -549,10 +579,8 @@ function clearSearch(){
 
 function jumpToQuestion(round, qi){
   const ql=document.getElementById('qLimit'); if(ql) ql.value='all';
-  document.querySelectorAll('.fbtn').forEach(b=>{
-    b.classList.toggle('active', b.dataset.round===String(round));
-  });
-  buildRound(round);
+  selRounds=[String(round)]; syncChips();
+  buildRound(selRounds.slice());
   document.getElementById('searchResults').style.display='none';
   setTimeout(()=>{
     const el = document.getElementById('q'+round+'x'+qi);
@@ -565,12 +593,6 @@ function jumpToQuestion(round, qi){
   }, 80);
 }
 
-function setRound(r, btn){
-  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  buildRound(r);
-  setTimeout(function(){ const m=document.getElementById('main'); if(m) m.scrollIntoView({behavior:'smooth',block:'start'}); },60);
-}
 
 function spk(round, qi, wi, btn){ doSpeak(DATA[String(round)][qi].w[wi].k, btn); }
 function spkSent(round, qi, btn){ doSpeak(DATA[String(round)][qi].s.replace('（　）',''), btn); }
@@ -595,7 +617,7 @@ if(window.speechSynthesis){
 
 buildRoundMenu();
 document.getElementById('hdr-round').textContent='';
-document.getElementById('main').innerHTML='<div class="pick-hint">👆 Chọn một đề ở trên để bắt đầu làm bài</div>';
+document.getElementById('main').innerHTML='<div class="pick-hint">👆 Chọn một hoặc nhiều đề ở trên để bắt đầu làm bài</div>';
 </script>
 <script src="but-ve.js" defer></script>
 </body>
