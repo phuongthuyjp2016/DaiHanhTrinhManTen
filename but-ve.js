@@ -1,6 +1,6 @@
 /* Bút vẽ cho các trang học: nút ✎ đỏ ở góc dưới bên phải. Dùng được với Apple Pencil, chuột, ngón tay.
    Màn hình rộng: thanh công cụ ở trên cùng. Điện thoại (rộng tối đa 640px): thanh gọn ở dưới cùng, màu và độ dày
-   gom thành nút bấm để đổi. Nét vẽ nằm trên trang đang mở, tải lại là mất.
+   gom thành nút bấm để đổi. Nét vẽ bám theo ô nội dung đã gạch (thu phóng, đổi cỡ chữ vẫn đúng chỗ), tải lại là mất.
    Một file dùng chung, trang nào cần thì thêm đúng một dòng <script src="but-ve.js" defer></script> trước </body>. */
 (function(){
 function penMain(){
@@ -113,15 +113,45 @@ function penMain(){
     x.clearRect(sx,sy,w,h);
     x.lineCap='round'; x.lineJoin='round';
     st.strokes.forEach(function(k){
+      var ox=0, oy=0, a=k.a;
+      if(a){
+        if(a.el.isConnected){
+          var r=a.el.getBoundingClientRect();
+          if(r.width>0||r.height>0){ a.sx=r.left+sx-a.l; a.sy=r.top+sy-a.t; }
+        }
+        ox=a.sx||0; oy=a.sy||0;
+      }
       x.save();
       if(k.tool==='erase') x.globalCompositeOperation='destination-out';
       else if(k.tool==='hi') x.globalAlpha=0.35;
       x.strokeStyle=k.tool==='erase'?'#000':k.color; x.lineWidth=k.size;
       x.beginPath();
-      k.pts.forEach(function(p,i){ if(i) x.lineTo(p[0],p[1]); else x.moveTo(p[0],p[1]); });
-      if(k.pts.length===1) x.lineTo(k.pts[0][0]+0.1,k.pts[0][1]);
+      k.pts.forEach(function(p,i){ if(i) x.lineTo(p[0]+ox,p[1]+oy); else x.moveTo(p[0]+ox,p[1]+oy); });
+      if(k.pts.length===1) x.lineTo(k.pts[0][0]+ox+0.1,k.pts[0][1]+oy);
       x.stroke(); x.restore();
     });
+  }
+  function anchorAt(cx,cy){
+    var list=document.elementsFromPoint?document.elementsFromPoint(cx,cy):[];
+    for(var i=0;i<list.length;i++){
+      var el=list[i];
+      if(el===cv||bar.contains(el)||(fab&&el===fab)||el===de||el===document.body||el===document.head) continue;
+      var n=el;
+      while(n&&n!==document.body&&n!==de){
+        var cs=getComputedStyle(n);
+        if(cs.position==='fixed'||cs.position==='sticky') return null;
+        n=n.parentElement;
+      }
+      while(el.parentElement&&el.parentElement!==document.body){
+        var q=el.getBoundingClientRect();
+        if(q.width>=120&&q.height>=24) break;
+        el=el.parentElement;
+      }
+      var r=el.getBoundingClientRect();
+      if(el===document.body||(r.width<1&&r.height<1)) return null;
+      return {el:el,l:r.left+window.pageXOffset,t:r.top+window.pageYOffset,sx:0,sy:0};
+    }
+    return null;
   }
   function pt(e){ return [e.clientX+window.pageXOffset, e.clientY+window.pageYOffset]; }
   cv.addEventListener('pointerdown',function(e){
@@ -129,7 +159,7 @@ function penMain(){
     else if(e.pointerType==='touch' && Date.now()-lastPen<1500) return;
     if(st.palOpen){ st.palOpen=false; sync(); }
     try{ cv.setPointerCapture(e.pointerId); }catch(err){}
-    cur={tool:st.tool,color:st.color,size:st.tool==='hi'?st.size*4:(st.tool==='erase'?st.size*5:st.size),pts:[pt(e)],id:e.pointerId};
+    cur={tool:st.tool,color:st.color,size:st.tool==='hi'?st.size*4:(st.tool==='erase'?st.size*5:st.size),pts:[pt(e)],id:e.pointerId,a:anchorAt(e.clientX,e.clientY)};
     st.strokes.push(cur); draw(); e.preventDefault();
   });
   cv.addEventListener('pointermove',function(e){
