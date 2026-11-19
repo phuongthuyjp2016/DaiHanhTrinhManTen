@@ -447,6 +447,9 @@ function goToSearchResult(ti,qi){
 }
 
 function goSelect(){state.screen='select';state.searchQuery='';render();scrollTo(0,0);}
+var qCount='all';
+function setQCount(v){qCount=v;}
+function limitQs(arr){return qCount==='all'?arr:arr.slice(0,parseInt(qCount,10));}
 function startTest(i){
   state.screen='quiz';state.testIndex=i;state.qIndex=0;
   state.answers=new Array(QUIZ_DATA[i].questions.length).fill(null);
@@ -474,7 +477,7 @@ function startSelectedTests(){
       combinedQuestions.push(clone);
     });
   });
-  QUIZ_DATA[COMBO_INDEX]={name:'Kết hợp '+indices.length+' đề',questions:combinedQuestions,_combo:true};
+  QUIZ_DATA[COMBO_INDEX]={name:'Kết hợp '+indices.length+' đề',questions:limitQs(combinedQuestions),_combo:true};
   selRounds.clear();
   startTest(COMBO_INDEX);
 }
@@ -602,6 +605,7 @@ function selScreen(){
   const hasQuery=state.searchQuery.trim().length>0;
   const selCount=selRounds.size;
   const controlRow=`<div class="sel-controls" style="display:${hasQuery?'none':'flex'};gap:8px;margin:10px 0;flex-wrap:wrap;">
+    <label style="font-size:13px;font-weight:700;align-self:center;">Số câu: <select onchange="setQCount(this.value)" style="padding:5px 8px;border-radius:8px;border:1.5px solid var(--line);"><option value="10" ${qCount==='10'?'selected':''}>10 câu</option><option value="20" ${qCount==='20'?'selected':''}>20 câu</option><option value="30" ${qCount==='30'?'selected':''}>30 câu</option><option value="all" ${qCount==='all'?'selected':''}>Tất cả</option></select></label>
     <button class="btn ghost" onclick="selectAllTests()">📚 Tất cả (${ORIGINAL_TEST_COUNT} đề)</button>
     <button class="btn green" style="display:${selCount>0?'':'none'}" onclick="startSelectedTests()">▶ Bắt đầu (đã chọn ${selCount} đề)</button>
   </div>`;
