@@ -21,6 +21,11 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
 .menu-btn:hover { background: #f0f0ea; }
 .menu-btn .round-title { font-weight: 600; font-size: 15px; }
 .menu-btn .word-list { font-size: 12px; color: #333; margin-top: 3px; }
+.menu-btn .mf-row { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 8px; padding:4px 0; border-top:1px dashed #e4d3ae; text-align:left; }
+.menu-btn .mf-row:first-child { border-top:0; }
+.menu-btn .mf-w { font-size:14px; font-weight:700; color:#1a1a1a; }
+.menu-btn .mf-kj { font-size:12px; color:#1f4e79; font-weight:700; }
+.menu-btn .mf-s { font-size:12.5px; color:#a6501b; background:#fff6ec; border:1px solid #f0cfae; border-radius:5px; padding:0 6px; }
 .menu-btn.done { border-color: #2e7d4f; }
 .menu-btn.done .round-title { color: #2e7d4f; }
 .menu-btn.active { border-color: #f5a623; background: linear-gradient(180deg,#ffd25a,#f5a623); }
@@ -160,6 +165,17 @@ const sections = [["練習問題", ["第83回", "第84回", "第85回", "第86�
 const scores = {};
 var wrongItems = [];
 let currentRound = null, shuffled = [], cur = 0, score = 0, answered = false, qAns = [];
+function m4SetOf(q){
+  var ls=(q.e||'').split('\n');
+  for(var i=0;i<ls.length;i++){ var c=ls[i].charCodeAt(0); if(c===0x2726||c===0x2746){ var t=ls[i].replace(/^.\s*(セット)?\s*[:\uff1a]?\s*/,''); return t; } }
+  return '';
+}
+function m4MenuFixList(round){
+  return round.qs.map(function(q){
+    var st=m4SetOf(q);
+    return '<div class="mf-row"><span class="mf-w">'+q.k+(q.kj?'<span class="mf-kj">【'+q.kj+'】</span>':'')+'</span>'+(st?'<span class="mf-s">'+st+'</span>':'')+'</div>';
+  }).join('');
+}
 function renderM4Nav(){
   var el=document.getElementById('m4NavScroll'); if(!el) return;
   el.innerHTML=shuffled.map(function(q,i){ var c='m4-nav-num'; if(i===cur) c+=' cur'; else if(qAns[i]!==undefined) c+=(qAns[i]===q.c?' cc':' cw'); return '<button class="'+c+'" onclick="jumpToQ('+i+')">'+(i+1)+'</button>'; }).join('');
@@ -594,7 +610,7 @@ function buildMenu(){
   menu.appendChild(startBtn);
   let anyMatch = false;
   sections.forEach(sec => {
-    const matchedRounds = sec[1].filter(r => !q4s || r.toLowerCase().includes(q4s) || (allData[r].words||'').toLowerCase().includes(q4s));
+    const matchedRounds = sec[1].filter(r => !q4s || r.toLowerCase().includes(q4s) || (allData[r].words||'').toLowerCase().includes(q4s) || m4MenuFixList(allData[r]).toLowerCase().includes(q4s));
     if(matchedRounds.length===0) return;
     anyMatch = true;
     const lbl = document.createElement('div');
@@ -606,7 +622,7 @@ function buildMenu(){
       const btn = document.createElement('button');
       btn.className = 'menu-btn' + (scores[r]!==undefined?' done':'') + (selRounds.has(r)?' active':'');
       const chip = scores[r]!==undefined?`<span class="score-chip">${scores[r]}/${q.qs.length}</span>`:'';
-      btn.innerHTML = `<div class="round-title">${r} ${chip}</div><div class="word-list">${q.words}</div>`;
+      btn.innerHTML = `<div class="round-title">${r} ${chip}</div><div class="word-list">${m4MenuFixList(q)}</div>`;
       btn.onclick = ()=>toggleRound(r, btn);
       menu.appendChild(btn);
     });
