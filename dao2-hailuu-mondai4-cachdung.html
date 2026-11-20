@@ -172,7 +172,7 @@ function m4SetOf(q){
 }
 function m4MenuFixList(round){
   return round.qs.map(function(q){
-    var st=m4SetOf(q);
+    var st=q.okf||m4SetOf(q);
     return '<div class="mf-row"><span class="mf-w">'+q.k+(q.kj?'<span class="mf-kj">【'+q.kj+'】</span>':'')+'</span>'+(st?'<span class="mf-s">'+st+'</span>':'')+'</div>';
   }).join('');
 }
