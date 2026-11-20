@@ -168,7 +168,7 @@ function dcBuildDao2Mondai3CardData(item, opts) {
     m: item.m,
     hasVi: !!item.vi,
     vi: item.vi || '',
-    synonyms: (item.sy || []).map(function (s, i) { return { text: s, mainClass: i === 0 ? ' pri' : '' }; }),
+    synonyms: (opts.synonyms || (item.sy || []).map(function (s) { return { text: s, fix: '' }; })).map(function (s, i) { return { text: s.text, fix: s.fix ? '→ ' + s.fix : '', mainClass: i === 0 ? ' pri' : '' }; }),
     collocations: (item.co || []).map(function (c) { return { text: c }; })
   };
 }

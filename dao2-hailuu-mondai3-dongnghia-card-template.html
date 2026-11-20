@@ -13,14 +13,18 @@
 .dc-mondai3-card .ptag{font-size:.72rem;background:#f2ede1;color:#7a6a52;border-radius:20px;padding:3px 10px;font-weight:700}
 .dc-mondai3-card .qbadge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:#1f4e79;color:#fff;border-radius:50%;font-size:.75rem;font-weight:800;flex-shrink:0}
 .dc-mondai3-card .mng{font-size:.92rem;color:#1a1a1a;margin-bottom:8px;line-height:1.55}
-.dc-mondai3-card .vi{font-size:.82rem;color:#1a1a1a;background:#fff;border:1px solid #9dc0da;border-radius:9px;padding:6px 11px;margin-bottom:10px;display:inline-block}
+.dc-mondai3-card .vi{font-family:"Segoe UI",Arial,sans-serif;font-size:.82rem;color:#1a1a1a;background:#fff;border:1px solid #9dc0da;border-radius:9px;padding:6px 11px;margin-bottom:10px;display:inline-block}
 .dc-mondai3-card .remember-box{border:2px solid #9dc0da;border-radius:14px;overflow:hidden}
+.dc-mondai3-card .remember-head,.dc-mondai3-card .remember-sub{font-family:"Segoe UI",Arial,"Be Vietnam Pro",sans-serif}
 .dc-mondai3-card .remember-head{background:#1f4e79;color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.03em;padding:9px 13px}
 .dc-mondai3-card .remember-body{padding:13px 13px 3px}
 .dc-mondai3-card .remember-sec{margin-bottom:13px}
 .dc-mondai3-card .remember-sub{font-size:.7rem;font-weight:800;letter-spacing:.02em;color:#1f4e79;margin-bottom:7px;text-transform:uppercase}
 .dc-mondai3-card .syn-chip-row{display:flex;flex-wrap:wrap;gap:6px}
 .dc-mondai3-card .syn-chip{background:#fff;border:1px solid #9dc0da;color:#1f4e79;border-radius:20px;padding:5px 12px;font-size:.82rem;font-weight:700}
+.dc-mondai3-card .syn-rows{display:flex;flex-direction:column;gap:6px}
+.dc-mondai3-card .syn-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.dc-mondai3-card .syn-fix{font-size:.9rem;color:#000;font-weight:700;line-height:1.5}
 .dc-mondai3-card .item-list{display:flex;flex-direction:column;gap:7px}
 .dc-mondai3-card .item-card{background:#fff;border:1px solid #9dc0da;border-radius:9px;padding:9px 11px;font-size:.85rem;color:#1a1a1a;line-height:1.5}
 <!--/STYLE-->
@@ -51,7 +55,7 @@
     <div class="remember-body">
       <div class="remember-sec">
         <div class="remember-sub">Đồng nghĩa</div>
-        <div class="syn-chip-row">{{#each synonyms}}<span class="syn-chip">{{this.text}}</span>{{/each}}</div>
+        <div class="syn-rows">{{#each synonyms}}<div class="syn-row"><span class="syn-chip">{{this.text}}</span><span class="syn-fix">{{this.fix}}</span></div>{{/each}}</div>
       </div>
       <div class="remember-sec">
         <div class="remember-sub">Cụm hay dùng</div>

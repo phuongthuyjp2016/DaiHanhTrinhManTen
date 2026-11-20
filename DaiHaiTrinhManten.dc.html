@@ -1392,7 +1392,7 @@ function subPos(id, mobilePosMap, x, y, mobile) {
   return { x, y };
 }
 
-// Tên tool trong progressTools có thể kèm ?v=... để phá cache (vd 'dao10-daichien-dethi.html?v=20261018a'),
+// Tên tool trong progressTools có thể kèm ?v=... để phá cache (vd 'dao10-daichien-dethi.html?v=20261020b'),
 // còn trang tool chỉ ghi tên file — bỏ tham số v trước khi tra, giữ các tham số khác như ?set=.
 function toolProgressKey(url) {
   const q = url.indexOf('?');
@@ -1534,7 +1534,41 @@ const ISLANDS = [
     progressTools:['dao3-suongmu-powerdrill-full30.html','dao3-suongmu-mondai6-quiz100.html','dao3-suongmu-mondai6-quiz320.html','dao3-suongmu-matdien-1321.html'] },
   { name:'Đảo Kiếm Sĩ', skill:'Nghe Hiểu · Loại Đáp Án Sai (MD4)', boss:'Cá Mập Kiếm Sĩ', item:'Kiếm Phá Bẫy', arc:'chinhphuc', color:'#bf6f4f', dark:'#8c4f36', x:1130, y:250, accessory:'bandana',
     story:'Cá Mập Kiếm Sĩ rèn luyện khả năng chém phăng những đáp án gây nhiễu trong bài nghe.',
-    playable:false, comingSoon:true, quiz:[] },
+    playable:false, comingSoon:false, external:true, menuUrl:'dao4-kiemsi-mondai4-nghe.html?set=2026-07', quiz:[], wideMenuTools:true,
+    menuTools:[
+      { icon:'⚔️', title:'Mondai 4 · Đề 2010-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2010-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2010-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2010-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2011-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2011-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2011-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2011-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2012-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2012-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2012-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2012-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2013-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2013-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2013-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2013-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2014-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2014-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2014-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2014-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2015-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2015-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2015-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2015-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2016-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2016-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2016-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 14 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2016-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2017-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2017-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2017-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2017-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2018-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2018-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2018-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2018-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2019-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2019-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2019-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2019-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2020-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2020-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2021-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2021-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2021-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2021-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2022-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 13 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2022-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2022-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 11 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2022-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2023-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 11 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2023-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2023-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 11 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2023-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2024-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 11 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2024-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2024-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 11 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2024-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2025-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 11 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2025-07' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2025-12', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 11 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2025-12' },
+      { icon:'⚔️', title:'Mondai 4 · Đề 2026-07', desc:'Nghe câu nói ngắn rồi chọn câu đáp phù hợp (即時応答) — 11 câu, kèm script sau khi nộp bài.', url:'dao4-kiemsi-mondai4-nghe.html?set=2026-07' }
+    ] },
   { name:'Đảo Tiếng Vọng', skill:'Nghe Hiểu · Bắt Từ Khóa (MD1)', boss:'Cá Mập Âm Thanh', item:'Tai Nghe Vàng', arc:'chinhphuc', color:'#4f9dbf', dark:'#356f8c', x:1260, y:460, accessory:'headphones',
     story:'Tiếng sóng vỗ mang theo những đoạn hội thoại bí ẩn, chỉ đôi tai tinh tường của Cá Mập Âm Thanh mới bắt trọn từ khóa.',
     playable:false, comingSoon:false, external:true, menuUrl:'dao5-index.html', quiz:[], wideMenuTools:true,
@@ -1569,9 +1603,10 @@ const ISLANDS = [
       { icon:'🎧', title:'Mondai 1 · Đề 2024-07', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html?set=2024-07' },
       { icon:'🎧', title:'Mondai 1 · Đề 2024-12', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html?set=2024-12' },
       { icon:'🎧', title:'Mondai 1 · Đề 2025-07', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html?set=2025-07' },
-      { icon:'🎧', title:'Mondai 1 · Đề 2025-12', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html?set=2025-12' }
+      { icon:'🎧', title:'Mondai 1 · Đề 2025-12', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html?set=2025-12' },
+      { icon:'🎧', title:'Mondai 1 · Đề 2026-07', desc:'Nghe hội thoại/đoạn nói rồi chọn hành động cần làm tiếp theo (課題理解) — kèm script và giải thích chi tiết.', url:'dao5-tiengvong-mondai1-nghe.html?set=2026-07' }
     ],
-    progressTools:['dao5-tiengvong-mondai1-nghe.html?set=2010-07','dao5-tiengvong-mondai1-nghe.html?set=2010-12','dao5-tiengvong-mondai1-nghe.html?set=2011-07','dao5-tiengvong-mondai1-nghe.html?set=2011-12','dao5-tiengvong-mondai1-nghe.html?set=2012-07','dao5-tiengvong-mondai1-nghe.html?set=2012-12','dao5-tiengvong-mondai1-nghe.html?set=2013-07','dao5-tiengvong-mondai1-nghe.html?set=2013-12','dao5-tiengvong-mondai1-nghe.html?set=2014-07','dao5-tiengvong-mondai1-nghe.html?set=2014-12','dao5-tiengvong-mondai1-nghe.html?set=2015-07','dao5-tiengvong-mondai1-nghe.html?set=2015-12','dao5-tiengvong-mondai1-nghe.html?set=2016-07','dao5-tiengvong-mondai1-nghe.html?set=2016-12','dao5-tiengvong-mondai1-nghe.html?set=2017-07','dao5-tiengvong-mondai1-nghe.html?set=2017-12','dao5-tiengvong-mondai1-nghe.html?set=2018-07','dao5-tiengvong-mondai1-nghe.html?set=2018-12','dao5-tiengvong-mondai1-nghe.html?set=2019-07','dao5-tiengvong-mondai1-nghe.html?set=2019-12','dao5-tiengvong-mondai1-nghe.html?set=2020-12','dao5-tiengvong-mondai1-nghe.html?set=2021-07','dao5-tiengvong-mondai1-nghe.html?set=2021-12','dao5-tiengvong-mondai1-nghe.html?set=2022-07','dao5-tiengvong-mondai1-nghe.html?set=2022-12','dao5-tiengvong-mondai1-nghe.html?set=2023-07','dao5-tiengvong-mondai1-nghe.html?set=2023-12','dao5-tiengvong-mondai1-nghe.html?set=2024-07','dao5-tiengvong-mondai1-nghe.html?set=2024-12','dao5-tiengvong-mondai1-nghe.html?set=2025-07','dao5-tiengvong-mondai1-nghe.html?set=2025-12'] },
+    progressTools:['dao5-tiengvong-mondai1-nghe.html?set=2010-07','dao5-tiengvong-mondai1-nghe.html?set=2010-12','dao5-tiengvong-mondai1-nghe.html?set=2011-07','dao5-tiengvong-mondai1-nghe.html?set=2011-12','dao5-tiengvong-mondai1-nghe.html?set=2012-07','dao5-tiengvong-mondai1-nghe.html?set=2012-12','dao5-tiengvong-mondai1-nghe.html?set=2013-07','dao5-tiengvong-mondai1-nghe.html?set=2013-12','dao5-tiengvong-mondai1-nghe.html?set=2014-07','dao5-tiengvong-mondai1-nghe.html?set=2014-12','dao5-tiengvong-mondai1-nghe.html?set=2015-07','dao5-tiengvong-mondai1-nghe.html?set=2015-12','dao5-tiengvong-mondai1-nghe.html?set=2016-07','dao5-tiengvong-mondai1-nghe.html?set=2016-12','dao5-tiengvong-mondai1-nghe.html?set=2017-07','dao5-tiengvong-mondai1-nghe.html?set=2017-12','dao5-tiengvong-mondai1-nghe.html?set=2018-07','dao5-tiengvong-mondai1-nghe.html?set=2018-12','dao5-tiengvong-mondai1-nghe.html?set=2019-07','dao5-tiengvong-mondai1-nghe.html?set=2019-12','dao5-tiengvong-mondai1-nghe.html?set=2020-12','dao5-tiengvong-mondai1-nghe.html?set=2021-07','dao5-tiengvong-mondai1-nghe.html?set=2021-12','dao5-tiengvong-mondai1-nghe.html?set=2022-07','dao5-tiengvong-mondai1-nghe.html?set=2022-12','dao5-tiengvong-mondai1-nghe.html?set=2023-07','dao5-tiengvong-mondai1-nghe.html?set=2023-12','dao5-tiengvong-mondai1-nghe.html?set=2024-07','dao5-tiengvong-mondai1-nghe.html?set=2024-12','dao5-tiengvong-mondai1-nghe.html?set=2025-07','dao5-tiengvong-mondai1-nghe.html?set=2025-12','dao5-tiengvong-mondai1-nghe.html?set=2026-07'] },
   { name:'Đảo Tiên Tri', skill:'Nghe Hiểu · Đọc Trước Dự Đoán (MD2)', boss:'Cá Mập Tiên Tri', item:'Quả Cầu Tiên Tri', arc:'chinhphuc', color:'#8f5fbf', dark:'#623f8c', x:1180, y:660, accessory:'orb',
     story:'Cá Mập Tiên Tri dạy cách đọc trước câu hỏi và dự đoán nội dung trước khi nghe.',
     playable:false, comingSoon:false, external:true, menuUrl:'dao6-index.html', quiz:[], wideMenuTools:true,
@@ -1606,15 +1641,84 @@ const ISLANDS = [
       { icon:'🔮', title:'Mondai 2 · Đề 2024-07', desc:'Đọc trước 4 đáp án, dự đoán rồi nghe xác nhận — kèm script và giải thích chi tiết theo phương pháp.', url:'dao6-tientri-mondai2-nghe.html?set=2024-07' },
       { icon:'🔮', title:'Mondai 2 · Đề 2024-12', desc:'Đọc trước 4 đáp án, dự đoán rồi nghe xác nhận — kèm script và giải thích chi tiết theo phương pháp.', url:'dao6-tientri-mondai2-nghe.html?set=2024-12' },
       { icon:'🔮', title:'Mondai 2 · Đề 2025-07', desc:'Đọc trước 4 đáp án, dự đoán rồi nghe xác nhận — kèm script và giải thích chi tiết theo phương pháp.', url:'dao6-tientri-mondai2-nghe.html?set=2025-07' },
-      { icon:'🔮', title:'Mondai 2 · Đề 2025-12', desc:'Đọc trước 4 đáp án, dự đoán rồi nghe xác nhận — kèm script và giải thích chi tiết theo phương pháp.', url:'dao6-tientri-mondai2-nghe.html?set=2025-12' }
+      { icon:'🔮', title:'Mondai 2 · Đề 2025-12', desc:'Đọc trước 4 đáp án, dự đoán rồi nghe xác nhận — kèm script và giải thích chi tiết theo phương pháp.', url:'dao6-tientri-mondai2-nghe.html?set=2025-12' },
+      { icon:'🔮', title:'Mondai 2 · Đề 2026-07', desc:'Đọc trước 4 đáp án, dự đoán rồi nghe xác nhận — kèm script và giải thích chi tiết theo phương pháp.', url:'dao6-tientri-mondai2-nghe.html?set=2026-07' }
     ],
-    progressTools:['dao6-tientri-mondai2-nghe.html?set=2010-07','dao6-tientri-mondai2-nghe.html?set=2010-12','dao6-tientri-mondai2-nghe.html?set=2011-07','dao6-tientri-mondai2-nghe.html?set=2011-12','dao6-tientri-mondai2-nghe.html?set=2012-07','dao6-tientri-mondai2-nghe.html?set=2012-12','dao6-tientri-mondai2-nghe.html?set=2013-07','dao6-tientri-mondai2-nghe.html?set=2013-12','dao6-tientri-mondai2-nghe.html?set=2014-07','dao6-tientri-mondai2-nghe.html?set=2014-12','dao6-tientri-mondai2-nghe.html?set=2015-07','dao6-tientri-mondai2-nghe.html?set=2015-12','dao6-tientri-mondai2-nghe.html?set=2016-07','dao6-tientri-mondai2-nghe.html?set=2016-12','dao6-tientri-mondai2-nghe.html?set=2017-07','dao6-tientri-mondai2-nghe.html?set=2017-12','dao6-tientri-mondai2-nghe.html?set=2018-07','dao6-tientri-mondai2-nghe.html?set=2018-12','dao6-tientri-mondai2-nghe.html?set=2019-07','dao6-tientri-mondai2-nghe.html?set=2019-12','dao6-tientri-mondai2-nghe.html?set=2020-12','dao6-tientri-mondai2-nghe.html?set=2021-07','dao6-tientri-mondai2-nghe.html?set=2021-12','dao6-tientri-mondai2-nghe.html?set=2022-07','dao6-tientri-mondai2-nghe.html?set=2022-12','dao6-tientri-mondai2-nghe.html?set=2023-07','dao6-tientri-mondai2-nghe.html?set=2023-12','dao6-tientri-mondai2-nghe.html?set=2024-07','dao6-tientri-mondai2-nghe.html?set=2024-12','dao6-tientri-mondai2-nghe.html?set=2025-07','dao6-tientri-mondai2-nghe.html?set=2025-12'] },
+    progressTools:['dao6-tientri-mondai2-nghe.html?set=2010-07','dao6-tientri-mondai2-nghe.html?set=2010-12','dao6-tientri-mondai2-nghe.html?set=2011-07','dao6-tientri-mondai2-nghe.html?set=2011-12','dao6-tientri-mondai2-nghe.html?set=2012-07','dao6-tientri-mondai2-nghe.html?set=2012-12','dao6-tientri-mondai2-nghe.html?set=2013-07','dao6-tientri-mondai2-nghe.html?set=2013-12','dao6-tientri-mondai2-nghe.html?set=2014-07','dao6-tientri-mondai2-nghe.html?set=2014-12','dao6-tientri-mondai2-nghe.html?set=2015-07','dao6-tientri-mondai2-nghe.html?set=2015-12','dao6-tientri-mondai2-nghe.html?set=2016-07','dao6-tientri-mondai2-nghe.html?set=2016-12','dao6-tientri-mondai2-nghe.html?set=2017-07','dao6-tientri-mondai2-nghe.html?set=2017-12','dao6-tientri-mondai2-nghe.html?set=2018-07','dao6-tientri-mondai2-nghe.html?set=2018-12','dao6-tientri-mondai2-nghe.html?set=2019-07','dao6-tientri-mondai2-nghe.html?set=2019-12','dao6-tientri-mondai2-nghe.html?set=2020-12','dao6-tientri-mondai2-nghe.html?set=2021-07','dao6-tientri-mondai2-nghe.html?set=2021-12','dao6-tientri-mondai2-nghe.html?set=2022-07','dao6-tientri-mondai2-nghe.html?set=2022-12','dao6-tientri-mondai2-nghe.html?set=2023-07','dao6-tientri-mondai2-nghe.html?set=2023-12','dao6-tientri-mondai2-nghe.html?set=2024-07','dao6-tientri-mondai2-nghe.html?set=2024-12','dao6-tientri-mondai2-nghe.html?set=2025-07','dao6-tientri-mondai2-nghe.html?set=2025-12','dao6-tientri-mondai2-nghe.html?set=2026-07'] },
   { name:'Đảo Ảo Ảnh', skill:'Nghe Hiểu · Suy Luận Hội Thoại (MD5)', boss:'Cá Mập Ảo Thuật Gia', item:'Tinh Thể Suy Luận', arc:'chinhphuc', color:'#bf4f9d', dark:'#8c3570', x:990, y:790, accessory:'mask',
     story:'Ảo ảnh và ẩn ý phủ khắp hòn đảo này — Cá Mập Ảo Thuật Gia thử thách khả năng suy luận ngữ cảnh hội thoại.',
-    playable:false, comingSoon:true, quiz:[] },
+    playable:false, comingSoon:false, external:true, menuUrl:'dao6b-aoanh-mondai5-nghe.html?set=2026-07', quiz:[], wideMenuTools:true,
+    menuTools:[
+      { icon:'🎭', title:'Mondai 5 · Đề 2010-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2010-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2010-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2010-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2011-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2011-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2011-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2011-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2012-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2012-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2012-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2012-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2013-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2013-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2013-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2013-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2014-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2014-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2014-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2014-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2015-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2015-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2015-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2015-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2016-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2016-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2016-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2016-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2017-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2017-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2017-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2017-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2018-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2018-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2018-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2018-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2019-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2019-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2019-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 4 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2019-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2020-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2020-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2021-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2021-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2021-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2021-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2022-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2022-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2022-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2022-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2023-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2023-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2023-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2023-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2024-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2024-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2024-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2024-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2025-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2025-07' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2025-12', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2025-12' },
+      { icon:'🎭', title:'Mondai 5 · Đề 2026-07', desc:'Nghe đoạn dài/nhiều người, tổng hợp thông tin (統合理解) — 3 câu, kèm script sau khi nộp bài.', url:'dao6b-aoanh-mondai5-nghe.html?set=2026-07' }
+    ] },
   { name:'Đảo Chiến Lược', skill:'Nghe Hiểu · Suy Luận Đáp Án (MD3)', boss:'Cá Mập Quân Sư', item:'Khiên Chiến Lược', arc:'chinhphuc', color:'#bf8f4f', dark:'#8c6335', x:670, y:820, accessory:'cape',
     story:'Cá Mập Quân Sư huấn luyện chiến thuật suy luận đáp án đúng từ những manh mối nhỏ nhất.',
-    playable:false, comingSoon:true, quiz:[] },
+    playable:false, comingSoon:false, external:true, menuUrl:'dao7-chienluoc-mondai3-nghe.html?set=2026-07', quiz:[], wideMenuTools:true,
+    menuTools:[
+      { icon:'🛡️', title:'Mondai 3 · Đề 2010-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2010-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2010-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2010-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2011-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2011-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2011-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2011-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2012-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2012-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2012-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2012-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2013-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2013-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2013-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2013-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2014-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2014-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2014-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2014-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2015-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2015-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2015-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2015-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2016-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2016-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2016-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2016-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2017-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2017-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2017-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2017-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2018-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2018-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2018-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2018-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2019-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2019-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2019-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2019-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2020-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2020-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2021-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2021-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2021-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2021-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2022-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 6 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2022-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2022-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2022-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2023-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2023-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2023-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2023-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2024-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2024-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2024-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2024-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2025-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2025-07' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2025-12', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2025-12' },
+      { icon:'🛡️', title:'Mondai 3 · Đề 2026-07', desc:'Nghe đoạn dài, nắm ý chính (概要理解) — 5 câu, kèm script sau khi nộp bài.', url:'dao7-chienluoc-mondai3-nghe.html?set=2026-07' }
+    ] },
   { name:'Đảo Ánh Sáng', skill:'Đọc Hiểu (Dokkai)', boss:'Người Gác Hải Đăng', item:'Nhãn Lực Tinh Anh', arc:'chinhphuc', color:'#d1b23f', dark:'#a3872a', x:400, y:730, accessory:'none',
     story:'Ngọn hải đăng chiếu rọi những đoạn văn dài — nơi đây sẽ mở ra một hải đồ phụ riêng cho kỹ năng Đọc Hiểu.',
     playable:false, comingSoon:true, quiz:[] },
@@ -1623,12 +1727,12 @@ const ISLANDS = [
     playable:false, comingSoon:false, external:true, menuUrl:'dao10-index.html', quiz:[],
     menuTools:[
       { icon:'📖', title:'Từ Vựng 語彙 · Toàn 30 Vòng', desc:'Luyện từ vựng N1 theo 30 vòng liên tiếp, bám sát cấu trúc đề thi thật.', url:'dao10-daichien-tuvung30.html' },
-      { icon:'⚔', title:'Đề Thi Tổng Hợp 2010–2025', desc:'Thi thử toàn phần, tổng hợp đề thi JLPT N1 các năm từ 2010 đến 2025.', url:'dao10-daichien-dethi.html?v=20261018a' }
+      { icon:'⚔', title:'Đề Thi Tổng Hợp 2010–2025', desc:'Thi thử toàn phần, tổng hợp đề thi JLPT N1 các năm từ 2010 đến 2025.', url:'dao10-daichien-dethi.html?v=20261021a' }
     ],
-    progressTools:['dao10-daichien-tuvung30.html','dao10-daichien-dethi.html?v=20261018a'] },
+    progressTools:['dao10-daichien-tuvung30.html','dao10-daichien-dethi.html?v=20261021a'] },
   { name:'Đảo Tứ Hoàng', skill:'Thử Thách Tổng Hợp N1 (Boss Cuối)', boss:'Vua Cá Mập', item:'Vương Miện Tứ Hoàng', arc:'daichien', color:'#4a2f6b', dark:'#33204a', x:790, y:640, accessory:'crown',
     story:'Vua Cá Mập chờ đợi những nhà thám hiểm xuất sắc nhất trong thử thách tổng hợp toàn bộ JLPT N1. Chiến thắng sẽ mở đường đến Đảo Kho Báu.',
-    playable:false, comingSoon:false, external:true, menuUrl:'dao11-thithu-jlpt-n1-7-2026.html?v=20261019a', quiz:[] },
+    playable:false, comingSoon:false, external:true, menuUrl:'dao11-thithu-jlpt-n1-7-2026.html?v=20261116c', quiz:[] },
   { name:'Đảo Kho Báu Manten', skill:'Đích Đến Vinh Quang', boss:'—', item:'Kho Báu Manten', arc:'vinhquang', color:'#d4af37', dark:'#a3841f', x:790, y:400, accessory:'none', isTreasure:true,
     story:'Không có chiến đấu nơi đây — chỉ có ánh sáng, pháo hoa và rương kho báu chờ đón Nhà Chinh Phục MANTEN đã hoàn thành cả hải trình.',
     playable:false, comingSoon:true, quiz:[] }
@@ -1673,11 +1777,11 @@ const TREASURE_POWER = [
 ];
 const SUBMAP_W = 1200, SUBMAP_H = 760;
 const HAILUU_ISLETS = [
-  { id:'song-ngam', name:'Đảo Sóng Ngầm', emoji:'🌊', skill:'Từ Vựng Theo Văn Cảnh', art:'assets/art-052.webp', boss:'Thủ Hộ Sóng Ngầm', treasure:'Ngọc Sóng Ngầm', treasureEmoji:'🔹', treasureArt:'assets/art-053.png', color:'#2f8fd1', tools:[{label:'Mondai 2 · Văn Cảnh Quy Định', url:'dao2-hailuu-mondai2-vancanh.html'},{label:'Phân Biệt Từ Dễ Nhầm (Mondai 2)', url:'dao2-hailuu-mondai2-phanbiet.html'},{label:'Mon2 - Bí Mật Ngữ Cảnh (20 đề)', url:'dao2-hailuu-mondai2-bimatngucanh.html'}], progressTools:['dao2-hailuu-mondai2-vancanh.html','dao2-hailuu-mondai2-bimatngucanh.html'], x:235, y:440,
+  { id:'song-ngam', name:'Đảo Sóng Ngầm', emoji:'🌊', skill:'Từ Vựng Theo Văn Cảnh', art:'assets/art-052.webp', boss:'Thủ Hộ Sóng Ngầm', treasure:'Ngọc Sóng Ngầm', treasureEmoji:'🔹', treasureArt:'assets/art-053.png', color:'#2f8fd1', tools:[{label:'Mondai 2 · Văn Cảnh Quy Định', url:'dao2-hailuu-mondai2-vancanh.html?v=20261119f'},{label:'Phân Biệt Từ Dễ Nhầm (Mondai 2)', url:'dao2-hailuu-mondai2-phanbiet.html'},{label:'Mon2 - Bí Mật Ngữ Cảnh (20 đề)', url:'dao2-hailuu-mondai2-bimatngucanh.html?v=20261119d'}], progressTools:['dao2-hailuu-mondai2-vancanh.html?v=20261119f','dao2-hailuu-mondai2-bimatngucanh.html?v=20261119d'], x:235, y:440,
     story:'Những con sóng ngầm mang theo các từ vựng ẩn dưới lớp văn cảnh — chỉ ai đọc được dòng chảy mới chọn đúng nghĩa.' },
-  { id:'gio', name:'Đảo Gió Nam', emoji:'🌬', skill:'Từ Đồng Nghĩa, Từ Thay Thế', art:'assets/art-054.webp', boss:'Thủ Hộ Gió Nam', treasure:'Lá Cờ Gió Nam', treasureEmoji:'🎐', treasureArt:'assets/art-055.png', color:'#4fbfa8', tools:[{label:'Mondai 3 · Đồng Nghĩa Thay Thế', url:'dao2-hailuu-mondai3-dongnghia.html'}], progressTools:['dao2-hailuu-mondai3-dongnghia.html'], x:600, y:200,
+  { id:'gio', name:'Đảo Gió Nam', emoji:'🌬', skill:'Từ Đồng Nghĩa, Từ Thay Thế', art:'assets/art-054.webp', boss:'Thủ Hộ Gió Nam', treasure:'Lá Cờ Gió Nam', treasureEmoji:'🎐', treasureArt:'assets/art-055.png', color:'#4fbfa8', tools:[{label:'Mondai 3 · Đồng Nghĩa Thay Thế', url:'dao2-hailuu-mondai3-dongnghia.html?v=20261119d'}], progressTools:['dao2-hailuu-mondai3-dongnghia.html?v=20261119d'], x:600, y:200,
     story:'Gió Nam thổi qua đảo mang theo hàng trăm cặp từ đồng nghĩa — nghe sai một hơi gió là chọn sai đáp án.' },
-  { id:'xoay-nuoc', name:'Đảo Xoáy Nước', emoji:'🌀', skill:'Cách Dùng Từ', art:'assets/art-056.webp', boss:'Thủ Hộ Xoáy Nước', treasure:'Bánh Lái Xoáy Nước', treasureEmoji:'⚓', treasureArt:'assets/art-057.png', color:'#5f7fbf', tools:[{label:'Mondai 4 · Cách Dùng Từ', url:'dao2-hailuu-mondai4-cachdung.html'}], progressTools:['dao2-hailuu-mondai4-cachdung.html'], x:960, y:460,
+  { id:'xoay-nuoc', name:'Đảo Xoáy Nước', emoji:'🌀', skill:'Cách Dùng Từ', art:'assets/art-056.webp', boss:'Thủ Hộ Xoáy Nước', treasure:'Bánh Lái Xoáy Nước', treasureEmoji:'⚓', treasureArt:'assets/art-057.png', color:'#5f7fbf', tools:[{label:'Mondai 4 · Cách Dùng Từ', url:'dao2-hailuu-mondai4-cachdung.html?v=20261119d'}], progressTools:['dao2-hailuu-mondai4-cachdung.html?v=20261119d'], x:960, y:460,
     story:'Xoáy nước cuốn các từ vào những ngữ cảnh khác nhau — thử thách khả năng dùng từ đúng chỗ.' }
 ];
 const ZONE_ART = {
@@ -1686,7 +1790,7 @@ const ZONE_ART = {
   'thanh-pho-la-ban':'assets/art-062.webp'
 };
 const ANHSANG_ZONES = [
-  { id:'rung-tia-chop', name:'Rừng Tia Chớp', emoji:'🌿', mondai:'Mondai 8', type:'Đoản văn', boss:'Cá Mập Tốc Độ', missions:['Đọc nhanh','Tìm ý chính'], treasure:'Huy Hiệu Đọc Nhanh', treasureEmoji:'⚡', treasureArt:'assets/art-063.png', color:'#3f8f6e', x:180, y:590, tools:[{label:'Mondai 8 · Đoản Văn', url:'dao9-anhsang-mon8-doanvan.html'}], progressTools:['dao9-anhsang-mon8-doanvan.html'],
+  { id:'rung-tia-chop', name:'Rừng Tia Chớp', emoji:'🌿', mondai:'Mondai 8', type:'Đoản văn', boss:'Cá Mập Tốc Độ', missions:['Đọc nhanh','Tìm ý chính'], treasure:'Huy Hiệu Đọc Nhanh', treasureEmoji:'⚡', treasureArt:'assets/art-063.png', color:'#3f8f6e', x:180, y:590, tools:[{label:'Mondai 8 · Đoản Văn', url:'dao9-anhsang-mon8-doanvan.html?v=20261112a'}], progressTools:['dao9-anhsang-mon8-doanvan.html?v=20261112a'],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[ { prompt:'近年、在宅勤務を導入する企業が増えている。通勤時間が削減される一方、社員同士のコミュニケーション不足という新たな課題も浮き彫りになってきた。\n\nこの文章で筆者が指摘している問題点は何か。', options:[
         { text:'在宅勤務によって社員間の意思疎通が難しくなること', correct:true },{ text:'通勤時間が長くなること', correct:false },{ text:'企業の業績が悪化すること', correct:false },{ text:'社員の給与が減ること', correct:false }
@@ -1698,7 +1802,7 @@ const ANHSANG_ZONES = [
         { text:'情報を素早く取捨選択する能力が重要になっている', correct:true },{ text:'情報の量を増やすことが重要である', correct:false },{ text:'情報を発信する力が重要である', correct:false },{ text:'情報を記憶する力が重要である', correct:false }
       ], explain:'「素早く見極める力」が求められると述べており、要旨は情報の取捨選択能力の重要性。' } ] }
     ] },
-  { id:'cau-tri-thuc', name:'Cầu Tri Thức', emoji:'🌉', mondai:'Mondai 9', type:'Trung văn', boss:'Cá Mập Học Giả', missions:['Hiểu nội dung','Liên kết ý','Suy luận'], treasure:'Cuộn Bí Kíp Dokkai', treasureEmoji:'📖', treasureArt:'assets/art-064.png', color:'#bf8f4f', x:415, y:355, tools:[{label:'Mondai 9 · Trung Văn', url:'dao9-anhsang-mon9-trungvan.html'}], progressTools:['dao9-anhsang-mon9-trungvan.html'],
+  { id:'cau-tri-thuc', name:'Cầu Tri Thức', emoji:'🌉', mondai:'Mondai 9', type:'Trung văn', boss:'Cá Mập Học Giả', missions:['Hiểu nội dung','Liên kết ý','Suy luận'], treasure:'Cuộn Bí Kíp Dokkai', treasureEmoji:'📖', treasureArt:'assets/art-064.png', color:'#bf8f4f', x:415, y:355, tools:[{label:'Mondai 9 · Trung Văn', url:'dao9-anhsang-mon9-trungvan.html?v=20261119c'}], progressTools:['dao9-anhsang-mon9-trungvan.html?v=20261119c'],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[ { prompt:'彼は若い頃、失敗を恐れるあまり挑戦を避けてきた。しかし、ある恩師との出会いをきっかけに、失敗もまた学びの一部であると考えるようになった。それ以来、彼は積極的に新しいことに取り組むようになったという。\n\n彼の考え方が変わったきっかけは何か。', options:[
         { text:'恩師との出会い', correct:true },{ text:'大きな失敗を経験したこと', correct:false },{ text:'新しい仕事に就いたこと', correct:false },{ text:'周囲からの励まし', correct:false }
@@ -1710,7 +1814,7 @@ const ANHSANG_ZONES = [
         { text:'評価は時間とともに変わることがある', correct:true },{ text:'専門家の評価は常に正しい', correct:false },{ text:'独創的な研究は評価されにくい', correct:false },{ text:'十年経てば必ず評価される', correct:false }
       ], explain:'当初評価されなかった研究が後に高く評価された例から、評価が時間で変化しうることが読み取れる。' } ] }
     ] },
-  { id:'nui-dai-van', name:'Núi Đại Văn', emoji:'🏔️', mondai:'Mondai 10 & 12', type:'Trường văn', boss:'Cá Mập Hiền Triết', missions:['Đọc bài dài','Phân tích lập luận','Tổng hợp thông tin'], treasure:'Kính Tri Thức', treasureEmoji:'🔍', treasureArt:'assets/art-065.png', color:'#7a7a8f', x:690, y:165, tools:[{label:'Mondai 10-12 · Trường Văn', url:'dao9-anhsang-mondai10-12-truongvan.html'}], progressTools:['dao9-anhsang-mondai10-12-truongvan.html'],
+  { id:'nui-dai-van', name:'Núi Đại Văn', emoji:'🏔️', mondai:'Mondai 10-12', type:'Trường văn', boss:'Cá Mập Hiền Triết', missions:['Đọc bài dài','Phân tích lập luận','Tổng hợp thông tin'], treasure:'Kính Tri Thức', treasureEmoji:'🔍', treasureArt:'assets/art-065.png', color:'#7a7a8f', x:690, y:165, tools:[{label:'Mondai 10 & 12 · Trường Văn', url:'dao9-anhsang-mondai10-12-truongvan.html?only=Mon10,Mon12'}], progressTools:['dao9-anhsang-mondai10-12-truongvan.html?only=Mon10,Mon12'],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[ { prompt:'テクノロジーの発展は人々の生活を便利にした一方で、人間関係を希薄にしたとも言われる。だが、SNSを通じて疎遠だった友人と再会し、関係を取り戻した人も少なくない。技術そのものに善悪はなく、使い方次第で人と人とを近づけることも遠ざけることもあるのだ。\n\n筆者の主張として最も適切なものはどれか。', options:[
         { text:'技術の影響は使い方によって異なる', correct:true },{ text:'技術は人間関係を必ず悪化させる', correct:false },{ text:'技術は人間関係を必ず改善する', correct:false },{ text:'技術と人間関係には関係がない', correct:false }
@@ -1722,7 +1826,7 @@ const ANHSANG_ZONES = [
         { text:'基礎研究は短期的な実用性だけで評価すべきではない', correct:true },{ text:'基礎研究には価値がない', correct:false },{ text:'実用的な研究だけを支援すべきだ', correct:false },{ text:'研究の価値は数十年後に必ず証明される', correct:false }
       ], explain:'「目先の実用性だけで研究の価値を判断すべきではない」と述べている。' } ] }
     ] },
-  { id:'thung-lung-song-anh', name:'Thung Lũng Song Ảnh', emoji:'⚖️', mondai:'Mondai 11', type:'So sánh A/B', boss:'Cá Mập Song Kiếm', missions:['So sánh','Phân biệt quan điểm'], treasure:'Song Kiếm Phân Tích', treasureEmoji:'⚔️', treasureArt:'assets/art-066.png', color:'#8f5fbf', x:955, y:420,
+  { id:'thung-lung-song-anh', name:'Thung Lũng Song Ảnh', emoji:'⚖️', mondai:'Mondai 11', type:'So sánh A/B', boss:'Cá Mập Song Kiếm', missions:['So sánh','Phân biệt quan điểm'], treasure:'Song Kiếm Phân Tích', treasureEmoji:'⚔️', treasureArt:'assets/art-066.png', color:'#8f5fbf', x:955, y:420, tools:[{label:'Mondai 11 · So sánh A/B', url:'dao9-anhsang-mondai10-12-truongvan.html?only=Mon11'}], progressTools:['dao9-anhsang-mondai10-12-truongvan.html?only=Mon11'],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[ { prompt:'A:「在宅勤務は通勤の負担を減らし、家族と過ごす時間を増やすというメリットがある。」\nB:「在宅勤務は同僚との偶発的な会話が減り、新しいアイデアが生まれにくくなるという指摘もある。」\n\nAとBの筆者に共通する話題は何か。', options:[
         { text:'在宅勤務が仕事や生活に与える影響', correct:true },{ text:'在宅勤務の歴史', correct:false },{ text:'通勤時間の測定方法', correct:false },{ text:'オフィスの設計方法', correct:false }
@@ -1734,7 +1838,7 @@ const ANHSANG_ZONES = [
         { text:'人口の都市集中がもたらす影響', correct:true },{ text:'都市の交通渋滞対策', correct:false },{ text:'地方の観光振興策', correct:false },{ text:'都市部の住宅価格', correct:false }
       ], explain:'どちらも人口の都市集中の影響について述べている。' } ] }
     ] },
-  { id:'thanh-pho-la-ban', name:'Thành Phố La Bàn', emoji:'🗺️', mondai:'Mondai 13', type:'Tìm kiếm thông tin', boss:'Cá Mập Hoa Tiêu', missions:['Tìm kiếm thông tin','Đọc bảng biểu','Xử lý dữ liệu'], treasure:'La Bàn Tri Thức', treasureEmoji:'🧭', treasureArt:'assets/art-067.png', color:'#4f9dbf', x:680, y:625,
+  { id:'thanh-pho-la-ban', name:'Thành Phố La Bàn', emoji:'🗺️', mondai:'Mondai 13', type:'Tìm kiếm thông tin', boss:'Cá Mập Hoa Tiêu', missions:['Tìm kiếm thông tin','Đọc bảng biểu','Xử lý dữ liệu'], treasure:'La Bàn Tri Thức', treasureEmoji:'🧭', treasureArt:'assets/art-067.png', color:'#4f9dbf', x:680, y:625, tools:[{label:'Mondai 13 · Tìm kiếm thông tin', url:'dao9-anhsang-mondai10-12-truongvan.html?only=Mon13'}], progressTools:['dao9-anhsang-mondai10-12-truongvan.html?only=Mon13'],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[ { prompt:'【お知らせ】図書館利用時間変更のご案内\n平日:9:00〜20:00 → 9:00〜18:00に変更\n土日:変更なし(9:00〜17:00)\n※変更は来月1日から適用されます。\n\nこの案内から分かることは何か。', options:[
         { text:'平日の利用時間が短縮される', correct:true },{ text:'土日の利用時間が延長される', correct:false },{ text:'図書館が来月から休館になる', correct:false },{ text:'利用時間はすべての曜日で変更される', correct:false }
@@ -1826,7 +1930,7 @@ const OWNER_KEY = 'dhtm_owner_uid_v1';
 const NOTEBOOK_KEY = 'dhtm_notebook_v1';
 const ISLAND_CARD_TEMPLATES = {
   'dao1-hantu-doc-kanji.html': { template: 'dao1-hantu-doc-kanji-card-template.html', buildData: (raw, opts) => dcBuildDao1KanjiCardData(raw, opts) },
-  'dao2-hailuu-mondai3-dongnghia.html': { template: 'dao2-hailuu-mondai3-dongnghia-card-template.html', buildData: (raw, opts) => dcBuildDao2Mondai3CardData(raw, opts) },
+  'dao2-hailuu-mondai3-dongnghia.html?v=20261119d': { template: 'dao2-hailuu-mondai3-dongnghia-card-template.html', buildData: (raw, opts) => dcBuildDao2Mondai3CardData(raw, opts) },
   'dao3-suongmu-tonghop-theonhom.html': { template: 'dao3-suongmu-tonghop-theonhom-card-template.html', buildData: (raw, opts) => dcBuildDao3TonghopCardData(raw, opts) }
 };
 function loadOwnerUid() { try { return localStorage.getItem(OWNER_KEY); } catch (e) { return null; } }
