@@ -21,6 +21,8 @@ h1 { text-shadow: 0 1px 2px rgba(255,255,255,.5); }
 .menu-btn:hover { background: #f0f0ea; }
 .menu-btn .round-title { font-weight: 600; font-size: 15px; }
 .menu-btn .word-list { font-size: 12px; color: #333; margin-top: 3px; }
+.menu-btn .mf-list { display:none; margin-top:8px; }
+.menu-btn.active .mf-list { display:block; }
 .menu-btn .mf-row { display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 8px; padding:4px 0; border-top:1px dashed #e4d3ae; text-align:left; }
 .menu-btn .mf-row:first-child { border-top:0; }
 .menu-btn .mf-w { font-size:14px; font-weight:700; color:#1a1a1a; }
@@ -622,7 +624,7 @@ function buildMenu(){
       const btn = document.createElement('button');
       btn.className = 'menu-btn' + (scores[r]!==undefined?' done':'') + (selRounds.has(r)?' active':'');
       const chip = scores[r]!==undefined?`<span class="score-chip">${scores[r]}/${q.qs.length}</span>`:'';
-      btn.innerHTML = `<div class="round-title">${r} ${chip}</div><div class="word-list">${m4MenuFixList(q)}</div>`;
+      btn.innerHTML = `<div class="round-title">${r} ${chip}</div><div class="word-list">${q.words}</div><div class="mf-list">${m4MenuFixList(q)}</div>`;
       btn.onclick = ()=>toggleRound(r, btn);
       menu.appendChild(btn);
     });
