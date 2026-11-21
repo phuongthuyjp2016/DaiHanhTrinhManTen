@@ -118,6 +118,19 @@ header h1{font-family:'Baloo 2','Noto Serif JP',serif;font-weight:800;color:#ffe
 .set-jp mark{background:#fff59d;border-radius:3px;padding:0 2px;font-weight:700;color:var(--ink);}
 .syn-fix-row .set-jp{color:#000;font-weight:700;font-size:.86rem;}
 .syn-fix-row .set-vn{color:#222;}
+.qnav{position:sticky;top:54px;z-index:90;display:none;align-items:center;gap:6px;background:rgba(255,255,255,.97);border-bottom:2px solid var(--border);padding:6px 10px;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.qn-btn{flex-shrink:0;min-width:34px;height:34px;border-radius:9px;border:1.5px solid var(--blue);background:#fff;color:var(--blue);font-size:15px;cursor:pointer;font-weight:700;padding:0 6px;}
+.qn-btn.wide{padding:0 10px;font-size:.78rem;}
+.qn-scroll{display:flex;gap:5px;overflow-x:auto;flex:1;padding:3px 2px;}
+.qn-num{min-width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:.78rem;font-weight:700;cursor:pointer;flex-shrink:0;color:var(--ink);}
+.qn-num.cc{background:#e8f5ec;border-color:var(--green);color:var(--green);}
+.qn-num.cw{background:#fdf0ee;border-color:var(--red);color:var(--red);}
+.qn-num.sk{background:#fff8e1;border-color:#f5a623;}
+.qn-num.cur{box-shadow:0 0 0 3px var(--blue);}
+.q-block{scroll-margin-top:120px;}
+.more-row{display:none;gap:8px;margin:0 16px 10px;flex-wrap:wrap;}
+.more-btn{background:#fff;border:1.5px solid var(--blue);color:var(--blue);border-radius:10px;padding:6px 12px;font-size:.78rem;font-weight:700;cursor:pointer;}
+.more-btn.on{background:var(--blue);color:#fff;}
 .pick-hint{max-width:900px;margin:30px auto;padding:24px 16px;text-align:center;color:#fff;font-weight:700;font-size:1rem;text-shadow:0 1px 3px rgba(0,0,0,.4);}
 .set-vn{font-size:.75rem;color:var(--muted);font-family:'Be Vietnam Pro',sans-serif;}
 
@@ -181,6 +194,13 @@ header h1{font-family:'Baloo 2','Noto Serif JP',serif;font-weight:800;color:#ffe
   <div class="search-results" id="searchResults" style="display:none;"></div>
 </div>
 
+<div class="qnav" id="qnav">
+  <button class="qn-btn" onclick="scrollTopPage()" title="Lên đầu trang">⬆</button>
+  <div class="qn-scroll" id="qnScroll"></div>
+  <button class="qn-btn wide" onclick="nextUnanswered()" title="Nhảy tới câu chưa làm kế tiếp">⏭ Chưa làm</button>
+  <button class="qn-btn" onclick="resetAnswers()" title="Làm lại các câu đang hiện">↺</button>
+  <button class="qn-btn" onclick="scrollBottomPage()" title="Xuống cuối trang">⬇</button>
+</div>
 <div class="main" id="main"></div>
 
 <script>
@@ -331,7 +351,7 @@ function allRoundKeysVC(){
 
 var curRound = 25;
 function qLimitVal(){ const v=(document.getElementById('qLimit')||{}).value; return (!v||v==='all') ? Infinity : parseInt(v,10); }
-function applyLimit(){ buildSelected(); }
+function applyLimit(){ prog.lim=(document.getElementById('qLimit')||{}).value||'all'; saveProg(); buildSelected(); }
 function cumOf(w){ const s=((w.set||'').split('・')[0]||'').replace(/<\/?mark>/g,'').replace(/\([^)]*\)/g,'').replace(/（[^）]*）/g,'').trim(); return s||w.k; }
 var selRounds = [];
 function roundOrd(r){ return allRoundKeysVC().indexOf(String(r)); }
@@ -346,10 +366,11 @@ function toggleRound(r){
   r = String(r);
   if(r==='all'){ selRounds = selRounds.length===allRoundKeysVC().length ? [] : allRoundKeysVC().slice(); }
   else{ const i=selRounds.indexOf(r); if(i>=0) selRounds.splice(i,1); else selRounds.push(r); selRounds.sort(function(a,b){return roundOrd(a)-roundOrd(b);}); }
-  syncChips(); buildSelected();
+  syncChips(); prog.sel=selRounds.slice(); saveProg(); buildSelected();
 }
 function buildSelected(){
   if(selRounds.length===0){
+    visibleQs=[]; renderQnav();
     document.getElementById('hdr-round').textContent='';
     document.getElementById('main').innerHTML='<div class="pick-hint">👆 Chọn một hoặc nhiều đề ở trên để bắt đầu làm bài</div>';
     return;
@@ -365,6 +386,7 @@ function buildRoundMenu(){
 }
 function buildRound(round){
   curRound = round;
+  visibleQs = [];
   const lim = qLimitVal();
   let shown = 0;
   const isList = Array.isArray(round);
@@ -391,6 +413,7 @@ function buildRound(round){
     const round = r;
     const ansIdx = q.a - 1;
     const qid = 'q'+round+'x'+qi;
+    visibleQs.push({qid:qid,key:round+'_'+qi,round:round,qi:qi,ansIdx:ansIdx});
     const sentBlank = esc(q.s).replace('（　）','<span class="blank" id="blank_'+qid+'">（　　）</span>');
     const choicesHtml = q.w.map((w,i)=>`
       <div class="choice" id="ch_${qid}_${i}" onclick="pick('${qid}',${i},${ansIdx},'${round}',${qi})">
@@ -455,6 +478,7 @@ function buildRound(round){
       </div>
       <div class="choices-wrap" id="choices_${qid}">${choicesHtml}</div>
       <div class="feedback" id="fb_${qid}"></div>
+      <div class="more-row" id="more_${qid}">${tipText?`<button class="more-btn" onclick="togglePart('tip_${qid}',this)">💡 Mẹo phân biệt</button>`:''}<button class="more-btn" onclick="togglePart('analysis_${qid}',this)">📖 Giải thích 4 đáp án</button></div>
       ${tipHtml}
       <div class="analysis-panel" id="analysis_${qid}">${analysisHtml}</div>
     </div>`;
@@ -462,12 +486,62 @@ function buildRound(round){
   });
   if(!anyQs){
     document.getElementById('main').innerHTML = '<div style="padding:40px;text-align:center;color:#888;">⚠️ Đợt này đang được cập nhật.</div>';
+    renderQnav();
     return;
   }
   document.getElementById('main').innerHTML = html;
+  renderQnav();
+  restoreAnswers();
   try{ localStorage.setItem('dao2_mondai2_vancanh_lastround', String(round)); }catch(e){}
 }
-function pick(qid, chosen, ansIdx, round, qi){
+var PROG_KEY='dao2_mondai2_vancanh_progress';
+var prog={sel:[],lim:'all',ans:{},last:''};
+var visibleQs=[], curIdx=-1;
+function loadProg(){ try{ const p=JSON.parse(localStorage.getItem(PROG_KEY)||'null'); if(p&&typeof p==='object') prog={sel:p.sel||[],lim:p.lim||'all',ans:p.ans||{},last:p.last||''}; }catch(e){} }
+function saveProg(){ try{ localStorage.setItem(PROG_KEY,JSON.stringify(prog)); }catch(e){} }
+function recordAns(key,chosen,qid,restore){ if(restore) return; prog.ans[key]=chosen; prog.last=qid; saveProg(); refreshQnav(); }
+function showMore(qid){ const m=document.getElementById('more_'+qid); if(m) m.style.display='flex'; }
+function togglePart(id,btn){ const el=document.getElementById(id); if(!el) return; const on=el.classList.toggle('show'); if(btn) btn.classList.toggle('on',on); }
+function restoreAnswers(){ visibleQs.forEach(function(v){ const a=prog.ans[v.key]; if(a===undefined) return; if(a===-1) skipQ(v.qid,v.ansIdx,v.round,v.qi,true); else pick(v.qid,a,v.ansIdx,v.round,v.qi,true); }); refreshQnav(); }
+function renderQnav(){
+  const nav=document.getElementById('qnav'), sc=document.getElementById('qnScroll'); if(!nav||!sc) return;
+  if(!visibleQs.length){ nav.style.display='none'; sc.innerHTML=''; return; }
+  nav.style.display='flex';
+  const h=document.querySelector('header'); if(h) nav.style.top=h.offsetHeight+'px';
+  sc.innerHTML=visibleQs.map(function(v,i){ const lab=v.round==='ontap'?'Ôn tập':'第'+v.round+'回'; return '<button class="qn-num" id="qn_'+i+'" title="'+lab+' câu '+(v.qi+1)+'" onclick="jumpToVQ('+i+')">'+(i+1)+'</button>'; }).join('');
+  refreshQnav();
+}
+function refreshQnav(){
+  visibleQs.forEach(function(v,i){ const b=document.getElementById('qn_'+i); if(!b) return; const a=prog.ans[v.key]; let c='qn-num'; if(a===-1) c+=' sk'; else if(a!==undefined) c+=(a===v.ansIdx?' cc':' cw'); if(i===curIdx) c+=' cur'; b.className=c; });
+}
+function jumpToVQ(i){ const v=visibleQs[i]; if(!v) return; const el=document.getElementById(v.qid); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+function nextUnanswered(){
+  if(!visibleQs.length) return;
+  const n=visibleQs.length; const start=Math.max(curIdx,0);
+  for(let k=1;k<=n;k++){ const i=(start+k)%n; if(prog.ans[visibleQs[i].key]===undefined){ jumpToVQ(i); return; } }
+  alert('Bạn đã làm hết các câu đang hiện 🎉');
+}
+function resetAnswers(){
+  if(!visibleQs.length) return;
+  if(!confirm('Làm lại tất cả '+visibleQs.length+' câu đang hiện? (kết quả đã lưu của các câu này sẽ bị xóa)')) return;
+  visibleQs.forEach(function(v){ delete prog.ans[v.key]; }); prog.last=''; saveProg(); buildSelected(); window.scrollTo(0,0);
+}
+function scrollTopPage(){ window.scrollTo({top:0,behavior:'smooth'}); }
+function scrollBottomPage(){ window.scrollTo({top:document.documentElement.scrollHeight,behavior:'smooth'}); }
+var _qnRaf=null;
+window.addEventListener('scroll',function(){ if(_qnRaf) return; _qnRaf=requestAnimationFrame(function(){ _qnRaf=null; updateCurQ(); }); },{passive:true});
+function updateCurQ(){
+  if(!visibleQs.length) return;
+  const nav=document.getElementById('qnav'); const h=document.querySelector('header');
+  const off=(h?h.offsetHeight:0)+(nav?nav.offsetHeight:0)+12; let idx=visibleQs.length-1;
+  for(let i=0;i<visibleQs.length;i++){ const el=document.getElementById(visibleQs[i].qid); if(el && el.getBoundingClientRect().bottom>off){ idx=i; break; } }
+  if(idx===curIdx) return;
+  curIdx=idx; refreshQnav();
+  const b=document.getElementById('qn_'+idx), sc=document.getElementById('qnScroll');
+  if(b&&sc) sc.scrollLeft=b.offsetLeft-sc.clientWidth/2+b.clientWidth/2;
+  prog.last=visibleQs[idx].qid; saveProg();
+}
+function pick(qid, chosen, ansIdx, round, qi, restore){
   const choicesWrap = document.getElementById('choices_'+qid);
   choicesWrap.querySelectorAll('.choice').forEach(c=>{c.classList.add('disabled');c.onclick=null;});
   choicesWrap.querySelectorAll('.c-kana').forEach(el=>el.classList.remove('kana-hidden'));
@@ -490,7 +564,7 @@ function pick(qid, chosen, ansIdx, round, qi){
   const tipEl = document.getElementById('tip_'+qid);
   if(svEl) svEl.classList.add('show');
   if(hintEl) hintEl.classList.add('hidden');
-  if(tipEl) tipEl.classList.add('show');
+  showMore(qid);
 
   const fb = document.getElementById('fb_'+qid);
   if(isCorrect){
@@ -500,10 +574,9 @@ function pick(qid, chosen, ansIdx, round, qi){
     fb.className='feedback wrong';
     fb.innerHTML='✗ Sai rồi！Đáp án: <strong>'+esc(correctW.k)+(correctW.r&&correctW.r!==correctW.k?'（'+esc(correctW.r)+'）':'')+'</strong><span class="fb-meaning">📖 '+esc(correctW.v)+'</span>';
   }
-  const ap = document.getElementById('analysis_'+qid);
-  if(ap) ap.classList.add('show');
-
   const qKey = round+'_'+qi;
+  recordAns(qKey, chosen, qid, restore);
+  if(restore) return;
   if(isCorrect){
     if(allCorrectVC.indexOf(qKey)<0)allCorrectVC.push(qKey);
     onCorrectAnswer();
@@ -514,7 +587,7 @@ function pick(qid, chosen, ansIdx, round, qi){
   reportToolProgress(allCorrectVC.length,TOTAL_Q_VC);
 }
 
-function skipQ(qid, ansIdx, round, qi){
+function skipQ(qid, ansIdx, round, qi, restore){
   const choicesWrap = document.getElementById('choices_'+qid);
   if(!choicesWrap || choicesWrap.classList.contains('disabled-skip')) return;
   choicesWrap.classList.add('disabled-skip');
@@ -532,12 +605,12 @@ function skipQ(qid, ansIdx, round, qi){
   const tipEl = document.getElementById('tip_'+qid);
   if(svEl) svEl.classList.add('show');
   if(hintEl) hintEl.classList.add('hidden');
-  if(tipEl) tipEl.classList.add('show');
+  showMore(qid);
   const fb = document.getElementById('fb_'+qid);
   fb.className='feedback';
   fb.innerHTML='⏭ Đã bỏ qua. Đáp án: <strong>'+esc(correctW.k)+(correctW.r&&correctW.r!==correctW.k?'（'+esc(correctW.r)+'）':'')+'</strong><span class="fb-meaning">📖 '+esc(correctW.v)+'</span>';
-  const ap = document.getElementById('analysis_'+qid);
-  if(ap) ap.classList.add('show');
+  recordAns(round+'_'+qi, -1, qid, restore);
+  if(restore) return;
   const nextBlock = document.getElementById(qid).nextElementSibling;
   if(nextBlock) nextBlock.scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -579,7 +652,7 @@ function clearSearch(){
 
 function jumpToQuestion(round, qi){
   const ql=document.getElementById('qLimit'); if(ql) ql.value='all';
-  selRounds=[String(round)]; syncChips();
+  selRounds=[String(round)]; syncChips(); prog.sel=selRounds.slice(); saveProg();
   buildRound(selRounds.slice());
   document.getElementById('searchResults').style.display='none';
   setTimeout(()=>{
@@ -616,8 +689,20 @@ if(window.speechSynthesis){
 }
 
 buildRoundMenu();
-document.getElementById('hdr-round').textContent='';
-document.getElementById('main').innerHTML='<div class="pick-hint">👆 Chọn một hoặc nhiều đề ở trên để bắt đầu làm bài</div>';
+loadProg();
+(function(){
+  const valid=allRoundKeysVC();
+  selRounds=(prog.sel||[]).map(String).filter(function(r){return valid.indexOf(r)>=0;});
+  const ql=document.getElementById('qLimit'); if(ql&&prog.lim) ql.value=prog.lim;
+  syncChips();
+  if(selRounds.length){
+    buildSelected();
+    if(prog.last){ setTimeout(function(){ const el=document.getElementById(prog.last); if(el) el.scrollIntoView({block:'start'}); updateCurQ(); },120); }
+  } else {
+    document.getElementById('hdr-round').textContent='';
+    document.getElementById('main').innerHTML='<div class="pick-hint">👆 Chọn một hoặc nhiều đề ở trên để bắt đầu làm bài</div>';
+  }
+})();
 </script>
 <script src="but-ve.js" defer></script>
 </body>
