@@ -102,32 +102,49 @@ function penMain(){
     cv.style.pointerEvents=(st.on&&!st.scroll)?'auto':'none';
     if(fab) fab.style.display=st.on?'none':'block';
   }
+  /* Toạ độ trang (tính từ góc trên trái của tài liệu, không phụ thuộc cuộn/phóng to) của một ô. */
+  function docRect(el){
+    var r=el.getBoundingClientRect(), o=de.getBoundingClientRect();
+    return {l:r.left-o.left,t:r.top-o.top,w:r.width,h:r.height};
+  }
   function draw(){
-    var d=window.devicePixelRatio||1, w=window.innerWidth, h=window.innerHeight;
-    if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){
-      cv.width=Math.round(w*d); cv.height=Math.round(h*d);
-      cv.style.width=w+'px'; cv.style.height=h+'px';
+    var d=window.devicePixelRatio||1, vv=window.visualViewport;
+    var zoomed=!!(vv&&vv.scale>1.01), sx,sy,w,h,k;
+    if(zoomed){
+      /* Đang chụm ngón phóng to: canvas phủ đúng vùng đang nhìn thấy, nét vẽ nét hơn theo mức zoom. */
+      sx=vv.pageLeft; sy=vv.pageTop; w=vv.width; h=vv.height; k=d*vv.scale;
+      cv.style.position='absolute'; cv.style.left=sx+'px'; cv.style.top=sy+'px';
+    } else {
+      sx=window.pageXOffset; sy=window.pageYOffset; w=window.innerWidth; h=window.innerHeight; k=d;
+      cv.style.position='fixed'; cv.style.left='0'; cv.style.top='0';
     }
-    var x=cv.getContext('2d'), sx=window.pageXOffset, sy=window.pageYOffset;
-    x.setTransform(d,0,0,d,-sx*d,-sy*d);
+    if(w*h*k*k>3e7) k=Math.sqrt(3e7/(w*h));
+    if(cv.width!==Math.round(w*k)||cv.height!==Math.round(h*k)){
+      cv.width=Math.round(w*k); cv.height=Math.round(h*k);
+    }
+    cv.style.width=w+'px'; cv.style.height=h+'px';
+    var x=cv.getContext('2d');
+    x.setTransform(k,0,0,k,-sx*k,-sy*k);
     x.clearRect(sx,sy,w,h);
     x.lineCap='round'; x.lineJoin='round';
-    st.strokes.forEach(function(k){
-      var ox=0, oy=0, a=k.a;
+    st.strokes.forEach(function(s){
+      var a=s.a, R=null;
       if(a){
         if(a.el.isConnected){
-          var r=a.el.getBoundingClientRect();
-          if(r.width>0||r.height>0){ a.sx=r.left+sx-a.l; a.sy=r.top+sy-a.t; }
+          var r=docRect(a.el);
+          if(r.w>0||r.h>0) a.cur=r;
         }
-        ox=a.sx||0; oy=a.sy||0;
+        R=a.cur||a;
       }
+      function X(p){ return R?R.l+p[0]*R.w:p[0]; }
+      function Y(p){ return R?R.t+p[1]*R.h:p[1]; }
       x.save();
-      if(k.tool==='erase') x.globalCompositeOperation='destination-out';
-      else if(k.tool==='hi') x.globalAlpha=0.35;
-      x.strokeStyle=k.tool==='erase'?'#000':k.color; x.lineWidth=k.size;
+      if(s.tool==='erase') x.globalCompositeOperation='destination-out';
+      else if(s.tool==='hi') x.globalAlpha=0.35;
+      x.strokeStyle=s.tool==='erase'?'#000':s.color; x.lineWidth=s.size;
       x.beginPath();
-      k.pts.forEach(function(p,i){ if(i) x.lineTo(p[0]+ox,p[1]+oy); else x.moveTo(p[0]+ox,p[1]+oy); });
-      if(k.pts.length===1) x.lineTo(k.pts[0][0]+ox+0.1,k.pts[0][1]+oy);
+      s.pts.forEach(function(p,i){ if(i) x.lineTo(X(p),Y(p)); else x.moveTo(X(p),Y(p)); });
+      if(s.pts.length===1) x.lineTo(X(s.pts[0])+0.1,Y(s.pts[0]));
       x.stroke(); x.restore();
     });
   }
@@ -147,19 +164,24 @@ function penMain(){
         if(q.width>=120&&q.height>=24) break;
         el=el.parentElement;
       }
-      var r=el.getBoundingClientRect();
-      if(el===document.body||(r.width<1&&r.height<1)) return null;
-      return {el:el,l:r.left+window.pageXOffset,t:r.top+window.pageYOffset,sx:0,sy:0};
+      var r=docRect(el);
+      if(el===document.body||(r.w<1&&r.h<1)) return null;
+      return {el:el,l:r.l,t:r.t,w:Math.max(1,r.w),h:Math.max(1,r.h)};
     }
     return null;
   }
-  function pt(e){ return [e.clientX+window.pageXOffset, e.clientY+window.pageYOffset]; }
+  /* Điểm trong toạ độ trang (pageX/pageY đúng cả khi đang phóng to); nét thuộc một ô thì lưu theo TỈ LỆ trong ô. */
+  function pt(e,a){
+    var X=e.pageX, Y=e.pageY;
+    return a?[(X-a.l)/a.w,(Y-a.t)/a.h]:[X,Y];
+  }
   cv.addEventListener('pointerdown',function(e){
     if(e.pointerType==='pen') lastPen=Date.now();
     else if(e.pointerType==='touch' && Date.now()-lastPen<1500) return;
     if(st.palOpen){ st.palOpen=false; sync(); }
     try{ cv.setPointerCapture(e.pointerId); }catch(err){}
-    cur={tool:st.tool,color:st.color,size:st.tool==='hi'?st.size*4:(st.tool==='erase'?st.size*5:st.size),pts:[pt(e)],id:e.pointerId,a:anchorAt(e.clientX,e.clientY)};
+    var an=anchorAt(e.clientX,e.clientY);
+    cur={tool:st.tool,color:st.color,size:st.tool==='hi'?st.size*4:(st.tool==='erase'?st.size*5:st.size),pts:[pt(e,an)],id:e.pointerId,a:an};
     st.strokes.push(cur); draw(); e.preventDefault();
   });
   cv.addEventListener('pointermove',function(e){
@@ -167,7 +189,7 @@ function penMain(){
     if(e.pointerType==='pen') lastPen=Date.now();
     var list=(e.getCoalescedEvents&&e.getCoalescedEvents())||[e];
     if(!list.length) list=[e];
-    list.forEach(function(ev){ cur.pts.push(pt(ev)); });
+    list.forEach(function(ev){ cur.pts.push(pt(ev,cur.a)); });
     draw(); e.preventDefault();
   });
   function end(e){ if(cur&&(!e||e.pointerId===cur.id)) cur=null; }
@@ -177,7 +199,12 @@ function penMain(){
   cv.addEventListener('wheel',function(e){ window.scrollBy(e.deltaX,e.deltaY); },{passive:true});
   window.addEventListener('scroll',draw,true);
   window.addEventListener('resize',function(){ layout(); sync(); draw(); });
-  if(window.visualViewport){ window.visualViewport.addEventListener('resize',function(){ draw(); }); }
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',function(){ draw(); });
+    window.visualViewport.addEventListener('scroll',function(){ draw(); });
+  }
+  /* Chữ đổi chỗ không kèm sự kiện nào (mở giải thích, đổi cỡ chữ, phóng to bằng Ctrl +/-): vẽ lại định kỳ để nét bám theo ô. */
+  setInterval(function(){ if(st.strokes.length) draw(); },250);
   function setOn(v){
     st.on=v; bar.style.display=v?'flex':'none';
     if(!v){ st.scroll=false; st.palOpen=false; disarm(); }
