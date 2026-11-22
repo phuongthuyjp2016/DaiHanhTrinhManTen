@@ -82,6 +82,7 @@
   }
   @media (max-width:520px){ .wrap{ padding:12px; } }
 </style>
+<script src="sao-keotha.js?v=20261123a"></script>
 </head>
 <body>
 <div class="top">
@@ -234,8 +235,13 @@ function qHtml(it, examKey, blockId){
     const ok = answers[examKey][it.no] === it.ans;
     res = '<div class="res ' + (ok ? "ok" : "ng") + '">' + (ok ? "✓ Đúng" : "✗ Sai") + " — đáp án: " + it.ans + "</div>" + m6FixHtml(it);
   }
-  const stemText = hideStem ? "" : stemHtml(it, examKey);
-  return '<div class="q" id="q_' + examKey + '_' + it.no + '"><div class="qstem"><b>' + it.no + '.</b> ' + stemText + '</div>' + opts + res + '</div>';
+  let stemText = hideStem ? "" : stemHtml(it, examKey), sao = "";
+  if (blockId === "mon6" && !subm && !hideText && window.SaoDnd) {
+    const SD = SaoDnd.build({ key: "d11|" + examKey + "|" + it.no, stem: it.stem, options: it.options, mode: "star", initStar: answers[examKey][it.no],
+      onPick: n => { const r = document.querySelector('input[name="q' + examKey + '_' + it.no + '"][value="' + n + '"]'); if (r) r.checked = true; pick(examKey, it.no, n); } });
+    if (SD) { stemText = SD.sentence; sao = SD.tray; }
+  }
+  return '<div class="q" id="q_' + examKey + '_' + it.no + '"><div class="qstem"><b>' + it.no + '.</b> ' + stemText + '</div>' + sao + opts + res + '</div>';
 }
 // Mondai 6 (並べ替え): chữa đề hiện thứ tự đúng + câu hoàn chỉnh ghép từ chính đề, tô mảnh ★.
 function m6FixHtml(it){
