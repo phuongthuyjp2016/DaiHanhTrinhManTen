@@ -215,6 +215,40 @@ button{font-family:inherit}
   .mascot .face{width:90px;height:90px}
   .mascot .say{margin-bottom:52px}
 }
+/* ---------- cảnh tàu lấy từ ảnh mẫu ---------- */
+.scene{position:relative;overflow:hidden;border-radius:18px;margin:2px 0 14px;box-shadow:0 6px 18px rgba(0,30,80,.3);container-type:inline-size}
+.scene .train{position:relative;display:block;width:100%;aspect-ratio:1536/415;background:url('assets/tau-canh.webp') center/100% 100% no-repeat}
+.scene .wagon{position:absolute;margin:0;flex:none;min-width:0;transition:transform .3s}
+.scene .wbody{position:absolute;inset:0;background:none;border:none;border-radius:12%/16%;padding:0;box-shadow:none;transition:box-shadow .35s}
+.scene .wbody::after{display:none}
+.scene .win{position:absolute;inset:8% 5%;min-height:0;border:none;border-radius:1cqi;background:linear-gradient(#ffffff,#eef4fc);display:flex;align-items:center;justify-content:center;
+  padding:2%;font-size:clamp(9px,1.55cqi,20px);line-height:1.15;color:#123a6b;font-weight:800;overflow:hidden;word-break:break-all}
+.scene .win .dash{width:62%;border-bottom:max(2px,.3cqi) dashed #2f7fd6;opacity:.9}
+.scene .wnum{position:absolute;transform:translate(-50%,-50%);width:4.1cqi;height:4.1cqi;min-width:17px;min-height:17px;font-size:max(9px,2.1cqi);border:max(2px,.28cqi) solid #fff;background:#123a6b;z-index:2}
+.scene .wnum.got{background:var(--gold2);color:#3a2600;animation:pop2 .5s cubic-bezier(.2,1.8,.4,1)}
+.scene .wstar{position:absolute;transform:translate(-50%,-50%);width:3.9cqi;height:3.9cqi;min-width:15px;min-height:15px;z-index:2}
+.scene .wstar.big{width:4.6cqi;height:4.6cqi}
+.scene .wstar path{fill:#a9bbd0;opacity:1;stroke:#eef4fb}
+.scene .wstar.big path{fill:#c4ad63;stroke:#fff3c0}
+.scene .wstar.lit path{fill:var(--gold);stroke:#fff6cf;filter:drop-shadow(0 0 .6cqi rgba(255,210,70,1))}
+.scene .wstar.lit{animation:litpop2 .6s cubic-bezier(.2,1.8,.4,1),shine2 1.6s ease-in-out .6s infinite}
+@keyframes litpop2{0%{transform:translate(-50%,-50%) scale(.5)}60%{transform:translate(-50%,-50%) scale(1.7)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes shine2{0%,100%{transform:translate(-50%,-50%) scale(1) rotate(0)}50%{transform:translate(-50%,-50%) scale(1.18) rotate(10deg)}}
+@keyframes pop2{0%{transform:translate(-50%,-50%) scale(.4)}60%{transform:translate(-50%,-50%) scale(1.45)}100%{transform:translate(-50%,-50%) scale(1)}}
+.scene .wagon.hover .wbody{filter:none;box-shadow:0 0 0 .45cqi #9fd0ff,0 0 1.6cqi .3cqi rgba(160,210,255,.9)}
+.scene .wagon.ok .wbody{box-shadow:0 0 0 .35cqi #ffd34d,0 0 2.4cqi .7cqi rgba(255,214,90,.95)}
+.scene .wagon.ok .win{background:linear-gradient(#fffdf2,#fff1c4)}
+.scene .wagon.ng .wbody{box-shadow:0 0 0 .45cqi rgba(217,68,58,.9)}
+.scene .stack{position:absolute;left:11.6%;top:38%;width:1px;height:1px}
+.scene .chug{animation:chug2 .9s ease-in-out}
+@keyframes chug2{0%,100%{transform:none}30%{transform:translateX(1.1%)}60%{transform:translateX(-.4%)}}
+.scene .tw{font-size:max(9px,1.3cqi)!important}
+.piece{background:linear-gradient(180deg,#ffffff,#fdf7e9);border:3px solid #6fa8e6;box-shadow:inset 0 0 0 3px #e3f0ff,0 4px 0 #3f78b8,0 6px 14px rgba(0,30,80,.2);position:relative}
+.piece .pt{flex:1;min-width:0}
+.piece .pic{flex:none;height:44px;width:auto;mix-blend-mode:multiply;opacity:.95;pointer-events:none;-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparent 100%);mask-image:radial-gradient(closest-side,#000 62%,transparent 100%)}
+.logo-s{height:62px;width:auto;flex:none;border-radius:14px;-webkit-mask-image:radial-gradient(ellipse 60% 62% at 50% 50%,#000 80%,transparent 100%);mask-image:radial-gradient(ellipse 60% 62% at 50% 50%,#000 80%,transparent 100%);filter:drop-shadow(0 3px 6px rgba(0,30,80,.35));margin:-6px 0}
+.chest-s{height:36px;width:auto;margin-left:4px;-webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent 100%);mask-image:radial-gradient(closest-side,#000 70%,transparent 100%);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+@media (max-width:640px){ .logo-s{height:44px} .chest-s{height:26px} .piece .pic{height:32px} }
 </style>
 </head>
 <body>
@@ -233,7 +267,7 @@ button{font-family:inherit}
 
   <!-- Màn chơi -->
   <div id="game" class="hidden">
-    <div class="top">
+    <div class="top"><img class="logo-s" src="assets/tau-logo.webp" alt="Đại Hải Trình Manten">
       <button class="btn-back vn" id="toHome">← Stage</button>
       <div class="stage-pill vn"><span>⭐</span><span class="t" id="stTitle"></span><span class="cnt" id="stCnt">1/5</span></div>
       <div class="starbar" id="starbar"></div>
@@ -242,42 +276,8 @@ button{font-family:inherit}
 
     <div class="bubble" id="bubble"></div>
 
-    <div class="rail-area" id="railArea"><div id="twinkles"></div>
-      <div class="bridge"></div><div class="track"></div>
-      <svg class="station" id="station" viewBox="0 0 200 150" aria-hidden="true">
-        <rect x="10" y="60" width="180" height="80" rx="6" fill="#f4faff" stroke="#1f5fa8" stroke-width="4"/>
-        <path d="M0 64 L100 14 L200 64 Z" fill="#1f5fa8" stroke="#123a6b" stroke-width="4" stroke-linejoin="round"/>
-        <rect x="78" y="88" width="44" height="52" rx="4" fill="#9fc6ee" stroke="#123a6b" stroke-width="3"/>
-        <rect x="26" y="84" width="36" height="26" rx="3" fill="#ffe9a0" stroke="#123a6b" stroke-width="3"/>
-        <rect x="138" y="84" width="36" height="26" rx="3" fill="#ffe9a0" stroke="#123a6b" stroke-width="3"/>
-        <rect x="58" y="40" width="84" height="20" rx="4" fill="#ffc83a" stroke="#123a6b" stroke-width="3"/>
-        <text x="100" y="55" text-anchor="middle" font-size="13" font-weight="800" fill="#123a6b" font-family="Segoe UI,Arial">GA N1 ★</text>
-      </svg>
-      <div class="train" id="train">
-        <div class="loco" id="loco">
-          <svg viewBox="0 0 170 130" aria-hidden="true">
-            <rect x="88" y="8" width="70" height="72" rx="10" fill="#1f5fa8" stroke="#0f3a6e" stroke-width="4"/>
-            <rect x="80" y="2" width="86" height="14" rx="6" fill="#123a6b"/>
-            <rect x="96" y="22" width="54" height="40" rx="7" fill="#dcefff" stroke="#0f3a6e" stroke-width="3"/>
-            <rect x="14" y="46" width="90" height="50" rx="22" fill="#2f7fd6" stroke="#0f3a6e" stroke-width="4"/>
-            <rect x="36" y="22" width="18" height="28" rx="4" fill="#123a6b" stroke="#0f3a6e" stroke-width="3"/>
-            <rect x="31" y="16" width="28" height="10" rx="4" fill="#e8c46a" stroke="#0f3a6e" stroke-width="3"/>
-            <circle cx="18" cy="62" r="10" fill="#fff3b0" stroke="#d9b24a" stroke-width="4"/>
-            <path d="M4 100 L28 82 L160 82 L160 104 L4 104 Z" fill="#f4faff" stroke="#0f3a6e" stroke-width="4" stroke-linejoin="round"/>
-            <path d="M58 58 v22 M50 74 q8 8 16 0 M52 62 h12" stroke="#ffc83a" stroke-width="4" fill="none" stroke-linecap="round"/>
-            <circle cx="58" cy="57" r="4" fill="none" stroke="#ffc83a" stroke-width="3"/>
-            <g class="wheel-svg"><circle cx="42" cy="110" r="15" fill="#28344a" stroke="#d9b24a" stroke-width="4"/><circle cx="42" cy="110" r="4" fill="#f6d36b"/></g>
-            <g class="wheel-svg"><circle cx="86" cy="110" r="15" fill="#28344a" stroke="#d9b24a" stroke-width="4"/><circle cx="86" cy="110" r="4" fill="#f6d36b"/></g>
-            <g class="wheel-svg"><circle cx="134" cy="110" r="15" fill="#28344a" stroke="#d9b24a" stroke-width="4"/><circle cx="134" cy="110" r="4" fill="#f6d36b"/></g>
-            <line x1="42" y1="110" x2="134" y2="110" stroke="#d9b24a" stroke-width="4"/>
-          </svg>
-          <div class="same" aria-hidden="true"></div>
-        </div>
-        <div class="wagons" id="wagons"></div>
-      </div>
-    </div>
-
-    <div class="ribbon vn"><span>⭐ Kéo 4 mảnh ghép vào đúng toa tàu</span></div>
+    <div class="scene" id="railArea"><div class="train" id="train"><div id="twinkles"></div><span class="stack" id="loco"></span><div id="wagons"></div></div></div>
+    <span id="station" class="hidden"></span><div class="ribbon" style="display:none"></div>
     <div class="pieces" id="pieces"></div>
     <div id="explainBox"></div>
   </div>
@@ -384,7 +384,7 @@ function startStage(k){
 function renderStarbar(){
   var h = "";
   for (var i=0;i<G.list.length;i++){ var r = G.results[i]; h += starSvg(r ? "s-gold" : "s-off"); }
-  $("starbar").innerHTML = h + '<span class="score" id="score">🪙 '+coinCount()+'</span>';
+  $("starbar").innerHTML = h + '<span class="score" id="score">🪙 '+coinCount()+'</span><img class="chest-s" src="assets/tau-ruong.webp" alt="">';
 }
 /* ---------- xu: cộng vào hồ sơ chung dhtm_profile_v1 (cùng kho xu với các đảo) ---------- */
 var XU_CAU = 10, XU_RUONG = 20, sessionXu = 0;
@@ -407,14 +407,17 @@ function loadQuestion(){
   $("pieces").classList.remove("hidden"); document.querySelector(".ribbon").classList.remove("hidden");
   $("train").style.transform = ""; $("train").classList.remove("running");
   renderBubble(); makeTwinkles();
-  var w = "";
+  var w = "", SW = 1536, SH = 415;
   for (var i=0;i<4;i++){
-    w += '<div class="wagon" data-i="'+i+'"><div class="coupler"></div><div class="wbody"><div class="wnum">'+(i+1)+'</div><div class="win"><span class="dash"></span></div>'+
-      starSvg("wstar"+(i===G.starIdx?" big":""))+'</div><div class="wheels"><span class="wheel"></span><span class="wheel"></span></div></div>';
+    var R0 = WIN[i], bx = (BADGE[i][0]-R0[0])/R0[2]*100, by = (BADGE[i][1]-R0[1])/R0[3]*100, sx = (STARP[i][0]-R0[0])/R0[2]*100, sy = (STARP[i][1]-R0[1])/R0[3]*100;
+    w += '<div class="wagon" data-i="'+i+'" style="left:'+(R0[0]/SW*100)+'%;top:'+(R0[1]/SH*100)+'%;width:'+(R0[2]/SW*100)+'%;height:'+(R0[3]/SH*100)+'%">'+
+      '<div class="wbody"><div class="win"><span class="dash"></span></div></div>'+
+      '<div class="wnum" style="left:'+bx+'%;top:'+by+'%">'+(i+1)+'</div>'+
+      starSvg("wstar"+(i===G.starIdx?" big":"")).replace('<svg ','<svg style="left:'+sx+'%;top:'+sy+'%" ')+'</div>';
   }
   $("wagons").innerHTML = w;
   var p = "";
-  q.options.forEach(function(o,i){ p += '<div class="piece" data-n="'+(i+1)+'"><span class="n">'+(i+1)+'</span><span>'+esc(o)+'</span></div>'; });
+  q.options.forEach(function(o,i){ p += '<div class="piece" data-n="'+(i+1)+'"><span class="n">'+(i+1)+'</span><span class="pt">'+esc(o)+'</span><img class="pic" src="assets/tau-i'+(i+1)+'.webp" alt="" draggable="false"></div>'; });
   $("pieces").innerHTML = p;
 }
 function makeTwinkles(){
@@ -425,6 +428,10 @@ function makeTwinkles(){
   }
   $("twinkles").innerHTML = h;
 }
+// Toạ độ trong ảnh cảnh tàu (assets/tau-canh.webp, 1536×415): khung cửa sổ toa, vòng số, ngôi sao
+var WIN = [[398,128,199,117],[643,131,193,116],[885,128,188,116],[1121,126,187,116]];
+var BADGE = [[493,117],[740,117],[980,114],[1213,113]];
+var STARP = [[498,262],[744,256],[982,251],[1216,247]];
 function renderBubble(){
   var k = 0, q = G.q;
   $("bubble").innerHTML = esc(q.question).replace(SLOT_RE, function(){
@@ -608,7 +615,7 @@ function finishStage(){
   $("station").classList.add("show");
   var t = $("train"); runTrain(true);
   var area = $("railArea").getBoundingClientRect(), tr = t.getBoundingClientRect();
-  t.style.transform = "translateX("+Math.max(40, area.width*0.12)+"px)";
+
   setTimeout(function(){ t.classList.remove("running"); showFinale(); }, 1500);
 }
 function showFinale(){
