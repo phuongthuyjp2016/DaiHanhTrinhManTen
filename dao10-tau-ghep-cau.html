@@ -35,7 +35,8 @@ button{font-family:inherit}
 .starbar .s-silver path{fill:var(--silver);stroke:#fff;stroke-width:1.2;filter:drop-shadow(0 0 5px rgba(200,225,255,.9))}
 .starbar .pop{animation:pop .6s cubic-bezier(.2,1.8,.4,1)}
 @keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.45)}100%{transform:scale(1)}}
-.score{color:#fff;font-weight:800;font-size:.95rem;margin-left:4px;min-width:44px;text-align:right}
+.score{color:#fff;font-weight:800;font-size:.95rem;margin-left:6px;white-space:nowrap}
+.score.bump{animation:pop .5s cubic-bezier(.2,1.8,.4,1)}
 .sound{border:none;background:rgba(18,58,107,.75);color:#fff;border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:1.1rem}
 
 /* ---------- câu hỏi ---------- */
@@ -265,7 +266,6 @@ button{font-family:inherit}
 
     <div class="ribbon vn"><span>⭐ Kéo 4 mảnh ghép vào đúng toa tàu</span></div>
     <div class="pieces" id="pieces"></div>
-    <div class="mist vn" id="mist"></div>
     <div id="explainBox"></div>
   </div>
 </div>
@@ -323,8 +323,8 @@ function renderHome(){
   var sv = loadSave();
   $("stages").innerHTML = EXAMS.map(function(k){
     var r = sv[k], ss = "";
-    for (var i=0;i<5;i++){ var c = r && r.stars && r.stars[i]; ss += '<span class="'+(c==="g"?"g":c==="s"?"s":"")+'">★</span>'; }
-    return '<div class="stage" data-k="'+esc(k)+'"><div class="k">Stage '+esc(k)+'</div><div class="ss">'+ss+'</div><div class="bs vn">'+(r?("Kỷ lục "+r.best+" điểm"):"Chưa chơi")+'</div></div>';
+    for (var i=0;i<5;i++){ ss += '<span class="'+(r?"g":"")+'">★</span>'; }
+    return '<div class="stage" data-k="'+esc(k)+'"><div class="k">Stage '+esc(k)+'</div><div class="ss">'+ss+'</div><div class="bs vn">'+(r?"✓ Đã về ga":"Chưa chơi")+'</div></div>';
   }).join("");
 }
 $("stages").addEventListener("click", function(e){ var s = e.target.closest(".stage"); if (s) startStage(s.getAttribute("data-k")); });
@@ -344,10 +344,19 @@ function startStage(k){
 }
 function renderStarbar(){
   var h = "";
-  for (var i=0;i<G.list.length;i++){ var r = G.results[i]; h += starSvg(r ? (r.gold?"s-gold":"s-silver") : "s-off"); }
-  $("starbar").innerHTML = h + '<span class="score" id="score">'+totalPts()+'</span>';
+  for (var i=0;i<G.list.length;i++){ var r = G.results[i]; h += starSvg(r ? "s-gold" : "s-off"); }
+  $("starbar").innerHTML = h + '<span class="score" id="score">🪙 '+coinCount()+'</span>';
 }
-function totalPts(){ return G.results.reduce(function(a,r){ return a + r.pts; }, 0); }
+/* ---------- xu: cộng vào hồ sơ chung dhtm_profile_v1 (cùng kho xu với các đảo) ---------- */
+var XU_CAU = 10, XU_RUONG = 20, sessionXu = 0;
+function loadProfile(){ try { var r = localStorage.getItem("dhtm_profile_v1"); return r ? JSON.parse(r) : null; } catch(e){ return null; } }
+function addXu(n){
+  sessionXu += n;
+  var p = loadProfile();
+  if (p){ p.coins = (p.coins||0) + n; try { localStorage.setItem("dhtm_profile_v1", JSON.stringify(p)); } catch(e){} }
+}
+function coinCount(){ var p = loadProfile(); return p ? (p.coins||0) : sessionXu; }
+function bumpCoins(){ var el = $("score"); if (!el) return; el.textContent = "🪙 "+coinCount(); el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
 
 function loadQuestion(){
   var q = G.list[G.idx];
@@ -355,7 +364,7 @@ function loadQuestion(){
   G.q = q; G.order = q.order.split("-").map(Number); G.filled = [0,0,0,0]; G.mist = 0; G.done = false; G.sel = null;
   G.starIdx = toks.findIndex(function(t){ return /[*＊★]/.test(t); });
   $("stCnt").textContent = (G.idx+1)+"/"+G.list.length;
-  $("explainBox").innerHTML = ""; $("mist").textContent = "";
+  $("explainBox").innerHTML = "";
   $("train").style.transform = ""; $("train").classList.remove("running");
   renderBubble();
   var w = "";
@@ -459,15 +468,15 @@ function dropOn(n, i, pieceEl, ghost){
     setTimeout(function(){ w.classList.remove("shake","ng"); }, 480);
     if (ghost) flyBack(pieceEl, ghost);
     else { pieceEl.classList.remove("shake"); pieceEl.animate([{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"none"}],{duration:300}); }
-    $("mist").textContent = "Sai "+G.mist+" lần";
   }
 }
 
 /* ---------- xong một câu: hiệu ứng 1 + 2 + 3 + linh vật ---------- */
 function questionDone(){
   G.done = true;
-  var gold = G.mist===0, pts = Math.max(40, 100 - 20*G.mist);
-  G.results[G.idx] = { mist:G.mist, pts:pts, gold:gold };
+  var perfect = G.mist===0;
+  G.results[G.idx] = { done:true };
+  addXu(XU_CAU);
   runTrain(false);
   var ws = document.querySelector('.wagon[data-i="'+G.starIdx+'"] .wstar');
   var r = ws.getBoundingClientRect(), cx = r.left+r.width/2, cy = r.top+r.height/2;
@@ -475,11 +484,11 @@ function questionDone(){
   SND.star();
   var target = $("starbar").querySelectorAll("svg")[G.idx];
   setTimeout(function(){ flyStar(cx, cy, target, function(){   // 3. sao bay lên thanh điểm
-    target.setAttribute("class", gold ? "s-gold pop" : "s-silver pop"); // 1. sao bật sáng
+    target.setAttribute("class", "s-gold pop"); // 1. sao bật sáng
     burst(target.getBoundingClientRect().left+15, target.getBoundingClientRect().top+15, 8);
-    $("score").textContent = totalPts();
+    bumpCoins();
   }); }, 250);
-  showMascot(gold ? "PERFECT!" : "GREAT!", "+"+pts+" điểm"+(gold?"":" · sai "+G.mist+" lần"));   // 4. linh vật cổ vũ
+  showMascot(perfect ? "PERFECT!" : "GREAT!", "+"+XU_CAU+" xu 🪙");   // 4. linh vật cổ vũ
   setTimeout(showExplain, 700);
 }
 function runTrain(final){
@@ -550,22 +559,20 @@ function finishStage(){
   setTimeout(function(){ t.classList.remove("running"); showFinale(); }, 1500);
 }
 function showFinale(){
-  var total = totalPts(), golds = G.results.filter(function(r){ return r.gold; }).length;
-  var sv = loadSave(), prev = sv[G.exam], best = Math.max(total, prev ? prev.best : 0), isBest = !prev || total > prev.best;
-  sv[G.exam] = { best:best, stars: (isBest || !prev) ? G.results.map(function(r){ return r.gold?"g":"s"; }) : prev.stars };
-  writeSave(sv);
+  var sv = loadSave(); sv[G.exam] = { done:true }; writeSave(sv);
+  addXu(XU_RUONG); var stageXu = XU_CAU*G.list.length + XU_RUONG;
   var tw = "";
   for (var i=0;i<26;i++) tw += '<circle class="twinkle" cx="'+(Math.random()*480).toFixed(0)+'" cy="'+(Math.random()*200).toFixed(0)+'" r="'+(Math.random()*1.6+.5).toFixed(1)+'" style="animation-delay:'+(Math.random()*2).toFixed(2)+'s"/>';
   var lines = "", stars = "";
   for (var j=0;j<CONST_PTS.length-1;j++) lines += '<line x1="'+CONST_PTS[j][0]+'" y1="'+CONST_PTS[j][1]+'" x2="'+CONST_PTS[j+1][0]+'" y2="'+CONST_PTS[j+1][1]+'"/>';
-  CONST_PTS.forEach(function(p,i){ var r = G.results[i]; stars += '<g class="cs '+(r&&r.gold?"gold":"silver")+'" transform="translate('+(p[0]-18)+','+(p[1]-18)+') scale(1.5)"><path d="'+STAR_D+'" fill="#3d5677"/></g>'; });
+  CONST_PTS.forEach(function(p,i){ stars += '<g class="cs gold" transform="translate('+(p[0]-18)+','+(p[1]-18)+') scale(1.5)"><path d="'+STAR_D+'" fill="#3d5677"/></g>'; });
   var ov = document.createElement("div"); ov.className = "finale vn"; ov.id = "finale";
-  ov.innerHTML = '<div class="fin-box"><h2>🚉 Tàu đã về ga!</h2><div class="sub">Stage '+esc(G.exam)+' · '+golds+'/5 câu đúng ngay lần đầu</div>'+
+  ov.innerHTML = '<div class="fin-box"><h2>🚉 Tàu đã về ga!</h2><div class="sub">Stage '+esc(G.exam)+' · ghép xong 5 câu</div>'+
     '<svg class="const" viewBox="0 0 480 200">'+tw+lines+stars+'</svg>'+
     '<div class="chest" id="chest"><svg viewBox="0 0 120 100"><defs><radialGradient id="cg"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffd34d" stop-opacity=".8"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient></defs><g class="glow"><circle cx="60" cy="44" r="50" fill="url(#cg)"/></g>'+
       '<rect x="14" y="46" width="92" height="48" rx="8" fill="#a8652a" stroke="#5a3210" stroke-width="4"/><rect x="14" y="62" width="92" height="8" fill="#e8c46a"/><rect x="52" y="56" width="16" height="20" rx="3" fill="#ffd34d" stroke="#5a3210" stroke-width="3"/>'+
       '<g class="lid"><path d="M14 48 Q14 18 60 18 Q106 18 106 48 Z" fill="#c07a34" stroke="#5a3210" stroke-width="4"/><rect x="14" y="40" width="92" height="8" fill="#e8c46a"/></g></svg></div>'+
-    '<div class="reward" id="reward"><span class="big">+'+total+'</span> điểm thưởng'+(isBest && prev ? ' · 🏆 Kỷ lục mới!' : '')+'<div style="font-size:.95rem;opacity:.85">Kỷ lục Stage: '+best+' điểm</div></div>'+
+    '<div class="reward" id="reward"><span class="big">+'+XU_RUONG+' 🪙</span> xu từ rương<div style="font-size:.95rem;opacity:.85">Cả Stage: +'+stageXu+' xu · đang có 🪙 '+coinCount()+'</div></div>'+
     '<div class="fin-btns"><button class="p1" id="finNext">Stage tiếp theo →</button><button class="p2" id="finAgain">Chơi lại</button><button class="p2" id="finHome">Chọn Stage</button></div></div>';
   document.body.appendChild(ov); SND.fanfare();
   var cs = ov.querySelectorAll(".cs"), ls = ov.querySelectorAll("line");
