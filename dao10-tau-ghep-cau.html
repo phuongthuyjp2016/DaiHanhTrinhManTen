@@ -442,7 +442,8 @@ var BADGE = [[493,117],[740,117],[980,114],[1213,113]];
 var STARP = [[498,262],[744,256],[982,251],[1216,247]];
 function renderBubble(){
   var k = 0, q = G.q;
-  $("bubble").innerHTML = esc(q.question).replace(SLOT_RE, function(){
+  // hội thoại: mỗi người nói một dòng (」 rồi tên người + 「 → xuống dòng)
+  $("bubble").innerHTML = esc(q.question).replace(/」[ 　]*(?=[^\s　「」。、]{1,8}[ 　]?「)/g, "」<br>").replace(/\r?\n/g, "<br>").replace(SLOT_RE, function(){
     var i = k++, n = G.filled[i], star = i===G.starIdx;
     if (n) return '<span class="blank fill'+(star?" star":"")+'"><span class="bn">'+n+'</span>'+esc(q.options[n-1])+'</span>';
     return '<span class="blank'+(star?" star":"")+'">'+(i+1)+'</span>';

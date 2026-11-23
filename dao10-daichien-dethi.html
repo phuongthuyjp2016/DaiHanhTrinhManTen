@@ -173,7 +173,7 @@ document.getElementById("dcSearchInput")?.addEventListener("input",e=>{dcRenderS
 var host=document.getElementById("tauHost"),fr=null,frExam=null;
 function fit(){try{var D=fr.contentDocument,g=D&&D.getElementById("game");if(!g)return;var h=0;[g,D.getElementById("home")].forEach(function(el){if(el&&!el.classList.contains("hidden")){var r=el.getBoundingClientRect();h=Math.max(h,r.bottom)}});h=Math.ceil(h+16);if(h>100&&Math.abs(fr.offsetHeight-h)>2)fr.style.height=h+"px"}catch(e){}}
 function build(ex){
-  frExam=ex;host.innerHTML='<iframe id="tauFrame" title="Tàu Ghép Câu" scrolling="no" style="display:block;width:100%;height:560px;border:0;border-radius:16px;background:transparent" src="dao10-tau-ghep-cau.html?v=20261123g&ky='+encodeURIComponent(ex)+'&embed=1&q='+state.idx+'"></iframe>';
+  frExam=ex;host.innerHTML='<iframe id="tauFrame" title="Tàu Ghép Câu" scrolling="no" style="display:block;width:100%;height:560px;border:0;border-radius:16px;background:transparent" src="dao10-tau-ghep-cau.html?v=20261123h&ky='+encodeURIComponent(ex)+'&embed=1&q='+state.idx+'"></iframe>';
   fr=document.getElementById("tauFrame");
 }
 setInterval(function(){if(fr&&host.style.display!=="none")fit()},400);
