@@ -47,7 +47,9 @@ button{font-family:inherit}
   border-bottom:3px dashed var(--blue2);color:var(--blue2);font-size:.62em;font-weight:800;position:relative}
 .blank.star{border-bottom-color:var(--gold2)}
 .blank.star::after{content:"★";position:absolute;top:-1.05em;left:50%;transform:translateX(-50%);color:var(--gold2);font-size:1.1em}
-.blank.fill{font-size:1em;font-weight:700;color:var(--blue);border-bottom:3px solid var(--blue2);animation:fadeUp .35s}
+.blank.fill{font-size:1em;font-weight:700;color:var(--blue);border-bottom:3px solid var(--blue2);animation:fadeUp .35s;gap:4px}
+.blank .bn{display:inline-flex;align-items:center;justify-content:center;width:1.3em;height:1.3em;border-radius:50%;background:#1f4e79;color:#fff;font-size:.62em;font-weight:800;flex:none}
+.wnum.got{background:var(--gold2);color:#3a2600;animation:pop .5s cubic-bezier(.2,1.8,.4,1)}
 .blank.fill.star{color:#b06d00;border-bottom-color:var(--gold2)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
@@ -111,6 +113,9 @@ button{font-family:inherit}
 .ghost{position:fixed;z-index:50;pointer-events:none;transform:rotate(-3deg) scale(1.04);box-shadow:0 10px 24px rgba(0,30,80,.35);cursor:grabbing}
 
 /* ---------- giải thích ---------- */
+.m6x{--bg:#f3ecd8;--card:#fdf6e8;--ink:#1a1a1a;--muted:#1a1a1a;--border:#9dc0da;--accent:#1f4e79;--wrong:#b3402f;--good:#2e7d4f;--good-bg:#e8f5ec;--vn:#2255cc;--badge-bg:#ece7da;
+  color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP",-apple-system,sans-serif;line-height:1.6}
+.m6x .dc-ref-go{display:none}
 .explain{margin-top:14px;background:rgba(255,255,255,.96);border:3px solid #8fc4ff;border-radius:18px;padding:14px 16px;box-shadow:0 6px 18px rgba(0,30,80,.25);animation:fadeUp .4s}
 .explain .full{font-size:1.1rem;line-height:1.9;margin-bottom:6px}
 .explain .full b{color:#b06d00;background:#fff1c4;border-radius:5px;padding:0 4px}
@@ -274,6 +279,32 @@ button{font-family:inherit}
 
 <script src="dao10-daichien-dethi-data.js"></script>
 <script>
+/*DAO10-COPY-START: chép nguyên văn từ dao10-daichien-dethi.html — đừng sửa tay, chạy lại script chép */
+var state={exam:null,mon:"mon6",idx:0,chosen:1},_m6FullText="";
+var speakJapanese=e=>{if(!e)return;window.speechSynthesis.cancel();const n=new SpeechSynthesisUtterance(e);n.lang="ja-JP",n.rate=.9,n.pitch=1,n.volume=1;const t=window.speechSynthesis.getVoices().find(e=>"ja-JP"===e.lang||e.lang.startsWith("ja"));t&&(n.voice=t),window.speechSynthesis.speak(n)};
+var MON_LABELS={mon1:'問題1（漢字読み）',mon2:'問題2（文脈規定）',mon3:'問題3（言い換え）',mon4:'問題4（用法）',mon5:'問題5（文法1）',mon6:'問題6（★並べ替え）'};
+var GRAMMAR_N1={"だけあって":{meaning:"cũng đúng thôi vì..., xứng đáng là... vì",usage:"X だけあって Y — Y là kết quả/đánh giá xứng đáng với X",conj:"名詞 / 動詞普通形 / い形 / な形 + だけあって",ex:"プロだけあって、仕事が速い。（Xứng danh là dân chuyên nghiệp, làm việc rất nhanh.）"},"ばかりに":{meaning:"chỉ vì..., chính vì... mà",usage:"X ばかりに Y — Y là hậu quả xấu do X gây ra",conj:"動詞た形 / 動詞ている形 / い形 / な形な + ばかりに",ex:"一言言ったばかりに、大きなトラブルになった。（Chỉ vì nói một câu mà gây ra chuyện lớn.）"},"からして":{meaning:"ngay từ..., chỉ cần nhìn vào... cũng biết",usage:"X からして Y — lấy X làm bằng chứng điển hình để khẳng định Y",conj:"名詞 + からして",ex:"態度からして問題だ。（Ngay từ thái độ đã có vấn đề rồi.）"},"からには":{meaning:"đã... thì phải..., một khi đã... thì",usage:"X からには Y — Y là trách nhiệm/quyết tâm tất yếu sau khi X",conj:"動詞普通形 / た形 + からには",ex:"引き受けたからには、最後までやる。（Đã nhận lời thì phải làm đến cùng.）"},"あっての":{meaning:"nhờ có... mới có được",usage:"X あっての Y — Y chỉ tồn tại được nhờ có X",conj:"名詞 + あっての + 名詞",ex:"お客様あっての商売だ。（Kinh doanh là nhờ có khách hàng.）"},"ならではの":{meaning:"chỉ có... mới có được, đặc trưng của",usage:"X ならではの Y — Y là điều chỉ có X mới làm được",conj:"名詞 + ならではの + 名詞",ex:"この地域ならではの料理。（Món ăn đặc trưng chỉ có ở vùng này.）"},"こともあって":{meaning:"cũng có lý do là..., vì cũng có...",usage:"X こともあって Y — X là một trong các nguyên nhân dẫn đến Y",conj:"名詞な / 動詞普通形 + こともあって",ex:"天気がいいこともあって、人出が多い。（Có lý do là thời tiết đẹp nên đông người.）"},"ほど":{meaning:"đến mức..., càng... càng",usage:"①X ほど Y — Y ở mức tương đương X ②～ば～ほど — càng ~ càng ~",conj:"名詞 / 動詞普通形 + ほど",ex:"信じられないほど速い。（Nhanh đến mức không thể tin được.）"},"以上":{meaning:"một khi đã..., vì đã/là",usage:"X 以上（は） Y — tương tự からには, nhấn mạnh nghĩa vụ/tất yếu",conj:"動詞普通形 / た形 + 以上（は）",ex:"やると決めた以上は、やり遂げる。（Một khi đã quyết định làm thì phải hoàn thành.）"},"わけにもいかず":{meaning:"không thể... được, không tiện...",usage:"X わけにもいかず Y — không thể làm X nên phải/đành Y",conj:"動詞辞書形 + わけにもいかず",ex:"断るわけにもいかず、引き受けた。（Không thể từ chối được nên đành nhận lời.）"},"がちな":{meaning:"hay..., dễ bị..., có xu hướng",usage:"X がちだ/がちな — thường xảy ra X (thường mang nghĩa tiêu cực)",conj:"動詞ます形 / 名詞 + がちだ",ex:"彼は遅刻がちだ。（Anh ấy hay bị muộn.）"},"なくして":{meaning:"nếu không có..., thiếu...",usage:"X なくして Y — Y không thể xảy ra/thực hiện nếu thiếu X",conj:"名詞 + なくして（は）",ex:"努力なくして成功なし。（Không có nỗ lực thì không có thành công.）"},"をもって":{meaning:"①lấy X làm mốc chấm dứt ②lấy X làm căn cứ/phương tiện",usage:"①時間・日付 をもって — hết hạn/kết thúc ②手段 をもって — bằng phương tiện X",conj:"名詞 + をもって",ex:"本日をもって閉店いたします。（Lấy hôm nay làm mốc đóng cửa hàng.）"},"をきっかけに":{meaning:"lấy... làm cơ hội/dịp, từ sau...",usage:"X をきっかけに Y — Y bắt đầu/xảy ra sau sự kiện X",conj:"名詞 + をきっかけに（して）",ex:"留学をきっかけに日本語を始めた。（Lấy việc du học làm cơ hội bắt đầu học tiếng Nhật.）"},"における":{meaning:"trong (lĩnh vực/địa điểm/thời gian)",usage:"X における Y — Y trong phạm vi/lĩnh vực X",conj:"名詞 + における + 名詞",ex:"現代における問題。（Vấn đề trong thời hiện đại.）"},"に至っては":{meaning:"đến mức... thậm chí",usage:"X に至っては Y — X là ví dụ cực đoan để nhấn mạnh mức độ",conj:"名詞 + に至っては",ex:"彼に至っては全く練習しなかった。（Đến anh ta còn không tập chút nào.）"},"によるところが大きい":{meaning:"phần lớn là do...",usage:"Y は X によるところが大きい — Y chủ yếu là nhờ/do X",conj:"名詞 / 動詞辞書形こと + による",ex:"成功は努力によるところが大きい。（Thành công phần lớn là nhờ nỗ lực.）"},"次第で":{meaning:"tùy thuộc vào...",usage:"X 次第で Y — Y thay đổi tùy theo X",conj:"名詞 + 次第で",ex:"やり方次第で結果が変わる。（Kết quả thay đổi tùy cách làm.）"},"ものとは":{meaning:"việc... thật (là bất ngờ/cảm thán)",usage:"X ものとは — bày tỏ cảm xúc bất ngờ trước thực tế X",conj:"動詞辞書形 / 動詞た形 + ものとは",ex:"こんなに難しいものとは思わなかった。（Không nghĩ lại khó đến vậy.）"},"さることながら":{meaning:"... thì đã đành, nhưng còn...",usage:"X さることながら Y — Y cũng quan trọng không kém X",conj:"名詞 + さることながら",ex:"機能性さることながら、デザインも大事だ。（Tính năng thì đã đành, thiết kế cũng quan trọng.）"},"ことぐらい":{meaning:"điều gì đó hiển nhiên/đơn giản như",usage:"～ことぐらい (分かる/できる) — ngay cả điều đơn giản như vậy cũng...",conj:"動詞辞書形 + ことぐらい",ex:"それぐらいのことくらいわかるだろう。（Điều đơn giản như vậy cũng phải biết chứ.）"}};
+function dcRefChip(r,color,border){return`<button type="button" class="dc-ref-chip" data-ref="${r}" style="background:#fff;border:1px solid ${border};border-radius:12px;padding:2px 9px;font-size:0.78rem;font-weight:600;color:${color};white-space:nowrap;cursor:pointer;font-family:inherit;">${r}</button>`}
+function dcFindRef(r){const m=String(r).match(/^Mon(\d+)-(\S+) Q(\d+)$/);if(!m)return null;const mon="mon"+m[1],arr=(FULL_DATA[m[2]]||{})[mon];if(!arr)return null;let n=+m[3],i=arr.findIndex(q=>q.q==n);if(i<0&&mon==="mon6"&&n>35)i=arr.findIndex(q=>q.q==n-35);return i<0?null:{examKey:m[2],mon:mon,i:i,item:arr[i]}}
+// hide: chưa làm câu hiện tại → không lộ đáp án câu lặp.
+function dcRefPreview(ref,hide){const q=ref.item,esc=t=>String(t==null?"":t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");const opts=q.options||[],ok=opts[q.ans-1],okTxt=ok&&typeof ok==="object"?(ok.word||ok.text||""):ok;
+let sent;if(hide){sent=esc(q.question||q.sentence||"")}else if(q.full_sentence){sent=esc(q.full_sentence).replace(/（\*([^（）]*)）/g,'<b style="color:#b3261e;background:#fdecea;border-radius:4px;padding:0 3px;">★$1</b>').replace(/（([^（）]*)）/g,'<span style="border-bottom:1px solid #c9b77a;">$1</span>')}
+else{sent=esc(q.question||q.sentence||"");const b='<b style="color:#1f7a3f;background:#e8f5ec;border-radius:4px;padding:0 3px;">'+esc(okTxt)+"</b>";sent=/（[\s　]*）/.test(sent)?sent.replace(/（[\s　]*）/,"（"+b+"）"):sent+'<div style="margin-top:4px;">→ Đáp án: '+b+"</div>"}
+const vi=hide?'<div style="color:#8a5a00;font-size:0.82rem;margin-top:4px;">🔒 Chọn đáp án câu này để xem đáp án câu lặp</div>':q.translate&&!/[぀-ヿ一-鿿]/.test(q.translate)?'<div style="color:#555;font-size:0.84rem;margin-top:4px;">🇻🇳 '+esc(q.translate)+"</div>":"";
+const ol=opts.map((o,k)=>'<span style="display:inline-block;margin:2px 8px 2px 0;'+(!hide&&k===q.ans-1?"color:#1f7a3f;font-weight:700;":"color:#555;")+'">'+(k+1)+". "+esc(typeof o==="object"?(o.word||o.text||""):o)+(!hide&&k===q.ans-1?" ✓":"")+"</span>").join("");
+return'<div style="background:#fff;border:1px solid #d9cfe9;border-radius:10px;padding:10px 12px;margin-top:6px;font-size:0.9rem;line-height:1.7;"><div style="font-size:0.78rem;font-weight:700;color:#5b3fa8;margin-bottom:4px;">'+MON_LABELS[ref.mon]+" · Kỳ "+ref.examKey+" · Câu "+q.q+"</div><div>"+sent+'</div><div style="font-size:0.82rem;margin-top:4px;">'+ol+"</div>"+vi+'<button type="button" class="dc-ref-go" style="margin-top:6px;border:1px solid #5b3fa8;background:#f3eefc;color:#5b3fa8;border-radius:8px;padding:3px 10px;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit;">→ Mở câu này</button></div>'}
+document.addEventListener("click",e=>{const go=e.target.closest(".dc-ref-go");if(go){const r=dcFindRef(go.closest(".dc-ref-prev").dataset.ref);if(r)dcGoToResult(r);return}
+const chip=e.target.closest(".dc-ref-chip");if(!chip)return;let wrap=chip.parentElement;while(wrap&&!wrap.querySelector(":scope > .dc-ref-prev"))wrap=wrap.parentElement;if(!wrap)return;const box=wrap.querySelector(":scope > .dc-ref-prev");
+wrap.querySelectorAll(".dc-ref-chip").forEach(c=>c.style.outline="");
+if(box.dataset.ref===chip.dataset.ref){box.innerHTML="";box.dataset.ref="";return}
+const ref=dcFindRef(chip.dataset.ref);box.dataset.ref=chip.dataset.ref;box.innerHTML=ref?dcRefPreview(ref,state.chosen===null):'<div style="font-size:0.85rem;color:#888;margin-top:4px;">Không tìm thấy câu này trong dữ liệu.</div>';chip.style.outline="2px solid currentColor"});
+function repeatBadge(e){if(!e||!e.rep||!e.rep.length)return"";const c=e.rep.map(r=>dcRefChip(r,"#8a5a00","#f0c36d")).join("");return`<div style="background:#fff7df;border:1px solid #f0c36d;border-radius:10px;padding:8px 12px;margin-bottom:10px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;"><span style="font-size:0.8rem;font-weight:700;color:#8a5a00;">🔁 Câu lặp — từ/câu này cũng ra ở (bấm để xem câu):</span>${c}<div class="dc-ref-prev" style="width:100%"></div></div>`}
+function gramBadge(e){if(!e||!e.gram||!e.gram.length||null===state.chosen)return"";const chip=r=>dcRefChip(r,"#5b3fa8","#b9a6e8");return e.gram.map(g=>{const c=g.at.map(chip).join("");const body=g.at.length>8?`<details style="width:100%;"><summary style="cursor:pointer;font-size:0.8rem;color:#5b3fa8;">Xem ${g.at.length} câu khác</summary><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${c}</div></details>`:c;return`<div style="background:#f3eefc;border:1px solid #b9a6e8;border-radius:10px;padding:8px 12px;margin:10px 0;display:flex;flex-wrap:wrap;align-items:center;gap:6px;"><span style="font-size:0.82rem;font-weight:700;color:#5b3fa8;width:100%;">📌 Cấu trúc hay ra — ${g.l} · ra ${g.n} lần <span style="font-weight:500;">(bấm năm để xem câu)</span></span>${body}<div class="dc-ref-prev" style="width:100%"></div></div>`}).join("")}
+function m6Explain(e){var s="",i=e.order?e.order.split("-").map(Number):[];_m6FullText=e.full_sentence?e.full_sentence.replace(/[（）()*＊★]/g,""):"";{var u=e.star_word||e.options[e.ans-1],x=GRAMMAR_N1[u];if(s+='<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;">',s+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">',e.order&&(s+='<span style="background:var(--good);color:#fff;font-size:0.78rem;font-weight:700;padding:4px 12px;border-radius:20px;">Thứ tự đúng: '+e.order+"</span>"),u&&(s+='<span style="background:#eaf4fb;color:var(--accent);font-size:0.82rem;font-weight:700;padding:4px 12px;border-radius:20px;">📌 Mẫu: ★'+u+"</span>"),s+="</div>",e.full_sentence)s+='<div style="font-size:0.98rem;line-height:2;margin-bottom:8px;">'+e.full_sentence.replace(/（\*([^）]*）)/g,'<span style="color:var(--accent);font-weight:700;">（★$1</span>').replace(/\(\*([^)]*\))/g,'<span style="color:var(--accent);font-weight:700;">(★$1</span>')+"</div>",s+='<button onclick="speakJapanese(_m6FullText)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:var(--muted);font-size:0.78rem;margin-bottom:10px;font-family:inherit;">',s+='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>全文を聞く</button>';e.translate&&(s+='<div style="font-size:0.88rem;color:var(--vn);font-style:italic;margin-bottom:12px;">🇻🇳 '+e.translate+"</div>"),e.explain&&(s+='<div style="background:#fff8e1;border:1.5px solid #f0c36d;border-radius:10px;padding:14px 16px;margin-bottom:12px;"><div style="font-size:0.82rem;font-weight:700;color:#8a5a00;margin-bottom:8px;">💡 Bí kíp giải</div><div style="font-size:0.88rem;line-height:1.8;white-space:pre-line;">'+e.explain+"</div></div>"),4===i.length&&(s+='<hr style="border:none;border-top:1px solid var(--border);margin:10px 0;">',s+='<div style="font-size:0.82rem;line-height:1.9;">',s+='<div style="margin-bottom:5px;"><b>1. Mảnh đầu câu (vị trí 1):</b> 「'+e.options[i[0]-1]+"」— khớp với phần câu ngay trước chỗ trống.</div>",s+='<div style="margin-bottom:5px;"><b>2. Mảnh cuối câu (vị trí 4):</b> 「'+e.options[i[3]-1]+"」— khớp với phần câu ngay sau chỗ trống.</div>",s+='<div style="margin-bottom:5px;"><b>3. Hai mảnh giữa (2-3):</b> 「'+e.options[i[1]-1]+"」rồi 「"+e.options[i[2]-1]+"」— ghép theo cấu trúc ngữ pháp/ý nghĩa.</div>",s+="<div><b>4. Vị trí ★ (số "+e.ans+'):</b> = <span style="color:var(--accent);font-weight:700;">'+u+"</span></div>",s+="</div>"),s+="</div>",(x||e.gram_explain)&&function(){var gp=e.gram_pattern||u||'';s+='<div style="background:linear-gradient(135deg,#eaf4fb,#f3eefc);border:1.5px solid #9db8d8;border-left:4px solid #7b6cb5;border-radius:10px;padding:14px 16px;margin-bottom:12px;">';s+='<div style="font-size:0.82rem;font-weight:700;color:var(--accent);margin-bottom:10px;">📖 Ngữ pháp: '+gp+'</div>';if(x){s+='<div style="font-size:0.88rem;margin-bottom:6px;"><b style="color:var(--vn);">🇻🇳 Nghĩa:</b> '+x.meaning+'</div>';s+='<div style="font-size:0.88rem;margin-bottom:6px;"><b style="color:#c0392b;">📌 Cách dùng:</b> '+x.usage+'</div>';s+='<div style="font-size:0.88rem;margin-bottom:6px;"><b style="color:#7b6cb5;">🔧 Cách chia:</b> <span style="color:var(--accent);">'+x.conj+'</span></div>';}else if(e.gram_explain){var gl=e.gram_explain.split('\n');for(var gi=0;gi<gl.length;gi++){if(gl[gi].indexOf('🔗')<0&&gl[gi].indexOf('💬')<0)s+='<div style="font-size:0.88rem;margin-bottom:6px;">'+gl[gi]+'</div>';}}if(e.gram_explain){var hd=e.gram_explain.match(/🔗[^\n]*/);if(hd)s+='<div style="font-size:0.88rem;margin-bottom:6px;"><b style="color:#7b6cb5;">'+hd[0]+'</b></div>';}if(x){s+='<div style="font-size:0.88rem;color:var(--muted);"><b>💬 Ví dụ:</b> '+x.ex+'</div>';}else if(e.gram_explain){var vd=e.gram_explain.match(/💬[^\n]*/);if(vd)s+='<div style="font-size:0.88rem;color:var(--muted);">'+vd[0]+'</div>';}s+='</div>'}()}return s}
+function dcGoToResult(r){location.href="dao10-daichien-dethi.html";}
+/*DAO10-COPY-END*/
+</script>
+<script>
 (function(){
 "use strict";
 var STAR_D = "M12 1.8l3.1 6.4 7 .9-5.1 4.9 1.3 7-6.3-3.4-6.3 3.4 1.3-7L1.9 9.1l7-.9z";
@@ -365,6 +396,7 @@ function loadQuestion(){
   G.starIdx = toks.findIndex(function(t){ return /[*＊★]/.test(t); });
   $("stCnt").textContent = (G.idx+1)+"/"+G.list.length;
   $("explainBox").innerHTML = "";
+  $("pieces").classList.remove("hidden"); document.querySelector(".ribbon").classList.remove("hidden");
   $("train").style.transform = ""; $("train").classList.remove("running");
   renderBubble();
   var w = "";
@@ -381,7 +413,7 @@ function renderBubble(){
   var k = 0, q = G.q;
   $("bubble").innerHTML = esc(q.question).replace(SLOT_RE, function(){
     var i = k++, n = G.filled[i], star = i===G.starIdx;
-    if (n) return '<span class="blank fill'+(star?" star":"")+'">'+esc(q.options[n-1])+'</span>';
+    if (n) return '<span class="blank fill'+(star?" star":"")+'"><span class="bn">'+n+'</span>'+esc(q.options[n-1])+'</span>';
     return '<span class="blank'+(star?" star":"")+'">'+(i+1)+'</span>';
   });
 }
@@ -459,6 +491,7 @@ function dropOn(n, i, pieceEl, ghost){
     pieceEl.classList.remove("src"); pieceEl.classList.add("used");
     G.filled[i] = n;
     w.querySelector(".win").textContent = G.q.options[n-1];
+    var wn = w.querySelector(".wnum"); wn.textContent = n; wn.classList.add("got"); // đầu toa ghi số của mảnh → đọc lần lượt ra 3-4-2-1
     w.classList.add("ok","linked");
     renderBubble(); SND.ok();
     if (G.filled.every(Boolean)) setTimeout(questionDone, 350);
@@ -474,6 +507,7 @@ function dropOn(n, i, pieceEl, ghost){
 /* ---------- xong một câu: hiệu ứng 1 + 2 + 3 + linh vật ---------- */
 function questionDone(){
   G.done = true;
+  $("pieces").classList.add("hidden"); document.querySelector(".ribbon").classList.add("hidden");
   var perfect = G.mist===0;
   G.results[G.idx] = { done:true };
   addXu(XU_CAU);
@@ -537,14 +571,14 @@ function fmtFull(q){
 }
 function showExplain(){
   var q = G.q, last = G.idx === G.list.length-1;
-  var seq = G.order.map(function(n,i){ return (i===G.starIdx?"★":"")+n; }).join(" → ");
-  var h = '<div class="explain"><div class="vn" style="font-weight:800;color:#123a6b;margin-bottom:4px">🔀 Thứ tự đúng: '+seq+'</div>'+
-    '<div class="full">'+fmtFull(q)+'</div>'+
-    (q.translate ? '<div class="vi vn">🇻🇳 '+esc(q.translate)+'</div>' : "")+
-    (q.explain ? '<div class="ex vn">'+esc(q.explain)+'</div>' : "")+
-    (q.gram_pattern ? '<div class="gp vn"><span class="h">📌 '+esc(q.gram_pattern)+'</span>\n'+esc(q.gram_explain||"")+'</div>' : "")+
+  // Giải thích giống hệt trang luyện đảo 10: 🔁 Câu lặp + khung giải thích Mon6 + 📌 Cấu trúc hay ra (code chép nguyên văn ở khối DAO10-COPY)
+  var qq = Object.assign({}, q, { _origExam: G.exam });
+  var h = '<div class="explain m6x">'+repeatBadge(qq)+m6Explain(qq)+gramBadge(qq)+
     '<button class="next vn" id="nextBtn">'+(last ? "🏁 Về ga" : "Câu tiếp →")+'</button></div>';
   $("explainBox").innerHTML = h;
+  // Câu đã điền sẵn ở khung trên → không lặp lại câu đầy đủ trong phần giải thích
+  var dup = $("explainBox").querySelector('.m6x div[style*="font-size:0.98rem;line-height:2"]');
+  if (dup) dup.remove();
   $("nextBtn").addEventListener("click", function(){ if (last) finishStage(); else { G.idx++; loadQuestion(); window.scrollTo({top:0,behavior:"smooth"}); } });
 }
 
