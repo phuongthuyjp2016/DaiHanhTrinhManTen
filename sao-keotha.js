@@ -105,6 +105,18 @@
     changed(key, before);
   }
 
+  // Ô nhận thẻ: ô bị thẻ đang kéo đè lên nhiều nhất; không đè ô nào thì lấy ô gần ngón tay nhất (trong 70px).
+  function findSlot(key, g, px, py) {
+    var best = null, bestA = 0, near = null, nearD = 70;
+    sel("sao-slot", key).forEach(function (s) {
+      var r = s.getBoundingClientRect();
+      var w = Math.min(g.right, r.right) - Math.max(g.left, r.left), h = Math.min(g.bottom, r.bottom) - Math.max(g.top, r.top);
+      if (w > 0 && h > 0 && w * h > bestA) { bestA = w * h; best = s; }
+      var dx = Math.max(r.left - px, 0, px - r.right), dy = Math.max(r.top - py, 0, py - r.bottom), d = Math.sqrt(dx * dx + dy * dy);
+      if (d < nearD) { nearD = d; near = s; }
+    });
+    return best || near;
+  }
   var drag = null;
   document.addEventListener("pointerdown", function (e) {
     var chip = e.target.closest && e.target.closest(".sao-chip");
@@ -123,8 +135,7 @@
       document.body.appendChild(g); drag.ghost = g; drag.chip.classList.add("sao-src");
     }
     drag.ghost.style.left = (e.clientX - drag.dx) + "px"; drag.ghost.style.top = (e.clientY - drag.dy) + "px";
-    var el = document.elementFromPoint(e.clientX, e.clientY), slot = el && el.closest(".sao-slot");
-    if (slot && slot.getAttribute("data-key") !== drag.key) slot = null;
+    var slot = findSlot(drag.key, drag.ghost.getBoundingClientRect(), e.clientX, e.clientY);
     if (drag.over && drag.over !== slot) drag.over.classList.remove("sao-hover");
     if (slot) slot.classList.add("sao-hover");
     drag.over = slot;
