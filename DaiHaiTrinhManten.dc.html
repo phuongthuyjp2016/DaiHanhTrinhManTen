@@ -1392,7 +1392,7 @@ function subPos(id, mobilePosMap, x, y, mobile) {
   return { x, y };
 }
 
-// Tên tool trong progressTools có thể kèm ?v=... để phá cache (vd 'dao10-daichien-dethi.html?v=20261121b'),
+// Tên tool trong progressTools có thể kèm ?v=... để phá cache (vd 'dao10-daichien-dethi.html?v=20261123c'),
 // còn trang tool chỉ ghi tên file — bỏ tham số v trước khi tra, giữ các tham số khác như ?set=.
 function toolProgressKey(url) {
   const q = url.indexOf('?');
@@ -1529,7 +1529,7 @@ const ISLANDS = [
       { icon:'🗂️', title:'Flashcard Ngữ Pháp N1', desc:'Lật thẻ ôn nhanh các mẫu ngữ pháp N1 quan trọng.', url:'dao3-suongmu-flashcard.html' },
       { icon:'⭐', title:'Mondai 6 · Điền Sao (100 câu)', desc:'Luyện dạng bài sắp xếp câu ★ với 100 câu hỏi chọn lọc.', url:'dao3-suongmu-mondai6-quiz100.html' },
       { icon:'🌟', title:'Mondai 6 · Điền Sao (320 câu)', desc:'Bộ đề đầy đủ 320 câu dạng sắp xếp câu ★ cho Mondai 6.', url:'dao3-suongmu-mondai6-quiz320.html' },
-      { icon:'🔮', title:'Mật Điển Văn Pháp 1321', desc:'Kho 1321 câu ngữ pháp N1 chia theo tuần, luyện theo từng bài.', url:'dao3-suongmu-matdien-1321.html' }
+      { icon:'🔮', title:'Mật Điển Văn Pháp 1321', desc:'Kho 1321 câu ngữ pháp N1 chia theo tuần, luyện theo từng bài.', url:'dao3-suongmu-matdien-1321.html?v=20261123a' }
     ],
     progressTools:['dao3-suongmu-powerdrill-full30.html','dao3-suongmu-mondai6-quiz100.html','dao3-suongmu-mondai6-quiz320.html','dao3-suongmu-matdien-1321.html'] },
   { name:'Đảo Kiếm Sĩ', skill:'Nghe Hiểu · Loại Đáp Án Sai (MD4)', boss:'Cá Mập Kiếm Sĩ', item:'Kiếm Phá Bẫy', arc:'chinhphuc', color:'#bf6f4f', dark:'#8c4f36', x:1130, y:250, accessory:'bandana',
@@ -1727,12 +1727,12 @@ const ISLANDS = [
     playable:false, comingSoon:false, external:true, menuUrl:'dao10-index.html', quiz:[],
     menuTools:[
       { icon:'📖', title:'Từ Vựng 語彙 · Toàn 30 Vòng', desc:'Luyện từ vựng N1 theo 30 vòng liên tiếp, bám sát cấu trúc đề thi thật.', url:'dao10-daichien-tuvung30.html' },
-      { icon:'⚔', title:'Đề Thi Tổng Hợp 2010–2025', desc:'Thi thử toàn phần, tổng hợp đề thi JLPT N1 các năm từ 2010 đến 2025.', url:'dao10-daichien-dethi.html?v=20261121b' }
+      { icon:'⚔', title:'Đề Thi Tổng Hợp 2010–2025', desc:'Thi thử toàn phần, tổng hợp đề thi JLPT N1 các năm từ 2010 đến 2025.', url:'dao10-daichien-dethi.html?v=20261123c' }
     ],
-    progressTools:['dao10-daichien-tuvung30.html','dao10-daichien-dethi.html?v=20261121b'] },
+    progressTools:['dao10-daichien-tuvung30.html','dao10-daichien-dethi.html?v=20261123c'] },
   { name:'Đảo Tứ Hoàng', skill:'Thử Thách Tổng Hợp N1 (Boss Cuối)', boss:'Vua Cá Mập', item:'Vương Miện Tứ Hoàng', arc:'daichien', color:'#4a2f6b', dark:'#33204a', x:790, y:640, accessory:'crown',
     story:'Vua Cá Mập chờ đợi những nhà thám hiểm xuất sắc nhất trong thử thách tổng hợp toàn bộ JLPT N1. Chiến thắng sẽ mở đường đến Đảo Kho Báu.',
-    playable:false, comingSoon:false, external:true, menuUrl:'dao11-thithu-jlpt-n1-7-2026.html?v=20261121a', quiz:[] },
+    playable:false, comingSoon:false, external:true, menuUrl:'dao11-thithu-jlpt-n1-7-2026.html?v=20261123c', quiz:[] },
   { name:'Đảo Kho Báu Manten', skill:'Đích Đến Vinh Quang', boss:'—', item:'Kho Báu Manten', arc:'vinhquang', color:'#d4af37', dark:'#a3841f', x:790, y:400, accessory:'none', isTreasure:true,
     story:'Không có chiến đấu nơi đây — chỉ có ánh sáng, pháo hoa và rương kho báu chờ đón Nhà Chinh Phục MANTEN đã hoàn thành cả hải trình.',
     playable:false, comingSoon:true, quiz:[] }
