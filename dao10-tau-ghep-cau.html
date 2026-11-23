@@ -76,8 +76,17 @@ button{font-family:inherit}
 .win{background:linear-gradient(#ffffff,#e9f3ff);border:2px solid #b6d3f2;border-radius:9px;min-height:62px;display:flex;align-items:center;justify-content:center;
   text-align:center;padding:6px 4px;font-size:clamp(.78rem,1.9vw,1.05rem);font-weight:700;color:var(--navy);line-height:1.35;word-break:break-all}
 .win .dash{width:60%;border-bottom:3px dashed var(--blue2);opacity:.8}
-.wstar{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);width:28px;height:28px;z-index:2}
-.wstar path{fill:var(--gold);stroke:#fff6cf;stroke-width:1.5}
+.wstar{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);width:24px;height:24px;z-index:2;transition:transform .3s}
+.wstar path{fill:#8ea3bd;stroke:#dfe9f5;stroke-width:1.5;opacity:.75;transition:fill .35s,opacity .35s}
+.wstar.big{width:32px;height:32px;bottom:-10px}
+.wstar.big path{fill:#b9a25a;opacity:.85;stroke:#fff3c0}
+.wstar.lit path{fill:var(--gold);opacity:1;stroke:#fff6cf;filter:drop-shadow(0 0 6px rgba(255,210,70,1))}
+.wstar.lit{animation:litpop .6s cubic-bezier(.2,1.8,.4,1),shine 1.6s ease-in-out .6s infinite}
+@keyframes litpop{0%{transform:translateX(-50%) scale(.5)}60%{transform:translateX(-50%) scale(1.6)}100%{transform:translateX(-50%) scale(1)}}
+@keyframes shine{0%,100%{transform:translateX(-50%) scale(1) rotate(0)}50%{transform:translateX(-50%) scale(1.15) rotate(8deg)}}
+.tw{position:absolute;pointer-events:none;color:#fff;text-shadow:0 0 6px #fff,0 0 12px #bfe3ff;font-size:14px;line-height:1;animation:twk 2.4s ease-in-out infinite;z-index:3}
+.tw.g{color:#ffe27a;text-shadow:0 0 6px #ffe27a,0 0 12px #ffc83a}
+@keyframes twk{0%,100%{opacity:.15;transform:scale(.5) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(45deg)}}
 .wheels{display:flex;justify-content:space-around;margin-top:-6px;padding:0 10%}
 .wheel{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle,#f6d36b 0 22%,#28344a 24% 100%);border:2px solid #d9b24a;position:relative}
 .wheel::before,.wheel::after{content:"";position:absolute;left:50%;top:1px;bottom:1px;width:2px;margin-left:-1px;background:#d9b24a}
@@ -206,7 +215,6 @@ button{font-family:inherit}
   .mascot .face{width:90px;height:90px}
   .mascot .say{margin-bottom:52px}
 }
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
 </style>
 </head>
 <body>
@@ -234,7 +242,7 @@ button{font-family:inherit}
 
     <div class="bubble" id="bubble"></div>
 
-    <div class="rail-area" id="railArea">
+    <div class="rail-area" id="railArea"><div id="twinkles"></div>
       <div class="bridge"></div><div class="track"></div>
       <svg class="station" id="station" viewBox="0 0 200 150" aria-hidden="true">
         <rect x="10" y="60" width="180" height="80" rx="6" fill="#f4faff" stroke="#1f5fa8" stroke-width="4"/>
@@ -398,16 +406,24 @@ function loadQuestion(){
   $("explainBox").innerHTML = "";
   $("pieces").classList.remove("hidden"); document.querySelector(".ribbon").classList.remove("hidden");
   $("train").style.transform = ""; $("train").classList.remove("running");
-  renderBubble();
+  renderBubble(); makeTwinkles();
   var w = "";
   for (var i=0;i<4;i++){
     w += '<div class="wagon" data-i="'+i+'"><div class="coupler"></div><div class="wbody"><div class="wnum">'+(i+1)+'</div><div class="win"><span class="dash"></span></div>'+
-      (i===G.starIdx ? starSvg("wstar") : "")+'</div><div class="wheels"><span class="wheel"></span><span class="wheel"></span></div></div>';
+      starSvg("wstar"+(i===G.starIdx?" big":""))+'</div><div class="wheels"><span class="wheel"></span><span class="wheel"></span></div></div>';
   }
   $("wagons").innerHTML = w;
   var p = "";
   q.options.forEach(function(o,i){ p += '<div class="piece" data-n="'+(i+1)+'"><span class="n">'+(i+1)+'</span><span>'+esc(o)+'</span></div>'; });
   $("pieces").innerHTML = p;
+}
+function makeTwinkles(){
+  var h = "";
+  for (var i=0;i<20;i++){
+    var l = (Math.random()*96+2).toFixed(1), t = (Math.random()*38+2).toFixed(1), sz = (Math.random()*12+13).toFixed(0);
+    h += '<span class="tw'+(i%3===0?" g":"")+'" style="left:'+l+'%;top:'+t+'%;font-size:'+sz+'px;animation-delay:'+(Math.random()*2.4).toFixed(2)+'s">✦</span>';
+  }
+  $("twinkles").innerHTML = h;
 }
 function renderBubble(){
   var k = 0, q = G.q;
@@ -493,6 +509,9 @@ function dropOn(n, i, pieceEl, ghost){
     w.querySelector(".win").textContent = G.q.options[n-1];
     var wn = w.querySelector(".wnum"); wn.textContent = n; wn.classList.add("got"); // đầu toa ghi số của mảnh → đọc lần lượt ra 3-4-2-1
     w.classList.add("ok","linked");
+    // 1. sao bật sáng: kéo đúng mảnh → sao trên toa từ mờ chuyển vàng rực + lấp lánh
+    var st = w.querySelector(".wstar"); st.classList.add("lit");
+    var sr = st.getBoundingClientRect(); burst(sr.left+sr.width/2, sr.top+sr.height/2, 10);
     renderBubble(); SND.ok();
     if (G.filled.every(Boolean)) setTimeout(questionDone, 350);
   } else {
