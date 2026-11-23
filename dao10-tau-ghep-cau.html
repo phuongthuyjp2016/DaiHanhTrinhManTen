@@ -238,6 +238,13 @@ button{font-family:inherit}
 .scene .wagon.hover .wbody{filter:none;box-shadow:0 0 0 .45cqi #9fd0ff,0 0 1.6cqi .3cqi rgba(160,210,255,.9)}
 .scene .wagon.ok .wbody{box-shadow:0 0 0 .35cqi #ffd34d,0 0 2.4cqi .7cqi rgba(255,214,90,.95)}
 .scene .wagon.ok .win{background:linear-gradient(#fffdf2,#fff1c4)}
+/* toa ★ ghép đúng: đổi sang màu cam để nhận ra ngay */
+.scene .wagon.starw.ok .wbody{background:rgba(255,128,48,.32);box-shadow:0 0 0 .5cqi #ff7a2f,0 0 3cqi 1cqi rgba(255,120,40,.95)}
+.scene .wagon.starw.ok .win{background:linear-gradient(#fff3e8,#ffc999);color:#9a2c06}
+.scene .wagon.starw.ok .wnum.got{background:#ff7a2f;color:#fff}
+/* nhúng trong Mondai 6 đảo 10 */
+html.embed,html.embed body{background:transparent!important;overflow:hidden;min-height:0!important}
+html.embed #toHome,html.embed #finNext,html.embed #finHome{display:none!important}
 .scene .wagon.ng .wbody{box-shadow:0 0 0 .45cqi rgba(217,68,58,.9)}
 .scene .stack{position:absolute;left:11.6%;top:38%;width:1px;height:1px}
 .scene .chug{animation:chug2 .9s ease-in-out}
@@ -373,13 +380,13 @@ $("toHome").addEventListener("click", showHome);
 $("sound").addEventListener("click", function(){ muted=!muted; try{localStorage.setItem(LS+".mute",muted?"1":"0");}catch(e){} setSoundIcon(); });
 
 /* ---------- vào stage ---------- */
-function startStage(k){
-  G = { exam:k, list:FULL_DATA[k].mon6, idx:0, results:[] };
+function startStage(k, at){
+  G = { exam:k, list:FULL_DATA[k].mon6, idx:(at>0&&at<FULL_DATA[k].mon6.length)?at:0, results:[] };
   $("home").classList.add("hidden"); $("game").classList.remove("hidden");
   $("stTitle").textContent = "Stage "+k+" · Ghép câu";
   $("station").classList.remove("show");
-  try { history.replaceState(null,"","?ky="+encodeURIComponent(k)); } catch(e){}
-  renderStarbar(); loadQuestion(); window.scrollTo(0,0);
+  if (!EMBED) try { history.replaceState(null,"","?ky="+encodeURIComponent(k)); } catch(e){}
+  renderStarbar(); loadQuestion(); if (!EMBED) window.scrollTo(0,0);
 }
 function renderStarbar(){
   var h = "";
@@ -403,6 +410,7 @@ function loadQuestion(){
   G.q = q; G.order = q.order.split("-").map(Number); G.filled = [0,0,0,0]; G.mist = 0; G.done = false; G.sel = null;
   G.starIdx = toks.findIndex(function(t){ return /[*＊★]/.test(t); });
   $("stCnt").textContent = (G.idx+1)+"/"+G.list.length;
+  if (EMBED) try { parent.__tauSync && parent.__tauSync(G.exam, G.idx); } catch(e){}
   $("explainBox").innerHTML = "";
   $("pieces").classList.remove("hidden"); document.querySelector(".ribbon").classList.remove("hidden");
   $("train").style.transform = ""; $("train").classList.remove("running");
@@ -410,7 +418,7 @@ function loadQuestion(){
   var w = "", SW = 1536, SH = 415;
   for (var i=0;i<4;i++){
     var R0 = WIN[i], bx = (BADGE[i][0]-R0[0])/R0[2]*100, by = (BADGE[i][1]-R0[1])/R0[3]*100, sx = (STARP[i][0]-R0[0])/R0[2]*100, sy = (STARP[i][1]-R0[1])/R0[3]*100;
-    w += '<div class="wagon" data-i="'+i+'" style="left:'+(R0[0]/SW*100)+'%;top:'+(R0[1]/SH*100)+'%;width:'+(R0[2]/SW*100)+'%;height:'+(R0[3]/SH*100)+'%">'+
+    w += '<div class="wagon'+(i===G.starIdx?" starw":"")+'" data-i="'+i+'" style="left:'+(R0[0]/SW*100)+'%;top:'+(R0[1]/SH*100)+'%;width:'+(R0[2]/SW*100)+'%;height:'+(R0[3]/SH*100)+'%">'+
       '<div class="wbody"><div class="win"><span class="dash"></span></div></div>'+
       '<div class="wnum" style="left:'+bx+'%;top:'+by+'%">'+(i+1)+'</div>'+
       starSvg("wstar"+(i===G.starIdx?" big":"")).replace('<svg ','<svg style="left:'+sx+'%;top:'+sy+'%" ')+'</div>';
@@ -605,7 +613,7 @@ function showExplain(){
   // Câu đã điền sẵn ở khung trên → không lặp lại câu đầy đủ trong phần giải thích
   var dup = $("explainBox").querySelector('.m6x div[style*="font-size:0.98rem;line-height:2"]');
   if (dup) dup.remove();
-  $("nextBtn").addEventListener("click", function(){ if (last) finishStage(); else { G.idx++; loadQuestion(); window.scrollTo({top:0,behavior:"smooth"}); } });
+  $("nextBtn").addEventListener("click", function(){ if (last) finishStage(); else { G.idx++; loadQuestion(); if (EMBED) { try { frameElement.scrollIntoView({behavior:"smooth",block:"start"}); } catch(e){} } else window.scrollTo({top:0,behavior:"smooth"}); } });
 }
 
 /* ---------- 5. hoàn thành: tàu về ga, chòm sao, rương thưởng ---------- */
@@ -648,10 +656,13 @@ function showFinale(){
 }
 
 /* ---------- khởi động ---------- */
+var EMBED = new URLSearchParams(location.search).get("embed")==="1";
+if (EMBED) document.documentElement.classList.add("embed");
 setSoundIcon();
 var qk = new URLSearchParams(location.search).get("ky");
-if (qk && EXAMS.indexOf(qk) >= 0) startStage(qk); else renderHome();
-window.__tau = { get G(){ return G; }, startStage:startStage };
+if (qk && EXAMS.indexOf(qk) >= 0) startStage(qk, +(new URLSearchParams(location.search).get("q"))||0); else renderHome();
+window.__tau = { get G(){ return G; }, startStage:startStage,
+  goTo:function(i){ if (!G || i<0 || i>=G.list.length || i===G.idx) return; G.idx=i; hideMascot(); renderStarbar(); loadQuestion(); } };
 })();
 </script>
 </body>
