@@ -486,6 +486,17 @@ function selectAllTests(){
   startSelectedTests();
 }
 
+var WRONG_KEY='dao2_bimat_wrong';
+var wrongSetB=new Set((function(){try{return JSON.parse(localStorage.getItem(WRONG_KEY)||'[]');}catch(e){return [];}})());
+function wrongBSet(k,isWrong){ if(isWrong) wrongSetB.add(k); else wrongSetB.delete(k); try{localStorage.setItem(WRONG_KEY,JSON.stringify(Array.from(wrongSetB)));}catch(e){} }
+function startWrongReview(){
+  const qs=[];
+  for(let ti=0;ti<ORIGINAL_TEST_COUNT;ti++){ QUIZ_DATA[ti].questions.forEach(function(qq,qi){ const k=ti+':'+qi; if(wrongSetB.has(k)){ const c=Object.assign({},qq); c._origKey=k; qs.push(c); } }); }
+  if(!qs.length){ alert('Chưa có câu sai nào 🎉'); return; }
+  QUIZ_DATA[COMBO_INDEX]={name:'Ôn câu sai',questions:qs,_combo:true};
+  selRounds.clear();
+  startTest(COMBO_INDEX);
+}
 function pickAnswer(qIdx,choice){
   if(state.answers[qIdx]!==null)return;
   state.answers[qIdx]=choice;
@@ -501,6 +512,7 @@ function pickAnswer(qIdx,choice){
   } else {
     onWrongAnswer();
   }
+  wrongBSet(key, choice!==q.c);
   saveExamProgress();
   render();
 }
@@ -606,6 +618,7 @@ function selScreen(){
   const selCount=selRounds.size;
   const controlRow=`<div class="sel-controls" style="display:${hasQuery?'none':'flex'};gap:8px;margin:10px 0;flex-wrap:wrap;">
     <label style="font-size:13px;font-weight:700;align-self:center;">Số câu: <select onchange="setQCount(this.value)" style="padding:5px 8px;border-radius:8px;border:1.5px solid var(--line);"><option value="10" ${qCount==='10'?'selected':''}>10 câu</option><option value="20" ${qCount==='20'?'selected':''}>20 câu</option><option value="30" ${qCount==='30'?'selected':''}>30 câu</option><option value="all" ${qCount==='all'?'selected':''}>Tất cả</option></select></label>
+    <button class="btn ghost" style="border-color:#c0392b;color:#c0392b;" onclick="startWrongReview()">❌ Ôn câu sai (${wrongSetB.size} câu)</button>
     <button class="btn ghost" onclick="selectAllTests()">📚 Tất cả (${ORIGINAL_TEST_COUNT} đề)</button>
     <button class="btn green" style="display:${selCount>0?'':'none'}" onclick="startSelectedTests()">▶ Bắt đầu (đã chọn ${selCount} đề)</button>
   </div>`;
