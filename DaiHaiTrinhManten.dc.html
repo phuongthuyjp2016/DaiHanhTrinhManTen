@@ -1392,7 +1392,7 @@ function subPos(id, mobilePosMap, x, y, mobile) {
   return { x, y };
 }
 
-// Tên tool trong progressTools có thể kèm ?v=... để phá cache (vd 'dao10-daichien-dethi.html?v=20261123j'),
+// Tên tool trong progressTools có thể kèm ?v=... để phá cache (vd 'dao10-daichien-dethi.html?v=20261125t'),
 // còn trang tool chỉ ghi tên file — bỏ tham số v trước khi tra, giữ các tham số khác như ?set=.
 function toolProgressKey(url) {
   const q = url.indexOf('?');
@@ -1529,7 +1529,7 @@ const ISLANDS = [
       { icon:'🗂️', title:'Flashcard Ngữ Pháp N1', desc:'Lật thẻ ôn nhanh các mẫu ngữ pháp N1 quan trọng.', url:'dao3-suongmu-flashcard.html' },
       { icon:'⭐', title:'Mondai 6 · Điền Sao (100 câu)', desc:'Luyện dạng bài sắp xếp câu ★ với 100 câu hỏi chọn lọc.', url:'dao3-suongmu-mondai6-quiz100.html' },
       { icon:'🌟', title:'Mondai 6 · Điền Sao (320 câu)', desc:'Bộ đề đầy đủ 320 câu dạng sắp xếp câu ★ cho Mondai 6.', url:'dao3-suongmu-mondai6-quiz320.html' },
-      { icon:'🔮', title:'Mật Điển Văn Pháp 1321', desc:'Kho 1321 câu ngữ pháp N1 chia theo tuần, luyện theo từng bài.', url:'dao3-suongmu-matdien-1321.html?v=20261123b' }
+      { icon:'🔮', title:'Mật Điển Văn Pháp 1321', desc:'Kho 1321 câu ngữ pháp N1 chia theo tuần, luyện theo từng bài.', url:'dao3-suongmu-matdien-1321.html?v=20261125t' }
     ],
     progressTools:['dao3-suongmu-powerdrill-full30.html','dao3-suongmu-mondai6-quiz100.html','dao3-suongmu-mondai6-quiz320.html','dao3-suongmu-matdien-1321.html'] },
   { name:'Đảo Kiếm Sĩ', skill:'Nghe Hiểu · Loại Đáp Án Sai (MD4)', boss:'Cá Mập Kiếm Sĩ', item:'Kiếm Phá Bẫy', arc:'chinhphuc', color:'#bf6f4f', dark:'#8c4f36', x:1130, y:250, accessory:'bandana',
@@ -1727,9 +1727,9 @@ const ISLANDS = [
     playable:false, comingSoon:false, external:true, menuUrl:'dao10-index.html', quiz:[],
     menuTools:[
       { icon:'📖', title:'Từ Vựng 語彙 · Toàn 30 Vòng', desc:'Luyện từ vựng N1 theo 30 vòng liên tiếp, bám sát cấu trúc đề thi thật.', url:'dao10-daichien-tuvung30.html' },
-      { icon:'⚔', title:'Đề Thi Tổng Hợp 2010–2025', desc:'Thi thử toàn phần, tổng hợp đề thi JLPT N1 các năm từ 2010 đến 2025.', url:'dao10-daichien-dethi.html?v=20261123j' }
+      { icon:'⚔', title:'Đề Thi Tổng Hợp 2010–2025', desc:'Thi thử toàn phần, tổng hợp đề thi JLPT N1 các năm từ 2010 đến 2025.', url:'dao10-daichien-dethi.html?v=20261125t' }
     ],
-    progressTools:['dao10-daichien-tuvung30.html','dao10-daichien-dethi.html?v=20261123j'] },
+    progressTools:['dao10-daichien-tuvung30.html','dao10-daichien-dethi.html?v=20261125t'] },
   { name:'Đảo Tứ Hoàng', skill:'Thử Thách Tổng Hợp N1 (Boss Cuối)', boss:'Vua Cá Mập', item:'Vương Miện Tứ Hoàng', arc:'daichien', color:'#4a2f6b', dark:'#33204a', x:790, y:640, accessory:'crown',
     story:'Vua Cá Mập chờ đợi những nhà thám hiểm xuất sắc nhất trong thử thách tổng hợp toàn bộ JLPT N1. Chiến thắng sẽ mở đường đến Đảo Kho Báu.',
     playable:false, comingSoon:false, external:true, menuUrl:'dao11-thithu-jlpt-n1-7-2026.html?v=20261123c', quiz:[] },
@@ -1777,11 +1777,11 @@ const TREASURE_POWER = [
 ];
 const SUBMAP_W = 1200, SUBMAP_H = 760;
 const HAILUU_ISLETS = [
-  { id:'song-ngam', name:'Đảo Sóng Ngầm', emoji:'🌊', skill:'Từ Vựng Theo Văn Cảnh', art:'assets/art-052.webp', boss:'Thủ Hộ Sóng Ngầm', treasure:'Ngọc Sóng Ngầm', treasureEmoji:'🔹', treasureArt:'assets/art-053.png', color:'#2f8fd1', tools:[{label:'Mondai 2 · Văn Cảnh Quy Định', url:'dao2-hailuu-mondai2-vancanh.html?v=20261124b'},{label:'Phân Biệt Từ Dễ Nhầm (Mondai 2)', url:'dao2-hailuu-mondai2-phanbiet.html'},{label:'Mon2 - Bí Mật Ngữ Cảnh (20 đề)', url:'dao2-hailuu-mondai2-bimatngucanh.html?v=20261125a'}], progressTools:['dao2-hailuu-mondai2-vancanh.html?v=20261124b','dao2-hailuu-mondai2-bimatngucanh.html?v=20261125a'], x:235, y:440,
+  { id:'song-ngam', name:'Đảo Sóng Ngầm', emoji:'🌊', skill:'Từ Vựng Theo Văn Cảnh', art:'assets/art-052.webp', boss:'Thủ Hộ Sóng Ngầm', treasure:'Ngọc Sóng Ngầm', treasureEmoji:'🔹', treasureArt:'assets/art-053.png', color:'#2f8fd1', tools:[{label:'Mondai 2 · Văn Cảnh Quy Định', url:'dao2-hailuu-mondai2-vancanh.html?v=20261125t'},{label:'Phân Biệt Từ Dễ Nhầm (Mondai 2)', url:'dao2-hailuu-mondai2-phanbiet.html'},{label:'Mon2 - Bí Mật Ngữ Cảnh (20 đề)', url:'dao2-hailuu-mondai2-bimatngucanh.html?v=20261125t'}], progressTools:['dao2-hailuu-mondai2-vancanh.html?v=20261125t','dao2-hailuu-mondai2-bimatngucanh.html?v=20261125t'], x:235, y:440,
     story:'Những con sóng ngầm mang theo các từ vựng ẩn dưới lớp văn cảnh — chỉ ai đọc được dòng chảy mới chọn đúng nghĩa.' },
-  { id:'gio', name:'Đảo Gió Nam', emoji:'🌬', skill:'Từ Đồng Nghĩa, Từ Thay Thế', art:'assets/art-054.webp', boss:'Thủ Hộ Gió Nam', treasure:'Lá Cờ Gió Nam', treasureEmoji:'🎐', treasureArt:'assets/art-055.png', color:'#4fbfa8', tools:[{label:'Mondai 3 · Đồng Nghĩa Thay Thế', url:'dao2-hailuu-mondai3-dongnghia.html?v=20261120b'}], progressTools:['dao2-hailuu-mondai3-dongnghia.html?v=20261120b'], x:600, y:200,
+  { id:'gio', name:'Đảo Gió Nam', emoji:'🌬', skill:'Từ Đồng Nghĩa, Từ Thay Thế', art:'assets/art-054.webp', boss:'Thủ Hộ Gió Nam', treasure:'Lá Cờ Gió Nam', treasureEmoji:'🎐', treasureArt:'assets/art-055.png', color:'#4fbfa8', tools:[{label:'Mondai 3 · Đồng Nghĩa Thay Thế', url:'dao2-hailuu-mondai3-dongnghia.html?v=20261125t'}], progressTools:['dao2-hailuu-mondai3-dongnghia.html?v=20261125t'], x:600, y:200,
     story:'Gió Nam thổi qua đảo mang theo hàng trăm cặp từ đồng nghĩa — nghe sai một hơi gió là chọn sai đáp án.' },
-  { id:'xoay-nuoc', name:'Đảo Xoáy Nước', emoji:'🌀', skill:'Cách Dùng Từ', art:'assets/art-056.webp', boss:'Thủ Hộ Xoáy Nước', treasure:'Bánh Lái Xoáy Nước', treasureEmoji:'⚓', treasureArt:'assets/art-057.png', color:'#5f7fbf', tools:[{label:'Mondai 4 · Cách Dùng Từ', url:'dao2-hailuu-mondai4-cachdung.html?v=20261120b'}], progressTools:['dao2-hailuu-mondai4-cachdung.html?v=20261120b'], x:960, y:460,
+  { id:'xoay-nuoc', name:'Đảo Xoáy Nước', emoji:'🌀', skill:'Cách Dùng Từ', art:'assets/art-056.webp', boss:'Thủ Hộ Xoáy Nước', treasure:'Bánh Lái Xoáy Nước', treasureEmoji:'⚓', treasureArt:'assets/art-057.png', color:'#5f7fbf', tools:[{label:'Mondai 4 · Cách Dùng Từ', url:'dao2-hailuu-mondai4-cachdung.html?v=20261125t'}], progressTools:['dao2-hailuu-mondai4-cachdung.html?v=20261125t'], x:960, y:460,
     story:'Xoáy nước cuốn các từ vào những ngữ cảnh khác nhau — thử thách khả năng dùng từ đúng chỗ.' }
 ];
 const ZONE_ART = {
@@ -1790,7 +1790,7 @@ const ZONE_ART = {
   'thanh-pho-la-ban':'assets/art-062.webp'
 };
 const ANHSANG_ZONES = [
-  { id:'rung-tia-chop', name:'Rừng Tia Chớp', emoji:'🌿', mondai:'Mondai 8', type:'Đoản văn', boss:'Cá Mập Tốc Độ', missions:['Đọc nhanh','Tìm ý chính'], treasure:'Huy Hiệu Đọc Nhanh', treasureEmoji:'⚡', treasureArt:'assets/art-063.png', color:'#3f8f6e', x:180, y:590, tools:[{label:'Mondai 8 · Đoản Văn', url:'dao9-anhsang-mon8-doanvan.html?v=20261112a'}], progressTools:['dao9-anhsang-mon8-doanvan.html?v=20261112a'],
+  { id:'rung-tia-chop', name:'Rừng Tia Chớp', emoji:'🌿', mondai:'Mondai 8', type:'Đoản văn', boss:'Cá Mập Tốc Độ', missions:['Đọc nhanh','Tìm ý chính'], treasure:'Huy Hiệu Đọc Nhanh', treasureEmoji:'⚡', treasureArt:'assets/art-063.png', color:'#3f8f6e', x:180, y:590, tools:[{label:'Mondai 8 · Đoản Văn', url:'dao9-anhsang-mon8-doanvan.html?v=20261125t'}], progressTools:['dao9-anhsang-mon8-doanvan.html?v=20261125t'],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[ { prompt:'近年、在宅勤務を導入する企業が増えている。通勤時間が削減される一方、社員同士のコミュニケーション不足という新たな課題も浮き彫りになってきた。\n\nこの文章で筆者が指摘している問題点は何か。', options:[
         { text:'在宅勤務によって社員間の意思疎通が難しくなること', correct:true },{ text:'通勤時間が長くなること', correct:false },{ text:'企業の業績が悪化すること', correct:false },{ text:'社員の給与が減ること', correct:false }
@@ -1802,7 +1802,7 @@ const ANHSANG_ZONES = [
         { text:'情報を素早く取捨選択する能力が重要になっている', correct:true },{ text:'情報の量を増やすことが重要である', correct:false },{ text:'情報を発信する力が重要である', correct:false },{ text:'情報を記憶する力が重要である', correct:false }
       ], explain:'「素早く見極める力」が求められると述べており、要旨は情報の取捨選択能力の重要性。' } ] }
     ] },
-  { id:'cau-tri-thuc', name:'Cầu Tri Thức', emoji:'🌉', mondai:'Mondai 9', type:'Trung văn', boss:'Cá Mập Học Giả', missions:['Hiểu nội dung','Liên kết ý','Suy luận'], treasure:'Cuộn Bí Kíp Dokkai', treasureEmoji:'📖', treasureArt:'assets/art-064.png', color:'#bf8f4f', x:415, y:355, tools:[{label:'Mondai 9 · Trung Văn', url:'dao9-anhsang-mon9-trungvan.html?v=20261119c'}], progressTools:['dao9-anhsang-mon9-trungvan.html?v=20261119c'],
+  { id:'cau-tri-thuc', name:'Cầu Tri Thức', emoji:'🌉', mondai:'Mondai 9', type:'Trung văn', boss:'Cá Mập Học Giả', missions:['Hiểu nội dung','Liên kết ý','Suy luận'], treasure:'Cuộn Bí Kíp Dokkai', treasureEmoji:'📖', treasureArt:'assets/art-064.png', color:'#bf8f4f', x:415, y:355, tools:[{label:'Mondai 9 · Trung Văn', url:'dao9-anhsang-mon9-trungvan.html?v=20261125t'}], progressTools:['dao9-anhsang-mon9-trungvan.html?v=20261125t'],
     sets:[
       { id:'set1', label:'Bộ Đề 1', questions:[ { prompt:'彼は若い頃、失敗を恐れるあまり挑戦を避けてきた。しかし、ある恩師との出会いをきっかけに、失敗もまた学びの一部であると考えるようになった。それ以来、彼は積極的に新しいことに取り組むようになったという。\n\n彼の考え方が変わったきっかけは何か。', options:[
         { text:'恩師との出会い', correct:true },{ text:'大きな失敗を経験したこと', correct:false },{ text:'新しい仕事に就いたこと', correct:false },{ text:'周囲からの励まし', correct:false }
@@ -3394,5 +3394,6 @@ class Component extends DCLogic {
 }
 
 </script>
+<script src="tim-kiem.js?v=20261125a" defer></script>
 </body>
 </html>
