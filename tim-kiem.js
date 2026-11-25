@@ -3,7 +3,7 @@
    Dữ liệu: tim-kiem-data.js (dựng bằng node tools/build-tim-kiem.js). */
 (function () {
   if (window.__TK_LOADED) return; window.__TK_LOADED = true;
-  var DATA_URL = 'tim-kiem-data.js?v=20261125a';
+  var DATA_URL = 'tim-kiem-data.js?v=20261126a';
   var PAGE = (location.pathname.split('/').pop() || 'DaiHaiTrinhManten.dc.html');
   var IS_HUB = /DaiHaiTrinhManten\.dc\.html$/i.test(PAGE) || PAGE === '' || PAGE === 'index.html';
 
