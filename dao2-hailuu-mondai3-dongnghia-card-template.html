@@ -27,6 +27,13 @@
 .dc-mondai3-card .syn-fix{font-size:.9rem;color:#000;font-weight:700;line-height:1.5}
 .dc-mondai3-card .item-list{display:flex;flex-direction:column;gap:7px}
 .dc-mondai3-card .item-card{background:#fff;border:1px solid #9dc0da;border-radius:9px;padding:9px 11px;font-size:.85rem;color:#1a1a1a;line-height:1.5}
+.dc-mondai3-card .tt-sec{border-top:1px dashed #9dc0da;padding-top:10px}
+.dc-mondai3-card .tt-rows{display:flex;flex-direction:column;gap:5px}
+.dc-mondai3-card .tt-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.dc-mondai3-card .tt-s{font-size:.9rem;font-weight:700;color:#1a1a1a}
+.dc-mondai3-card .tt-p{font-size:.82rem;color:#555}
+.dc-mondai3-card .tt-note{font-size:.8rem;color:#555;margin-top:3px}
+.dc-mondai3-card .tt-note:empty{display:none}
 <!--/STYLE-->
 <!--CARD-->
 <div class="dc-mondai3-card" data-nb-id="{{nbId}}">
@@ -61,6 +68,13 @@
         <div class="remember-sub">Cụm hay dùng</div>
         <div class="item-list">{{#each collocations}}<div class="item-card">{{this.text}}</div>{{/each}}</div>
       </div>
+      {{#if hasTettei}}
+      <div class="remember-sec tt-sec">
+        <div class="remember-sub">{{ttHead}}</div>
+        <div class="tt-rows">{{#each ttRows}}<div class="tt-row"><span class="tt-s">{{this.s}}</span><span class="tt-p">{{this.p}}</span></div>{{/each}}</div>
+        <div class="tt-note">{{ttNote}}</div>
+      </div>
+      {{/if}}
     </div>
   </div>
 </div>
