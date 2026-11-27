@@ -47,7 +47,7 @@ window.MONDAI1_DATA['2015-12'] = {
     number: 3,
     question: '会社の広報部で男の人と女の人が会社案内について話しています。女の人はこの後まず何をしなければなりませんか。',
     choices: ['社長に写真の変更について聞く','表紙の背景の色を変更する','営業部の文章を書き直す','営業部に修正すると伝える'],
-    correctAnswer: 3,
+    correctAnswer: 2,
     script: [
       { speaker:'男', spk:'m', text:'来年度の就職希望者向けの会社案内の案、見たよ。社長の写真、変更するんじゃなかったの？十年前からこれだろう？' },
       { speaker:'女', spk:'f', text:'新しい写真も撮ったんですが、社長がもとのままのほうがいいとおっしゃって、社長、今週いっぱい出張ですし。' },
@@ -55,13 +55,13 @@ window.MONDAI1_DATA['2015-12'] = {
       { speaker:'女', spk:'f', text:'ありがとうございます。それから内容は昨年のものとほぼ同じですが、各部署からのメッセージを新たに入れてみました。' },
       { speaker:'男', spk:'m', text:'うん、この営業部のメッセージ、ちょっとアピールしたいことが伝わりにくいんだよな。ここ、表現変更しといてよ。' },
       { speaker:'女', spk:'f', text:'あのう、いただいた原稿をそのまま載せたんですが、勝手に手を入れてもいいんでしょうか。' },
-      { speaker:'男', spk:'m', text:'あ、会社案内の編集については広報部に一任されてるから。念のため、営業部に修正することは伝えとくよう。じゃあ、金曜日のミーティングで内容の確認したいから、それまでに。' },
+      { speaker:'男', spk:'m', text:'あ、会社案内の編集については広報部に一任されてるから。念のため、営業部に修正することは伝えとくよ。じゃあ、金曜日のミーティングで内容の確認したいから、それまでに。' },
       { speaker:'女', spk:'f', text:'はい。' },
       { speaker:'男', spk:'m', text:'で、やっぱりさっきの社長の写真だけどね。社長が戻られたら、写真、本当に変更しなくてもいいか、もう一度聞いてくれる？' },
       { speaker:'女', spk:'f', text:'分かりました。戻られたら、すぐ確認します。' }
     ],
-    explanation: 'Đây là dạng **この後 + まず**: cần phân biệt việc làm trước với việc làm sau.\n\n- Đáp án 1 phải chờ đến khi giám đốc trở về sau chuyến công tác: `社長が戻られたら`.\n- Đáp án 2 sai vì màu nền bìa đã được đổi từ xám sang hồng nhạt và được khen là sáng hơn. Đây là việc **đã hoàn thành**.\n- Đáp án 3 là việc cần làm trước cuộc họp thứ Sáu, nhưng trước khi tự sửa bản thảo nhận từ phòng kinh doanh, cô ấy cần báo cho phòng đó.\n- Đáp án 4 đúng vì người nam dặn `念のため、営業部に修正することは伝えとくよう` - trước tiên hãy báo cho phòng kinh doanh rằng nội dung sẽ được chỉnh sửa.',
-    keypoint: 'Đây là dạng **この後 + まず**: cần phân biệt việc làm trước với việc làm sau.'
+    explanation: 'Đây là dạng **この後 + まず**: cần phân biệt việc người nữ phải tự làm với việc người khác làm hoặc làm sau.\n\n- Đáp án 3 đúng. Người nam yêu cầu sửa lời nhắn của 営業部: `ここ表現変更しといてよ`, và hạn là trước buổi họp thứ Sáu: `金曜日のミーティングで内容の確認したいから、それまでに`. Người nữ lo không được tự ý sửa, nhưng người nam nói `会社案内の編集については広報部に一任されてるから` → cô ấy được tự sửa luôn.\n- Đáp án 4 sai vì người báo cho 営業部 là **người nam**: `念のため、営業部に修正することは伝えとくよ` (〜とくよ = tôi sẽ báo giùm). Người nữ không phải làm việc này.\n- Đáp án 1 làm sau, khi giám đốc đi công tác về: `社長が戻られたら、写真本当に変更しなくてもいいか、もう一度聞いてくれる？`.\n- Đáp án 2 sai vì màu nền bìa **đã đổi** từ xám sang hồng nhạt: `淡いピンクに変更してぐっと明るくなったね`.',
+    keypoint: 'Bẫy ở 「伝えとくよ」: người nam tự báo cho 営業部, nên việc người nữ phải làm trước tiên là sửa lời nhắn của 営業部.'
   },
   {
     number: 4,
